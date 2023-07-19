@@ -1,17 +1,17 @@
 {
     "manifest_version": 2,
     "type": "extension",
-    "name": "插件模板",
-    "slug": "plugin_template",
-    "description": "LiteLoaderQQNT的插件模板",
+    "name": "轻量工具箱",
+    "slug": "lightweight_toolbox",
+    "description": "LiteLoaderQQNT的轻量工具箱",
     "version": "0.1.0",
     "thumbnail": "./default_icon.png",
     "author": {
-        "name": "沫烬染",
-        "link": "https://github.com/mo-jinran"
+        "name": "曦月",
+        "link": "https://github.com/xiyuesaves"
     },
     "repository": {
-        "repo": "LiteLoaderQQNT-Plugin-Template",
+        "repo": "lite_tools",
         "branch": "main"
     },
     "platform": [
