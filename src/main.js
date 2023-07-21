@@ -32,19 +32,6 @@ function onLoad(plugin, liteloader) {
     );
   }
 
-  // 窗口初始化完成事件 - 暂时没有使用
-  ipcMain.on("LiteLoader.lite_tools.windowReady", (event, hash) => {
-    console.log("窗口加载完成事件", hash);
-    switch (hash) {
-      case "#/main/message":
-        mainMessage.webContents.send("LiteLoader.lite_tools.updateSidebar", {
-          type: "set",
-          options,
-        });
-        break;
-    }
-  });
-
   // 获取侧边栏按钮
   ipcMain.handle("LiteLoader.lite_tools.getSidebar", async (event, message) => {
     mainMessage.webContents.send("LiteLoader.lite_tools.updateSidebar", message);
@@ -59,6 +46,7 @@ function onLoad(plugin, liteloader) {
   // 获取/修改配置信息
   ipcMain.handle("LiteLoader.lite_tools.config", (event, opt) => {
     if (opt) {
+      console.log("更新配置信息", opt);
       options = opt;
       fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
       mainMessage.webContents.send("LiteLoader.lite_tools.updateSidebar", {

@@ -6,7 +6,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updateSidebar: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateSidebar", callback),
   sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
-  windowReady: (hash) => ipcRenderer.send("LiteLoader.lite_tools.windowReady", hash),
   config: (options) => ipcRenderer.invoke("LiteLoader.lite_tools.config", options),
   log: (msg) => ipcRenderer.send("LiteLoader.lite_tools.log", msg),
 });

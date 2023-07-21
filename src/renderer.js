@@ -19,13 +19,15 @@ function imageViewer() {
   }
   `;
   // 针对图片的单击关闭图片
+  if (options.imageViewer.quickClose) {
+  }
   const appEl = document.querySelector("#app");
   const option = { attributes: false, childList: true, subtree: true };
   const callback = (mutationsList, observer) => {
     lite_tools.log("observer触发");
     const img = document.querySelector(".main-area__image");
     const video = document.querySelector("embed");
-    if (img) {
+    if (img && options.imageViewer.quickClose) {
       observer.disconnect();
       let isMove = false;
       img.addEventListener("mousedown", (event) => {
@@ -59,7 +61,7 @@ async function mainMessage() {
   style.innerText = ".disabled{display:none !important};";
   document.body.appendChild(style);
 
-  // 观察者
+  // 监听侧边栏图标变动
   const observer = new MutationObserver((mutations, observer) => {
     document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
       const find = options.sidebar.find((opt) => opt.index == index);
@@ -136,14 +138,17 @@ async function mainMessage() {
     }
   });
 }
+
+// 设置界面
+function settings() {}
+
 // 页面加载完成时触发
 async function onLoad() {
   options = await lite_tools.config();
 
   navigation.addEventListener("navigatesuccess", () => {
-    lite_tools.log(`新页面参数 ${JSON.stringify(location)}`);
-    const hash = location.hash;
-    switch (hash) {
+    // lite_tools.log(`新页面参数 ${JSON.stringify(location)}`);
+    switch (location.hash) {
       case "#/imageViewer":
         imageViewer();
         break;
@@ -151,6 +156,7 @@ async function onLoad() {
         mainMessage();
         break;
       case "#/setting/settings/common":
+        settings();
         break;
     }
   });
@@ -220,6 +226,18 @@ async function onConfigView(view) {
       wrap.querySelector(".icon").classList.toggle("is-fold");
       wrap.querySelector("ul").classList.toggle("hidden");
     });
+  });
+
+  if (options.imageViewer.quickClose) {
+    view.querySelector(".switchQuickCloseImage").classList.add("is-active");
+  } else {
+    view.querySelector(".switchQuickCloseImage").classList.remove("is-active");
+  }
+
+  view.querySelector(".switchQuickCloseImage").addEventListener("click", function () {
+    this.classList.toggle("is-active");
+    options.imageViewer.quickClose = this.className.includes("is-active");
+    lite_tools.config(options);
   });
 }
 
