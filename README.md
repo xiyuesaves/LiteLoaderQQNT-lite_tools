@@ -1,3 +1,7 @@
+<div align=center>
+  <img src="./icon.png" />
+</div>
+
 # LiteLoaderQQNT-lite_tools
 
 LiteLoaderQQNT插件，轻量工具箱，添加了一些能提升使用体验的功能。

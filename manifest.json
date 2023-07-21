@@ -5,13 +5,13 @@
     "slug": "lite_tools",
     "description": "LiteLoaderQQNT的轻量工具箱",
     "version": "0.1.0",
-    "thumbnail": "./default_icon.png",
+    "thumbnail": "./icon.png",
     "author": {
         "name": "曦月",
         "link": "https://github.com/xiyuesaves"
     },
     "repository": {
-        "repo": "lite_tools",
+        "repo": "xiyuesaves/lite_tools",
         "branch": "main"
     },
     "platform": [
