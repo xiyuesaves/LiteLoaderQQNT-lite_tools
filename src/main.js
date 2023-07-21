@@ -6,7 +6,10 @@ let mainMessage, settings, options;
 
 // 默认配置文件
 const defaultOptions = {
-  sidebar: [],
+  sidebar: {
+    top:[],
+    bottom:[]
+  },
   imageViewer: {
     quickClose: false,
   },

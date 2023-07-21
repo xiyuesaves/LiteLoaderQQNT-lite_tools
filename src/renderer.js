@@ -64,9 +64,20 @@ async function mainMessage() {
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
     }
-    // 初始化侧边栏
+    // 初始化顶部侧边栏
     document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-      const find = options.sidebar.find((opt) => opt.index == index);
+      const find = options.sidebar.top.find((opt) => opt.index == index);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+    // 初始化底部侧边栏
+    document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
+      const find = options.sidebar.bottom.find((opt) => opt.index == index);
       if (find) {
         if (find.disabled) {
           el.classList.add("disabled");
@@ -91,7 +102,7 @@ async function mainMessage() {
     // console.log("接收到请求", message);
     switch (message.type) {
       case "get":
-        let list = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
+        let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
           if (el.getAttribute("aria-label")) {
             if (el.getAttribute("aria-label").includes("消息")) {
               return {
@@ -120,7 +131,27 @@ async function mainMessage() {
             };
           }
         });
-        lite_tools.sendSidebar(list);
+        let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map(
+          (el, index) => {
+            if (el.querySelector(".icon-item").getAttribute("aria-label")) {
+              return {
+                name: el.querySelector(".icon-item").getAttribute("aria-label"),
+                index,
+                disabled: el.className.includes("disabled"),
+              };
+            } else {
+              return {
+                name: "未知功能",
+                index,
+                disabled: el.className.includes("disabled"),
+              };
+            }
+          }
+        );
+        lite_tools.sendSidebar({
+          top,
+          bottom,
+        });
         break;
       case "set":
         options = message.options;
@@ -130,9 +161,20 @@ async function mainMessage() {
         } else {
           document.querySelector(".sticker-bar").classList.remove("disabled");
         }
-        // 更新侧边栏
+        // 更新顶部侧边栏
         document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-          const find = options.sidebar.find((opt) => opt.index == index);
+          const find = options.sidebar.top.find((opt) => opt.index == index);
+          if (find) {
+            if (find.disabled) {
+              el.classList.add("disabled");
+            } else {
+              el.classList.remove("disabled");
+            }
+          }
+        });
+        // 更新底部侧边栏
+        document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
+          const find = options.sidebar.bottom.find((opt) => opt.index == index);
           if (find) {
             if (find.disabled) {
               el.classList.add("disabled");
@@ -213,11 +255,11 @@ async function onConfigView(view) {
   // 获取侧边栏按钮列表\
   getSidebar();
   async function getSidebar() {
-    const list = await lite_tools.getSidebar({
+    const { top, bottom } = await lite_tools.getSidebar({
       type: "get",
     });
     const sidebar = view.querySelector(".sidebar ul");
-    list.forEach((el) => {
+    top.forEach((el) => {
       const hr = document.createElement("hr");
       hr.classList.add("horizontal-dividing-line");
       const li = document.createElement("li");
@@ -230,9 +272,35 @@ async function onConfigView(view) {
       switchEl.setAttribute("index", el.index);
       switchEl.addEventListener("click", function () {
         let index = this.getAttribute("index");
-        list[index].disabled = this.className.includes("is-active");
+        top[index].disabled = this.className.includes("is-active");
         this.classList.toggle("is-active");
-        options.sidebar = list;
+        options.sidebar.top = top;
+        lite_tools.config(options);
+      });
+      const span = document.createElement("span");
+      span.classList.add("q-switch__handle");
+      switchEl.appendChild(span);
+      const title = document.createElement("h2");
+      title.innerText = el.name;
+      li.append(title, switchEl);
+      sidebar.append(hr, li);
+    });
+    bottom.forEach((el) => {
+      const hr = document.createElement("hr");
+      hr.classList.add("horizontal-dividing-line");
+      const li = document.createElement("li");
+      li.classList.add("vertical-list-item");
+      const switchEl = document.createElement("div");
+      switchEl.classList.add("q-switch");
+      if (!el.disabled) {
+        switchEl.classList.add("is-active");
+      }
+      switchEl.setAttribute("index", el.index);
+      switchEl.addEventListener("click", function () {
+        let index = this.getAttribute("index");
+        bottom[index].disabled = this.className.includes("is-active");
+        this.classList.toggle("is-active");
+        options.sidebar.bottom = bottom;
         lite_tools.config(options);
       });
       const span = document.createElement("span");
@@ -252,10 +320,10 @@ async function onConfigView(view) {
       wrap.querySelector(".icon").classList.toggle("is-fold");
       wrap.querySelector("ul").classList.toggle("hidden");
     });
-    // 当前功能较少，默认全部展开
-    if (el.parentElement.querySelector("ul").className.includes("hidden")) {
-      el.click();
-    }
+    // 当前功能较少，默认全部展开 - 现在够多了不用全打开了[dog]
+    // if (el.parentElement.querySelector("ul").className.includes("hidden")) {
+    //   el.click();
+    // }
   });
 
   if (options.imageViewer.quickClose) {
