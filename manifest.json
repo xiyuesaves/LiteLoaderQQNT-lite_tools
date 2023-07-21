@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "type": "extension",
     "name": "轻量工具箱",
-    "slug": "lightweight_toolbox",
+    "slug": "lite_tools",
     "description": "LiteLoaderQQNT的轻量工具箱",
     "version": "0.1.0",
     "thumbnail": "./default_icon.png",

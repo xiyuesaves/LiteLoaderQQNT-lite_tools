@@ -4,12 +4,23 @@ const path = require("path");
 const fs = require("fs");
 let mainMessage, settings, options;
 
+// 默认配置文件
+const defaultOptions = {
+  sidebar: [],
+  imageViewer: {
+    quickClose: false,
+  },
+  message: {
+    disabledSticker: false,
+  },
+};
+
 // 加载插件时触发
 function onLoad(plugin, liteloader) {
   console.log("轻量工具箱已加载");
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
-  options = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
+
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
     fs.mkdirSync(pluginDataPath, { recursive: true });
@@ -17,24 +28,17 @@ function onLoad(plugin, liteloader) {
 
   // 初始化配置文件
   if (!fs.existsSync(settingsPath)) {
-    fs.writeFileSync(
-      settingsPath,
-      JSON.stringify(
-        {
-          sidebar: [],
-          imageViewer: {
-            quickClose: false,
-          },
-        },
-        null,
-        4
-      )
-    );
+    fs.writeFileSync(settingsPath, JSON.stringify(defaultOptions, null, 4));
   }
+
+  // 获取本地配置文件
+  fileOptions = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
+  // 保存配置和默认配置执行一次合并，以适配新增功能
+  options = Object.assign(defaultOptions, fileOptions);
 
   // 获取侧边栏按钮
   ipcMain.handle("LiteLoader.lite_tools.getSidebar", async (event, message) => {
-    mainMessage.webContents.send("LiteLoader.lite_tools.updateSidebar", message);
+    mainMessage.webContents.send("LiteLoader.lite_tools.messageChannel", message);
     const list = await new Promise((res) => {
       ipcMain.once("LiteLoader.lite_tools.sendSidebar", (event, list) => {
         res(list);
@@ -49,10 +53,12 @@ function onLoad(plugin, liteloader) {
       console.log("更新配置信息", opt);
       options = opt;
       fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-      mainMessage.webContents.send("LiteLoader.lite_tools.updateSidebar", {
+      mainMessage.webContents.send("LiteLoader.lite_tools.messageChannel", {
         type: "set",
         options,
       });
+    } else {
+      console.log("获取配置信息", options);
     }
     return options;
   });

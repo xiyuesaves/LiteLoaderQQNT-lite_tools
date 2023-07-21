@@ -7,6 +7,7 @@ function imageViewer() {
   const element = document.createElement("style");
   document.head.appendChild(element);
   element.textContent = `
+  .main-area__loading-tip,
   .image-viewer__tip{
     pointer-events: none;
     width: 145px !important;
@@ -24,7 +25,7 @@ function imageViewer() {
   const appEl = document.querySelector("#app");
   const option = { attributes: false, childList: true, subtree: true };
   const callback = (mutationsList, observer) => {
-    lite_tools.log("observer触发");
+    // lite_tools.log("observer触发");
     const img = document.querySelector(".main-area__image");
     const video = document.querySelector("embed");
     if (img && options.imageViewer.quickClose) {
@@ -57,12 +58,13 @@ function imageViewer() {
 
 // 首页处理
 async function mainMessage() {
-  const style = document.createElement("style");
-  style.innerText = ".disabled{display:none !important};";
-  document.body.appendChild(style);
-
-  // 监听侧边栏图标变动
+  // 全局监听器，在页面创建30秒后自动销毁
   const observer = new MutationObserver((mutations, observer) => {
+    // 初始化推荐表情
+    if (options.message.disabledSticker) {
+      document.querySelector(".sticker-bar")?.classList.add("disabled");
+    }
+    // 初始化侧边栏
     document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
       const find = options.sidebar.find((opt) => opt.index == index);
       if (find) {
@@ -74,7 +76,7 @@ async function mainMessage() {
       }
     });
   });
-  observer.observe(document.querySelector(".nav.sidebar__nav"), {
+  observer.observe(document.querySelector("#app"), {
     attributes: false,
     childList: true,
     subtree: false,
@@ -85,7 +87,7 @@ async function mainMessage() {
   }, 30000);
 
   // 主进程通信模块
-  lite_tools.updateSidebar((event, message) => {
+  lite_tools.messageChannel((event, message) => {
     // console.log("接收到请求", message);
     switch (message.type) {
       case "get":
@@ -121,11 +123,16 @@ async function mainMessage() {
         lite_tools.sendSidebar(list);
         break;
       case "set":
-        // lite_tools.log(
-        //   `${document.querySelectorAll(".nav.sidebar__nav .nav-item").length} 更新聊天页面 ${JSON.stringify(message)}`
-        // );
+        options = message.options;
+        // 更新推荐表情
+        if (options.message.disabledSticker) {
+          document.querySelector(".sticker-bar").classList.add("disabled");
+        } else {
+          document.querySelector(".sticker-bar").classList.remove("disabled");
+        }
+        // 更新侧边栏
         document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-          const find = message.options.sidebar.find((opt) => opt.index == index);
+          const find = options.sidebar.find((opt) => opt.index == index);
           if (find) {
             if (find.disabled) {
               el.classList.add("disabled");
@@ -139,6 +146,13 @@ async function mainMessage() {
   });
 }
 
+// 独立聊天窗口
+function chatMessage() {
+  if (options.message.disabledSticker) {
+    document.querySelector(".sticker-bar")?.classList.add("disabled");
+  }
+}
+
 // 设置界面
 function settings() {}
 
@@ -146,14 +160,26 @@ function settings() {}
 async function onLoad() {
   options = await lite_tools.config();
 
+  // 全局加载通用样式
+  const style = document.createElement("style");
+  style.innerText = `.disabled{display:none !important};`;
+  document.body.append(style);
+
   navigation.addEventListener("navigatesuccess", () => {
-    // lite_tools.log(`新页面参数 ${JSON.stringify(location)}`);
-    switch (location.hash) {
+    let hash = location.hash;
+    lite_tools.log(`新页面参数 ${hash}`);
+    if (hash.includes("#/chat/")) {
+      hash = "#/chat/message";
+    }
+    switch (hash) {
       case "#/imageViewer":
         imageViewer();
         break;
       case "#/main/message":
         mainMessage();
+        break;
+      case "#/chat/message":
+        chatMessage();
         break;
       case "#/setting/settings/common":
         settings();
@@ -166,7 +192,7 @@ async function onLoad() {
 async function onConfigView(view) {
   // 部分代码来自
   // https://github.com/mo-jinran/LiteLoaderQQNT-Config-View
-  const plugin_path = LiteLoader.plugins.lightweight_toolbox.path.plugin;
+  const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const css_file_path = `file://${plugin_path}/src/config/style.css`;
   const html_file_path = `file://${plugin_path}/src/config/view.html`;
 
@@ -219,13 +245,17 @@ async function onConfigView(view) {
     });
   }
 
-  // 点击事件
+  // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
     el.addEventListener("click", function (event) {
       const wrap = this.parentElement;
       wrap.querySelector(".icon").classList.toggle("is-fold");
       wrap.querySelector("ul").classList.toggle("hidden");
     });
+    // 当前功能较少，默认全部展开
+    if (el.parentElement.querySelector("ul").className.includes("hidden")) {
+      el.click();
+    }
   });
 
   if (options.imageViewer.quickClose) {
@@ -237,6 +267,17 @@ async function onConfigView(view) {
   view.querySelector(".switchQuickCloseImage").addEventListener("click", function () {
     this.classList.toggle("is-active");
     options.imageViewer.quickClose = this.className.includes("is-active");
+    lite_tools.config(options);
+  });
+
+  if (options.message.disabledSticker) {
+    view.querySelector(".switchSticker").classList.add("is-active");
+  } else {
+    view.querySelector(".switchSticker").classList.remove("is-active");
+  }
+  view.querySelector(".switchSticker").addEventListener("click", function () {
+    this.classList.toggle("is-active");
+    options.message.disabledSticker = this.className.includes("is-active");
     lite_tools.config(options);
   });
 }
