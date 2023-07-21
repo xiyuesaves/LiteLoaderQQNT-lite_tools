@@ -1,5 +1,5 @@
 // 运行在 Electron 渲染进程 下的页面脚本
-// const { ipcRenderer } = require('electron')
+let options;
 
 // 媒体预览增强
 function imageViewer() {
@@ -8,6 +8,7 @@ function imageViewer() {
   document.head.appendChild(element);
   element.textContent = `
   .image-viewer__tip{
+    pointer-events: none;
     width: 145px !important;
     transform: none !important;
     top:0 !important;
@@ -57,7 +58,31 @@ async function mainMessage() {
   const style = document.createElement("style");
   style.innerText = ".disabled{display:none !important};";
   document.body.appendChild(style);
-  // 主要监听器
+
+  // 观察者
+  const observer = new MutationObserver((mutations, observer) => {
+    document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
+      const find = options.sidebar.find((opt) => opt.index == index);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+  });
+  observer.observe(document.querySelector(".nav.sidebar__nav"), {
+    attributes: false,
+    childList: true,
+    subtree: false,
+  });
+  // 页面加载完成30秒后取消监听
+  setTimeout(() => {
+    observer.disconnect();
+  }, 30000);
+
+  // 主进程通信模块
   lite_tools.updateSidebar((event, message) => {
     // console.log("接收到请求", message);
     switch (message.type) {
@@ -94,7 +119,9 @@ async function mainMessage() {
         lite_tools.sendSidebar(list);
         break;
       case "set":
-        // lite_tools.log(`更新聊天页面 ${JSON.stringify(message)}`);
+        // lite_tools.log(
+        //   `${document.querySelectorAll(".nav.sidebar__nav .nav-item").length} 更新聊天页面 ${JSON.stringify(message)}`
+        // );
         document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
           const find = message.options.sidebar.find((opt) => opt.index == index);
           if (find) {
@@ -110,11 +137,12 @@ async function mainMessage() {
   });
 }
 // 页面加载完成时触发
-function onLoad() {
+async function onLoad() {
+  options = await lite_tools.config();
+
   navigation.addEventListener("navigatesuccess", () => {
     lite_tools.log(`新页面参数 ${JSON.stringify(location)}`);
     const hash = location.hash;
-    lite_tools.windowReady(hash);
     switch (hash) {
       case "#/imageViewer":
         imageViewer();
@@ -148,7 +176,7 @@ async function onConfigView(view) {
   const doc = parser.parseFromString(html_text, "text/html");
   doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
 
-  const options = await lite_tools.config();
+  options = await lite_tools.config();
 
   // 获取侧边栏按钮列表\
   getSidebar();

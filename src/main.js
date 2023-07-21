@@ -32,7 +32,7 @@ function onLoad(plugin, liteloader) {
     );
   }
 
-  // 窗口初始化完成事件
+  // 窗口初始化完成事件 - 暂时没有使用
   ipcMain.on("LiteLoader.lite_tools.windowReady", (event, hash) => {
     console.log("窗口加载完成事件", hash);
     switch (hash) {
