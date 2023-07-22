@@ -289,7 +289,7 @@ async function onConfigView(view) {
 
   options = await lite_tools.config();
 
-  // 获取侧边栏按钮列表\
+  // 获取侧边栏按钮列表
   getSidebar();
   async function getSidebar() {
     const { top, bottom } = await lite_tools.getSidebar({
@@ -335,47 +335,34 @@ async function onConfigView(view) {
       wrap.querySelector(".icon").classList.toggle("is-fold");
       wrap.querySelector("ul").classList.toggle("hidden");
     });
-    // 当前功能较少，默认全部展开 - 现在够多了不用全打开了[dog]
-    // if (el.parentElement.querySelector("ul").className.includes("hidden")) {
-    //   el.click();
-    // }
   });
 
   // 切换初始化方式
-  if (options.spareInitialization) {
-    view.querySelector(".switchSpare").classList.add("is-active");
-  } else {
-    view.querySelector(".switchSpare").classList.remove("is-active");
-  }
-  view.querySelector(".switchSpare").addEventListener("click", function () {
-    this.classList.toggle("is-active");
-    options.spareInitialization = this.className.includes("is-active");
-    lite_tools.config(options);
-  });
+  addSwitchEventlistener("spareInitialization", ".switchSpare");
 
   // 快速关闭图片
-  if (options.imageViewer.quickClose) {
-    view.querySelector(".switchQuickCloseImage").classList.add("is-active");
-  } else {
-    view.querySelector(".switchQuickCloseImage").classList.remove("is-active");
-  }
-  view.querySelector(".switchQuickCloseImage").addEventListener("click", function () {
-    this.classList.toggle("is-active");
-    options.imageViewer.quickClose = this.className.includes("is-active");
-    lite_tools.config(options);
-  });
+  addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
 
   // 禁用推荐表情
-  if (options.message.disabledSticker) {
-    view.querySelector(".switchSticker").classList.add("is-active");
-  } else {
-    view.querySelector(".switchSticker").classList.remove("is-active");
+  addSwitchEventlistener("message.disabledSticker", ".switchSticker");
+
+  // 开关初始化方法
+  function addSwitchEventlistener(optionKey, switchClass) {
+    const option = Function(`return options.${optionKey}`);
+    if (option) {
+      view.querySelector(switchClass).classList.add("is-active");
+    } else {
+      view.querySelector(switchClass).classList.remove("is-active");
+    }
+    view.querySelector(switchClass).addEventListener("click", function () {
+      this.classList.toggle("is-active");
+      options = Object.assign(
+        options,
+        Function("options", `options.${optionKey} = ${this.className.includes("is-active")}; return options`)(options)
+      );
+      lite_tools.config(options);
+    });
   }
-  view.querySelector(".switchSticker").addEventListener("click", function () {
-    this.classList.toggle("is-active");
-    options.message.disabledSticker = this.className.includes("is-active");
-    lite_tools.config(options);
-  });
 }
 
 // 这两个函数都是可选的
