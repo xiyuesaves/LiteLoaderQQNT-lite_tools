@@ -296,58 +296,36 @@ async function onConfigView(view) {
       type: "get",
     });
     const sidebar = view.querySelector(".sidebar ul");
-    top.forEach((el) => {
-      const hr = document.createElement("hr");
-      hr.classList.add("horizontal-dividing-line");
-      const li = document.createElement("li");
-      li.classList.add("vertical-list-item");
-      const switchEl = document.createElement("div");
-      switchEl.classList.add("q-switch");
-      if (!el.disabled) {
-        switchEl.classList.add("is-active");
-      }
-      switchEl.setAttribute("index", el.index);
-      switchEl.addEventListener("click", function () {
-        let index = this.getAttribute("index");
-        top[index].disabled = this.className.includes("is-active");
-        this.classList.toggle("is-active");
-        options.sidebar.top = top;
-        lite_tools.config(options);
+    addSidebarItem(top, "top");
+    addSidebarItem(bottom, "bottom");
+    function addSidebarItem(list, objKey) {
+      list.forEach((el) => {
+        const hr = document.createElement("hr");
+        hr.classList.add("horizontal-dividing-line");
+        const li = document.createElement("li");
+        li.classList.add("vertical-list-item");
+        const switchEl = document.createElement("div");
+        switchEl.classList.add("q-switch");
+        if (!el.disabled) {
+          switchEl.classList.add("is-active");
+        }
+        switchEl.setAttribute("index", el.index);
+        switchEl.addEventListener("click", function () {
+          let index = this.getAttribute("index");
+          list[index].disabled = this.className.includes("is-active");
+          this.classList.toggle("is-active");
+          options.sidebar[objKey] = list;
+          lite_tools.config(options);
+        });
+        const span = document.createElement("span");
+        span.classList.add("q-switch__handle");
+        switchEl.appendChild(span);
+        const title = document.createElement("h2");
+        title.innerText = el.name;
+        li.append(title, switchEl);
+        sidebar.append(hr, li);
       });
-      const span = document.createElement("span");
-      span.classList.add("q-switch__handle");
-      switchEl.appendChild(span);
-      const title = document.createElement("h2");
-      title.innerText = el.name;
-      li.append(title, switchEl);
-      sidebar.append(hr, li);
-    });
-    bottom.forEach((el) => {
-      const hr = document.createElement("hr");
-      hr.classList.add("horizontal-dividing-line");
-      const li = document.createElement("li");
-      li.classList.add("vertical-list-item");
-      const switchEl = document.createElement("div");
-      switchEl.classList.add("q-switch");
-      if (!el.disabled) {
-        switchEl.classList.add("is-active");
-      }
-      switchEl.setAttribute("index", el.index);
-      switchEl.addEventListener("click", function () {
-        let index = this.getAttribute("index");
-        bottom[index].disabled = this.className.includes("is-active");
-        this.classList.toggle("is-active");
-        options.sidebar.bottom = bottom;
-        lite_tools.config(options);
-      });
-      const span = document.createElement("span");
-      span.classList.add("q-switch__handle");
-      switchEl.appendChild(span);
-      const title = document.createElement("h2");
-      title.innerText = el.name;
-      li.append(title, switchEl);
-      sidebar.append(hr, li);
-    });
+    }
   }
 
   // 列表展开功能
