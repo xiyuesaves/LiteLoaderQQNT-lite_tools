@@ -16,6 +16,7 @@ const defaultOptions = {
   },
   message: {
     disabledSticker: false,
+    disabledHotGIF: false,
   },
 };
 

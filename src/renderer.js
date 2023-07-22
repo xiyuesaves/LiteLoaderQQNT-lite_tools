@@ -1,6 +1,33 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options;
 
+// 所有页面通用初始化函数
+function initFunction(func) {
+  if (!options.spareInitialization) {
+    // 全局监听器，在页面创建30秒后自动销毁
+    const observer = new MutationObserver(func);
+    observer.observe(document.querySelector("#app"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+    // 页面加载完成30秒后取消监听
+    setTimeout(() => {
+      observer.disconnect();
+    }, 30000);
+  } else {
+    // 窗口启动的1分钟之内每隔10ms应用一次配置信息
+    let timeout = new Date().getTime() + 30 * 1000;
+    loop();
+    function loop() {
+      if (timeout > new Date().getTime()) {
+        setTimeout(loop, 10);
+        func();
+      }
+    }
+  }
+}
+
 // 媒体预览增强
 function imageViewer() {
   // 修复弹窗字体模糊
@@ -58,80 +85,47 @@ function imageViewer() {
 
 // 首页处理
 async function mainMessage() {
-  if (!options.spareInitialization) {
-    // 全局监听器，在页面创建30秒后自动销毁
-    const observer = new MutationObserver((mutations, observer) => {
-      // 初始化推荐表情
-      if (options.message.disabledSticker) {
-        document.querySelector(".sticker-bar")?.classList.add("disabled");
-      }
-      // 初始化顶部侧边栏
-      document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-        const find = options.sidebar.top.find((opt) => opt.index == index);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 初始化底部侧边栏
-      document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
-        const find = options.sidebar.bottom.find((opt) => opt.index == index);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-    });
-    observer.observe(document.querySelector("#app"), {
-      attributes: false,
-      childList: true,
-      subtree: false,
-    });
-    // 页面加载完成30秒后取消监听
-    setTimeout(() => {
-      observer.disconnect();
-    }, 30000);
-  } else {
-    // 窗口启动的1分钟之内每隔10ms应用一次配置信息
-    let timeout = new Date().getTime() + 60 * 1000;
-    loop();
-    function loop() {
-      if (timeout > new Date().getTime()) {
-        setTimeout(loop, 10);
-      }
-      // 初始化推荐表情
-      if (options.message.disabledSticker) {
-        document.querySelector(".sticker-bar")?.classList.add("disabled");
-      }
-      // 初始化顶部侧边栏
-      document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-        const find = options.sidebar.top.find((opt) => opt.index == index);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 初始化底部侧边栏
-      document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
-        const find = options.sidebar.bottom.find((opt) => opt.index == index);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
+  // 初始化页面
+  initFunction(updatePage);
+
+  // 刷新页面配置
+  function updatePage() {
+    // 初始化推荐表情
+    if (options.message.disabledSticker) {
+      document.querySelector(".sticker-bar")?.classList.add("disabled");
     }
+    // 初始化顶部侧边栏
+    document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
+      const find = options.sidebar.top.find((opt) => opt.index == index);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+    // 初始化底部侧边栏
+    document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
+      const find = options.sidebar.bottom.find((opt) => opt.index == index);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+    // 禁用给GIF热图
+    document.querySelectorAll(".sticker-panel__bar .tabs-container-item").forEach((el) => {
+      if (el.querySelector(".q-icon") && el.querySelector(".q-icon").getAttribute("title") === "GIF热图") {
+        if (options.message.disabledHotGIF) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
   }
 
   // 主进程通信模块
@@ -192,34 +186,7 @@ async function mainMessage() {
         break;
       case "set":
         options = message.options;
-        // 更新推荐表情
-        if (options.message.disabledSticker) {
-          document.querySelector(".sticker-bar").classList.add("disabled");
-        } else {
-          document.querySelector(".sticker-bar").classList.remove("disabled");
-        }
-        // 更新顶部侧边栏
-        document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-          const find = options.sidebar.top.find((opt) => opt.index == index);
-          if (find) {
-            if (find.disabled) {
-              el.classList.add("disabled");
-            } else {
-              el.classList.remove("disabled");
-            }
-          }
-        });
-        // 更新底部侧边栏
-        document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
-          const find = options.sidebar.bottom.find((opt) => opt.index == index);
-          if (find) {
-            if (find.disabled) {
-              el.classList.add("disabled");
-            } else {
-              el.classList.remove("disabled");
-            }
-          }
-        });
+        updatePage();
         break;
     }
   });
@@ -227,8 +194,21 @@ async function mainMessage() {
 
 // 独立聊天窗口
 function chatMessage() {
-  if (options.message.disabledSticker) {
-    document.querySelector(".sticker-bar")?.classList.add("disabled");
+  updatePage();
+  initFunction(updatePage());
+  function updatePage() {
+    if (options.message.disabledSticker) {
+      document.querySelector(".sticker-bar")?.classList.add("disabled");
+    }
+    document.querySelectorAll(".sticker-panel__bar .tabs-container-item").forEach((el) => {
+      if (el.querySelector(".q-icon") && el.querySelector(".q-icon").getAttribute("title") === "GIF热图") {
+        if (options.message.disabledHotGIF) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
   }
 }
 
@@ -328,6 +308,8 @@ async function onConfigView(view) {
     }
   }
 
+  // 获取聊天窗口上方功能列表
+
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
     el.addEventListener("click", function (event) {
@@ -346,9 +328,12 @@ async function onConfigView(view) {
   // 禁用推荐表情
   addSwitchEventlistener("message.disabledSticker", ".switchSticker");
 
-  // 开关初始化方法
+  // 禁用表情GIF热图
+  addSwitchEventlistener("message.disabledHotGIF", ".switchHotGIF");
+
+  // 初始化设置界面
   function addSwitchEventlistener(optionKey, switchClass) {
-    const option = Function(`return options.${optionKey}`);
+    const option = Function("options", `return options.${optionKey}`)(options);
     if (option) {
       view.querySelector(switchClass).classList.add("is-active");
     } else {
