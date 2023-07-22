@@ -126,6 +126,16 @@ async function mainMessage() {
         }
       }
     });
+
+    // 禁用小红点
+    if (options.message.disabledBadge) {
+      let disabledBadge = document.createElement("style");
+      disabledBadge.innerHTML = `.q-badge .q-badge-sub,.q-badge .q-badge-num,.q-badge .q-badge__red{display:none !important;}`;
+      disabledBadge.classList.add("disabledBadge");
+      document.body.appendChild(disabledBadge);
+    } else {
+      document.querySelectorAll(".disabledBadge").forEach((el) => el.remove());
+    }
   }
 
   // 主进程通信模块
@@ -330,6 +340,9 @@ async function onConfigView(view) {
 
   // 禁用表情GIF热图
   addSwitchEventlistener("message.disabledHotGIF", ".switchHotGIF");
+
+  // 禁用表情GIF热图
+  addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
 
   // 初始化设置界面
   function addSwitchEventlistener(optionKey, switchClass) {
