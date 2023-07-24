@@ -262,7 +262,7 @@ async function onConfigView(view) {
   // 部分代码来自
   // https://github.com/mo-jinran/LiteLoaderQQNT-Config-View
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const css_file_path = `file://${plugin_path}/src/config/style.css`;
+  const css_file_path = `file://${plugin_path}/src/config/view.css`;
   const html_file_path = `file://${plugin_path}/src/config/view.html`;
 
   // CSS
