@@ -47,7 +47,6 @@
   margin: 8px;
 }
 
-
 /* 版本号 */
 .config_view .versions .wrap {
   display: flex;
@@ -55,13 +54,12 @@
   padding: 16px 0px;
 }
 
-.config_view .versions .wrap>div {
+.config_view .versions .wrap > div {
   flex: 1;
   margin: 0px 10px;
   border-radius: 8px;
   text-align: center;
 }
-
 
 /* 数据目录 */
 .config_view .path .path-input {
@@ -77,14 +75,19 @@
   background-color: var(--overlay_active);
 }
 
+.q-switch__disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 @media (prefers-color-scheme: light) {
   .text_color {
-      color: black;
+    color: black;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   .text_color {
-      color: white;
+    color: white;
   }
 }

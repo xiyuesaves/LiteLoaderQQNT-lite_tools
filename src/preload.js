@@ -9,6 +9,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
+  // 消息窗口向主进程发送输入框上方功能列表
+  sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 获取和更新配置文件
   config: (options) => ipcRenderer.invoke("LiteLoader.lite_tools.config", options),
   // 在主进程的终端打印渲染进程日志

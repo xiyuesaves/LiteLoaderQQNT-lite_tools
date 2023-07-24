@@ -19,6 +19,7 @@ const defaultOptions = {
     disabledHotGIF: false,
     disabledBadge: false,
   },
+  textAreaFuncList: [],
 };
 
 // 加载插件时触发
@@ -47,10 +48,19 @@ function onLoad(plugin, liteloader) {
     mainMessage.webContents.send("LiteLoader.lite_tools.messageChannel", message);
     const list = await new Promise((res) => {
       ipcMain.once("LiteLoader.lite_tools.sendSidebar", (event, list) => {
+        options.sidebar = list;
         res(list);
       });
     });
     return list;
+  });
+
+  // 更新聊天框上方功能列表
+  ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
+    let res = new Map(),
+      concat = options.textAreaFuncList.concat(list);
+    options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
+    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
   });
 
   // 获取/修改配置信息

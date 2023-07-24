@@ -1,6 +1,15 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options;
 
+// 首次执行检测，只有第一次执行时返回true
+function First() {
+  const set = new Set();
+  return (tag) => {
+    return !set.has(tag) && !!set.add(tag);
+  };
+}
+const first = First();
+
 // 所有页面通用初始化函数
 function initFunction(func) {
   if (!options.spareInitialization) {
@@ -88,6 +97,26 @@ async function mainMessage() {
   // 初始化页面
   initFunction(updatePage);
 
+  function observerChatArea() {
+    new MutationObserver((mutations, observe) => {
+      document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
+        const name = el.querySelector(".icon-item").getAttribute("aria-label");
+        const find = options.textAreaFuncList.find((el) => el.name === name);
+        if (find) {
+          if (find.disabled) {
+            el.classList.add("disabled");
+          } else {
+            el.classList.remove("disabled");
+          }
+        }
+      });
+    }).observe(document.querySelector(".chat-input-area"), {
+      attributes: false,
+      childList: true,
+      subtree: true,
+    });
+  }
+
   // 刷新页面配置
   function updatePage() {
     // 初始化推荐表情
@@ -126,7 +155,6 @@ async function mainMessage() {
         }
       }
     });
-
     // 禁用小红点
     if (options.message.disabledBadge) {
       let disabledBadge = document.createElement("style");
@@ -136,11 +164,25 @@ async function mainMessage() {
     } else {
       document.querySelectorAll(".disabledBadge").forEach((el) => el.remove());
     }
+    // 初始化输入框上方功能
+    if (document.querySelector(".chat-input-area") && first("chat-input-area")) {
+      observerChatArea();
+    }
+    document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
+      const name = el.querySelector(".icon-item").getAttribute("aria-label");
+      const find = options.textAreaFuncList.find((el) => el.name === name);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
   }
 
   // 主进程通信模块
   lite_tools.messageChannel((event, message) => {
-    // console.log("接收到请求", message);
     switch (message.type) {
       case "get":
         let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
@@ -205,7 +247,7 @@ async function mainMessage() {
 // 独立聊天窗口
 function chatMessage() {
   updatePage();
-  initFunction(updatePage());
+  initFunction(updatePage);
   function updatePage() {
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
@@ -219,11 +261,28 @@ function chatMessage() {
         }
       }
     });
+    document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
+      const name = el.querySelector(".icon-item").getAttribute("aria-label");
+      const find = options.textAreaFuncList.find((el) => el.name === name);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+    // 更新输入框上方功能列表
+    const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
+      return {
+        name: el.querySelector(".icon-item").getAttribute("aria-label"),
+        id: el.querySelector(".icon-item").id,
+        disabled: el.className.includes(".disabled"),
+      };
+    });
+    lite_tools.sendTextAreaList(textAreaList);
   }
 }
-
-// 设置界面
-function settings() {}
 
 // 页面加载完成时触发
 async function onLoad() {
@@ -250,9 +309,6 @@ async function onLoad() {
       case "#/chat/message":
         chatMessage();
         break;
-      case "#/setting/settings/common":
-        settings();
-        break;
     }
   });
 }
@@ -277,48 +333,45 @@ async function onConfigView(view) {
   const doc = parser.parseFromString(html_text, "text/html");
   doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
 
+  // 更新配置信息
   options = await lite_tools.config();
 
-  // 获取侧边栏按钮列表
-  getSidebar();
-  async function getSidebar() {
-    const { top, bottom } = await lite_tools.getSidebar({
-      type: "get",
-    });
-    const sidebar = view.querySelector(".sidebar ul");
-    addSidebarItem(top, "top");
-    addSidebarItem(bottom, "bottom");
-    function addSidebarItem(list, objKey) {
-      list.forEach((el) => {
-        const hr = document.createElement("hr");
-        hr.classList.add("horizontal-dividing-line");
-        const li = document.createElement("li");
-        li.classList.add("vertical-list-item");
-        const switchEl = document.createElement("div");
-        switchEl.classList.add("q-switch");
-        if (!el.disabled) {
-          switchEl.classList.add("is-active");
-        }
-        switchEl.setAttribute("index", el.index);
-        switchEl.addEventListener("click", function () {
-          let index = this.getAttribute("index");
-          list[index].disabled = this.className.includes("is-active");
-          this.classList.toggle("is-active");
-          options.sidebar[objKey] = list;
-          lite_tools.config(options);
-        });
-        const span = document.createElement("span");
-        span.classList.add("q-switch__handle");
-        switchEl.appendChild(span);
-        const title = document.createElement("h2");
-        title.innerText = el.name;
-        li.append(title, switchEl);
-        sidebar.append(hr, li);
+  // 向设置界面插入动态选项
+  function addOptionLi(list, element, objKey, key) {
+    list.forEach((el, index) => {
+      const hr = document.createElement("hr");
+      hr.classList.add("horizontal-dividing-line");
+      const li = document.createElement("li");
+      li.classList.add("vertical-list-item");
+      const switchEl = document.createElement("div");
+      switchEl.classList.add("q-switch");
+      if (!el[key]) {
+        switchEl.classList.add("is-active");
+      }
+      switchEl.setAttribute("index", index);
+      switchEl.addEventListener("click", function () {
+        Function("options", `options.${objKey}[${index}].${key} = ${this.className.includes("is-active")}`)(options);
+        this.classList.toggle("is-active");
+        lite_tools.config(options);
       });
-    }
+      const span = document.createElement("span");
+      span.classList.add("q-switch__handle");
+      switchEl.appendChild(span);
+      const title = document.createElement("h2");
+      title.innerText = el.name;
+      li.append(title, switchEl);
+      element.append(hr, li);
+    });
   }
 
-  // 获取聊天窗口上方功能列表
+  // 获取侧边栏按钮列表
+  options.sidebar = await lite_tools.getSidebar({ type: "get" });
+  const sidebar = view.querySelector(".sidebar ul");
+  addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
+  addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
+
+  // 添加输入框上方功能列表
+  addOptionLi(options.textAreaFuncList, view.querySelector(".textArea ul"), "textAreaFuncList", "disabled");
 
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
@@ -341,7 +394,7 @@ async function onConfigView(view) {
   // 禁用表情GIF热图
   addSwitchEventlistener("message.disabledHotGIF", ".switchHotGIF");
 
-  // 禁用表情GIF热图
+  // 禁用红点
   addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
 
   // 初始化设置界面
