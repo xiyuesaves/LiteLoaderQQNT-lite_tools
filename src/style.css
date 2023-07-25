@@ -195,6 +195,9 @@
   .mix-message__container--pic::after {
     display: none;
   }
+  .reply-element {
+    color: #333333 !important;
+  }
 
   /* 工具栏项目 */
   .panel-header__action .side-panel {
