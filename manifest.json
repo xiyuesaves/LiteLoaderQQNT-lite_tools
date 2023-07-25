@@ -3,7 +3,7 @@
     "type": "extension",
     "name": "轻量工具箱",
     "slug": "lite_tools",
-    "description": "LiteLoaderQQNT的轻量工具箱",
+    "description": "里面有一些能提升使用体验的小工具",
     "version": "0.1.4",
     "thumbnail": "./icon.png",
     "author": {
