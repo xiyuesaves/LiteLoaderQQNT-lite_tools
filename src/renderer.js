@@ -116,9 +116,9 @@ async function mainMessage() {
       subtree: true,
     });
   }
-
+  let styleText;
   // 刷新页面配置
-  function updatePage() {
+  async function updatePage() {
     // 初始化推荐表情
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
@@ -179,76 +179,122 @@ async function mainMessage() {
         }
       }
     });
+
+    // 更新自定义样式
+    const backgroundStyle = document.querySelector(".backgroundStyle");
+    if (options.background.enabled) {
+      if (!styleText) {
+        styleText = await lite_tools.getStyle();
+      }
+      // 如果url指向图片类型则直接插入css中
+      let backgroundImage = "";
+      if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
+        document.querySelector(".background-wallpaper-video")?.remove();
+        backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+        `;
+      } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
+        let videoEl = document.querySelector(".background-wallpaper-video");
+        if (!videoEl) {
+          videoEl = document.createElement("video");
+          videoEl.setAttribute("muted", "");
+          videoEl.setAttribute("autoplay", "");
+          videoEl.setAttribute("loop", "");
+          videoEl.setAttribute("src", options.background.url);
+          videoEl.classList.add("background-wallpaper-video");
+          videoEl.volume = 0;
+          document.querySelector(".tab-container").appendChild(videoEl);
+        } else {
+          if (videoEl.getAttribute("src") !== options.background.url) {
+            videoEl.setAttribute("src", options.background.url);
+          }
+        }
+      } else {
+        document.querySelector(".background-wallpaper-video")?.remove();
+      }
+      backgroundStyle.textContent = backgroundImage + styleText;
+    } else {
+      backgroundStyle.textContent = "";
+      document.querySelector(".background-wallpaper-video")?.remove();
+    }
   }
 
-  // 主进程通信模块
-  lite_tools.messageChannel((event, message) => {
-    switch (message.type) {
-      case "get":
-        let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
-          if (el.getAttribute("aria-label")) {
-            if (el.getAttribute("aria-label").includes("消息")) {
-              return {
-                name: "消息",
-                index,
-                disabled: el.className.includes("disabled"),
-              };
-            } else {
-              return {
-                name: el.getAttribute("aria-label"),
-                index,
-                disabled: el.className.includes("disabled"),
-              };
-            }
-          } else if (el.querySelector(".game-center-item")) {
-            return {
-              name: "游戏中心",
-              index,
-              disabled: el.className.includes("disabled"),
-            };
-          } else {
-            return {
-              name: "未知功能",
-              index,
-              disabled: el.className.includes("disabled"),
-            };
-          }
-        });
-        let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map(
-          (el, index) => {
-            if (el.querySelector(".icon-item").getAttribute("aria-label")) {
-              return {
-                name: el.querySelector(".icon-item").getAttribute("aria-label"),
-                index,
-                disabled: el.className.includes("disabled"),
-              };
-            } else {
-              return {
-                name: "未知功能",
-                index,
-                disabled: el.className.includes("disabled"),
-              };
-            }
-          }
-        );
-        lite_tools.sendSidebar({
-          top,
-          bottom,
-        });
-        break;
-      case "set":
-        options = message.options;
-        updatePage();
-        break;
+  // 配置文件更新
+  lite_tools.updateOptions((event, opt) => {
+    console.log("新接口获取配置更新");
+    options = opt;
+    updatePage();
+  });
+
+  // 调试用css刷新
+  lite_tools.updateStyle((event, message) => {
+    let backgroundImage = "";
+    if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
+      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+        `;
     }
+    document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
+  });
+
+  // 设置页面获取侧边栏项目
+  lite_tools.optionsOpen((event, message) => {
+    let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
+      if (el.getAttribute("aria-label")) {
+        if (el.getAttribute("aria-label").includes("消息")) {
+          return {
+            name: "消息",
+            index,
+            disabled: el.className.includes("disabled"),
+          };
+        } else {
+          return {
+            name: el.getAttribute("aria-label"),
+            index,
+            disabled: el.className.includes("disabled"),
+          };
+        }
+      } else if (el.querySelector(".game-center-item")) {
+        return {
+          name: "游戏中心",
+          index,
+          disabled: el.className.includes("disabled"),
+        };
+      } else {
+        return {
+          name: "未知功能",
+          index,
+          disabled: el.className.includes("disabled"),
+        };
+      }
+    });
+    let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
+      if (el.querySelector(".icon-item").getAttribute("aria-label")) {
+        return {
+          name: el.querySelector(".icon-item").getAttribute("aria-label"),
+          index,
+          disabled: el.className.includes("disabled"),
+        };
+      } else {
+        return {
+          name: "未知功能",
+          index,
+          disabled: el.className.includes("disabled"),
+        };
+      }
+    });
+    lite_tools.sendSidebar({
+      top,
+      bottom,
+    });
   });
 }
 
 // 独立聊天窗口
 function chatMessage() {
+  let styleText = "";
   updatePage();
-  initFunction(updatePage);
-  function updatePage() {
+  // initFunction(updatePage);
+  async function updatePage() {
+    // 禁用贴纸
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
     }
@@ -261,6 +307,7 @@ function chatMessage() {
         }
       }
     });
+    // 禁用GIF热图 - 有bug待修复
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
       const find = options.textAreaFuncList.find((el) => el.name === name);
@@ -272,27 +319,89 @@ function chatMessage() {
         }
       }
     });
-    // 更新输入框上方功能列表
-    const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
-      return {
-        name: el.querySelector(".icon-item").getAttribute("aria-label"),
-        id: el.querySelector(".icon-item").id,
-        disabled: el.className.includes(".disabled"),
-      };
-    });
-    lite_tools.sendTextAreaList(textAreaList);
+    if (first("updateList")) {
+      // 更新输入框上方功能列表
+      const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
+        return {
+          name: el.querySelector(".icon-item").getAttribute("aria-label"),
+          id: el.querySelector(".icon-item").id,
+          disabled: el.className.includes(".disabled"),
+        };
+      });
+      lite_tools.sendTextAreaList(textAreaList);
+    }
+
+    // 更新自定义样式
+    const backgroundStyle = document.querySelector(".backgroundStyle");
+    if (options.background.enabled) {
+      if (!styleText) {
+        styleText = await lite_tools.getStyle();
+      }
+      // 如果url指向图片类型则直接插入css中
+      let backgroundImage = "";
+      if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
+        document.querySelector(".background-wallpaper-video")?.remove();
+        backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+            `;
+      } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
+        let videoEl = document.querySelector(".background-wallpaper-video");
+        if (!videoEl) {
+          videoEl = document.createElement("video");
+          videoEl.setAttribute("muted", "");
+          videoEl.setAttribute("autoplay", "");
+          videoEl.setAttribute("loop", "");
+          videoEl.setAttribute("src", options.background.url);
+          videoEl.classList.add("background-wallpaper-video");
+          videoEl.volume = 0;
+          document.querySelector(".container").appendChild(videoEl);
+        } else {
+          if (videoEl.getAttribute("src") !== options.background.url) {
+            videoEl.setAttribute("src", options.background.url);
+          }
+        }
+      } else {
+        document.querySelector(".background-wallpaper-video")?.remove();
+      }
+      backgroundStyle.textContent = backgroundImage + styleText;
+    } else {
+      backgroundStyle.textContent = "";
+      document.querySelector(".background-wallpaper-video")?.remove();
+    }
   }
+
+  lite_tools.updateOptions((event, opt) => {
+    console.log("新接口获取配置更新");
+    options = opt;
+    updatePage();
+  });
+
+  // 调试用css刷新
+  lite_tools.updateStyle((event, message) => {
+    let backgroundImage = "";
+    if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
+      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+          `;
+    }
+    document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
+  });
 }
 
 // 页面加载完成时触发
 async function onLoad() {
+  // 获取最新的配置信息
   options = await lite_tools.config();
+
+  // 插入自定义样式style容器
+  const backgroundStyle = document.createElement("style");
+  backgroundStyle.classList.add("backgroundStyle");
+  document.body.appendChild(backgroundStyle);
 
   // 全局加载通用样式
   const style = document.createElement("style");
   style.innerText = `.disabled{display:none !important};`;
   document.body.append(style);
 
+  // 监听导航跳转
   navigation.addEventListener("navigatesuccess", () => {
     let hash = location.hash;
     lite_tools.log(`新页面参数 ${hash}`);
@@ -397,23 +506,52 @@ async function onConfigView(view) {
   // 禁用红点
   addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
 
+  // 自定义背景
+  addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (event, enabled) => {
+    if (enabled) {
+      view.querySelector(".select-path").classList.remove("hidden");
+    } else {
+      view.querySelector(".select-path").classList.add("hidden");
+    }
+  });
+  if (options.background.enabled) {
+    view.querySelector(".select-path").classList.remove("hidden");
+  } else {
+    view.querySelector(".select-path").classList.add("hidden");
+  }
+  view.querySelector(".select-path input").value = options.background.url;
+  view.querySelectorAll(".select-file").forEach((el) => {
+    el.addEventListener("click", () => {
+      lite_tools.openSelectBackground();
+    });
+  });
+
   // 初始化设置界面
-  function addSwitchEventlistener(optionKey, switchClass) {
+  function addSwitchEventlistener(optionKey, switchClass, callback) {
     const option = Function("options", `return options.${optionKey}`)(options);
     if (option) {
       view.querySelector(switchClass).classList.add("is-active");
     } else {
       view.querySelector(switchClass).classList.remove("is-active");
     }
-    view.querySelector(switchClass).addEventListener("click", function () {
+    view.querySelector(switchClass).addEventListener("click", function (event) {
       this.classList.toggle("is-active");
       options = Object.assign(
         options,
         Function("options", `options.${optionKey} = ${this.className.includes("is-active")}; return options`)(options)
       );
       lite_tools.config(options);
+      if (callback) {
+        callback(event, this.className.includes("is-active"));
+      }
     });
   }
+
+  // 监听设置文件变动
+  lite_tools.updateOptions((event, opt) => {
+    options = opt;
+    view.querySelector(".select-path input").value = options.background.url;
+  });
 }
 
 // 这两个函数都是可选的

@@ -1,0 +1,382 @@
+/* 更透亮的侧边栏 */
+.sidebar-nav {
+  background-color: transparent !important;
+}
+.background-wallpaper-video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0.5;
+  top: 0;
+  left: 0;
+}
+.tab-container {
+  position: relative;
+}
+.tab-container .message-panel,
+.tab-container .contact-layout {
+  background: unset !important;
+  position: relative;
+  z-index: 1;
+}
+.tab-container .message-panel::after,
+.tab-container .contact-layout::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  background-image: var(--background-wallpaper);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  /* background: unset !important; */
+}
+.ark-view-message_not-support {
+  background-color: unset !important;
+}
+
+/* 独立聊天窗口样式 */
+@media (prefers-color-scheme: light) {
+  .aio-independent .chat-header {
+    position: relative;
+    z-index: 1;
+  }
+  .aio-independent .chat-header::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    z-index: -1;
+  }
+  .aio-independent {
+    background: unset !important;
+    position: relative;
+    z-index: 1;
+  }
+  .aio-independent::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    background-image: var(--background-wallpaper);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+  }
+  .aio-independent .draggable-view__container {
+    background: unset !important;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: unset !important;
+  }
+  .aio-independent .chat-header {
+    position: relative;
+    z-index: 1;
+  }
+  .aio-independent .chat-header::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+  }
+  .aio-independent {
+    background: unset !important;
+    position: relative;
+    z-index: 1;
+  }
+  .aio-independent::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    background-image: var(--background-wallpaper);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+  }
+  .aio-independent .draggable-view__container {
+    background: unset !important;
+  }
+}
+
+/* 主窗口样式 */
+@media (prefers-color-scheme: light) {
+  /* 左侧消息列表 */
+  .recent-contact {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(8px);
+  }
+  .list-toggler .viewport-list__inner {
+    background-color: transparent !important;
+  }
+
+  /* 顶部消息栏 */
+  .panel-header {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* 输入框 */
+  .chat-input-area {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+  }
+  .chat-input-area::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(8px);
+  }
+
+  /* 群组右侧列表 */
+  .group-box__wrapper {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* 消息内容外部块 */
+  .message-content__wrapper {
+    overflow: unset !important;
+  }
+
+  /* 消息内容块 */
+  .msg-content-container {
+    background: unset !important;
+    color: #313131 !important;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+  .msg-content-container::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(28px);
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: -1;
+  }
+  .msg-content-container .text-link {
+    color: #2d77e5 !important;
+  }
+  .mix-message__container--pic {
+    backdrop-filter: unset !important;
+    box-shadow: unset !important;
+  }
+  .mix-message__container--pic::after {
+    display: none;
+  }
+
+  /* 工具栏项目 */
+  .panel-header__action .side-panel {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(8px);
+  }
+
+  /* 跳转到顶部-底部 */
+  .chat-msg-area__tip--top-btn,
+  .chat-msg-area__tip--bottom {
+    background: unset !important;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    border-color: transparent !important;
+  }
+  .chat-msg-area__tip--top-btn::after,
+  .chat-msg-area__tip--bottom::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: -1;
+  }
+
+  /* 联系人列表 */
+  .contact,
+  .contact .tab-header,
+  .contact .q-collapse-item__header {
+    background: unset !important;
+  }
+  .contact {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(8px);
+  }
+
+  .contact-profile .profile {
+    background: unset !important;
+    backdrop-filter: blur(8px);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  /* 左侧消息列表 */
+  .recent-contact {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(8px);
+  }
+  .list-toggler .viewport-list__inner {
+    background-color: transparent !important;
+  }
+
+  /* 顶部消息栏 */
+  .panel-header {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* 输入框 */
+  .chat-input-area {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+  }
+  .chat-input-area::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(8px);
+  }
+
+  /* 群组右侧列表 */
+  .group-box__wrapper {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* 消息内容外部块 */
+  .message-content__wrapper {
+    overflow: unset !important;
+  }
+
+  /* 消息内容块 */
+  .msg-content-container {
+    background: unset !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+  }
+  .msg-content-container::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(24px);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+  .msg-content-container .text-link {
+    color: #2d77e5 !important;
+  }
+  .mix-message__container--pic {
+    backdrop-filter: unset !important;
+    box-shadow: unset !important;
+  }
+  .mix-message__container--pic::after {
+    display: none;
+  }
+
+  /* 工具栏项目 */
+  .panel-header__action .side-panel {
+    background: unset !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(24px) !important;
+  }
+  /* 跳转到顶部-底部 */
+  .chat-msg-area__tip--top-btn,
+  .chat-msg-area__tip--bottom {
+    background: unset !important;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    border-color: transparent !important;
+  }
+  .chat-msg-area__tip--top-btn::after,
+  .chat-msg-area__tip--bottom::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+  }
+
+  /* 联系人列表 */
+  .contact,
+  .contact .tab-header,
+  .contact .q-collapse-item__header {
+    background: unset !important;
+  }
+  .contact {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(8px);
+  }
+
+  .contact-profile .profile {
+    background: unset !important;
+    backdrop-filter: blur(8px);
+  }
+
+  .q-divider.q-divider__vertical {
+    display: none;
+  }
+
+  .group-box {
+    box-shadow: unset !important;
+  }
+
+  /* 夜间模式增强文本可阅读性 */
+  .user-name {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  .message__timestamp,
+  .gray-tip-message {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  .group-box__wrapper span:not(.text--link) {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+}

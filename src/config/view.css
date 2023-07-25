@@ -61,20 +61,18 @@
   text-align: center;
 }
 
-/* 数据目录 */
-.config_view .path .path-input {
+.select-file {
   align-self: normal;
   flex: 1;
   border-radius: 4px;
   margin-right: 16px;
   transition: all 100ms ease-out;
-}
-
-.config_view .path .path-input:focus {
   padding-left: 5px;
   background-color: var(--overlay_active);
 }
-
+.select-file:last-child {
+  margin-right: 0;
+}
 .q-switch__disabled {
   opacity: 0.5;
   pointer-events: none;
