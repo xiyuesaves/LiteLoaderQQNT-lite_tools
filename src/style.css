@@ -188,15 +188,12 @@
   .msg-content-container .text-link {
     color: #2d77e5 !important;
   }
-  .mix-message__container--pic {
-    backdrop-filter: unset !important;
-    box-shadow: unset !important;
-  }
-  .mix-message__container--pic::after {
-    display: none;
-  }
   .reply-element {
     color: #333333 !important;
+  }
+  .file-message--content {
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
   }
 
   /* 工具栏项目 */
@@ -209,10 +206,10 @@
   .chat-msg-area__tip--top-btn,
   .chat-msg-area__tip--bottom {
     background: unset !important;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
-    border-color: transparent !important;
+    border-width: 0 !important;
   }
   .chat-msg-area__tip--top-btn::after,
   .chat-msg-area__tip--bottom::after {
@@ -224,7 +221,7 @@
     width: 100%;
     height: 100%;
     backdrop-filter: blur(8px);
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.7);
     z-index: -1;
   }
 
@@ -310,12 +307,9 @@
   .msg-content-container .text-link {
     color: #2d77e5 !important;
   }
-  .mix-message__container--pic {
-    backdrop-filter: unset !important;
-    box-shadow: unset !important;
-  }
-  .mix-message__container--pic::after {
-    display: none;
+  .file-message--content {
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
   }
 
   /* 工具栏项目 */
@@ -328,10 +322,10 @@
   .chat-msg-area__tip--top-btn,
   .chat-msg-area__tip--bottom {
     background: unset !important;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15) !important;
     position: relative;
     overflow: hidden;
-    border-color: transparent !important;
+    border-width: 0 !important;
   }
   .chat-msg-area__tip--top-btn::after,
   .chat-msg-area__tip--bottom::after {
@@ -383,3 +377,34 @@
     color: rgba(255, 255, 255, 0.8) !important;
   }
 }
+
+/* 小程序消息 */
+.msg-content-container.container--self.ark-msg-content-container {
+  background: unset !important;
+  color: unset !important;
+  transition: 300ms !important;
+}
+.msg-content-container.container--self.ark-msg-content-container::after {
+  display: none !important;
+}
+
+/* 卡片消息 */
+/* .ark-msg-content-container {} */
+
+/* 文件消息 */
+/* .file-message--content{} */
+
+/* 预览消息 */
+/* .msg-preview{} */
+
+/* 视频预览 */
+/* .msg-preview--video{} */
+
+/* 视频消息 */
+/* .video-element{} */
+
+/* 图片消息 */
+/* .mix-message__container--pic{} */
+
+/* 普通消息 */
+/* mix-message__container{} */
