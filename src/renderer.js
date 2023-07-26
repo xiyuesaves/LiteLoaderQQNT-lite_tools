@@ -145,16 +145,22 @@ async function mainMessage() {
         }
       }
     });
-    // 禁用给GIF热图
-    document.querySelectorAll(".sticker-panel__bar .tabs-container-item").forEach((el) => {
-      if (el.querySelector(".q-icon") && el.querySelector(".q-icon").getAttribute("title") === "GIF热图") {
-        if (options.message.disabledHotGIF) {
-          el.classList.add("disabled");
-        } else {
-          el.classList.remove("disabled");
-        }
+    // 禁用GIF热图
+    let disabledHotGIF = document.querySelector(".disabledHotGIF");
+    if (options.message.disabledHotGIF) {
+      if (!disabledHotGIF) {
+        disabledHotGIF = document.createElement("style");
+        disabledHotGIF.classList.add("disabledHotGIF");
+        document.body.appendChild(disabledHotGIF);
       }
-    });
+      disabledHotGIF.textContent = `.sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title="GIF热图"] {
+        display: none !important;
+      }`;
+    } else {
+      if (disabledHotGIF) {
+        disabledHotGIF.textContent = ``;
+      }
+    }
     // 禁用小红点
     if (options.message.disabledBadge) {
       let disabledBadge = document.createElement("style");
@@ -298,16 +304,23 @@ function chatMessage() {
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
     }
-    document.querySelectorAll(".sticker-panel__bar .tabs-container-item").forEach((el) => {
-      if (el.querySelector(".q-icon") && el.querySelector(".q-icon").getAttribute("title") === "GIF热图") {
-        if (options.message.disabledHotGIF) {
-          el.classList.add("disabled");
-        } else {
-          el.classList.remove("disabled");
-        }
+    // 禁用GIF热图
+    let disabledHotGIF = document.querySelector(".disabledHotGIF");
+    if (options.message.disabledHotGIF) {
+      if (!disabledHotGIF) {
+        disabledHotGIF = document.createElement("style");
+        disabledHotGIF.classList.add("disabledHotGIF");
+        document.body.appendChild(disabledHotGIF);
       }
-    });
-    // 禁用GIF热图 - 有bug待修复
+      disabledHotGIF.textContent = `.sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title="GIF热图"] {
+        display: none !important;
+      }`;
+    } else {
+      if (disabledHotGIF) {
+        disabledHotGIF.textContent = ``;
+      }
+    }
+    // 禁用输入框上方功能
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
       const find = options.textAreaFuncList.find((el) => el.name === name);
