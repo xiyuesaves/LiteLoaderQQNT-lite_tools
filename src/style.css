@@ -39,6 +39,15 @@
   background-color: unset !important;
 }
 
+/* 文件消息 */
+/* .file-message--content{} */
+
+/* 图片消息 */
+/* .msg-content-container.container--self.mix-message__container.mix-message__container--pic{} */
+
+/* 文本消息 */
+/* .msg-content-container.container--self.mix-message__container{} */
+
 /* 独立聊天窗口样式 */
 @media (prefers-color-scheme: light) {
   .aio-independent .chat-header {
@@ -382,4 +391,14 @@
   .group-box__wrapper span:not(.text--link) {
     color: rgba(255, 255, 255, 0.8) !important;
   }
+}
+
+/* 小程序消息 */
+.msg-content-container.container--self.ark-msg-content-container {
+  background: unset !important;
+  color: unset !important;
+  transition: 300ms !important;
+}
+.msg-content-container.container--self.ark-msg-content-container::after {
+  display: none !important;
 }

@@ -18,6 +18,7 @@ const defaultOptions = {
     disabledSticker: false,
     disabledHotGIF: false,
     disabledBadge: false,
+    convertBiliBiliArk: false,
   },
   textAreaFuncList: [],
   background: {
@@ -145,7 +146,10 @@ function onLoad(plugin, liteloader) {
 
 // 创建窗口时触发
 function onBrowserWindowCreated(window, plugin) {
+  // 新窗口添加到推送列表
   listenList.push(window);
+
+  // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
       console.log("捕获到主窗口");
@@ -156,6 +160,71 @@ function onBrowserWindowCreated(window, plugin) {
       settings = window;
     }
   });
+
+  // 复写并监听ipc通信内容
+  const original_send =
+    (window.webContents.__qqntim_original_object && window.webContents.__qqntim_original_object.send) ||
+    window.webContents.send;
+
+  const patched_send = function (channel, ...args) {
+    if (options.message.convertBiliBiliArk) {
+      const msgListIndex = args.findIndex(
+        (item) =>
+          item &&
+          item.hasOwnProperty("msgList") &&
+          item.msgList != null &&
+          item.msgList instanceof Array &&
+          item.msgList.length > 0
+      );
+      if (msgListIndex !== -1) {
+        args[msgListIndex].msgList.forEach((msgItem) => {
+          // console.log("解析到消息数据", msgItem.elements.forEach);
+          msgItem.elements.forEach((msgElements) => {
+            // console.log("拿到消息元素", msgElements.arkElement);
+            if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+              const json = JSON.parse(msgElements.arkElement.bytesData);
+              if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
+                // console.log("解析到哔哩哔哩小程序卡片", msgElements.arkElement);
+                msgElements.arkElement.bytesData = JSON.stringify({
+                  app: "com.tencent.structmsg",
+                  config: json.config,
+                  desc: "新闻",
+                  extra: { app_type: 1, appid: 100951776, msg_seq: null, uin: json.meta.detail_1.host.uin },
+                  meta: {
+                    news: {
+                      action: "",
+                      android_pkg_name: "",
+                      app_type: 1,
+                      appid: 100951776,
+                      ctime: json.config.ctime,
+                      desc: json.meta.detail_1.desc,
+                      jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
+                      preview: json.meta.detail_1.preview,
+                      source_icon: json.meta.detail_1.icon,
+                      source_url: "",
+                      tag: "哔哩哔哩",
+                      title: "哔哩哔哩",
+                      uin: json.meta.detail_1.host.uin,
+                    },
+                  },
+                  prompt: "[分享]哔哩哔哩",
+                  ver: "0.0.0.1",
+                  view: "news",
+                });
+              }
+            }
+          });
+        });
+      }
+    }
+    return original_send.call(window.webContents, channel, ...args);
+  };
+
+  if (window.webContents.__qqntim_original_object) {
+    window.webContents.__qqntim_original_object.send = patched_send;
+  } else {
+    window.webContents.send = patched_send;
+  }
 }
 
 // 防抖函数

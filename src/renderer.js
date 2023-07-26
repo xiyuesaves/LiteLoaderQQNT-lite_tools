@@ -506,6 +506,9 @@ async function onConfigView(view) {
   // 禁用红点
   addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
 
+  // 将哔哩哔哩小程序替换为url卡片
+  addSwitchEventlistener("message.convertBiliBiliArk", ".switchDisabledMiniPrgm");
+
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (event, enabled) => {
     if (enabled) {
