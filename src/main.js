@@ -178,9 +178,10 @@ function onBrowserWindowCreated(window, plugin) {
       );
       if (msgListIndex !== -1) {
         args[msgListIndex].msgList.forEach((msgItem) => {
-          // console.log("解析到消息数据", msgItem.elements.forEach);
+          // console.log("解析到消息数据", msgItem);
+          let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
-            // console.log("拿到消息元素", msgElements.arkElement);
+            // console.log("拿到消息元素", msgElements);
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
@@ -189,7 +190,7 @@ function onBrowserWindowCreated(window, plugin) {
                   app: "com.tencent.structmsg",
                   config: json.config,
                   desc: "新闻",
-                  extra: { app_type: 1, appid: 100951776, msg_seq: null, uin: json.meta.detail_1.host.uin },
+                  extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
                   meta: {
                     news: {
                       action: "",
