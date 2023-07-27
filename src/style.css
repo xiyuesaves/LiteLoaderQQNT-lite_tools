@@ -295,6 +295,7 @@
     color: rgba(255, 255, 255, 0.8) !important;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
     position: relative;
+    overflow: hidden !important;
   }
   .forward-msg::after,
   .msg-content-container::after {
