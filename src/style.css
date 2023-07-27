@@ -198,6 +198,23 @@
     border-radius: 8px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
   }
+  /* 语音消息样式微调 */
+  .ptt-element__top-area .ptt-element__button {
+    background: #0099ff !important;
+  }
+  .ptt-element__top-area .ptt-element__button .q-icon {
+    color: rgba(255, 255, 255, 1) !important;
+  }
+  .ptt-element__top-area .ptt-element__progress div{
+    background: rgba(0, 153, 255, 0.7) !important;
+  }
+  .ptt-element__top-area .ptt-element__duration{
+    color: rgba(0, 153, 255, 1) !important;
+  }
+  .ptt-element__top-area .ptt-element__duration span{
+    transform: translateY(1px);
+  }
+
 
   /* 工具栏项目 */
   .panel-header__action .side-panel {
