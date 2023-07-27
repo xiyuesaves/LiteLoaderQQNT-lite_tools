@@ -1,3 +1,7 @@
+// 调试工具
+// const inspector = require("node:inspector");
+// inspector.open(8899, "localhost", true);
+
 // 运行在 Electron 主进程 下的插件入口
 const { app, ipcMain, dialog, BrowserWindow, MessageChannelMain } = require("electron");
 const path = require("path");
@@ -167,7 +171,9 @@ function onBrowserWindowCreated(window, plugin) {
     window.webContents.send;
 
   const patched_send = function (channel, ...args) {
+    console.log(channel, args);
     if (options.message.convertBiliBiliArk) {
+      // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
         (item) =>
           item &&
@@ -217,7 +223,102 @@ function onBrowserWindowCreated(window, plugin) {
           });
         });
       }
+      // 替换新消息中的小程序卡片
+      const onAddSendMsg = args[1]
+        ? Array.isArray(args[1])
+          ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onAddSendMsg")
+          : -1
+        : -1;
+      if (onAddSendMsg !== -1) {
+        // console.log("这是我发送的新消息", args[1]);
+        const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
+        args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
+          if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+            const json = JSON.parse(msgElements.arkElement.bytesData);
+            if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
+              msgElements.arkElement.bytesData = JSON.stringify({
+                app: "com.tencent.structmsg",
+                config: json.config,
+                desc: "新闻",
+                extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
+                meta: {
+                  news: {
+                    action: "",
+                    android_pkg_name: "",
+                    app_type: 1,
+                    appid: 100951776,
+                    ctime: json.config.ctime,
+                    desc: json.meta.detail_1.desc,
+                    jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
+                    preview: json.meta.detail_1.preview,
+                    source_icon: json.meta.detail_1.icon,
+                    source_url: "",
+                    tag: "哔哩哔哩",
+                    title: "哔哩哔哩",
+                    uin: json.meta.detail_1.host.uin,
+                  },
+                },
+                prompt: "[分享]哔哩哔哩",
+                ver: "0.0.0.1",
+                view: "news",
+              });
+            }
+          }
+        });
+      }
+      // 替换新消息中的小程序卡片
+      const onRecvMsg = args[1]
+        ? Array.isArray(args[1])
+          ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onRecvMsg")
+          : -1
+        : -1;
+      if (onRecvMsg !== -1) {
+        // console.log("这是新接收到的消息", args[1]);
+        args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
+          const msg_seq = arrs.msgSeq;
+          arrs.elements.forEach((msgElements) => {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+              const json = JSON.parse(msgElements.arkElement.bytesData);
+              if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
+                msgElements.arkElement.bytesData = JSON.stringify({
+                  app: "com.tencent.structmsg",
+                  config: json.config,
+                  desc: "新闻",
+                  extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
+                  meta: {
+                    news: {
+                      action: "",
+                      android_pkg_name: "",
+                      app_type: 1,
+                      appid: 100951776,
+                      ctime: json.config.ctime,
+                      desc: json.meta.detail_1.desc,
+                      jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
+                      preview: json.meta.detail_1.preview,
+                      source_icon: json.meta.detail_1.icon,
+                      source_url: "",
+                      tag: "哔哩哔哩",
+                      title: "哔哩哔哩",
+                      uin: json.meta.detail_1.host.uin,
+                    },
+                  },
+                  prompt: "[分享]哔哩哔哩",
+                  ver: "0.0.0.1",
+                  view: "news",
+                });
+              }
+            }
+          });
+        });
+      }
     }
+
+    // 视频加载完成事件
+    cmdName: "nodeIKernelMsgListener/onRichMediaDownloadComplete";
+
+    // 打开图片预览窗口事件
+    windowName: "ImageViewerWindow";
+
     return original_send.call(window.webContents, channel, ...args);
   };
 
