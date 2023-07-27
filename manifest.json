@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "type": "extension",
-    "name": "轻量工具箱-plus",
+    "name": "轻量工具箱",
     "slug": "lite_tools",
     "description": "里面有一些能提升使用体验的小工具",
     "version": "0.1.6",
