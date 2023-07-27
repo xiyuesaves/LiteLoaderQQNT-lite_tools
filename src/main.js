@@ -6,7 +6,7 @@
 const { app, ipcMain, dialog, BrowserWindow, MessageChannelMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
-let mainMessage, settings, options;
+let mainMessage, options;
 
 // 默认配置文件
 const defaultOptions = {
@@ -158,10 +158,6 @@ function onBrowserWindowCreated(window, plugin) {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
       console.log("捕获到主窗口");
       mainMessage = window;
-    }
-    if (window.webContents.getURL().indexOf("#/setting/settings/common") !== -1) {
-      console.log("捕获到设置窗口");
-      settings = window;
     }
   });
 
