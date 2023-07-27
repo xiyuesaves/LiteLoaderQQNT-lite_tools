@@ -1,14 +1,30 @@
 /* 独立所有变量 */
 @media (prefers-color-scheme: light) {
   :root {
-    --background-color-05: rgba(255, 255, 255, 0.5) !important;
-    --background-color-: rgba(255, 255, 255, 1) !important;
+    --background-color-008: rgba(255, 255, 255, 0.08);
+    --background-color-015: rgba(255, 255, 255, 0.15);
+    --background-color-03: rgba(255, 255, 255, 0.3);
+    --background-color-05: rgba(255, 255, 255, 0.5);
+    --background-color-07: rgba(255, 255, 255, 0.7);
+    --background-color-1: rgba(255, 255, 255, 1);
+    ----text-color: rgba(0, 0, 0, 0.8);
+    --link-url-color: rgb(45, 119, 229);
+    --voice-color-07: rgba(0, 153, 255, 1);
+    --voice-color-1: rgba(0, 153, 255, 1);
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color-05: rgba(0, 0, 0, 0.5) !important;
-    --background-color-1: rgba(0, 0, 0, 1) !important;
+    --background-color-008: rgba(0, 0, 0, 0.08);
+    --background-color-015: rgba(0, 0, 0, 0.15);
+    --background-color-03: rgba(0, 0, 0, 0.3);
+    --background-color-05: rgba(0, 0, 0, 0.5);
+    --background-color-07: rgba(0, 0, 0, 0.7);
+    --background-color-1: rgba(0, 0, 0, 1);
+    ----text-color: rgba(255, 255, 255, 0.8);
+    --link-url-color: rgb(45, 119, 229);
+    --voice-color-07: rgba(255, 255, 255, 1);
+    --voice-color-1: rgba(255, 255, 255, 1);
   }
 }
 
@@ -27,6 +43,7 @@
   left: 0;
 }
 
+/* 卡片样式调整 */
 .ark-view-message_not-support {
   background-color: unset !important;
 }
@@ -45,7 +62,7 @@
       height: 100%;
       position: absolute;
       z-index: -1;
-      background-image: var(--background-wallpaper);
+      background-image: var(--background-wallpaper) !important;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -63,7 +80,7 @@
     }
   }
   .draggable-view__container {
-    background-color: var(--background-color-05);
+    background-color: var(--background-color-03) !important;
     backdrop-filter: blur(8px) !important;
   }
   .list {
@@ -78,7 +95,7 @@
     top: 0;
     left: 0;
     z-index: -1;
-    background-image: var(--background-wallpaper);
+    background-image: var(--background-wallpaper) !important;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -93,379 +110,199 @@
     top: 0;
     left: 0;
     z-index: -2;
-    background: var(--background-color-1);
+    background: var(--background-color-1) !important;
   }
 }
 
 /* 独立聊天窗口样式 */
-@media (prefers-color-scheme: light) {
-  .container {
-    background: unset !important;
+.aio-independent {
+  background: unset !important;
+  position: relative;
+  z-index: 1;
+  &::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    background-image: var(--background-wallpaper) !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
   }
-  .aio-independent {
+
+  .draggable-view__container {
     background: unset !important;
-    position: relative;
-    z-index: 1;
-    &::after {
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      z-index: -1;
-      background-image: var(--background-wallpaper);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0.5;
-    }
-    .chat-header {
-      position: relative;
-      z-index: 1;
-      &::after {
-        content: "";
-        display: block;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: rgba(255, 255, 255, 0.3);
-        z-index: -1;
-      }
-    }
-    .draggable-view__container {
-      background: unset !important;
-    }
-  }
-}
-@media (prefers-color-scheme: dark) {
-  .container {
-    background: unset !important;
-  }
-  .aio-independent {
-    background: unset !important;
-    position: relative;
-    z-index: 1;
-    &::after {
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      z-index: -1;
-      background-image: var(--background-wallpaper);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0.5;
-    }
-    .chat-header {
-      position: relative;
-      z-index: 1;
-      &::after {
-        content: "";
-        display: block;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: rgba(0, 0, 0, 0.3);
-        z-index: -1;
-      }
-    }
-    .draggable-view__container {
-      background: unset !important;
-    }
   }
 }
 
 /* 主窗口样式 */
-@media (prefers-color-scheme: light) {
-  /* 左侧消息列表 */
-  .recent-contact {
-    background-color: rgba(255, 255, 255, 0.5) !important;
-    backdrop-filter: blur(8px);
-  }
-  .list-toggler {
-    .viewport-list__inner {
-      background-color: transparent !important;
-    }
-  }
 
-  /* 顶部消息栏 */
-  .panel-header {
-    background-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  /* 输入框 */
-  .chat-input-area {
-    background: transparent !important;
-    position: relative;
-    z-index: 1;
-    &::after {
-      content: "";
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background-color: rgba(255, 255, 255, 0.3) !important;
-      backdrop-filter: blur(8px);
-    }
-  }
-
-  /* 群组右侧列表 */
-  .group-box__wrapper {
-    background-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  /* 消息内容外部块 */
-  .message-content__wrapper {
-    overflow: unset !important;
-  }
-
-  /* 消息内容块 */
-  .forward-msg,
-  .mix-message__container,
-  .msg-content-container {
-    background: unset !important;
-    color: #313131 !important;
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
-    overflow: hidden !important;
-    position: relative;
-    backdrop-filter: blur(28px);
-    &::after {
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      backdrop-filter: blur(28px);
-      background-color: rgba(255, 255, 255, 0.5);
-      z-index: -1;
-    }
-    .text-link {
-      color: #2d77e5 !important;
-    }
-  }
-  .reply-element {
-    color: #333333 !important;
-  }
-  .file-message--content {
-    border-radius: 8px;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
-  }
-  /* 语音消息样式微调 */
-  .ptt-element__top-area {
-    .ptt-element__button {
-      background: #0099ff !important;
-    }
-    .ptt-element__button .q-icon {
-      color: rgba(255, 255, 255, 1) !important;
-    }
-    .ptt-element__progress div {
-      background: rgba(0, 153, 255, 0.7) !important;
-    }
-    .ptt-element__duration {
-      color: rgba(0, 153, 255, 1) !important;
-    }
-    .ptt-element__duration span {
-      transform: translateY(1px);
-    }
-  }
-
-  /* 工具栏项目 */
-  .panel-header__action {
-    .side-panel {
-      background-color: rgba(255, 255, 255, 0.5) !important;
-      backdrop-filter: blur(8px);
-    }
-  }
-
-  /* 跳转到顶部-底部 */
-  .chat-msg-area__tip--top-btn,
-  .chat-msg-area__tip--bottom {
-    background: unset !important;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
-    position: relative;
-    overflow: hidden;
-    border-width: 0 !important;
-    &::after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(8px);
-      background-color: rgba(255, 255, 255, 0.7);
-      z-index: -1;
-    }
-  }
-
-  /* 联系人列表 */
-  .contact {
-    background-color: rgba(255, 255, 255, 0.5) !important;
-    backdrop-filter: blur(8px);
-    background: unset !important;
-    .tab-header,
-    .q-collapse-item__header {
-      background: unset !important;
-    }
-    .contact-profile {
-      .profile {
-        background: unset !important;
-        backdrop-filter: blur(8px);
-      }
-    }
+/* 左侧消息列表 */
+.recent-contact {
+  background-color: var(--background-color-05) !important;
+  backdrop-filter: blur(8px);
+}
+.list-toggler {
+  .viewport-list__inner {
+    background-color: transparent !important;
   }
 }
-@media (prefers-color-scheme: dark) {
-  /* 左侧消息列表 */
-  .recent-contact {
-    background-color: rgba(0, 0, 0, 0.5) !important;
+
+/* 顶部消息栏 */
+.chat-header {
+  background-color: var(--background-color-03) !important;
+  position: relative;
+  z-index: 1000;
+  &::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(8px);
+    z-index: -1;
+  }
+}
+
+/* 输入框 */
+.chat-input-area {
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: var(--background-color-03) !important;
     backdrop-filter: blur(8px);
   }
-  .list-toggler {
-    .viewport-list__inner {
-      background-color: transparent !important;
-    }
-  }
+}
 
-  /* 顶部消息栏 */
-  .panel-header {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-  }
+/* 群组右侧列表 */
+.group-box__wrapper {
+  background-color: var(--background-color-03) !important;
+}
 
-  /* 输入框 */
-  .chat-input-area {
-    background: transparent !important;
-    position: relative;
-    z-index: 1;
-    &::after {
-      content: "";
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background-color: rgba(0, 0, 0, 0.3) !important;
-      backdrop-filter: blur(8px);
-    }
-  }
+/* 消息内容外部块 */
+.message-content__wrapper {
+  overflow: unset !important;
+}
 
-  /* 群组右侧列表 */
-  .group-box__wrapper {
-    background-color: rgba(0, 0, 0, 0.3) !important;
+/* 消息内容块 */
+.forward-msg,
+.msg-content-container,
+.mix-message__container {
+  background: unset !important;
+  color: var(----text-color) !important;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  position: relative;
+  backdrop-filter: blur(28px);
+  /* 我的消息 */
+  &.container--self {
   }
+  /* 别人的消息 */
+  &.container--others {
+  }
+  &::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(28px);
+    background-color: var(--background-color-05);
+    z-index: -1;
+  }
+  .text-link {
+    color: var(--link-url-color) !important;
+  }
+  .reply-element {
+    color: var(----text-color) !important;
+  }
+}
 
-  /* 消息内容外部块 */
-  .message-content__wrapper {
-    overflow: unset !important;
-  }
+.file-message--content {
+  border-radius: 8px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+}
 
-  /* 消息内容块 */
-  .forward-msg,
-  .mix-message__container,
-  .msg-content-container {
-    background: unset !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
-    position: relative;
-    overflow: hidden !important;
-    &::after {
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      backdrop-filter: blur(28px);
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: -1;
-    }
-    .text-link {
-      color: #2d77e5 !important;
-    }
+/* 语音消息样式微调 */
+.ptt-element__top-area {
+  .ptt-element__button {
+    background: var(--voice-color-1) !important;
   }
+  .ptt-element__button .q-icon {
+    color: var(--background-color-1) !important;
+  }
+  .ptt-element__progress div {
+    background: var(--voice-color-07) !important;
+  }
+  .ptt-element__duration {
+    color: var(--voice-color-1) !important;
+  }
+  .ptt-element__duration span {
+    transform: translateY(1px);
+  }
+}
 
-  .file-message--content {
-    border-radius: 8px;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  /* 工具栏项目 */
-  .panel-header__action .side-panel {
-    background: unset !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    backdrop-filter: blur(28px) !important;
-  }
-  /* 跳转到顶部-底部 */
-  .chat-msg-area__tip--top-btn,
-  .chat-msg-area__tip--bottom {
-    background: unset !important;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15) !important;
-    position: relative;
-    overflow: hidden;
-    border-width: 0 !important;
-    &::after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(8px);
-      background-color: rgba(0, 0, 0, 0.6);
-      z-index: -1;
-    }
-  }
-
-  /* 联系人列表 */
-  .contact {
-    background-color: rgba(0, 0, 0, 0.5) !important;
+/* 工具栏项目 */
+.panel-header__action {
+  .side-panel {
+    background-color: var(--background-color-05) !important;
     backdrop-filter: blur(8px);
-    .tab-header,
-    .q-collapse-item__header {
+  }
+}
+
+/* 跳转到顶部-底部 */
+.chat-msg-area__tip--top-btn,
+.chat-msg-area__tip--bottom {
+  background: unset !important;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  border-width: 0 !important;
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background-color: var(--background-color-07);
+    z-index: -1;
+  }
+}
+
+/* 联系人列表 */
+.contact {
+  background-color: var(--background-color-05) !important;
+  backdrop-filter: blur(8px);
+  background: unset !important;
+  .tab-header,
+  .q-collapse-item__header {
+    background: unset !important;
+  }
+  .contact-profile {
+    .profile {
       background: unset !important;
+      backdrop-filter: blur(8px);
     }
-  }
-
-  .contact-profile .profile {
-    background: unset !important;
-    backdrop-filter: blur(8px);
-  }
-
-  .q-divider.q-divider__vertical {
-    display: none;
-  }
-
-  .group-box {
-    box-shadow: unset !important;
-  }
-
-  /* 夜间模式增强文本可阅读性 */
-  .user-name {
-    color: rgba(255, 255, 255, 0.8) !important;
-  }
-  .message__timestamp,
-  .gray-tip-message {
-    color: rgba(255, 255, 255, 0.5) !important;
-  }
-  .group-box__wrapper span:not(.text--link) {
-    color: rgba(255, 255, 255, 0.8) !important;
   }
 }
 
@@ -473,6 +310,7 @@
 .ark-msg-content-container {
   background: unset !important;
   color: unset !important;
+  font-size: 0 !important;
   ::after {
     display: none !important;
   }
@@ -497,6 +335,20 @@
         width: 40px !important;
       }
     }
+  }
+}
+
+/* 夜间模式增强文本可阅读性 */
+@media (prefers-color-scheme: dark) {
+  .user-name {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  .message__timestamp,
+  .gray-tip-message {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  .group-box__wrapper span:not(.text--link) {
+    color: rgba(255, 255, 255, 0.8) !important;
   }
 }
 
