@@ -522,6 +522,9 @@ async function onConfigView(view) {
   // 将哔哩哔哩小程序替换为url卡片
   addSwitchEventlistener("message.convertBiliBiliArk", ".switchDisabledMiniPrgm");
 
+  // debug开关
+  addSwitchEventlistener("debug", ".switchDebug");
+
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (event, enabled) => {
     if (enabled) {
