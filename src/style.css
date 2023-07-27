@@ -22,12 +22,14 @@
 .tab-container {
   position: relative;
 }
-.tab-container .message-panel, .tab-container .contact-layout {
+.tab-container .message-panel,
+.tab-container .contact-layout {
   background: unset !important;
   position: relative;
   z-index: 1;
 }
-.tab-container .message-panel::after, .tab-container .contact-layout::after {
+.tab-container .message-panel::after,
+.tab-container .contact-layout::after {
   content: "";
   display: block;
   width: 100%;
@@ -157,7 +159,7 @@
     background-color: rgba(255, 255, 255, 0.5) !important;
     backdrop-filter: blur(8px);
   }
-  .list-toggler.viewport-list__inner {
+  .list-toggler .viewport-list__inner {
     background-color: transparent !important;
   }
   /* 顶部消息栏 */
@@ -272,7 +274,8 @@
     backdrop-filter: blur(8px);
     background: unset !important;
   }
-  .contact .tab-header, .contact .q-collapse-item__header {
+  .contact .tab-header,
+  .contact .q-collapse-item__header {
     background: unset !important;
   }
   .contact .contact-profile .profile {
@@ -428,7 +431,8 @@
 .sticker-panel__bar .tabs-container .tabs-container-item {
   width: unset !important;
 }
-.sticker-panel__bar .tabs-container .tabs-container-item .q-icon, .sticker-panel__bar .tabs-container .tabs-container-item div.tabs-container-item-img {
+.sticker-panel__bar .tabs-container .tabs-container-item .q-icon,
+.sticker-panel__bar .tabs-container .tabs-container-item div.tabs-container-item-img {
   text-align: center;
   width: 40px !important;
 }

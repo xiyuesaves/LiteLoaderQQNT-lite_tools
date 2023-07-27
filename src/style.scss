@@ -19,8 +19,8 @@
 
 .tab-container {
   position: relative;
-  & .message-panel,
-  & .contact-layout {
+  .message-panel,
+  .contact-layout {
     background: unset !important;
     position: relative;
     z-index: 1;
@@ -43,10 +43,10 @@
 /* 转发消息样式 */
 .forward#app {
   position: relative;
-  & .draggable-view__container .text-ellipsis {
+  .draggable-view__container .text-ellipsis {
     background: unset !important;
   }
-  & .list {
+  .list {
     background: unset !important;
   }
   &::after {
@@ -88,11 +88,11 @@
       background-repeat: no-repeat;
       opacity: 0.5;
     }
-    & .chat-header {
+    .chat-header {
       position: relative;
       z-index: 1;
     }
-    & .chat-header::after {
+    .chat-header::after {
       content: "";
       display: block;
       width: 100%;
@@ -103,7 +103,7 @@
       background-color: rgba(255, 255, 255, 0.3);
       z-index: -1;
     }
-    & .draggable-view__container {
+    .draggable-view__container {
       background: unset !important;
     }
   }
@@ -129,11 +129,11 @@
       background-repeat: no-repeat;
       opacity: 0.5;
     }
-    & .chat-header {
+    .chat-header {
       position: relative;
       z-index: 1;
     }
-    & .chat-header::after {
+    .chat-header::after {
       content: "";
       display: block;
       width: 100%;
@@ -144,7 +144,7 @@
       background-color: rgba(0, 0, 0, 0.3);
       z-index: -1;
     }
-    & .draggable-view__container {
+    .draggable-view__container {
       background: unset !important;
     }
   }
@@ -158,7 +158,7 @@
     backdrop-filter: blur(8px);
   }
   .list-toggler {
-    &.viewport-list__inner {
+    .viewport-list__inner {
       background-color: transparent !important;
     }
   }
@@ -221,7 +221,7 @@
   }
 
   .msg-content-container {
-    & .text-link {
+    .text-link {
       color: #2d77e5 !important;
     }
   }
@@ -234,26 +234,26 @@
   }
   /* 语音消息样式微调 */
   .ptt-element__top-area {
-    & .ptt-element__button {
+    .ptt-element__button {
       background: #0099ff !important;
     }
-    & .ptt-element__button .q-icon {
+    .ptt-element__button .q-icon {
       color: rgba(255, 255, 255, 1) !important;
     }
-    & .ptt-element__progress div {
+    .ptt-element__progress div {
       background: rgba(0, 153, 255, 0.7) !important;
     }
-    & .ptt-element__duration {
+    .ptt-element__duration {
       color: rgba(0, 153, 255, 1) !important;
     }
-    & .ptt-element__duration span {
+    .ptt-element__duration span {
       transform: translateY(1px);
     }
   }
 
   /* 工具栏项目 */
   .panel-header__action {
-    & .side-panel {
+    .side-panel {
       background-color: rgba(255, 255, 255, 0.5) !important;
       backdrop-filter: blur(8px);
     }
@@ -286,12 +286,12 @@
     background-color: rgba(255, 255, 255, 0.5) !important;
     backdrop-filter: blur(8px);
     background: unset !important;
-    & .tab-header,
-    & .q-collapse-item__header {
+    .tab-header,
+    .q-collapse-item__header {
       background: unset !important;
     }
-    & .contact-profile {
-      & .profile {
+    .contact-profile {
+      .profile {
         background: unset !important;
         backdrop-filter: blur(8px);
       }
@@ -304,8 +304,10 @@
     background-color: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(8px);
   }
-  .list-toggler .viewport-list__inner {
-    background-color: transparent !important;
+  .list-toggler {
+    .viewport-list__inner {
+      background-color: transparent !important;
+    }
   }
 
   /* 顶部消息栏 */
@@ -442,26 +444,26 @@
 .ark-msg-content-container {
   background: unset !important;
   color: unset !important;
-  & ::after {
+  ::after {
     display: none !important;
   }
 }
 
 /* 重写表情选择栏样式逻辑，以便使用样式控制图标显示与否 */
 .message-panel {
-  & .sticker-panel {
+  .sticker-panel {
     max-width: 600px !important;
-    & .sticker-panel__pages {
+    .sticker-panel__pages {
       width: 100% !important;
     }
   }
 }
 .sticker-panel__bar {
-  & .tabs-container {
-    & .tabs-container-item {
+  .tabs-container {
+    .tabs-container-item {
       width: unset !important;
-      & .q-icon,
-      & div.tabs-container-item-img {
+      .q-icon,
+      div.tabs-container-item-img {
         text-align: center;
         width: 40px !important;
       }
