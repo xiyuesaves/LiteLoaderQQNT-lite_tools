@@ -1,3 +1,17 @@
+/* 独立所有变量 */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-color-05: rgba(255, 255, 255, 0.5) !important;
+    --background-color-: rgba(255, 255, 255, 1) !important;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color-05: rgba(0, 0, 0, 0.5) !important;
+    --background-color-1: rgba(0, 0, 0, 1) !important;
+  }
+}
+
 /* 更透亮的侧边栏 */
 .sidebar-nav {
   background-color: transparent !important;
@@ -43,8 +57,14 @@
 /* 转发消息样式 */
 .forward#app {
   position: relative;
-  .draggable-view__container .text-ellipsis {
-    background: unset !important;
+  .draggable-view__container {
+    .text-ellipsis {
+      background: unset !important;
+    }
+  }
+  .draggable-view__container {
+    background-color: var(--background-color-05);
+    backdrop-filter: blur(8px) !important;
   }
   .list {
     background: unset !important;
@@ -63,6 +83,17 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.5;
+  }
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    background: var(--background-color-1);
   }
 }
 
@@ -360,7 +391,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      backdrop-filter: blur(24px);
+      backdrop-filter: blur(28px);
       background-color: rgba(0, 0, 0, 0.5);
       z-index: -1;
     }
@@ -378,7 +409,7 @@
   .panel-header__action .side-panel {
     background: unset !important;
     background-color: rgba(0, 0, 0, 0.5) !important;
-    backdrop-filter: blur(24px) !important;
+    backdrop-filter: blur(28px) !important;
   }
   /* 跳转到顶部-底部 */
   .chat-msg-area__tip--top-btn,
