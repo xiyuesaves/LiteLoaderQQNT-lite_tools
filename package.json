@@ -1,0 +1,15 @@
+{
+  "name": "lite_tools",
+  "version": "1.0.0",
+  "description": "<div align=center>\r   <img src=\"./icon.png\" />\r </div>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sass": "^1.64.1"
+  }
+}
