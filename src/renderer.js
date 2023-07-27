@@ -399,6 +399,11 @@ function chatMessage() {
   });
 }
 
+// 转发消息界面
+function forwardMessage(){
+  
+}
+
 // 页面加载完成时触发
 async function onLoad() {
   // 获取最新的配置信息
@@ -420,6 +425,8 @@ async function onLoad() {
     lite_tools.log(`新页面参数 ${hash}`);
     if (hash.includes("#/chat/")) {
       hash = "#/chat/message";
+    } else if (hash.includes("#/forward")) {
+      hash = "#/forward";
     }
     switch (hash) {
       case "#/imageViewer":
@@ -430,6 +437,9 @@ async function onLoad() {
         break;
       case "#/chat/message":
         chatMessage();
+        break;
+      case "#/chat/message":
+        forwardMessage();
         break;
     }
   });
@@ -518,7 +528,7 @@ async function onConfigView(view) {
 
   // 禁用红点
   addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
-  
+
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (event, enabled) => {
     if (enabled) {

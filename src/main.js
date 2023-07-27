@@ -1,3 +1,6 @@
+// 调试工具
+const inspector = require("node:inspector");
+
 // 运行在 Electron 主进程 下的插件入口
 const { app, ipcMain, dialog, BrowserWindow, MessageChannelMain } = require("electron");
 const path = require("path");
@@ -7,6 +10,7 @@ let mainMessage, options;
 // 默认配置文件
 const defaultOptions = {
   spareInitialization: false,
+  debug: false,
   sidebar: {
     top: [],
     bottom: [],
@@ -49,6 +53,10 @@ function onLoad(plugin, liteloader) {
   fileOptions = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
   // 保存配置和默认配置执行一次合并，以适配新增功能
   options = Object.assign(defaultOptions, fileOptions);
+
+  if (options.debug) {
+    inspector.open(8899, "localhost", true);
+  }
 
   // 获取侧边栏按钮
   ipcMain.handle("LiteLoader.lite_tools.getSidebar", async (event, message) => {
