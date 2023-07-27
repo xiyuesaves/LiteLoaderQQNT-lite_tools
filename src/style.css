@@ -194,6 +194,7 @@
   }
   /* 消息内容块 */
   .forward-msg,
+  .mix-message__container,
   .msg-content-container {
     background: unset !important;
     color: #313131 !important;
@@ -201,8 +202,10 @@
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
     overflow: hidden !important;
     position: relative;
+    backdrop-filter: blur(28px);
   }
   .forward-msg::after,
+  .mix-message__container::after,
   .msg-content-container::after {
     content: "";
     display: block;
@@ -215,6 +218,8 @@
     background-color: rgba(255, 255, 255, 0.5);
     z-index: -1;
   }
+  .forward-msg .text-link,
+  .mix-message__container .text-link,
   .msg-content-container .text-link {
     color: #2d77e5 !important;
   }
@@ -324,6 +329,7 @@
   }
   /* 消息内容块 */
   .forward-msg,
+  .mix-message__container,
   .msg-content-container {
     background: unset !important;
     color: rgba(255, 255, 255, 0.8) !important;
@@ -332,6 +338,7 @@
     overflow: hidden !important;
   }
   .forward-msg::after,
+  .mix-message__container::after,
   .msg-content-container::after {
     content: "";
     display: block;
@@ -344,6 +351,8 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: -1;
   }
+  .forward-msg .text-link,
+  .mix-message__container .text-link,
   .msg-content-container .text-link {
     color: #2d77e5 !important;
   }
@@ -380,14 +389,13 @@
     z-index: -1;
   }
   /* 联系人列表 */
-  .contact,
-  .contact .tab-header,
-  .contact .q-collapse-item__header {
-    background: unset !important;
-  }
   .contact {
     background-color: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(8px);
+  }
+  .contact .tab-header,
+  .contact .q-collapse-item__header {
+    background: unset !important;
   }
   .contact-profile .profile {
     background: unset !important;
