@@ -1,5 +1,5 @@
 // 运行在 Electron 渲染进程 下的页面脚本
-let options;
+let options, styleText;
 
 // 首次执行检测，只有第一次执行时返回true
 function First() {
@@ -116,7 +116,6 @@ async function mainMessage() {
       subtree: true,
     });
   }
-  let styleText;
   // 刷新页面配置
   async function updatePage() {
     // 初始化推荐表情
@@ -296,7 +295,6 @@ async function mainMessage() {
 
 // 独立聊天窗口
 function chatMessage() {
-  let styleText = "";
   updatePage();
   // initFunction(updatePage);
   async function updatePage() {
@@ -400,8 +398,65 @@ function chatMessage() {
 }
 
 // 转发消息界面
-function forwardMessage(){
-  
+function forwardMessage() {
+  lite_tools.log("转发消息界面");
+  document.querySelector("#app").classList.add("forward");
+  updatePage();
+  async function updatePage() {
+    // 更新自定义样式
+    const backgroundStyle = document.querySelector(".backgroundStyle");
+    if (options.background.enabled) {
+      if (!styleText) {
+        styleText = await lite_tools.getStyle();
+      }
+      lite_tools.log("加载自定义样式");
+
+      // 如果url指向图片类型则直接插入css中
+      let backgroundImage = "";
+      if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
+        document.querySelector(".background-wallpaper-video")?.remove();
+        backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+                `;
+      } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
+        let videoEl = document.querySelector(".background-wallpaper-video");
+        if (!videoEl) {
+          videoEl = document.createElement("video");
+          videoEl.setAttribute("muted", "");
+          videoEl.setAttribute("autoplay", "");
+          videoEl.setAttribute("loop", "");
+          videoEl.setAttribute("src", options.background.url);
+          videoEl.classList.add("background-wallpaper-video");
+          videoEl.volume = 0;
+          document.querySelector(".container").appendChild(videoEl);
+        } else {
+          if (videoEl.getAttribute("src") !== options.background.url) {
+            videoEl.setAttribute("src", options.background.url);
+          }
+        }
+      } else {
+        document.querySelector(".background-wallpaper-video")?.remove();
+      }
+      backgroundStyle.textContent = backgroundImage + styleText;
+    } else {
+      backgroundStyle.textContent = "";
+      document.querySelector(".background-wallpaper-video")?.remove();
+    }
+  }
+  lite_tools.updateOptions((event, opt) => {
+    console.log("新接口获取配置更新");
+    options = opt;
+    updatePage();
+  });
+
+  // 调试用css刷新
+  lite_tools.updateStyle((event, message) => {
+    let backgroundImage = "";
+    if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
+      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+          `;
+    }
+    document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
+  });
 }
 
 // 页面加载完成时触发
@@ -422,12 +477,12 @@ async function onLoad() {
   // 监听导航跳转
   navigation.addEventListener("navigatesuccess", () => {
     let hash = location.hash;
-    lite_tools.log(`新页面参数 ${hash}`);
     if (hash.includes("#/chat/")) {
       hash = "#/chat/message";
     } else if (hash.includes("#/forward")) {
       hash = "#/forward";
     }
+    lite_tools.log(`新页面参数 ${hash}`);
     switch (hash) {
       case "#/imageViewer":
         imageViewer();
@@ -438,7 +493,7 @@ async function onLoad() {
       case "#/chat/message":
         chatMessage();
         break;
-      case "#/chat/message":
+      case "#/forward":
         forwardMessage();
         break;
     }

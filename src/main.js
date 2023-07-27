@@ -56,6 +56,16 @@ function onLoad(plugin, liteloader) {
 
   if (options.debug) {
     inspector.open(8899, "localhost", true);
+    const sass = require("sass");
+    // 开启debug模式后开始监听并编译style.scss
+    const sassPath = path.join(plugin.path.plugin, "src/style.scss");
+    fs.watch(
+      sassPath,
+      "utf-8",
+      debounce(() => {
+        fs.writeFileSync(stylePath, sass.compile(sassPath).css);
+      }, 100)
+    );
   }
 
   // 获取侧边栏按钮
