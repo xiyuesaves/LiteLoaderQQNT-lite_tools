@@ -166,13 +166,16 @@
   }
 
   /* 消息内容块 */
+  .forward-msg,
   .msg-content-container {
     background: unset !important;
     color: #313131 !important;
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden !important;
     position: relative;
   }
+  .forward-msg::after,
   .msg-content-container::after {
     content: "";
     display: block;
@@ -404,6 +407,8 @@
   width: 40px !important;
 }
 
+/* 转发消息 */
+/* .forward-msg{} */
 
 /* 卡片消息 */
 /* .ark-msg-content-container {} */
