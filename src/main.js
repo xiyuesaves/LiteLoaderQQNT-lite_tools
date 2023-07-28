@@ -194,14 +194,14 @@ function onBrowserWindowCreated(window, plugin) {
       );
       if (msgListIndex !== -1) {
         args[msgListIndex].msgList.forEach((msgItem) => {
-          // console.log("解析到消息数据", msgItem);
+          console.log("解析到消息数据", msgItem);
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
             // console.log("拿到消息元素", msgElements);
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
-                // console.log("解析到哔哩哔哩小程序卡片", msgElements.arkElement);
+              if (json.meta.detail_1.appid === "1109937557") {
+                console.log("解析到哔哩哔哩小程序卡片", msgElements.arkElement);
                 msgElements.arkElement.bytesData = JSON.stringify({
                   app: "com.tencent.structmsg",
                   config: json.config,
@@ -240,7 +240,7 @@ function onBrowserWindowCreated(window, plugin) {
           : -1
         : -1;
       if (onAddSendMsg !== -1) {
-        // console.log("这是我发送的新消息", args[1]);
+        console.log("这是我发送的新消息", args[1]);
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
           if (msgElements.arkElement && msgElements.arkElement.bytesData) {
@@ -283,7 +283,7 @@ function onBrowserWindowCreated(window, plugin) {
           : -1
         : -1;
       if (onRecvMsg !== -1) {
-        // console.log("这是新接收到的消息", args[1]);
+        console.log("这是新接收到的消息", args[1]);
         args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
           const msg_seq = arrs.msgSeq;
           arrs.elements.forEach((msgElements) => {
