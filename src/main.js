@@ -67,6 +67,14 @@ function onLoad(plugin, liteloader) {
         fs.writeFileSync(stylePath, sass.compile(sassPath).css);
       }, 100)
     );
+    // 开启debug才监听css文件变动，避免锁定文件导致插件更新失败
+    fs.watch(
+      stylePath,
+      "utf-8",
+      debounce(() => {
+        updateStyle();
+      }, 100)
+    );
   }
 
   // 获取侧边栏按钮
@@ -110,13 +118,6 @@ function onLoad(plugin, liteloader) {
   ipcMain.handle("LiteLoader.lite_tools.getStyle", (event) => {
     return fs.readFileSync(stylePath, "utf-8");
   });
-  fs.watch(
-    stylePath,
-    "utf-8",
-    debounce(() => {
-      updateStyle();
-    }, 100)
-  );
 
   ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
     dialog
@@ -324,10 +325,10 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 视频加载完成事件
-    cmdName: "nodeIKernelMsgListener/onRichMediaDownloadComplete";
+    // cmdName: "nodeIKernelMsgListener/onRichMediaDownloadComplete";
 
     // 打开图片预览窗口事件
-    windowName: "ImageViewerWindow";
+    // windowName: "ImageViewerWindow";
 
     return original_send.call(window.webContents, channel, ...args);
   };
