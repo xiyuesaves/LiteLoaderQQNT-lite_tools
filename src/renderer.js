@@ -470,7 +470,23 @@ async function onLoad() {
 
   // 全局加载通用样式
   const style = document.createElement("style");
-  style.innerText = `.disabled{display:none !important};`;
+  style.innerText = `
+.disabled{display:none !important};
+.message-panel .sticker-panel {
+  max-width: 600px !important;
+}
+.message-panel .sticker-panel .sticker-panel__pages {
+  width: 100% !important;
+}
+
+.sticker-panel__bar .tabs-container .tabs-container-item {
+  width: unset !important;
+}
+.sticker-panel__bar .tabs-container .tabs-container-item .q-icon,
+.sticker-panel__bar .tabs-container .tabs-container-item div.tabs-container-item-img {
+  text-align: center;
+  width: 40px !important;
+}`;
   document.body.append(style);
 
   // 监听导航跳转
