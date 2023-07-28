@@ -10,7 +10,7 @@ function First() {
 }
 const first = First();
 
-// 所有页面通用初始化函数
+// 通用初始化函数
 function initFunction(func) {
   if (!options.spareInitialization) {
     // 全局监听器，在页面创建30秒后自动销毁
@@ -110,6 +110,16 @@ async function mainMessage() {
           }
         }
       });
+
+      // 更新输入框上方功能列表
+      const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
+        return {
+          name: el.querySelector(".icon-item").getAttribute("aria-label"),
+          id: el.querySelector(".icon-item").id,
+          disabled: el.className.includes(".disabled"),
+        };
+      });
+      lite_tools.sendTextAreaList(textAreaList);
     }).observe(document.querySelector(".chat-input-area"), {
       attributes: false,
       childList: true,
@@ -330,17 +340,6 @@ function chatMessage() {
         }
       }
     });
-    if (first("updateList")) {
-      // 更新输入框上方功能列表
-      const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
-        return {
-          name: el.querySelector(".icon-item").getAttribute("aria-label"),
-          id: el.querySelector(".icon-item").id,
-          disabled: el.className.includes(".disabled"),
-        };
-      });
-      lite_tools.sendTextAreaList(textAreaList);
-    }
 
     // 更新自定义样式
     const backgroundStyle = document.querySelector(".backgroundStyle");
