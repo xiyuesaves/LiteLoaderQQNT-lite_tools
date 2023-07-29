@@ -202,37 +202,10 @@ function onBrowserWindowCreated(window, plugin) {
           console.log("解析到消息数据", msgItem);
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
-            // console.log("拿到消息元素", msgElements);
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json.meta.detail_1.appid === "1109937557") {
-                console.log("解析到哔哩哔哩小程序卡片", msgElements.arkElement);
-                msgElements.arkElement.bytesData = JSON.stringify({
-                  app: "com.tencent.structmsg",
-                  config: json.config,
-                  desc: "新闻",
-                  extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
-                  meta: {
-                    news: {
-                      action: "",
-                      android_pkg_name: "",
-                      app_type: 1,
-                      appid: 100951776,
-                      ctime: json.config.ctime,
-                      desc: json.meta.detail_1.desc,
-                      jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
-                      preview: json.meta.detail_1.preview,
-                      source_icon: json.meta.detail_1.icon,
-                      source_url: "",
-                      tag: "哔哩哔哩",
-                      title: "哔哩哔哩",
-                      uin: json.meta.detail_1.host.uin,
-                    },
-                  },
-                  prompt: "[分享]哔哩哔哩",
-                  ver: "0.0.0.1",
-                  view: "news",
-                });
+                msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
               }
             }
           });
@@ -250,33 +223,8 @@ function onBrowserWindowCreated(window, plugin) {
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
           if (msgElements.arkElement && msgElements.arkElement.bytesData) {
             const json = JSON.parse(msgElements.arkElement.bytesData);
-            if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
-              msgElements.arkElement.bytesData = JSON.stringify({
-                app: "com.tencent.structmsg",
-                config: json.config,
-                desc: "新闻",
-                extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
-                meta: {
-                  news: {
-                    action: "",
-                    android_pkg_name: "",
-                    app_type: 1,
-                    appid: 100951776,
-                    ctime: json.config.ctime,
-                    desc: json.meta.detail_1.desc,
-                    jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
-                    preview: json.meta.detail_1.preview,
-                    source_icon: json.meta.detail_1.icon,
-                    source_url: "",
-                    tag: "哔哩哔哩",
-                    title: "哔哩哔哩",
-                    uin: json.meta.detail_1.host.uin,
-                  },
-                },
-                prompt: "[分享]哔哩哔哩",
-                ver: "0.0.0.1",
-                view: "news",
-              });
+            if (json.meta.detail_1.appid === "1109937557") {
+              msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
             }
           }
         });
@@ -294,33 +242,8 @@ function onBrowserWindowCreated(window, plugin) {
           arrs.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json.prompt === "[QQ小程序]" && json.meta.detail_1.appid === "1109937557") {
-                msgElements.arkElement.bytesData = JSON.stringify({
-                  app: "com.tencent.structmsg",
-                  config: json.config,
-                  desc: "新闻",
-                  extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
-                  meta: {
-                    news: {
-                      action: "",
-                      android_pkg_name: "",
-                      app_type: 1,
-                      appid: 100951776,
-                      ctime: json.config.ctime,
-                      desc: json.meta.detail_1.desc,
-                      jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
-                      preview: json.meta.detail_1.preview,
-                      source_icon: json.meta.detail_1.icon,
-                      source_url: "",
-                      tag: "哔哩哔哩",
-                      title: "哔哩哔哩",
-                      uin: json.meta.detail_1.host.uin,
-                    },
-                  },
-                  prompt: "[分享]哔哩哔哩",
-                  ver: "0.0.0.1",
-                  view: "news",
-                });
+              if (json.meta.detail_1.appid === "1109937557") {
+                msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
               }
             }
           });
@@ -342,6 +265,36 @@ function onBrowserWindowCreated(window, plugin) {
   } else {
     window.webContents.send = patched_send;
   }
+}
+
+// 卡片替换函数
+function replaceArk(json, msg_seq) {
+  return JSON.stringify({
+    app: "com.tencent.structmsg",
+    config: json.config,
+    desc: "新闻",
+    extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
+    meta: {
+      news: {
+        action: "",
+        android_pkg_name: "",
+        app_type: 1,
+        appid: 100951776,
+        ctime: json.config.ctime,
+        desc: json.meta.detail_1.desc,
+        jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
+        preview: json.meta.detail_1.preview,
+        source_icon: json.meta.detail_1.icon,
+        source_url: "",
+        tag: "哔哩哔哩",
+        title: "哔哩哔哩",
+        uin: json.meta.detail_1.host.uin,
+      },
+    },
+    prompt: "[分享]哔哩哔哩",
+    ver: "0.0.0.1",
+    view: "news",
+  });
 }
 
 // 防抖函数
