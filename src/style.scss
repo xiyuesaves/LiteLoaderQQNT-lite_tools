@@ -79,6 +79,14 @@
       background: unset !important;
     }
   }
+  .background-wallpaper-video {
+    z-index: -1;
+  }
+  .ark-msg-content-container{
+    canvas:not(:first-child){
+      display: none;
+    }
+  }
   .draggable-view__container {
     background-color: var(--background-color-03) !important;
     backdrop-filter: blur(8px) !important;

@@ -37,6 +37,53 @@ function initFunction(func) {
   }
 }
 
+// 通用样式加载函数
+async function updateWallpaper() {
+  const backgroundStyle = document.querySelector(".backgroundStyle");
+  if (options.background.enabled) {
+    if (!styleText) {
+      styleText = await lite_tools.getStyle();
+    }
+    // 如果url指向图片类型则直接插入css中
+    let backgroundImage = "";
+    if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
+      document.querySelector(".background-wallpaper-video")?.remove();
+      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+        `;
+    } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
+      let videoEl = document.querySelector(".background-wallpaper-video");
+      if (!videoEl) {
+        videoEl = document.createElement("video");
+        videoEl.setAttribute("muted", "");
+        videoEl.setAttribute("autoplay", "");
+        videoEl.setAttribute("loop", "");
+        videoEl.setAttribute("src", options.background.url);
+        videoEl.classList.add("background-wallpaper-video");
+        videoEl.volume = 0;
+        if (document.querySelector(".tab-container")) {
+          document.querySelector(".tab-container").appendChild(videoEl);
+        } else if (document.querySelector(".container")) {
+          document.querySelector(".container").appendChild(videoEl);
+        } else if (document.querySelector("#app.forward")) {
+          document.querySelector("#app.forward").appendChild(videoEl);
+        } else {
+          console.log("自定义视频挂载失败");
+        }
+      } else {
+        if (videoEl.getAttribute("src") !== options.background.url) {
+          videoEl.setAttribute("src", options.background.url);
+        }
+      }
+    } else {
+      document.querySelector(".background-wallpaper-video")?.remove();
+    }
+    backgroundStyle.textContent = backgroundImage + styleText;
+  } else {
+    backgroundStyle.textContent = "";
+    document.querySelector(".background-wallpaper-video")?.remove();
+  }
+}
+
 // 媒体预览增强
 function imageViewer() {
   // 修复弹窗字体模糊
@@ -196,41 +243,7 @@ async function mainMessage() {
     });
 
     // 更新自定义样式
-    const backgroundStyle = document.querySelector(".backgroundStyle");
-    if (options.background.enabled) {
-      if (!styleText) {
-        styleText = await lite_tools.getStyle();
-      }
-      // 如果url指向图片类型则直接插入css中
-      let backgroundImage = "";
-      if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
-        document.querySelector(".background-wallpaper-video")?.remove();
-        backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
-        `;
-      } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
-        let videoEl = document.querySelector(".background-wallpaper-video");
-        if (!videoEl) {
-          videoEl = document.createElement("video");
-          videoEl.setAttribute("muted", "");
-          videoEl.setAttribute("autoplay", "");
-          videoEl.setAttribute("loop", "");
-          videoEl.setAttribute("src", options.background.url);
-          videoEl.classList.add("background-wallpaper-video");
-          videoEl.volume = 0;
-          document.querySelector(".tab-container").appendChild(videoEl);
-        } else {
-          if (videoEl.getAttribute("src") !== options.background.url) {
-            videoEl.setAttribute("src", options.background.url);
-          }
-        }
-      } else {
-        document.querySelector(".background-wallpaper-video")?.remove();
-      }
-      backgroundStyle.textContent = backgroundImage + styleText;
-    } else {
-      backgroundStyle.textContent = "";
-      document.querySelector(".background-wallpaper-video")?.remove();
-    }
+    updateWallpaper();
   }
 
   // 配置文件更新
@@ -342,41 +355,7 @@ function chatMessage() {
     });
 
     // 更新自定义样式
-    const backgroundStyle = document.querySelector(".backgroundStyle");
-    if (options.background.enabled) {
-      if (!styleText) {
-        styleText = await lite_tools.getStyle();
-      }
-      // 如果url指向图片类型则直接插入css中
-      let backgroundImage = "";
-      if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
-        document.querySelector(".background-wallpaper-video")?.remove();
-        backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
-            `;
-      } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
-        let videoEl = document.querySelector(".background-wallpaper-video");
-        if (!videoEl) {
-          videoEl = document.createElement("video");
-          videoEl.setAttribute("muted", "");
-          videoEl.setAttribute("autoplay", "");
-          videoEl.setAttribute("loop", "");
-          videoEl.setAttribute("src", options.background.url);
-          videoEl.classList.add("background-wallpaper-video");
-          videoEl.volume = 0;
-          document.querySelector(".container").appendChild(videoEl);
-        } else {
-          if (videoEl.getAttribute("src") !== options.background.url) {
-            videoEl.setAttribute("src", options.background.url);
-          }
-        }
-      } else {
-        document.querySelector(".background-wallpaper-video")?.remove();
-      }
-      backgroundStyle.textContent = backgroundImage + styleText;
-    } else {
-      backgroundStyle.textContent = "";
-      document.querySelector(".background-wallpaper-video")?.remove();
-    }
+    updateWallpaper();
   }
 
   lite_tools.updateOptions((event, opt) => {
@@ -403,43 +382,7 @@ function forwardMessage() {
   updatePage();
   async function updatePage() {
     // 更新自定义样式
-    const backgroundStyle = document.querySelector(".backgroundStyle");
-    if (options.background.enabled) {
-      if (!styleText) {
-        styleText = await lite_tools.getStyle();
-      }
-      lite_tools.log("加载自定义样式");
-
-      // 如果url指向图片类型则直接插入css中
-      let backgroundImage = "";
-      if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
-        document.querySelector(".background-wallpaper-video")?.remove();
-        backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
-                `;
-      } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
-        let videoEl = document.querySelector(".background-wallpaper-video");
-        if (!videoEl) {
-          videoEl = document.createElement("video");
-          videoEl.setAttribute("muted", "");
-          videoEl.setAttribute("autoplay", "");
-          videoEl.setAttribute("loop", "");
-          videoEl.setAttribute("src", options.background.url);
-          videoEl.classList.add("background-wallpaper-video");
-          videoEl.volume = 0;
-          document.querySelector(".container").appendChild(videoEl);
-        } else {
-          if (videoEl.getAttribute("src") !== options.background.url) {
-            videoEl.setAttribute("src", options.background.url);
-          }
-        }
-      } else {
-        document.querySelector(".background-wallpaper-video")?.remove();
-      }
-      backgroundStyle.textContent = backgroundImage + styleText;
-    } else {
-      backgroundStyle.textContent = "";
-      document.querySelector(".background-wallpaper-video")?.remove();
-    }
+    updateWallpaper();
   }
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");
