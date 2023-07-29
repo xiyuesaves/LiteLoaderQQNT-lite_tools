@@ -292,16 +292,29 @@
 }
 
 /* 联系人列表 */
-.contact {
+.container .contact {
   background-color: var(--background-color-05) !important;
   backdrop-filter: blur(8px);
   background: unset !important;
 }
-.contact .tab-header,
-.contact .q-collapse-item__header {
+.container .contact .tab-header,
+.container .contact .q-collapse-item__header {
   background: unset !important;
 }
-.contact .contact-profile .profile {
+.container .q-divider.q-divider__vertical {
+  display: none !important;
+}
+.container .sys-notify {
+  background: unset !important;
+  backdrop-filter: blur(8px);
+}
+.container .sys-notify .sys-notify-list {
+  background: unset !important;
+}
+.container .sys-notify .sys-notify-list > div {
+  background: unset !important;
+}
+.container .contact-profile .profile {
   background: unset !important;
   backdrop-filter: blur(8px);
 }

@@ -82,8 +82,8 @@
   .background-wallpaper-video {
     z-index: -1;
   }
-  .ark-msg-content-container{
-    canvas:not(:first-child){
+  .ark-msg-content-container {
+    canvas:not(:first-child) {
       display: none;
     }
   }
@@ -298,13 +298,30 @@
 }
 
 /* 联系人列表 */
-.contact {
-  background-color: var(--background-color-05) !important;
-  backdrop-filter: blur(8px);
-  background: unset !important;
-  .tab-header,
-  .q-collapse-item__header {
+.container {
+  .contact {
+    background-color: var(--background-color-05) !important;
+    backdrop-filter: blur(8px);
     background: unset !important;
+    .tab-header,
+    .q-collapse-item__header {
+      background: unset !important;
+    }
+  }
+  .q-divider {
+    &.q-divider__vertical {
+      display: none !important;
+    }
+  }
+  .sys-notify {
+    background: unset !important;
+    backdrop-filter: blur(8px);
+    .sys-notify-list {
+      background: unset !important;
+      & > div {
+        background: unset !important;
+      }
+    }
   }
   .contact-profile {
     .profile {
