@@ -5,6 +5,7 @@ const inspector = require("node:inspector");
 const { app, ipcMain, dialog, BrowserWindow, MessageChannelMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
+let log = console.log;
 let mainMessage, options;
 
 // 默认配置文件
@@ -35,7 +36,7 @@ const listenList = [];
 
 // 加载插件时触发
 function onLoad(plugin, liteloader) {
-  console.log("轻量工具箱已加载", plugin.path);
+  log("轻量工具箱已加载");
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
@@ -77,8 +78,10 @@ function onLoad(plugin, liteloader) {
         }, 100)
       );
     } catch {
-      console.log("当前环境未安装sass，样式监听未启用");
+      log("当前环境未安装sass，样式监听未启用");
     }
+  } else {
+    log = () => {};
   }
 
   // 获取侧边栏按钮
@@ -104,18 +107,18 @@ function onLoad(plugin, liteloader) {
   // 获取/修改配置信息
   ipcMain.handle("LiteLoader.lite_tools.config", (event, opt) => {
     if (opt) {
-      console.log("更新配置信息", opt);
+      log("更新配置信息", opt);
       options = opt;
       updateOptions();
     } else {
-      console.log("获取配置信息", options);
+      log("获取配置信息", options);
     }
     return options;
   });
 
   // 控制台日志打印
   ipcMain.on("LiteLoader.lite_tools.log", (event, message) => {
-    console.log("轻量工具箱 [渲染进程]: ", message);
+    log("轻量工具箱 [渲染进程]: ", message);
   });
 
   // 动态样式调整
@@ -137,14 +140,14 @@ function onLoad(plugin, liteloader) {
         buttonLabel: "选择", //回调结果渲染到img标签上
       })
       .then((result) => {
-        console.log("选择了文件", result);
+        log("选择了文件", result);
         if (!result.canceled) {
           options.background.url = path.join(result.filePaths[0]).replace(/\\/g, "/");
           updateOptions();
         }
       })
       .catch((err) => {
-        console.log("无效操作", err);
+        log("无效操作", err);
       });
   });
 
@@ -175,7 +178,7 @@ function onBrowserWindowCreated(window, plugin) {
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
-      console.log("捕获到主窗口");
+      log("捕获到主窗口");
       mainMessage = window;
     }
   });
@@ -186,7 +189,7 @@ function onBrowserWindowCreated(window, plugin) {
     window.webContents.send;
 
   const patched_send = function (channel, ...args) {
-    console.log(channel, args);
+    log(channel, args);
     if (options.message.convertBiliBiliArk) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
@@ -199,7 +202,7 @@ function onBrowserWindowCreated(window, plugin) {
       );
       if (msgListIndex !== -1) {
         args[msgListIndex].msgList.forEach((msgItem) => {
-          console.log("解析到消息数据", msgItem);
+          log("解析到消息数据", msgItem);
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
@@ -218,7 +221,7 @@ function onBrowserWindowCreated(window, plugin) {
           : -1
         : -1;
       if (onAddSendMsg !== -1) {
-        console.log("这是我发送的新消息", args[1]);
+        log("这是我发送的新消息", args[1]);
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
           if (msgElements.arkElement && msgElements.arkElement.bytesData) {
@@ -236,7 +239,7 @@ function onBrowserWindowCreated(window, plugin) {
           : -1
         : -1;
       if (onRecvMsg !== -1) {
-        console.log("这是新接收到的消息", args[1]);
+        log("这是新接收到的消息", args[1]);
         args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
           const msg_seq = arrs.msgSeq;
           arrs.elements.forEach((msgElements) => {

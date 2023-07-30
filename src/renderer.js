@@ -1,5 +1,7 @@
 // 运行在 Electron 渲染进程 下的页面脚本
-let options, styleText;
+let options,
+  styleText,
+  log = console.log;
 
 // 首次执行检测，只有第一次执行时返回true
 function First() {
@@ -67,7 +69,7 @@ async function updateWallpaper() {
         } else if (document.querySelector("#app.forward")) {
           document.querySelector("#app.forward").appendChild(videoEl);
         } else {
-          console.log("自定义视频挂载失败");
+          log("自定义视频挂载失败");
         }
       } else {
         if (videoEl.getAttribute("src") !== options.background.url) {
@@ -248,7 +250,7 @@ async function mainMessage() {
 
   // 配置文件更新
   lite_tools.updateOptions((event, opt) => {
-    console.log("新接口获取配置更新");
+    log("新接口获取配置更新");
     options = opt;
     updatePage();
   });
@@ -359,7 +361,7 @@ function chatMessage() {
   }
 
   lite_tools.updateOptions((event, opt) => {
-    console.log("新接口获取配置更新");
+    log("新接口获取配置更新");
     options = opt;
     updatePage();
   });
@@ -385,7 +387,7 @@ function forwardMessage() {
     updateWallpaper();
   }
   lite_tools.updateOptions((event, opt) => {
-    console.log("新接口获取配置更新");
+    log("新接口获取配置更新");
     options = opt;
     updatePage();
   });
@@ -405,6 +407,10 @@ function forwardMessage() {
 async function onLoad() {
   // 获取最新的配置信息
   options = await lite_tools.config();
+
+  if (!options.debug) {
+    log = () => {};
+  }
 
   // 插入自定义样式style容器
   const backgroundStyle = document.createElement("style");
@@ -480,6 +486,10 @@ async function onConfigView(view) {
 
   // 更新配置信息
   options = await lite_tools.config();
+
+  if (!options.debug) {
+    log = () => {};
+  }
 
   // 向设置界面插入动态选项
   function addOptionLi(list, element, objKey, key) {
