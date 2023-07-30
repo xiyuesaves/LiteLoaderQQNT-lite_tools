@@ -207,7 +207,7 @@ function onBrowserWindowCreated(window, plugin) {
           msgItem.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json.meta.detail_1.appid === "1109937557") {
+              if (json?.meta?.detail_1?.appid === "1109937557") {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
               }
             }
@@ -226,7 +226,7 @@ function onBrowserWindowCreated(window, plugin) {
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
           if (msgElements.arkElement && msgElements.arkElement.bytesData) {
             const json = JSON.parse(msgElements.arkElement.bytesData);
-            if (json.meta.detail_1.appid === "1109937557") {
+            if (json?.meta?.detail_1?.appid === "1109937557") {
               msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
             }
           }
@@ -245,7 +245,7 @@ function onBrowserWindowCreated(window, plugin) {
           arrs.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json.meta.detail_1.appid === "1109937557") {
+              if (json?.meta?.detail_1?.appid === "1109937557") {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
               }
             }
