@@ -19,3 +19,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | 自定义背景图片/视频 |
 | 浏览器打开哔哩哔哩分享内容 |
 | ~~折叠群聊右上角功能~~ |
+
+## 协议及免责
+
+MIT | 禁止用于任何非法用途，插件开发属学习与研究目的，仅自用，未提供给任何第三方使用。任何不当使用导致的任何侵权问题责任自负。
