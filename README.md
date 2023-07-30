@@ -3,6 +3,7 @@
 </div>
 
 # LiteLoaderQQNT-lite_tools
+### 当前不兼容9.9.1
 
 LiteLoaderQQNT插件，轻量工具箱，添加了一些能提升使用体验的功能。
 
