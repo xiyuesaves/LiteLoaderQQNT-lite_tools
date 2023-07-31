@@ -3,7 +3,7 @@
     "type": "extension",
     "name": "轻量工具箱",
     "slug": "lite_tools",
-    "description": "里面有一些能提升使用体验的小工具。",
+    "description": "里面有一些能提升使用体验的小工具，点击详情查看功能列表。",
     "version": "1.0.7",
     "thumbnail": "./icon.png",
     "author": {
@@ -12,7 +12,11 @@
     },
     "repository": {
         "repo": "xiyuesaves/lite_tools",
-        "branch": "main"
+        "branch": "main",
+        "use_release":{
+          "tag":"latest",
+          "name":"lite_tools.zip"
+        }
     },
     "platform": [
         "win32",
