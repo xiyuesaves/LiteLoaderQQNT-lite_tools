@@ -78,7 +78,7 @@ function onLoad(plugin, liteloader) {
         }, 100)
       );
     } catch {
-      log("当前环境未安装sass，样式监听未启用");
+      log("当前环境未安装sass，动态更新样式未启用");
     }
   } else {
     log = () => {};
