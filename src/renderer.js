@@ -555,6 +555,9 @@ async function onConfigView(view) {
   // 将哔哩哔哩小程序替换为url卡片
   addSwitchEventlistener("message.convertBiliBiliArk", ".switchDisabledMiniPrgm");
 
+  // 自动打开来自手机的链接或者卡片消息
+  addSwitchEventlistener("message.autoOpenURL", ".switchAutoOpenURL");
+
   // debug开关
   addSwitchEventlistener("debug", ".switchDebug");
 

@@ -2,7 +2,7 @@
 const inspector = require("node:inspector");
 
 // 运行在 Electron 主进程 下的插件入口
-const { app, ipcMain, dialog, BrowserWindow, MessageChannelMain } = require("electron");
+const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 let log = console.log;
@@ -24,6 +24,7 @@ const defaultOptions = {
     disabledHotGIF: false,
     disabledBadge: false,
     convertBiliBiliArk: false,
+    autoOpenURL: false,
   },
   textAreaFuncList: [],
   background: {
@@ -242,6 +243,18 @@ function onBrowserWindowCreated(window, plugin) {
         log("这是新接收到的消息", args[1]);
         args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
           const msg_seq = arrs.msgSeq;
+          if (options.message.autoOpenURL) {
+            if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
+              log("这是我的手机的消息", arrs);
+              arrs.elements.forEach((msgElements) => {
+                if (msgElements.textElement) {
+                  if (/^http(s)?:\/\//.test(msgElements.textElement.content)) {
+                    shell.openExternal(msgElements.textElement.content.split(" ")[0]);
+                  }
+                }
+              });
+            }
+          }
           arrs.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
