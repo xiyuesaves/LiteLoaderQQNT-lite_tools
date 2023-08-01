@@ -2,7 +2,7 @@
 const inspector = require("node:inspector");
 
 // 运行在 Electron 主进程 下的插件入口
-const { app, ipcMain, dialog, BrowserWindow, MessageChannelMain } = require("electron");
+const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 let log = console.log;
@@ -83,6 +83,11 @@ function onLoad(plugin, liteloader) {
   } else {
     log = () => {};
   }
+
+  // 打开网址
+  ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
+    shell.openExternal(url);
+  });
 
   // 获取侧边栏按钮
   ipcMain.handle("LiteLoader.lite_tools.getSidebar", async (event, message) => {

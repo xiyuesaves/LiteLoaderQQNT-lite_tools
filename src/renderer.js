@@ -491,6 +491,11 @@ async function onConfigView(view) {
     log = () => {};
   }
 
+  view.querySelector(".version .link").addEventListener("click", () => {
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools");
+  });
+  view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
+
   // 向设置界面插入动态选项
   function addOptionLi(list, element, objKey, key) {
     list.forEach((el, index) => {

@@ -1,5 +1,5 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "type": "extension",
     "name": "轻量工具箱",
     "slug": "lite_tools",
