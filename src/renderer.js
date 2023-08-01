@@ -73,8 +73,8 @@ async function updateWallpaper() {
           log("自定义视频挂载失败");
         }
       } else {
-        if (videoEl.getAttribute("src") !== options.background.url) {
-          videoEl.setAttribute("src", options.background.url);
+        if (videoEl.getAttribute("src") !== `http://localhost:${port}${options.background.url}`) {
+          videoEl.setAttribute("src", `http://localhost:${port}${options.background.url}`);
         }
       }
     } else {

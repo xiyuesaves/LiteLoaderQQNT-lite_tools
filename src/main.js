@@ -114,7 +114,7 @@ function onLoad(plugin, liteloader) {
   log("http服务已启用", port);
 
   ipcMain.handle("LiteLoader.lite_tools.getPort", (event) => {
-    return port
+    return port;
   });
 
   // 获取侧边栏按钮
@@ -174,11 +174,18 @@ function onLoad(plugin, liteloader) {
       })
       .then((result) => {
         if (!result.canceled) {
-          // fs.unlink(options.background.url);
-          const rawFilePath = path.join(result.filePaths[0]);
+          // 判断是不是缓存文件夹路径
+          const rawFilePath = path.join(result.filePaths[0]).replace(/\\/g, "/");
           const backgroundFolder = path.join(catchPath, "background_file");
           const fileName = path.basename(rawFilePath);
           const backgroundFilePath = path.join(backgroundFolder, fileName);
+          if (options.background.url.includes("/cache/background_file/")) {
+            try {
+              fs.unlinkSync(path.join(backgroundFolder, path.basename(options.background.url)));
+            } catch (err) {
+              log("删除文件失败", err);
+            }
+          }
           log("选择了文件", rawFilePath);
           // 创建文件夹路径
           if (!fs.existsSync(backgroundFolder)) {
@@ -188,10 +195,11 @@ function onLoad(plugin, liteloader) {
             fs.mkdirSync(backgroundFolder);
           }
           // 复制文件到插件缓存目录
-          fs.copyFileSync(rawFilePath, backgroundFilePath);
-          options.background.showUrl = rawFilePath;
-          options.background.url = `/cache/background_file/${fileName}`;
-          updateOptions();
+          fs.copyFile(rawFilePath, backgroundFilePath, () => {
+            options.background.showUrl = rawFilePath;
+            options.background.url = `/cache/background_file/${fileName}`;
+            updateOptions();
+          });
         }
       })
       .catch((err) => {
