@@ -10,6 +10,7 @@
 
 ### 该分支并不稳定，请酌情使用
 
+
 LiteLoaderQQNT插件，轻量工具箱-plus，添加了一些能提升使用体验的功能。
 
 LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
@@ -26,8 +27,14 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | 浏览器打开哔哩哔哩分享内容 |
 | 自动打开来自手机的链接 |
 | 阻止拖拽多选消息 |
-| ~~折叠群聊右上角功能~~ |
 | ~~每条消息显示发送时间~~ |
+| ~~自定义群聊右上角功能~~ |
+
+## 安装方法
+  - pull该项目到LiteLoader数据目录
+  - 执行`npm i`安装环境
+  - 手动编译`src`目录下的`style.scss`和`global.scss`一次（后续会优化该步骤）
+  - 完成安装
 
 ## 协议及免责
 
