@@ -139,7 +139,6 @@ async function mainMessage() {
           }
         }
       });
-
       // 更新输入框上方功能列表
       const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
         return {
@@ -516,6 +515,9 @@ async function onConfigView(view) {
 
   // debug开关
   addSwitchEventlistener("debug", ".switchDebug");
+
+  // 显示每条消息发送时间
+  addSwitchEventlistener("message.showMsgTime", ".showMsgTime");
 
   // 禁用滑动多选消息
   addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");

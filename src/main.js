@@ -39,6 +39,7 @@ const defaultOptions = {
     disabledBadge: false,
     disabledSlideMultipleSelection: false,
     convertBiliBiliArk: false,
+    showMsgTime: false,
     autoOpenURL: false,
   },
   textAreaFuncList: [],
@@ -267,7 +268,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   const patched_send = function (channel, ...args) {
     // log(channel, args);
-    if (options.message.convertBiliBiliArk) {
+    if (options.message.convertBiliBiliArk || options.message.showMsgTime) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
         (item) =>
@@ -282,7 +283,7 @@ function onBrowserWindowCreated(window, plugin) {
           log("解析到消息数据", msgItem);
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
-            if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json?.meta?.detail_1?.appid === "1109937557") {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
@@ -301,7 +302,7 @@ function onBrowserWindowCreated(window, plugin) {
         log("这是我发送的新消息", args[1]);
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
-          if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+          if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
             const json = JSON.parse(msgElements.arkElement.bytesData);
             if (json?.meta?.detail_1?.appid === "1109937557") {
               msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
@@ -332,7 +333,7 @@ function onBrowserWindowCreated(window, plugin) {
             }
           }
           arrs.elements.forEach((msgElements) => {
-            if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json?.meta?.detail_1?.appid === "1109937557") {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
