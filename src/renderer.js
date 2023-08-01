@@ -50,7 +50,7 @@ async function updateWallpaper() {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
       document.querySelector(".background-wallpaper-video")?.remove();
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
         `;
     } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
       let videoEl = document.querySelector(".background-wallpaper-video");
@@ -259,7 +259,7 @@ async function mainMessage() {
   lite_tools.updateStyle((event, message) => {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
         `;
     }
     document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
@@ -370,7 +370,7 @@ function chatMessage() {
   lite_tools.updateStyle((event, message) => {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
           `;
     }
     document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
@@ -396,7 +396,7 @@ function forwardMessage() {
   lite_tools.updateStyle((event, message) => {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
           `;
     }
     document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
@@ -469,8 +469,8 @@ async function onConfigView(view) {
   // 部分代码来自
   // https://github.com/mo-jinran/LiteLoaderQQNT-Config-View
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const css_file_path = `file://${plugin_path}/src/config/view.css`;
-  const html_file_path = `file://${plugin_path}/src/config/view.html`;
+  const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
+  const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
 
   // CSS
   const link_element = document.createElement("link");
