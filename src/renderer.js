@@ -416,7 +416,6 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
-  // const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   port = await lite_tools.getPort();
   const css_file_path = `http://localhost:${port}/config/view.css`;
   const html_file_path = `http://localhost:${port}/config/view.html`;
@@ -436,14 +435,11 @@ async function onConfigView(view) {
   // 更新配置信息
   options = await lite_tools.config();
 
-  if (!options.debug) {
-    log = () => {};
-  }
-
   // 显示插件版本信息
   view.querySelector(".version .link").addEventListener("click", () => {
     lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/dev");
   });
+
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
 
   // 向设置界面插入动态选项
