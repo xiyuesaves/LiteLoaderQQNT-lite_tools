@@ -23,6 +23,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
   // 获取main进程http端口
   getPort: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPort"),
+  // 在浏览器打开页面
+  openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
   // 在主进程的终端打印渲染进程日志
   log: (msg) => ipcRenderer.send("LiteLoader.lite_tools.log", msg),
 });

@@ -493,6 +493,13 @@ async function onConfigView(view) {
     log = () => {};
   }
 
+  // 显示插件版本信息
+  view.querySelector(".version .link").addEventListener("click", ()=>{
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/dev");
+  })
+  view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
+
+
   // 向设置界面插入动态选项
   function addOptionLi(list, element, objKey, key) {
     list.forEach((el, index) => {

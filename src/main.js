@@ -113,8 +113,14 @@ function onLoad(plugin, liteloader) {
   log("轻量工具箱已加载", plugin);
   log("http服务已启用", port);
 
+  // 获取http端口
   ipcMain.handle("LiteLoader.lite_tools.getPort", (event) => {
     return port;
+  });
+
+  // 打开网址
+  ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
+    shell.openExternal(url);
   });
 
   // 获取侧边栏按钮
