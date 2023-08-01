@@ -167,6 +167,11 @@ function onLoad(plugin, liteloader) {
     log("轻量工具箱 [渲染进程]: ", ...message);
   });
 
+  // 获取全局样式
+  ipcMain.handle("LiteLoader.lite_tools.getGlobalStyle", (event) => {
+    return fs.readFileSync(globalPath, "utf-8");
+  });
+
   // 动态样式调整
   ipcMain.handle("LiteLoader.lite_tools.getStyle", (event) => {
     return fs.readFileSync(stylePath, "utf-8");

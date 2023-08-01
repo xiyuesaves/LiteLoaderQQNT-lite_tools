@@ -19,8 +19,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 获取和更新配置文件
   config: (options) => ipcRenderer.invoke("LiteLoader.lite_tools.config", options),
-  // 渲染进程准备完毕
+  // 获取背景样式
   getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
+  // 获取全局样式
+  getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
   // 打开选择背景图片窗口
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
   // 获取main进程http端口

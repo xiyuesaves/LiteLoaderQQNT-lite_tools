@@ -346,6 +346,7 @@ async function onLoad() {
 
   // 全局加载通用样式
   const globalStyle = document.createElement("style");
+  globalStyle.textContent = await lite_tools.getGlobalStyle();
   globalStyle.classList.add("global-style");
   document.body.append(globalStyle);
 
