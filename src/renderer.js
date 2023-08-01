@@ -492,7 +492,7 @@ async function onConfigView(view) {
   }
 
   view.querySelector(".version .link").addEventListener("click", () => {
-    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools");
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/v3");
   });
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
 
