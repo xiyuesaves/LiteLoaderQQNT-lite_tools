@@ -89,3 +89,13 @@
     color: white;
   }
 }
+
+.version{
+  text-align: center;
+}
+.version .link{
+  cursor: pointer;
+  font-size: 13px;
+  margin-left: 4px;
+  color: #0099ff;
+}

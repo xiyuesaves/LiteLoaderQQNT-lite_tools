@@ -466,6 +466,7 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
+
   // 部分代码来自
   // https://github.com/mo-jinran/LiteLoaderQQNT-Config-View
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
@@ -490,6 +491,12 @@ async function onConfigView(view) {
   if (!options.debug) {
     log = () => {};
   }
+
+
+  view.querySelector(".version .link").addEventListener("click", ()=>{
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools");
+  })
+  view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
 
   // 向设置界面插入动态选项
   function addOptionLi(list, element, objKey, key) {
