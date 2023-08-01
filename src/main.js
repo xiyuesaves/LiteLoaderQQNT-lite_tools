@@ -53,7 +53,7 @@ const defaultOptions = {
 const listenList = [];
 
 // 加载插件时触发
-function onLoad(plugin, liteloader) {
+function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
@@ -262,9 +262,7 @@ function onBrowserWindowCreated(window, plugin) {
   });
 
   // 复写并监听ipc通信内容
-  const original_send =
-    (window.webContents.__qqntim_original_object && window.webContents.__qqntim_original_object.send) ||
-    window.webContents.send;
+  const original_send = window.webContents.send;
 
   const patched_send = function (channel, ...args) {
     // log(channel, args);
@@ -343,6 +341,8 @@ function onBrowserWindowCreated(window, plugin) {
         });
       }
     }
+
+    // 记录下可能会用到的时间名称
 
     // 视频加载完成事件
     // cmdName: "nodeIKernelMsgListener/onRichMediaDownloadComplete";
