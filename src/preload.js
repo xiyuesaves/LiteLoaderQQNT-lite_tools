@@ -21,6 +21,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
   // 打开选择背景图片窗口
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
+  // 获取main进程http端口
+  getPort: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPort"),
   // 在主进程的终端打印渲染进程日志
   log: (msg) => ipcRenderer.send("LiteLoader.lite_tools.log", msg),
 });

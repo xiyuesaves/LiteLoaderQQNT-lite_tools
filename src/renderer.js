@@ -1,6 +1,7 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options,
   styleText,
+  port,
   log = console.log;
 
 // 首次执行检测，只有第一次执行时返回true
@@ -50,7 +51,7 @@ async function updateWallpaper() {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
       document.querySelector(".background-wallpaper-video")?.remove();
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("http://localhost:${port}${options.background.url}")}
         `;
     } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
       let videoEl = document.querySelector(".background-wallpaper-video");
@@ -259,7 +260,7 @@ async function mainMessage() {
   lite_tools.updateStyle((event, message) => {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("http://localhost:${port}${options.background.url}")}
         `;
     }
     document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
@@ -370,7 +371,7 @@ function chatMessage() {
   lite_tools.updateStyle((event, message) => {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("http://localhost:${port}${options.background.url}")}
           `;
     }
     document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
@@ -396,7 +397,7 @@ function forwardMessage() {
   lite_tools.updateStyle((event, message) => {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("file://${options.background.url}")}
+      backgroundImage = `:root{--background-wallpaper:url("http://localhost:${port}${options.background.url}")}
           `;
     }
     document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
@@ -407,6 +408,8 @@ function forwardMessage() {
 async function onLoad() {
   // 获取最新的配置信息
   options = await lite_tools.config();
+  // 获取端口
+  port = await lite_tools.getPort();
 
   if (!options.debug) {
     log = () => {};
@@ -466,11 +469,10 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
-  // 部分代码来自
-  // https://github.com/mo-jinran/LiteLoaderQQNT-Config-View
-  const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const css_file_path = `file://${plugin_path}/src/config/view.css`;
-  const html_file_path = `file://${plugin_path}/src/config/view.html`;
+  // const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
+  port = await lite_tools.getPort();
+  const css_file_path = `http://localhost:${port}/config/view.css`;
+  const html_file_path = `http://localhost:${port}/config/view.html`;
 
   // CSS
   const link_element = document.createElement("link");
@@ -574,7 +576,7 @@ async function onConfigView(view) {
   } else {
     view.querySelector(".select-path").classList.add("hidden");
   }
-  view.querySelector(".select-path input").value = options.background.url;
+  view.querySelector(".select-path input").value = options.background.showUrl;
   view.querySelectorAll(".select-file").forEach((el) => {
     el.addEventListener("click", () => {
       lite_tools.openSelectBackground();
@@ -605,7 +607,7 @@ async function onConfigView(view) {
   // 监听设置文件变动
   lite_tools.updateOptions((event, opt) => {
     options = opt;
-    view.querySelector(".select-path input").value = options.background.url;
+    view.querySelector(".select-path input").value = options.background.showUrl;
   });
 }
 

@@ -1,6 +1,20 @@
 // 调试工具
 const inspector = require("node:inspector");
 
+// http服务，处理高版本无法使用file协议的问题
+const express = require("express");
+const net = require("net");
+const app = express();
+
+// 获取空闲端口号
+const port = (() => {
+  const server = net.createServer();
+  server.listen(0);
+  const { port } = server.address();
+  server.close();
+  return port;
+})();
+
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
@@ -29,6 +43,7 @@ const defaultOptions = {
   textAreaFuncList: [],
   background: {
     enabled: false,
+    showUrl: "",
     url: "",
   },
 };
@@ -37,10 +52,11 @@ const listenList = [];
 
 // 加载插件时触发
 function onLoad(plugin, liteloader) {
-  log("轻量工具箱已加载");
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
+  const configPath = path.join(plugin.path.plugin, "src/config");
+  const catchPath = path.join(plugin.path.cache);
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
@@ -84,6 +100,22 @@ function onLoad(plugin, liteloader) {
   } else {
     log = () => {};
   }
+
+  // 配置界面
+  app.use("/config", express.static(configPath));
+
+  // 自定义背景
+  app.use("/cache", express.static(catchPath));
+
+  // 开始监听
+  app.listen(port);
+
+  log("轻量工具箱已加载", plugin);
+  log("http服务已启用", port);
+
+  ipcMain.handle("LiteLoader.lite_tools.getPort", (event) => {
+    return port
+  });
 
   // 获取侧边栏按钮
   ipcMain.handle("LiteLoader.lite_tools.getSidebar", async (event, message) => {
@@ -141,9 +173,24 @@ function onLoad(plugin, liteloader) {
         buttonLabel: "选择", //回调结果渲染到img标签上
       })
       .then((result) => {
-        log("选择了文件", result);
         if (!result.canceled) {
-          options.background.url = path.join(result.filePaths[0]).replace(/\\/g, "/");
+          // fs.unlink(options.background.url);
+          const rawFilePath = path.join(result.filePaths[0]);
+          const backgroundFolder = path.join(catchPath, "background_file");
+          const fileName = path.basename(rawFilePath);
+          const backgroundFilePath = path.join(backgroundFolder, fileName);
+          log("选择了文件", rawFilePath);
+          // 创建文件夹路径
+          if (!fs.existsSync(backgroundFolder)) {
+            if (!fs.existsSync(catchPath)) {
+              fs.mkdirSync(catchPath);
+            }
+            fs.mkdirSync(backgroundFolder);
+          }
+          // 复制文件到插件缓存目录
+          fs.copyFileSync(rawFilePath, backgroundFilePath);
+          options.background.showUrl = rawFilePath;
+          options.background.url = `/cache/background_file/${fileName}`;
           updateOptions();
         }
       })
