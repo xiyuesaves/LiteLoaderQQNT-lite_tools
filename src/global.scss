@@ -1,0 +1,75 @@
+/* 全局禁用样式 */
+.disabled {
+  display: none !important;
+}
+/* 禁用滑动多选 */
+.disabled-slide-multiple-selection {
+  .group-chat {
+    .chat-msg-area {
+      .ml-list.list > div {
+        pointer-events: none !important;
+        .message .message-container {
+          .avatar,
+          .message-content__wrapper {
+            pointer-events: auto !important;
+          }
+        }
+      }
+    }
+  }
+}
+/* 禁用GIF热图 */
+.disabled-sticker-hot-gif {
+  .sticker-panel__bar {
+    .tabs-container {
+      .tabs-container-item {
+        .q-icon[title="GIF热图"] {
+          display: none !important;
+        }
+      }
+    }
+  }
+}
+/* 禁用小红点 */
+.disabled-badge {
+  .q-badge {
+    .q-badge-num,
+    .q-badge-sub,
+    .q-badge__red {
+      display: none !important;
+    }
+  }
+}
+/* 修复图片预览窗口悬浮窗文本模糊 */
+.image-viewer {
+  .main-area__loading-tip,
+  .image-viewer__tip {
+    pointer-events: none;
+    width: 145px !important;
+    transform: none !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    margin: auto !important;
+  }
+}
+/* 修改贴图css结构 */
+.message-panel {
+  .sticker-panel {
+    max-width: 600px !important;
+    .sticker-panel__pages {
+      width: 100% !important;
+    }
+    .tabs-container {
+      .tabs-container-item {
+        width: unset !important;
+        .q-icon,
+        div.tabs-container-item-img {
+          text-align: center;
+          width: 40px !important;
+        }
+      }
+    }
+  }
+}

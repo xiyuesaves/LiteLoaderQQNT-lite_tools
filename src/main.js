@@ -37,6 +37,7 @@ const defaultOptions = {
     disabledSticker: false,
     disabledHotGIF: false,
     disabledBadge: false,
+    disabledSlideMultipleSelection: false,
     convertBiliBiliArk: false,
     autoOpenURL: false,
   },
@@ -55,6 +56,7 @@ function onLoad(plugin, liteloader) {
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
+  const globalPath = path.join(plugin.path.plugin, "src/global.css");
   const configPath = path.join(plugin.path.plugin, "src/config");
   const catchPath = path.join(plugin.path.cache);
 
@@ -77,21 +79,26 @@ function onLoad(plugin, liteloader) {
     inspector.open(8899, "localhost", true);
     try {
       const sass = require("sass");
-      // 开启debug模式后开始监听并编译style.scss
-      const sassPath = path.join(plugin.path.plugin, "src/style.scss");
+      // 监听并编译style.scss
+      const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
       fs.watch(
-        sassPath,
+        styleSassPath,
         "utf-8",
         debounce(() => {
-          fs.writeFileSync(stylePath, sass.compile(sassPath).css);
+          const cssText = sass.compile(styleSassPath).css;
+          fs.writeFileSync(stylePath, cssText);
+          updateStyle(cssText, "style");
         }, 100)
       );
-      // 开启debug才监听css文件变动，避免锁定文件导致插件更新失败
+      // 监听并编译global.scss
+      const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
       fs.watch(
-        stylePath,
+        globalScssPath,
         "utf-8",
         debounce(() => {
-          updateStyle();
+          const cssText = sass.compile(globalScssPath).css;
+          fs.writeFileSync(globalPath, cssText);
+          updateStyle(cssText, "global");
         }, 100)
       );
     } catch {
@@ -156,8 +163,8 @@ function onLoad(plugin, liteloader) {
   });
 
   // 控制台日志打印
-  ipcMain.on("LiteLoader.lite_tools.log", (event, message) => {
-    log("轻量工具箱 [渲染进程]: ", message);
+  ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
+    log("轻量工具箱 [渲染进程]: ", ...message);
   });
 
   // 动态样式调整
@@ -180,11 +187,11 @@ function onLoad(plugin, liteloader) {
       })
       .then((result) => {
         if (!result.canceled) {
-          // 判断是不是缓存文件夹路径
           const rawFilePath = path.join(result.filePaths[0]).replace(/\\/g, "/");
           const backgroundFolder = path.join(catchPath, "background_file");
           const fileName = path.basename(rawFilePath);
           const backgroundFilePath = path.join(backgroundFolder, fileName);
+          // 判断是不是缓存文件夹路径
           if (options.background.url.includes("/cache/background_file/")) {
             try {
               fs.unlinkSync(path.join(backgroundFolder, path.basename(options.background.url)));
@@ -213,11 +220,14 @@ function onLoad(plugin, liteloader) {
       });
   });
 
-  function updateStyle() {
-    const styleText = fs.readFileSync(stylePath, "utf-8");
+  function updateStyle(styleText, type) {
     listenList.forEach((window) => {
       if (!window.isDestroyed()) {
-        window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
+        if (type === "style") {
+          window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
+        } else if (type === "global") {
+          window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
+        }
       }
     });
   }
@@ -251,7 +261,7 @@ function onBrowserWindowCreated(window, plugin) {
     window.webContents.send;
 
   const patched_send = function (channel, ...args) {
-    log(channel, args);
+    // log(channel, args);
     if (options.message.convertBiliBiliArk) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
