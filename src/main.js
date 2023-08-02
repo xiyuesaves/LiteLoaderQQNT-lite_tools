@@ -43,6 +43,7 @@ const defaultOptions = {
     disabledSlideMultipleSelection: false,
     convertBiliBiliArk: false,
     showMsgTime: false,
+    showMsgTimeHover: false,
     autoOpenURL: false,
   },
   textAreaFuncList: [],

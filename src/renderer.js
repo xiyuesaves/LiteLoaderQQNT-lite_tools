@@ -170,6 +170,9 @@ async function mainMessage() {
               const timeEl = document.createElement("div");
               timeEl.innerText = new Date(find).toLocaleString();
               timeEl.classList.add("message-content-time");
+              if (options.message.showMsgTimeHover) {
+                timeEl.classList.add("hover-show");
+              }
               msgElement.appendChild(timeEl);
             }
           }
@@ -611,7 +614,21 @@ async function onConfigView(view) {
   addSwitchEventlistener("debug", ".switchDebug");
 
   // 显示每条消息发送时间
-  addSwitchEventlistener("message.showMsgTime", ".showMsgTime");
+  addSwitchEventlistener("message.showMsgTime", ".showMsgTime", (event, enabled) => {
+    if (enabled) {
+      view.querySelector(".hover-show-hidden").classList.remove("hidden");
+    } else {
+      view.querySelector(".hover-show-hidden").classList.add("hidden");
+    }
+  });
+  if (options.message.showMsgTime) {
+    view.querySelector(".hover-show-hidden").classList.remove("hidden");
+  } else {
+    view.querySelector(".hover-show-hidden").classList.add("hidden");
+  }
+
+  // 移入才显示时间
+  addSwitchEventlistener("message.showMsgTimeHover", ".showMsgTimeHover");
 
   // 禁用滑动多选消息
   addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");

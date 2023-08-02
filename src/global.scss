@@ -92,7 +92,7 @@
   margin-bottom: 15px;
   overflow: unset !important;
   &:hover {
-    .message-content-time {
+    .message-content-time.hover-show {
       opacity: 1;
       transform: translateX(0%);
     }
@@ -110,10 +110,12 @@
     padding: 2px 8px;
     border-radius: 6px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
-    transition: 300ms;
-    transform: translateX(-30%);
-    opacity: 0;
-    pointer-events: none;
+    &.hover-show {
+      transition: 300ms;
+      transform: translateX(-30%);
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 }
 .forward {
@@ -126,6 +128,8 @@
   .message-content-time {
     left: unset;
     right: 0;
-    transform: translateX(30%);
+    &.hover-show {
+      transform: translateX(30%);
+    }
   }
 }
