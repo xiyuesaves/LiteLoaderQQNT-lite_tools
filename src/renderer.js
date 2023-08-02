@@ -245,7 +245,9 @@ async function mainMessage() {
     });
 
     // 更新自定义样式
-    updateWallpaper();
+    if (first("init-wallpaper")) {
+      updateWallpaper();
+    }
   }
 
   // 配置文件更新
@@ -357,7 +359,9 @@ function chatMessage() {
     });
 
     // 更新自定义样式
-    updateWallpaper();
+    if (first("init-wallpaper")) {
+      updateWallpaper();
+    }
   }
 
   lite_tools.updateOptions((event, opt) => {
@@ -384,7 +388,9 @@ function forwardMessage() {
   updatePage();
   async function updatePage() {
     // 更新自定义样式
-    updateWallpaper();
+    if (first("init-wallpaper")) {
+      updateWallpaper();
+    }
   }
   lite_tools.updateOptions((event, opt) => {
     log("新接口获取配置更新");
@@ -492,7 +498,11 @@ async function onConfigView(view) {
   }
 
   view.querySelector(".version .link").addEventListener("click", () => {
+<<<<<<< HEAD
     lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/v3");
+=======
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools");
+>>>>>>> main
   });
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
 

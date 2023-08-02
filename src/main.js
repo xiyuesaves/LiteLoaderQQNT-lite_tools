@@ -101,6 +101,11 @@ function onLoad(plugin, liteloader) {
     return list;
   });
 
+  // 打开网址
+  ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
+    shell.openExternal(url);
+  });
+
   // 更新聊天框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
     let res = new Map(),

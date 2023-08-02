@@ -19,7 +19,6 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | 隐藏小红点 |
 | 自定义背景图片/视频 |
 | 浏览器打开哔哩哔哩分享内容 |
-| ~~折叠群聊右上角功能~~ |
 
 ## 协议及免责
 
