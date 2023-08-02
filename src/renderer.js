@@ -159,20 +159,22 @@ async function mainMessage() {
   }
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
-      const msgList = await lite_tools.getMsgIdAndTime();
-      idTImeMap = new Map([...idTImeMap, ...msgList]);
-      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
-        const find = idTImeMap.get(el.id);
-        if (find) {
-          const msgElement = el.querySelector(".message-content__wrapper");
-          if (msgElement && !el.querySelector(".message-content-time")) {
-            const timeEl = document.createElement("div");
-            timeEl.innerText = new Date(find).toLocaleString();
-            timeEl.classList.add("message-content-time");
-            msgElement.appendChild(timeEl);
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+          const find = idTImeMap.get(el.id);
+          if (find) {
+            const msgElement = el.querySelector(".message-content__wrapper");
+            if (msgElement && !el.querySelector(".message-content-time")) {
+              const timeEl = document.createElement("div");
+              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.classList.add("message-content-time");
+              msgElement.appendChild(timeEl);
+            }
           }
-        }
-      });
+        });
+      }
     }).observe(document.querySelector(".ml-list.list"), {
       attributes: false,
       childList: true,
@@ -227,7 +229,7 @@ async function mainMessage() {
       observerChatArea();
     }
     // 消息列表监听器
-    if (options.message.showMsgTime && document.querySelector(".ml-list.list") && first("msgList")) {
+    if (document.querySelector(".ml-list.list") && first("msgList")) {
       observerMessageList();
     }
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
@@ -353,29 +355,29 @@ function chatMessage() {
   // 附加消息发送时间
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
-      const msgList = await lite_tools.getMsgIdAndTime();
-      idTImeMap = new Map([...idTImeMap, ...msgList]);
-      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
-        const find = idTImeMap.get(el.id);
-        if (find) {
-          const msgElement = el.querySelector(".message-content__wrapper");
-          if (msgElement && !el.querySelector(".message-content-time")) {
-            const timeEl = document.createElement("div");
-            timeEl.innerText = new Date(find).toLocaleString();
-            timeEl.classList.add("message-content-time");
-            msgElement.appendChild(timeEl);
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+          const find = idTImeMap.get(el.id);
+          if (find) {
+            const msgElement = el.querySelector(".message-content__wrapper");
+            if (msgElement && !el.querySelector(".message-content-time")) {
+              const timeEl = document.createElement("div");
+              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.classList.add("message-content-time");
+              msgElement.appendChild(timeEl);
+            }
           }
-        }
-      });
+        });
+      }
     }).observe(document.querySelector(".ml-list.list"), {
       attributes: false,
       childList: true,
       subtree: false,
     });
   }
-  if (options.message.showMsgTime) {
-    observerMessageList();
-  }
+  observerMessageList();
 }
 
 // 转发消息界面
@@ -392,32 +394,32 @@ function forwardMessage() {
   // 附加消息发送时间
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
-      const msgList = await lite_tools.getMsgIdAndTime();
-      idTImeMap = new Map([...idTImeMap, ...msgList]);
-      lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
-      document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
-        const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
-        if (find) {
-          lite_tools.log("找到对应消息id时间", find);
-          const msgElement = el.querySelector(".message-content__wrapper");
-          if (msgElement && !el.querySelector(".message-content-time")) {
-            const timeEl = document.createElement("div");
-            timeEl.innerText = new Date(find).toLocaleString();
-            timeEl.classList.add("message-content-time");
-            // msgElement.innerText = find;
-            msgElement.appendChild(timeEl);
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
+        document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
+          const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
+          if (find) {
+            lite_tools.log("找到对应消息id时间", find);
+            const msgElement = el.querySelector(".message-content__wrapper");
+            if (msgElement && !el.querySelector(".message-content-time")) {
+              const timeEl = document.createElement("div");
+              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.classList.add("message-content-time");
+              // msgElement.innerText = find;
+              msgElement.appendChild(timeEl);
+            }
           }
-        }
-      });
+        });
+      }
     }).observe(document.querySelector(".list .q-scroll-view"), {
       attributes: false,
       childList: true,
       subtree: false,
     });
   }
-  if (options.message.showMsgTime) {
-    observerMessageList();
-  }
+  observerMessageList();
 
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");
