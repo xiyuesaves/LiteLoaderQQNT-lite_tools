@@ -1,6 +1,9 @@
 // 调试工具
 const inspector = require("node:inspector");
 
+// 编译样式
+const sass = require("sass");
+
 // http服务，处理高版本无法使用file协议的问题
 const express = require("express");
 const net = require("net");
@@ -57,9 +60,12 @@ let msgIdList = [];
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
+  const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
+  const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
   const globalPath = path.join(plugin.path.plugin, "src/global.css");
   const configPath = path.join(plugin.path.plugin, "src/config");
+
   const catchPath = path.join(plugin.path.cache);
 
   // 初始化配置文件路径
@@ -80,9 +86,7 @@ function onLoad(plugin) {
   if (options.debug) {
     inspector.open(8899, "localhost", true);
     try {
-      const sass = require("sass");
       // 监听并编译style.scss
-      const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
       fs.watch(
         styleSassPath,
         "utf-8",
@@ -93,7 +97,6 @@ function onLoad(plugin) {
         }, 100)
       );
       // 监听并编译global.scss
-      const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
       fs.watch(
         globalScssPath,
         "utf-8",
@@ -177,12 +180,34 @@ function onLoad(plugin) {
 
   // 获取全局样式
   ipcMain.handle("LiteLoader.lite_tools.getGlobalStyle", (event) => {
-    return fs.readFileSync(globalPath, "utf-8");
+    try {
+      return fs.readFileSync(globalPath, "utf-8");
+    } catch (err) {
+      if (fs.existsSync(globalScssPath)) {
+        const cssText = sass.compile(globalScssPath).css;
+        fs.writeFileSync(globalPath, cssText);
+        return cssText;
+      } else {
+        log("无法找到源scss文件");
+        return "";
+      }
+    }
   });
 
-  // 动态样式调整
+  // 获取自定义样式
   ipcMain.handle("LiteLoader.lite_tools.getStyle", (event) => {
-    return fs.readFileSync(stylePath, "utf-8");
+    try {
+      return fs.readFileSync(stylePath, "utf-8");
+    } catch (err) {
+      if (fs.existsSync(styleSassPath)) {
+        const cssText = sass.compile(styleSassPath).css;
+        fs.writeFileSync(stylePath, cssText);
+        return cssText;
+      } else {
+        log("无法找到源scss文件");
+        return "";
+      }
+    }
   });
 
   ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
