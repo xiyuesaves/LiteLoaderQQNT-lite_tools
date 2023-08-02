@@ -14,7 +14,7 @@ const first = First();
 
 // 通用初始化函数
 function initFunction(func) {
-  if (!options.spareInitialization) {
+  if (!options.spareInitialization && false) {
     // 全局监听器，在页面创建30秒后自动销毁
     const observer = new MutationObserver(func);
     observer.observe(document.querySelector("#app"), {
