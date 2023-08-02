@@ -51,6 +51,7 @@ const defaultOptions = {
 };
 
 const listenList = [];
+let msgIdList = [];
 
 // 加载插件时触发
 function onLoad(plugin) {
@@ -120,6 +121,12 @@ function onLoad(plugin) {
 
   log("轻量工具箱已加载", plugin);
   log("http服务已启用", port);
+
+  ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
+    // 只保留100条数据，减轻数据传递压力
+    msgIdList = msgIdList.slice(-100);
+    return msgIdList;
+  });
 
   // 获取http端口
   ipcMain.handle("LiteLoader.lite_tools.getPort", (event) => {
@@ -279,6 +286,11 @@ function onBrowserWindowCreated(window, plugin) {
       if (msgListIndex !== -1) {
         args[msgListIndex].msgList.forEach((msgItem) => {
           log("解析到消息数据", msgItem);
+          // 获取消息id和发送时间存入map
+          if (options.message.showMsgTime) {
+            msgIdList.push([msgItem.msgId, msgItem.msgTime * 1000]);
+          }
+          // 处理小程序卡片
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
@@ -298,6 +310,14 @@ function onBrowserWindowCreated(window, plugin) {
         : -1;
       if (onAddSendMsg !== -1) {
         log("这是我发送的新消息", args[1]);
+        // 获取消息id和发送时间存入map
+        if (options.message.showMsgTime) {
+          msgIdList.push([
+            args[1][onAddSendMsg].payload.msgRecord.msgId,
+            args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
+          ]);
+        }
+        // 处理小程序卡片
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
           if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
@@ -317,7 +337,11 @@ function onBrowserWindowCreated(window, plugin) {
       if (onRecvMsg !== -1) {
         log("这是新接收到的消息", args[1]);
         args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
-          const msg_seq = arrs.msgSeq;
+          // 获取消息id和发送时间存入map
+          if (options.message.showMsgTime) {
+            msgIdList.push([arrs.msgId, arrs.msgTime * 1000]);
+          }
+          // 打开发给自己的链接
           if (options.message.autoOpenURL) {
             if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
               log("这是我的手机的消息", arrs);
@@ -330,6 +354,8 @@ function onBrowserWindowCreated(window, plugin) {
               });
             }
           }
+          // 处理小程序卡片
+          const msg_seq = arrs.msgSeq;
           arrs.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);

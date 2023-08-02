@@ -7,7 +7,7 @@
     --background-color-05: rgba(255, 255, 255, 0.5);
     --background-color-07: rgba(255, 255, 255, 0.7);
     --background-color-1: rgba(255, 255, 255, 1);
-    ----text-color: rgba(0, 0, 0, 0.8);
+    --text-color: rgba(0, 0, 0, 0.8);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(0, 153, 255, 1);
     --voice-color-1: rgba(0, 153, 255, 1);
@@ -21,7 +21,7 @@
     --background-color-05: rgba(0, 0, 0, 0.5);
     --background-color-07: rgba(0, 0, 0, 0.7);
     --background-color-1: rgba(0, 0, 0, 1);
-    ----text-color: rgba(255, 255, 255, 0.8);
+    --text-color: rgba(255, 255, 255, 0.8);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(255, 255, 255, 1);
     --voice-color-1: rgba(255, 255, 255, 1);
@@ -211,7 +211,7 @@
 .msg-content-container,
 .mix-message__container {
   background: unset !important;
-  color: var(----text-color) !important;
+  color: var(--text-color) !important;
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
   overflow: hidden !important;
@@ -239,7 +239,7 @@
     color: var(--link-url-color) !important;
   }
   .reply-element {
-    color: var(----text-color) !important;
+    color: var(--text-color) !important;
   }
 }
 

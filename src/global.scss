@@ -73,3 +73,46 @@
     }
   }
 }
+/* 消息列表时间元素样式 */
+@media (prefers-color-scheme: light) {
+  :root {
+    --text-color: rgba(0, 0, 0, 0.8);
+    --background-color-05: rgba(255, 255, 255, 0.5);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: rgba(255, 255, 255, 0.8);
+    --background-color-05: rgba(0, 0, 0, 0.5);
+  }
+}
+.message-content__wrapper {
+  position: relative;
+  margin-bottom: 15px;
+  .message-content-time {
+    position: absolute;
+    top: calc(100% + 4px);
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--text-color);
+    z-index: -1;
+    left: 0;
+    background-color: var(--background-color-05);
+    backdrop-filter: blur(28px);
+    padding: 2px 8px;
+    border-radius: 6px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+.forward {
+  .message-content__wrapper {
+    z-index: 100;
+    margin-bottom: 20px;
+  }
+}
+.message-container--self {
+  .message-content-time {
+    left: unset;
+    right: 0;
+  }
+}

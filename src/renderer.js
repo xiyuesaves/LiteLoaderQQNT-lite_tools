@@ -1,5 +1,8 @@
 // 运行在 Electron 渲染进程 下的页面脚本
-let options, styleText, port;
+let options,
+  styleText,
+  port,
+  idTImeMap = new Map();
 
 // 首次执行检测，只有第一次执行时返回true
 function First() {
@@ -154,6 +157,29 @@ async function mainMessage() {
       subtree: true,
     });
   }
+  function observerMessageList() {
+    new MutationObserver(async (mutations, observe) => {
+      const msgList = await lite_tools.getMsgIdAndTime();
+      idTImeMap = new Map([...idTImeMap, ...msgList]);
+      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+        const find = idTImeMap.get(el.id);
+        if (find) {
+          const msgElement = el.querySelector(".message-content__wrapper");
+          if (msgElement && !el.querySelector(".message-content-time")) {
+            const timeEl = document.createElement("div");
+            timeEl.innerText = new Date(find).toLocaleString();
+            timeEl.classList.add("message-content-time");
+            msgElement.appendChild(timeEl);
+          }
+        }
+      });
+    }).observe(document.querySelector(".ml-list.list"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+  }
+
   // 刷新页面配置
   async function updatePage() {
     // 初始化推荐表情
@@ -199,6 +225,10 @@ async function mainMessage() {
     // 初始化输入框上方功能
     if (document.querySelector(".chat-input-area") && first("chat-input-area")) {
       observerChatArea();
+    }
+    // 消息列表监听器
+    if (options.message.showMsgTime && document.querySelector(".ml-list.list") && first("msgList")) {
+      observerMessageList();
     }
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
@@ -314,6 +344,32 @@ function chatMessage() {
     options = opt;
     updatePage();
   });
+  // 附加消息发送时间
+  function observerMessageList() {
+    new MutationObserver(async (mutations, observe) => {
+      const msgList = await lite_tools.getMsgIdAndTime();
+      idTImeMap = new Map([...idTImeMap, ...msgList]);
+      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+        const find = idTImeMap.get(el.id);
+        if (find) {
+          const msgElement = el.querySelector(".message-content__wrapper");
+          if (msgElement && !el.querySelector(".message-content-time")) {
+            const timeEl = document.createElement("div");
+            timeEl.innerText = new Date(find).toLocaleString();
+            timeEl.classList.add("message-content-time");
+            msgElement.appendChild(timeEl);
+          }
+        }
+      });
+    }).observe(document.querySelector(".ml-list.list"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+  }
+  if (options.message.showMsgTime) {
+    observerMessageList();
+  }
 }
 
 // 转发消息界面
@@ -324,6 +380,37 @@ function forwardMessage() {
     // 更新自定义样式
     updateWallpaper();
   }
+
+  // 附加消息发送时间
+  function observerMessageList() {
+    new MutationObserver(async (mutations, observe) => {
+      const msgList = await lite_tools.getMsgIdAndTime();
+      idTImeMap = new Map([...idTImeMap, ...msgList]);
+      lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
+      document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
+        const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
+        if (find) {
+          lite_tools.log("找到对应消息id时间", find);
+          const msgElement = el.querySelector(".message-content__wrapper");
+          if (msgElement && !el.querySelector(".message-content-time")) {
+            const timeEl = document.createElement("div");
+            timeEl.innerText = new Date(find).toLocaleString();
+            timeEl.classList.add("message-content-time");
+            // msgElement.innerText = find;
+            msgElement.appendChild(timeEl);
+          }
+        }
+      });
+    }).observe(document.querySelector(".list .q-scroll-view"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+  }
+  if (options.message.showMsgTime) {
+    observerMessageList();
+  }
+
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");
     options = opt;
