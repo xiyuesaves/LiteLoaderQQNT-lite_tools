@@ -654,7 +654,7 @@ async function onConfigView(view) {
   }
   view.querySelector(".tail-content").addEventListener(
     "input",
-    debounce((event) => {
+    debounce(() => {
       options.tail.content = view.querySelector(".tail-content").value;
       lite_tools.config(options);
     }, 100)

@@ -25,7 +25,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | 自动打开来自手机的链接 |
 | 阻止拖拽多选消息 |
 | 消息显示发送时间 |
-| 自定义消息后缀 |
+| 自定义消息后缀（仅9.9.0可用） |
 | ~~自定义群聊右上角功能~~ |
 
 ## 安装方法
