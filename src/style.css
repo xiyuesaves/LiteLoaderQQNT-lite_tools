@@ -277,6 +277,10 @@
   overflow: hidden;
   border-width: 0 !important;
 }
+.chat-msg-area__tip--top-btn.theme-primary::after,
+.chat-msg-area__tip--bottom.theme-primary::after {
+  background-color: var(--brand_standard) !important;
+}
 .chat-msg-area__tip--top-btn::after,
 .chat-msg-area__tip--bottom::after {
   position: absolute;

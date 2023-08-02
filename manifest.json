@@ -4,7 +4,7 @@
     "name": "轻量工具箱",
     "slug": "lite_tools",
     "description": "里面有一些能提升使用体验的小工具，点击详情查看功能列表。",
-    "version": "1.0.11",
+    "version": "1.1.11",
     "thumbnail": "./icon.png",
     "author": {
         "name": "曦月",

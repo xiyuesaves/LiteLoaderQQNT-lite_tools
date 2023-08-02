@@ -254,6 +254,7 @@ async function mainMessage() {
   lite_tools.updateOptions((event, opt) => {
     log("新接口获取配置更新");
     options = opt;
+    updateWallpaper();
     updatePage();
   });
 
@@ -367,6 +368,7 @@ function chatMessage() {
   lite_tools.updateOptions((event, opt) => {
     log("新接口获取配置更新");
     options = opt;
+    updateWallpaper();
     updatePage();
   });
 
@@ -395,6 +397,7 @@ function forwardMessage() {
   lite_tools.updateOptions((event, opt) => {
     log("新接口获取配置更新");
     options = opt;
+    updateWallpaper();
     updatePage();
   });
 
