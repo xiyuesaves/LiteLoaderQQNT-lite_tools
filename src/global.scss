@@ -88,7 +88,9 @@
 }
 .message-content__wrapper {
   position: relative;
+  z-index: 100;
   margin-bottom: 15px;
+  overflow: unset !important;
   &:hover {
     .message-content-time {
       opacity: 1;
