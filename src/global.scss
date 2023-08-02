@@ -89,19 +89,29 @@
 .message-content__wrapper {
   position: relative;
   margin-bottom: 15px;
+  &:hover {
+    .message-content-time {
+      opacity: 1;
+      transform: translateX(0%);
+    }
+  }
   .message-content-time {
     position: absolute;
     top: calc(100% + 4px);
     font-size: 12px;
     white-space: nowrap;
     color: var(--text-color);
-    z-index: -1;
+    z-index: 100;
     left: 0;
     background-color: var(--background-color-05);
     backdrop-filter: blur(28px);
     padding: 2px 8px;
     border-radius: 6px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+    transition: 300ms;
+    transform: translateX(-30%);
+    opacity: 0;
+    pointer-events: none;
   }
 }
 .forward {
@@ -114,5 +124,6 @@
   .message-content-time {
     left: unset;
     right: 0;
+    transform: translateX(30%);
   }
 }
