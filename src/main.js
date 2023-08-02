@@ -46,6 +46,10 @@ const defaultOptions = {
     showMsgTimeHover: false,
     autoOpenURL: false,
   },
+  tail: {
+    enabled: false,
+    content: "",
+  },
   textAreaFuncList: [],
   background: {
     enabled: false,
@@ -294,6 +298,26 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
+  // ipcMain 监听事件patch
+  window.webContents.on("ipc-message", (_, channel, ...args) => {
+    // log("ipc-msg被拦截", channel, args);
+    if (args[1] && args[1][0] === "nodeIKernelMsgService/sendMsg") {
+      // log("消息发送事件", args[1]);
+      if (args[1][1] && args[1][1].msgElements) {
+        if (options.tail.enabled) {
+          args[1][1].msgElements.forEach((el) => {
+            if (el.textElement && el.textElement.length !== 0) {
+              el.textElement.content += options.tail.content;
+            }
+          });
+        }
+      }
+    }
+  });
+  // window.webContents.on("ipc-message-sync", (_, channel, ...args) => {
+  //   log("ipc-msg-sync被拦截", channel, args);
+  // });
+
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
 
@@ -405,11 +429,7 @@ function onBrowserWindowCreated(window, plugin) {
     return original_send.call(window.webContents, channel, ...args);
   };
 
-  if (window.webContents.__qqntim_original_object) {
-    window.webContents.__qqntim_original_object.send = patched_send;
-  } else {
-    window.webContents.send = patched_send;
-  }
+  window.webContents.send = patched_send;
 }
 
 // 卡片替换函数

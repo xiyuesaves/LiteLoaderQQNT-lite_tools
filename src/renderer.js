@@ -13,6 +13,17 @@ function First() {
 }
 const first = First();
 
+// 防抖函数
+function debounce(fn, time) {
+  let timer = null;
+  return function (...args) {
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, time);
+  };
+}
+
 // 通用初始化函数
 function initFunction(func) {
   if (!options.spareInitialization) {
@@ -626,6 +637,28 @@ async function onConfigView(view) {
   } else {
     view.querySelector(".hover-show-hidden").classList.add("hidden");
   }
+
+  // 添加消息后缀
+  addSwitchEventlistener("tail.enabled", ".msg-tail", (event, enabled) => {
+    if (enabled) {
+      view.querySelector(".message-tail").classList.remove("hidden");
+    } else {
+      view.querySelector(".message-tail").classList.add("hidden");
+    }
+  });
+  view.querySelector(".tail-content").value = options.tail.content;
+  if (options.tail.enabled) {
+    view.querySelector(".message-tail").classList.remove("hidden");
+  } else {
+    view.querySelector(".message-tail").classList.add("hidden");
+  }
+  view.querySelector(".tail-content").addEventListener(
+    "input",
+    debounce((event) => {
+      options.tail.content = view.querySelector(".tail-content").value;
+      lite_tools.config(options);
+    }, 100)
+  );
 
   // 移入才显示时间
   addSwitchEventlistener("message.showMsgTimeHover", ".showMsgTimeHover");

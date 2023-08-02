@@ -24,7 +24,7 @@
       <div class="hidden select-path">
         <hr class="horizontal-dividing-line" />
         <div class="vertical-list-item">
-          <input placeholder="请选择文件" readonly class="select-file text_color" type="text" spellcheck="false" />
+          <input placeholder="请选择文件" readonly class="select-file input-text text_color" type="text" spellcheck="false" />
           <div class="ops-btns">
             <button class="q-button q-button--small q-button--secondary select-file">选择文件</button>
           </div>
@@ -140,6 +140,22 @@
               <span class="q-switch__handle"></span>
             </div>
           </li>
+        </div>
+        <hr class="horizontal-dividing-line" />
+        <li class="vertical-list-item">
+          <div>
+            <h2>消息后缀</h2>
+            <span class="secondary-text">在每一条消息后方加上指定内容</span>
+          </div>
+          <div class="msg-tail q-switch">
+            <span class="q-switch__handle"></span>
+          </div>
+        </li>
+        <div class="hidden message-tail">
+          <hr class="horizontal-dividing-line" />
+          <div class="vertical-list-item">
+            <input placeholder="输入消息后缀" class="tail-content input-text text_color" type="text" spellcheck="false" />
+          </div>
         </div>
       </ul>
     </div>

@@ -61,8 +61,9 @@
   text-align: center;
 }
 
-.select-file {
+.input-text {
   align-self: normal;
+  height: 24px;
   flex: 1;
   border-radius: 4px;
   margin-right: 16px;
@@ -70,7 +71,7 @@
   padding-left: 5px;
   background-color: var(--overlay_active);
 }
-.select-file:last-child {
+.input-text:last-child {
   margin-right: 0;
 }
 .q-switch__disabled {
