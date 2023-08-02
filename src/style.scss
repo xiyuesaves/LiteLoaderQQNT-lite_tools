@@ -283,6 +283,9 @@
   position: relative;
   overflow: hidden;
   border-width: 0 !important;
+  &.theme-primary::after{
+    background-color: var(--brand_standard) !important;
+  }
   &::after {
     position: absolute;
     top: 0;

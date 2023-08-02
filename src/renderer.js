@@ -252,6 +252,7 @@ async function mainMessage() {
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");
     options = opt;
+    updateWallpaper();
     updatePage();
   });
 
@@ -346,6 +347,7 @@ function chatMessage() {
   // 配置更新
   lite_tools.updateOptions((event, opt) => {
     options = opt;
+    updateWallpaper();
     updatePage();
   });
   // 附加消息发送时间
@@ -420,6 +422,7 @@ function forwardMessage() {
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");
     options = opt;
+    updateWallpaper();
     updatePage();
   });
 }
