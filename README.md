@@ -2,14 +2,13 @@
   <img src="./icon.png" />
 </div>
 
-# LiteLoaderQQNT-lite_tools-plus
+# LiteLoaderQQNT-lite_tools-dev
 
-### 该分支需要手动安装依赖库才能使用，请量力而行
+### 该分支为开发版，需要手动安装依赖库才能使用，请量力而行
 
 ### 该分支并不稳定，无法保证可用性，请酌情使用
 
-
-LiteLoaderQQNT插件，轻量工具箱-plus，添加了一些能提升使用体验的功能。
+LiteLoaderQQNT插件，轻量工具箱-dev，添加了一些能提升使用体验的功能。
 
 LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
@@ -29,9 +28,9 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | ~~自定义群聊右上角功能~~ |
 
 ## 安装方法
+  - 安装nodejs
   - pull该项目到LiteLoader数据目录
-  - 执行`npm i`安装环境
-  - 手动编译`src`目录下的`style.scss`和`global.scss`一次（后续会优化该步骤）
+  - 执行`npm i`安装所需库
   - 完成安装
 
 ## 协议及免责
