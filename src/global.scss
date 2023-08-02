@@ -77,13 +77,11 @@
 @media (prefers-color-scheme: light) {
   :root {
     --text-color: rgba(0, 0, 0, 0.8);
-    --background-color-05: rgba(255, 255, 255, 0.5);
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: rgba(255, 255, 255, 0.8);
-    --background-color-05: rgba(0, 0, 0, 0.5);
   }
 }
 .message-content__wrapper {
@@ -109,7 +107,7 @@
     backdrop-filter: blur(28px);
     padding: 2px 8px;
     border-radius: 6px;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--box-shadow);
     &.hover-show {
       transition: 300ms;
       transform: translateX(-30%);

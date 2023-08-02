@@ -1,4 +1,7 @@
 /* 独立所有变量 */
+:root {
+  --box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+}
 @media (prefers-color-scheme: light) {
   :root {
     --background-color-008: rgba(255, 255, 255, 0.08);
@@ -213,7 +216,7 @@
   background: unset !important;
   color: var(--text-color) !important;
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: var(--box-shadow);
   overflow: hidden !important;
   position: relative;
   backdrop-filter: blur(28px);
@@ -245,7 +248,7 @@
 
 .file-message--content {
   border-radius: 8px;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--box-shadow);
 }
 
 /* 语音消息样式微调 */
@@ -279,11 +282,11 @@
 .chat-msg-area__tip--top-btn,
 .chat-msg-area__tip--bottom {
   background: unset !important;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--box-shadow);
   position: relative;
   overflow: hidden;
   border-width: 0 !important;
-  &.theme-primary::after{
+  &.theme-primary::after {
     background-color: var(--brand_standard) !important;
   }
   &::after {
