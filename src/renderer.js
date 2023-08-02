@@ -243,7 +243,9 @@ async function mainMessage() {
     });
 
     // 更新自定义样式
-    updateWallpaper();
+    if (first("init-wallpaper")) {
+      updateWallpaper();
+    }
   }
 
   // 配置文件更新
@@ -337,7 +339,9 @@ function chatMessage() {
     });
 
     // 更新自定义样式
-    updateWallpaper();
+    if (first("init-wallpaper")) {
+      updateWallpaper();
+    }
   }
   // 配置更新
   lite_tools.updateOptions((event, opt) => {
@@ -378,7 +382,9 @@ function forwardMessage() {
   updatePage();
   async function updatePage() {
     // 更新自定义样式
-    updateWallpaper();
+    if (first("init-wallpaper")) {
+      updateWallpaper();
+    }
   }
 
   // 附加消息发送时间
