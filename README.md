@@ -4,11 +4,9 @@
 
 # LiteLoaderQQNT-lite_tools-plus
 
-### 理论兼容所有可以加载LiteLoaderQQNT本体的QQ版本
-
 ### 该分支需要手动安装依赖库才能使用，请量力而行
 
-### 该分支并不稳定，请酌情使用
+### 该分支并不稳定，无法保证可用性，请酌情使用
 
 
 LiteLoaderQQNT插件，轻量工具箱-plus，添加了一些能提升使用体验的功能。
