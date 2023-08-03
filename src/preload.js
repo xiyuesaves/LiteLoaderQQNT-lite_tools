@@ -29,6 +29,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
   // 消息窗口向主进程发送侧边栏按钮信息
   sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
+  // 聊天窗口顶部功能列表
+  sendChatTopList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendChatTopList", list),
   // 在浏览器打开页面
   openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
   // 在主进程的终端打印渲染进程日志

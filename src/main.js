@@ -51,6 +51,7 @@ const defaultOptions = {
     content: "",
   },
   textAreaFuncList: [],
+  chatAreaFuncList: [],
   background: {
     enabled: false,
     showUrl: "",
@@ -70,7 +71,6 @@ function onLoad(plugin) {
   const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
   const globalPath = path.join(plugin.path.plugin, "src/global.css");
   const configPath = path.join(plugin.path.plugin, "src/config");
-
   const catchPath = path.join(plugin.path.cache);
 
   // 初始化配置文件路径
@@ -158,11 +158,19 @@ function onLoad(plugin) {
     return list;
   });
 
-  // 更新聊天框上方功能列表
+  // 更新输入框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
     let res = new Map(),
       concat = options.textAreaFuncList.concat(list);
     options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
+    updateOptions();
+  });
+
+  // 更新聊天框上方功能列表
+  ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (event, list) => {
+    let res = new Map(),
+      concat = options.chatAreaFuncList.concat(list);
+    options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
     updateOptions();
   });
 
