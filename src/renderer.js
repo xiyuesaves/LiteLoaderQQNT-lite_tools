@@ -380,6 +380,9 @@ function chatMessage() {
               const timeEl = document.createElement("div");
               timeEl.innerText = new Date(find).toLocaleString();
               timeEl.classList.add("message-content-time");
+              if (options.message.showMsgTimeHover) {
+                timeEl.classList.add("hover-show");
+              }
               msgElement.appendChild(timeEl);
             }
           }
@@ -421,7 +424,9 @@ function forwardMessage() {
               const timeEl = document.createElement("div");
               timeEl.innerText = new Date(find).toLocaleString();
               timeEl.classList.add("message-content-time");
-              // msgElement.innerText = find;
+              if (options.message.showMsgTimeHover) {
+                timeEl.classList.add("hover-show");
+              }
               msgElement.appendChild(timeEl);
             }
           }
