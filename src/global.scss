@@ -8,6 +8,12 @@
     .chat-msg-area {
       .ml-list.list > div {
         pointer-events: none !important;
+        .gray-tip-content,
+        .gray-tip-element {
+          a {
+            pointer-events: auto !important;
+          }
+        }
         .message .message-container {
           .avatar,
           .message-content__wrapper {
