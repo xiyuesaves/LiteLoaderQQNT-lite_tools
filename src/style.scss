@@ -223,6 +223,9 @@
   overflow: hidden !important;
   position: relative;
   backdrop-filter: blur(28px);
+  &:focus:before {
+    background: unset !important;
+  }
   /* 我的消息 */
   &.container--self {
   }
