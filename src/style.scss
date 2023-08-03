@@ -32,9 +32,12 @@
 }
 
 /* 更透亮的侧边栏 */
-.sidebar-nav {
-  background-color: transparent !important;
+.acrylic {
+  .sidebar-nav {
+    background-color: transparent !important;
+  }
 }
+
 /* 背景视频样式 */
 .background-wallpaper-video {
   object-fit: cover;
