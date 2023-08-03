@@ -86,7 +86,6 @@
 }
 .message-content__wrapper {
   position: relative;
-  z-index: 100;
   margin-bottom: 15px;
   overflow: unset !important;
   &:hover {
@@ -101,7 +100,6 @@
     font-size: 12px;
     white-space: nowrap;
     color: var(--text-color);
-    z-index: 100;
     left: 0;
     background-color: var(--background-color-05);
     backdrop-filter: blur(28px);
