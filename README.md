@@ -3,7 +3,7 @@
 </div>
 
 # LiteLoaderQQNT-lite_tools
-### 该分支已兼容9.9.1-15293
+### 该分支已兼容9.9.1
 
 LiteLoaderQQNT插件，轻量工具箱，添加了一些能提升使用体验的功能。
 
