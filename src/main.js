@@ -1,5 +1,5 @@
 // 调试工具
-const inspector = require("node:inspector");
+// const inspector = require("node:inspector");
 
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell } = require("electron");
@@ -56,7 +56,7 @@ function onLoad(plugin, liteloader) {
   // 保存配置和默认配置执行一次合并，以适配新增功能
   options = Object.assign(defaultOptions, fileOptions);
 
-  if (options.debug) {
+  if (options.debug && false) {
     inspector.open(8899, "localhost", true);
     try {
       const sass = require("sass");
