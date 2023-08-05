@@ -212,7 +212,7 @@ async function mainMessage() {
             const msgElement = el.querySelector(".message-content__wrapper");
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleTimeString().slice(0, 5);;
+              timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
                 msgElement.classList.add("hover-show");
@@ -443,7 +443,7 @@ function chatMessage() {
             const msgElement = el.querySelector(".message-content__wrapper");
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleTimeString().slice(0, 5);;
+              timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
                 msgElement.classList.add("hover-show");
@@ -491,7 +491,7 @@ function forwardMessage() {
             const msgElement = el.querySelector(".message-content__wrapper");
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleTimeString().slice(0, 5);
+              timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
                 msgElement.classList.add("hover-show");
