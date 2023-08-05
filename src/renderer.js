@@ -467,6 +467,7 @@ function chatMessage() {
 // 转发消息界面
 function forwardMessage() {
   document.querySelector("#app").classList.add("show-time");
+  document.querySelector("#app").classList.add("forward");
   updatePage();
   async function updatePage() {
     // 更新自定义样式
