@@ -1,7 +1,6 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options,
   styleText,
-  port,
   idTImeMap = new Map();
 
 // 首次执行检测，只有第一次执行时返回true
@@ -63,7 +62,7 @@ async function updateWallpaper() {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
       document.querySelector(".background-wallpaper-video")?.remove();
-      backgroundImage = `:root{--background-wallpaper:url("http://localhost:${port}${options.background.url}")}`;
+      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
     } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
       let videoEl = document.querySelector(".background-wallpaper-video");
       if (!videoEl) {
@@ -84,8 +83,8 @@ async function updateWallpaper() {
           console.log("自定义视频挂载失败");
         }
       } else {
-        if (videoEl.getAttribute("src") !== `http://localhost:${port}${options.background.url}`) {
-          videoEl.setAttribute("src", `http://localhost:${port}${options.background.url}`);
+        if (videoEl.getAttribute("src") !== options.background.url) {
+          videoEl.setAttribute("src", options.background.url);
         }
       }
     } else {
@@ -514,8 +513,6 @@ function forwardMessage() {
 async function onLoad() {
   // 获取最新的配置信息
   options = await lite_tools.config();
-  // 获取端口
-  port = await lite_tools.getPort();
 
   // 插入自定义样式style容器
   const backgroundStyle = document.createElement("style");
@@ -535,7 +532,7 @@ async function onLoad() {
       console.log("更新背景样式");
       let backgroundImage = "";
       if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-        backgroundImage = `:root{--background-wallpaper:url("http://localhost:${port}${options.background.url}")}`;
+        backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
       }
       element.textContent = backgroundImage + message;
     }
@@ -595,9 +592,9 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
-  port = await lite_tools.getPort();
-  const css_file_path = `http://localhost:${port}/config/view.css`;
-  const html_file_path = `http://localhost:${port}/config/view.html`;
+  const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
+  const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
+  const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
 
   // CSS
   const link_element = document.createElement("link");
@@ -616,7 +613,7 @@ async function onConfigView(view) {
 
   // 显示插件版本信息
   view.querySelector(".version .link").addEventListener("click", () => {
-    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/dev");
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/v3");
   });
 
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
@@ -749,7 +746,7 @@ async function onConfigView(view) {
   } else {
     view.querySelector(".select-path").classList.add("hidden");
   }
-  view.querySelector(".select-path input").value = options.background.showUrl;
+  view.querySelector(".select-path input").value = options.background.url;
   view.querySelectorAll(".select-file").forEach((el) => {
     el.addEventListener("click", () => {
       lite_tools.openSelectBackground();
@@ -780,7 +777,7 @@ async function onConfigView(view) {
   // 监听设置文件变动
   lite_tools.updateOptions((event, opt) => {
     options = opt;
-    view.querySelector(".select-path input").value = options.background.showUrl;
+    view.querySelector(".select-path input").value = options.background.url;
   });
 }
 

@@ -17,8 +17,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   config: (options) => ipcRenderer.invoke("LiteLoader.lite_tools.config", options),
   // 获取背景样式
   getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
-  // 获取main进程http端口
-  getPort: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPort"),
   // 获取全局样式
   getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
   // 获取消息列表id对应时间

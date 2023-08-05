@@ -1,23 +1,3 @@
-// 调试工具
-const inspector = require("node:inspector");
-
-// 编译样式
-const sass = require("sass");
-
-// http服务，处理高版本无法使用file协议的问题
-const express = require("express");
-const net = require("net");
-const app = express();
-
-// 获取空闲端口号
-const port = (() => {
-  const server = net.createServer();
-  server.listen(0);
-  const { port } = server.address();
-  server.close();
-  return port;
-})();
-
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
@@ -54,7 +34,6 @@ const defaultOptions = {
   chatAreaFuncList: [],
   background: {
     enabled: false,
-    showUrl: "",
     url: "",
   },
 };
@@ -89,8 +68,18 @@ function onLoad(plugin) {
   options = Object.assign(defaultOptions, fileOptions);
 
   if (options.debug) {
-    inspector.open(8899, "localhost", true);
+    // 调试工具
     try {
+      const inspector = require("node:inspector");
+      inspector.open(8899, "localhost", true);
+    } catch (err) {
+      console.log("当前版本无法开启远程调试");
+      inspector = false;
+    }
+
+    try {
+      // 编译样式
+      const sass = require("sass");
       // 监听并编译style.scss
       fs.watch(
         styleSassPath,
@@ -118,27 +107,13 @@ function onLoad(plugin) {
     log = () => {};
   }
 
-  // 配置界面
-  app.use("/config", express.static(configPath));
-
-  // 自定义背景
-  app.use("/cache", express.static(catchPath));
-
-  // 开始监听
-  app.listen(port);
-
   log("轻量工具箱已加载", plugin);
-  log("http服务已启用", port);
 
+  // 返回消息id对应的发送时间
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
     // 只保留100条数据，减轻数据传递压力
     msgIdList = msgIdList.slice(-100);
     return msgIdList;
-  });
-
-  // 获取http端口
-  ipcMain.handle("LiteLoader.lite_tools.getPort", (event) => {
-    return port;
   });
 
   // 打开网址
@@ -237,33 +212,10 @@ function onLoad(plugin) {
         buttonLabel: "选择", //回调结果渲染到img标签上
       })
       .then((result) => {
+        log("选择了文件", result);
         if (!result.canceled) {
-          const rawFilePath = path.join(result.filePaths[0]).replace(/\\/g, "/");
-          const backgroundFolder = path.join(catchPath, "background_file");
-          const fileName = path.basename(rawFilePath);
-          const backgroundFilePath = path.join(backgroundFolder, fileName);
-          // 判断是不是缓存文件夹路径
-          if (options.background.url.includes("/cache/background_file/")) {
-            try {
-              fs.unlinkSync(path.join(backgroundFolder, path.basename(options.background.url)));
-            } catch (err) {
-              log("删除文件失败", err);
-            }
-          }
-          log("选择了文件", rawFilePath);
-          // 创建文件夹路径
-          if (!fs.existsSync(backgroundFolder)) {
-            if (!fs.existsSync(catchPath)) {
-              fs.mkdirSync(catchPath);
-            }
-            fs.mkdirSync(backgroundFolder);
-          }
-          // 复制文件到插件缓存目录
-          fs.copyFile(rawFilePath, backgroundFilePath, () => {
-            options.background.showUrl = rawFilePath;
-            options.background.url = `/cache/background_file/${fileName}`;
-            updateOptions();
-          });
+          options.background.url = path.join(result.filePaths[0]).replace(/\\/g, "/");
+          updateOptions();
         }
       })
       .catch((err) => {
@@ -306,7 +258,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
-  // ipcMain 监听事件patch
+  // ipcMain 监听事件patch 仅9.9.0有效
   window.webContents.on("ipc-message", (_, channel, ...args) => {
     // log("ipc-msg被拦截", channel, args);
     if (args[1] && args[1][0] === "nodeIKernelMsgService/sendMsg") {
