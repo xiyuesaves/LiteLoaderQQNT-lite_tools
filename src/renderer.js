@@ -26,7 +26,8 @@ function debounce(fn, time) {
 
 // 通用初始化函数
 function initFunction(func) {
-  if (!options.spareInitialization) {
+  // 由于出现问题的概率较高，禁用第一种加载方式
+  if (!options.spareInitialization && false) {
     // 全局监听器，在页面创建30秒后自动销毁
     const observer = new MutationObserver(func);
     observer.observe(document.querySelector("#app"), {
