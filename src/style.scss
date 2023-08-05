@@ -223,7 +223,13 @@
   overflow: hidden !important;
   position: relative;
   backdrop-filter: blur(28px);
-  &:focus:before {
+  & *::selection {
+    background-color: rgba(0, 153, 255, 0.5) !important;
+  }
+
+  &:focus .image:after,
+  &:focus:before,
+  .image:focus:after {
     background: unset !important;
   }
   /* 我的消息 */
