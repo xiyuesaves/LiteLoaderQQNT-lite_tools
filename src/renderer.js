@@ -203,6 +203,7 @@ async function mainMessage() {
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
       if (options.message.showMsgTime) {
+        document.body.classList.add("show-time");
         const msgList = await lite_tools.getMsgIdAndTime();
         idTImeMap = new Map([...idTImeMap, ...msgList]);
         document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
@@ -211,15 +212,17 @@ async function mainMessage() {
             const msgElement = el.querySelector(".message-content__wrapper");
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.innerText = new Date(find).toLocaleTimeString().slice(0, 5);;
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
-                timeEl.classList.add("hover-show");
+                msgElement.classList.add("hover-show");
               }
               msgElement.appendChild(timeEl);
             }
           }
         });
+      } else {
+        document.body.classList.remove("show-time");
       }
     }).observe(document.querySelector(".ml-list.list"), {
       attributes: false,
@@ -431,6 +434,7 @@ function chatMessage() {
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
       if (options.message.showMsgTime) {
+        document.body.classList.add("show-time");
         const msgList = await lite_tools.getMsgIdAndTime();
         idTImeMap = new Map([...idTImeMap, ...msgList]);
         document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
@@ -439,15 +443,17 @@ function chatMessage() {
             const msgElement = el.querySelector(".message-content__wrapper");
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.innerText = new Date(find).toLocaleTimeString().slice(0, 5);;
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
-                timeEl.classList.add("hover-show");
+                msgElement.classList.add("hover-show");
               }
               msgElement.appendChild(timeEl);
             }
           }
         });
+      } else {
+        document.body.classList.remove("show-time");
       }
     }).observe(document.querySelector(".ml-list.list"), {
       attributes: false,
@@ -460,7 +466,7 @@ function chatMessage() {
 
 // 转发消息界面
 function forwardMessage() {
-  document.querySelector("#app").classList.add("forward");
+  document.querySelector("#app").classList.add("show-time");
   updatePage();
   async function updatePage() {
     // 更新自定义样式
@@ -473,6 +479,7 @@ function forwardMessage() {
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
       if (options.message.showMsgTime) {
+        document.body.classList.add("show-time");
         const msgList = await lite_tools.getMsgIdAndTime();
         idTImeMap = new Map([...idTImeMap, ...msgList]);
         lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
@@ -483,15 +490,17 @@ function forwardMessage() {
             const msgElement = el.querySelector(".message-content__wrapper");
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.innerText = new Date(find).toLocaleTimeString().slice(0, 5);
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
-                timeEl.classList.add("hover-show");
+                msgElement.classList.add("hover-show");
               }
               msgElement.appendChild(timeEl);
             }
           }
         });
+      } else {
+        document.body.classList.remove("show-time");
       }
     }).observe(document.querySelector(".list .q-scroll-view"), {
       attributes: false,

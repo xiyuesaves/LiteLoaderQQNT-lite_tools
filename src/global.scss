@@ -90,48 +90,75 @@
     --text-color: rgba(255, 255, 255, 0.8);
   }
 }
-.message-content__wrapper {
-  position: relative;
-  margin-bottom: 15px;
-  overflow: unset !important;
-  &:hover {
-    .message-content-time.hover-show {
-      opacity: 1;
-      transform: translateX(0%);
-    }
-  }
-  .message-content-time {
-    position: absolute;
-    top: calc(100% + 4px);
-    font-size: 12px;
-    white-space: nowrap;
-    color: var(--text-color);
-    left: 0;
-    background-color: var(--background-color-05);
-    backdrop-filter: blur(28px);
-    padding: 2px 8px;
-    border-radius: 6px;
-    box-shadow: var(--box-shadow);
-    &.hover-show {
-      transition: 300ms;
-      transform: translateX(-30%);
-      opacity: 0;
-      pointer-events: none;
-    }
-  }
-}
-.forward {
-  .message-content__wrapper {
-    z-index: 100;
-    margin-bottom: 20px;
-  }
-}
-.message-container--self {
-  .message-content-time {
-    left: unset;
-    right: 0;
-    &.hover-show {
-      transform: translateX(30%);
+.show-time {
+  .q-scroll-view > div,
+  .ml-item {
+    .message {
+      .message-container {
+        /* 消息块样式调整 */
+        .message-content__wrapper {
+          position: relative;
+          overflow: unset !important;
+          /* 加入时间样式 */
+          .message-content-time {
+            position: absolute;
+            bottom: 0;
+            font-size: 12px;
+            white-space: nowrap;
+            color: var(--text-color);
+            background-color: var(--background-color-05);
+            backdrop-filter: blur(28px);
+            padding: 4px 12px;
+            border-radius: 50px;
+            box-shadow: var(--box-shadow);
+            pointer-events: none;
+          }
+          &.hover-show {
+            .message-content-time {
+              transition: 150ms;
+            }
+            &:hover {
+              .message-content-time {
+                transform: scale(1);
+                opacity: 1;
+              }
+            }
+          }
+        }
+        /* 其他人发的消息 */
+        &:not(.message-container--self) {
+          padding-right: 30px;
+          .message-content-time {
+            left: calc(100% + 4px);
+          }
+          .hover-show {
+            .message-content-time {
+              transform-origin: left bottom;
+              transform: scale(0.5);
+              opacity: 0;
+            }
+          }
+        }
+        /* 自己发的消息 */
+        &.message-container--self {
+          padding-left: 30px;
+          .message-content-time {
+            right: calc(100% + 4px);
+          }
+          .hover-show {
+            .message-content-time {
+              transform-origin: right bottom;
+              transform: scale(0.5);
+              opacity: 0;
+            }
+          }
+        }
+
+        /* 移除文件图标 */
+        .content-status {
+          display: none;
+        }
+      }
     }
   }
 }
