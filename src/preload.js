@@ -7,22 +7,30 @@ contextBridge.exposeInMainWorld("lite_tools", {
   optionsOpen: (callback) => ipcRenderer.on("LiteLoader.lite_tools.optionsOpen", callback),
   // 更新样式信息
   updateStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateStyle", callback),
+  // 更新全局样式
+  updateGlobalStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateGlobalStyle", callback),
   // 更新配置信息
   updateOptions: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateOptions", callback),
-  // 消息窗口向主进程发送侧边栏按钮信息
-  sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
-  // 消息窗口向主进程发送输入框上方功能列表
-  sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 获取和更新配置文件
   config: (options) => ipcRenderer.invoke("LiteLoader.lite_tools.config", options),
-  // 渲染进程准备完毕
+  // 获取背景样式
   getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
+  // 获取全局样式
+  getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
+  // 获取消息列表id对应时间
+  getMsgIdAndTime: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMsgIdAndTime"),
+  // 消息窗口向主进程发送输入框上方功能列表
+  sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 打开选择背景图片窗口
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
+  // 消息窗口向主进程发送侧边栏按钮信息
+  sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
+  // 聊天窗口顶部功能列表
+  sendChatTopList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendChatTopList", list),
   // 在浏览器打开页面
   openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
   // 在主进程的终端打印渲染进程日志
-  log: (msg) => ipcRenderer.send("LiteLoader.lite_tools.log", msg),
+  log: (...msg) => ipcRenderer.send("LiteLoader.lite_tools.log", ...msg),
 });

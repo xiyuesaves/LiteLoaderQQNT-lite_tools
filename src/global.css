@@ -1,0 +1,112 @@
+@charset "UTF-8";
+/* 全局禁用样式 */
+.disabled {
+  display: none !important;
+}
+
+/* 禁用滑动多选 */
+.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div {
+  pointer-events: none !important;
+}
+.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .gray-tip-content a,
+.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .gray-tip-element a {
+  pointer-events: auto !important;
+}
+.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .message .message-container .avatar,
+.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .message .message-container .message-content__wrapper {
+  pointer-events: auto !important;
+}
+
+/* 禁用GIF热图 */
+.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title=GIF热图] {
+  display: none !important;
+}
+
+/* 禁用小红点 */
+.disabled-badge .q-badge .q-badge-num,
+.disabled-badge .q-badge .q-badge-sub,
+.disabled-badge .q-badge .q-badge__red {
+  display: none !important;
+}
+
+/* 修复图片预览窗口悬浮窗文本模糊 */
+.image-viewer .main-area__loading-tip,
+.image-viewer .image-viewer__tip {
+  pointer-events: none;
+  width: 145px !important;
+  transform: none !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  margin: auto !important;
+}
+
+/* 修改贴图css结构 */
+.message-panel .sticker-panel {
+  max-width: 600px !important;
+}
+.message-panel .sticker-panel .sticker-panel__pages {
+  width: 100% !important;
+}
+.message-panel .sticker-panel .tabs-container .tabs-container-item {
+  width: unset !important;
+}
+.message-panel .sticker-panel .tabs-container .tabs-container-item .q-icon,
+.message-panel .sticker-panel .tabs-container .tabs-container-item div.tabs-container-item-img {
+  text-align: center;
+  width: 40px !important;
+}
+
+/* 消息列表时间元素样式 */
+@media (prefers-color-scheme: light) {
+  :root {
+    --text-color: rgba(0, 0, 0, 0.8);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: rgba(255, 255, 255, 0.8);
+  }
+}
+.message-content__wrapper {
+  position: relative;
+  margin-bottom: 15px;
+  overflow: unset !important;
+}
+.message-content__wrapper:hover .message-content-time.hover-show {
+  opacity: 1;
+  transform: translateX(0%);
+}
+.message-content__wrapper .message-content-time {
+  position: absolute;
+  top: calc(100% + 4px);
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--text-color);
+  left: 0;
+  background-color: var(--background-color-05);
+  backdrop-filter: blur(28px);
+  padding: 2px 8px;
+  border-radius: 6px;
+  box-shadow: var(--box-shadow);
+}
+.message-content__wrapper .message-content-time.hover-show {
+  transition: 300ms;
+  transform: translateX(-30%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.forward .message-content__wrapper {
+  z-index: 100;
+  margin-bottom: 20px;
+}
+
+.message-container--self .message-content-time {
+  left: unset;
+  right: 0;
+}
+.message-container--self .message-content-time.hover-show {
+  transform: translateX(30%);
+}

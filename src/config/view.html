@@ -2,16 +2,18 @@
   <section class="plugins">
     <h1>功能列表</h1>
     <div class="wrap global">
-      <div class="hidden vertical-list-item">
-        <div>
-          <h2>修改初始化方式</h2>
-          <span class="secondary-text">如果启动后功能没有生效再开启此项</span>
+      <div class="hidden">
+        <div class="vertical-list-item">
+          <div>
+            <h2>修改初始化方式</h2>
+            <span class="secondary-text">如果启动后功能没有生效再开启此项</span>
+          </div>
+          <div class="switchSpare q-switch">
+            <span class="q-switch__handle"></span>
+          </div>
         </div>
-        <div class="switchSpare q-switch is-active">
-          <span class="q-switch__handle"></span>
-        </div>
+        <hr class="horizontal-dividing-line" />
       </div>
-      <hr class="horizontal-dividing-line" />
       <div class="vertical-list-item">
         <div>
           <h2>自定义背景</h2>
@@ -24,7 +26,13 @@
       <div class="hidden select-path">
         <hr class="horizontal-dividing-line" />
         <div class="vertical-list-item">
-          <input placeholder="请选择文件" readonly class="select-file text_color" type="text" spellcheck="false" />
+          <input
+            placeholder="请选择文件"
+            readonly
+            class="select-file input-text text_color"
+            type="text"
+            spellcheck="false"
+          />
           <div class="ops-btns">
             <button class="q-button q-button--small q-button--secondary select-file">选择文件</button>
           </div>
@@ -45,7 +53,7 @@
             <h2>快速关闭图片</h2>
             <span class="secondary-text">点击图片关闭查看窗口</span>
           </div>
-          <div class="switchQuickCloseImage q-switch is-active">
+          <div class="switchQuickCloseImage q-switch">
             <span class="q-switch__handle"></span>
           </div>
         </li>
@@ -65,7 +73,17 @@
             <h2>禁用表情推荐</h2>
             <span class="secondary-text">修复官方设置有时无效的问题</span>
           </div>
-          <div class="switchSticker q-switch is-active">
+          <div class="switchSticker q-switch">
+            <span class="q-switch__handle"></span>
+          </div>
+        </li>
+        <hr class="horizontal-dividing-line" />
+        <li class="vertical-list-item">
+          <div>
+            <h2>自动打开来自手机的链接消息</h2>
+            <span class="secondary-text">还是大屏幕看着舒服</span>
+          </div>
+          <div class="switchAutoOpenURL q-switch">
             <span class="q-switch__handle"></span>
           </div>
         </li>
@@ -75,7 +93,7 @@
             <h2>禁用表情中的GIF热图</h2>
             <span class="secondary-text">看个人喜好</span>
           </div>
-          <div class="switchHotGIF q-switch is-active">
+          <div class="switchHotGIF q-switch">
             <span class="q-switch__handle"></span>
           </div>
         </li>
@@ -85,15 +103,15 @@
             <h2>禁用小红点</h2>
             <span class="secondary-text">移除左侧按钮上的小红点</span>
           </div>
-          <div class="disabledBadge q-switch is-active">
+          <div class="disabledBadge q-switch">
             <span class="q-switch__handle"></span>
           </div>
         </li>
         <hr class="horizontal-dividing-line" />
         <li class="vertical-list-item">
           <div>
-            <h2>哔哩哔哩小程序分享替换为url卡片</h2>
-            <span class="secondary-text">真不知道这小程序做出来干嘛的</span>
+            <h2>哔哩哔哩小程序替换为url卡片</h2>
+            <span class="secondary-text">谁在电脑上用小程序啊</span>
           </div>
           <div class="switchDisabledMiniPrgm q-switch">
             <span class="q-switch__handle"></span>
@@ -102,13 +120,56 @@
         <hr class="horizontal-dividing-line" />
         <li class="vertical-list-item">
           <div>
-            <h2>折叠群聊右上角所有功能</h2>
-            <span class="secondary-text">咕了</span>
+            <h2>阻止拖拽多选消息</h2>
+            <span class="secondary-text">为避免影响功能，用户头像仍可以多选</span>
           </div>
-          <div class="switchBackgroundImage q-switch">
+          <div class="switchDisabledSlideMultipleSelection q-switch">
             <span class="q-switch__handle"></span>
           </div>
         </li>
+        <hr class="horizontal-dividing-line" />
+        <li class="vertical-list-item">
+          <div>
+            <h2>显示消息发送时间</h2>
+            <span class="secondary-text">显示每一条消息的发送时间</span>
+          </div>
+          <div class="showMsgTime q-switch">
+            <span class="q-switch__handle"></span>
+          </div>
+        </li>
+        <div class="hidden hover-show-hidden">
+          <hr class="horizontal-dividing-line" />
+          <li class="vertical-list-item">
+            <div>
+              <h2>移入显示</h2>
+              <span class="secondary-text">鼠标放到消息内容上才显示发送时间</span>
+            </div>
+            <div class="showMsgTimeHover q-switch">
+              <span class="q-switch__handle"></span>
+            </div>
+          </li>
+        </div>
+        <hr class="horizontal-dividing-line" />
+        <li class="vertical-list-item">
+          <div>
+            <h2>消息后缀</h2>
+            <span class="secondary-text">在每一条消息后方加上指定内容，仅9.9.0可用</span>
+          </div>
+          <div class="msg-tail q-switch">
+            <span class="q-switch__handle"></span>
+          </div>
+        </li>
+        <div class="hidden message-tail">
+          <hr class="horizontal-dividing-line" />
+          <div class="vertical-list-item">
+            <input
+              placeholder="输入消息后缀"
+              class="tail-content input-text text_color"
+              type="text"
+              spellcheck="false"
+            />
+          </div>
+        </div>
       </ul>
     </div>
     <div class="wrap sidebar">
@@ -136,7 +197,23 @@
         </li>
       </ul>
     </div>
-    <div class="hidden wrap other">
+    <div class="wrap chatArea">
+      <div class="vertical-list-item title">
+        <h2>调整消息框上方功能按钮</h2>
+        <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 8L12 17L3 8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <ul class="hidden">
+        <hr class="horizontal-dividing-line" />
+        <li class="vertical-list-item">
+          <div>
+            <h2>首次使用需要手动打开群聊/私聊界面一次</h2>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="wrap other">
       <div class="vertical-list-item title">
         <h2>其他</h2>
         <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -148,9 +225,9 @@
         <li class="vertical-list-item">
           <div>
             <h2>远程DevTools调试</h2>
-            <span class="secondary-text">调试用，开启将导致QQ无法正常启动</span>
+            <span class="secondary-text">调试用，开启将导致QQ无法正常启动，默认端口8899</span>
           </div>
-          <div class="switchDebug q-switch is-active">
+          <div class="switchDebug q-switch">
             <span class="q-switch__handle"></span>
           </div>
         </li>

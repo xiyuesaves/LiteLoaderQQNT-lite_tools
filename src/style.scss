@@ -1,4 +1,7 @@
 /* 独立所有变量 */
+:root {
+  --box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+}
 @media (prefers-color-scheme: light) {
   :root {
     --background-color-008: rgba(255, 255, 255, 0.08);
@@ -7,7 +10,7 @@
     --background-color-05: rgba(255, 255, 255, 0.5);
     --background-color-07: rgba(255, 255, 255, 0.7);
     --background-color-1: rgba(255, 255, 255, 1);
-    ----text-color: rgba(0, 0, 0, 0.8);
+    --text-color: rgba(0, 0, 0, 0.8);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(0, 153, 255, 1);
     --voice-color-1: rgba(0, 153, 255, 1);
@@ -21,7 +24,7 @@
     --background-color-05: rgba(0, 0, 0, 0.5);
     --background-color-07: rgba(0, 0, 0, 0.7);
     --background-color-1: rgba(0, 0, 0, 1);
-    ----text-color: rgba(255, 255, 255, 0.8);
+    --text-color: rgba(255, 255, 255, 0.8);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(255, 255, 255, 1);
     --voice-color-1: rgba(255, 255, 255, 1);
@@ -29,9 +32,12 @@
 }
 
 /* 更透亮的侧边栏 */
-.sidebar-nav {
-  background-color: transparent !important;
+.acrylic {
+  .sidebar-nav {
+    background-color: transparent !important;
+  }
 }
+
 /* 背景视频样式 */
 .background-wallpaper-video {
   object-fit: cover;
@@ -211,12 +217,21 @@
 .msg-content-container,
 .mix-message__container {
   background: unset !important;
-  color: var(----text-color) !important;
+  color: var(--text-color) !important;
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: var(--box-shadow);
   overflow: hidden !important;
   position: relative;
   backdrop-filter: blur(28px);
+  & *::selection {
+    background-color: rgba(0, 153, 255, 0.5) !important;
+  }
+
+  &:focus .image:after,
+  &:focus:before,
+  .image:focus:after {
+    background: unset !important;
+  }
   /* 我的消息 */
   &.container--self {
   }
@@ -239,13 +254,13 @@
     color: var(--link-url-color) !important;
   }
   .reply-element {
-    color: var(----text-color) !important;
+    color: var(--text-color) !important;
   }
 }
 
 .file-message--content {
   border-radius: 8px;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--box-shadow);
 }
 
 /* 语音消息样式微调 */
@@ -279,7 +294,7 @@
 .chat-msg-area__tip--top-btn,
 .chat-msg-area__tip--bottom {
   background: unset !important;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--box-shadow);
   position: relative;
   overflow: hidden;
   border-width: 0 !important;
@@ -344,28 +359,6 @@
   }
 }
 
-/* 重写表情选择栏样式逻辑，以便使用样式控制图标显示与否 */
-.message-panel {
-  .sticker-panel {
-    max-width: 600px !important;
-    .sticker-panel__pages {
-      width: 100% !important;
-    }
-  }
-}
-.sticker-panel__bar {
-  .tabs-container {
-    .tabs-container-item {
-      width: unset !important;
-      .q-icon,
-      div.tabs-container-item-img {
-        text-align: center;
-        width: 40px !important;
-      }
-    }
-  }
-}
-
 /* 夜间模式增强文本可阅读性 */
 @media (prefers-color-scheme: dark) {
   .user-name {
@@ -379,6 +372,8 @@
     color: rgba(255, 255, 255, 0.8) !important;
   }
 }
+
+/* .chat-msg-area__vlist */
 
 /* 转发消息 */
 /* .forward-msg{} */

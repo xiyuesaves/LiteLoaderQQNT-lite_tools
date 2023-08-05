@@ -1,6 +1,3 @@
-// 调试工具
-// const inspector = require("node:inspector");
-
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
@@ -23,9 +20,18 @@ const defaultOptions = {
     disabledSticker: false,
     disabledHotGIF: false,
     disabledBadge: false,
+    disabledSlideMultipleSelection: false,
     convertBiliBiliArk: false,
+    showMsgTime: false,
+    showMsgTimeHover: false,
+    autoOpenURL: false,
+  },
+  tail: {
+    enabled: false,
+    content: "",
   },
   textAreaFuncList: [],
+  chatAreaFuncList: [],
   background: {
     enabled: false,
     url: "",
@@ -33,13 +39,18 @@ const defaultOptions = {
 };
 
 const listenList = [];
+let msgIdList = [];
 
 // 加载插件时触发
-function onLoad(plugin, liteloader) {
-  log("轻量工具箱已加载");
+function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
+  const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
+  const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
+  const globalPath = path.join(plugin.path.plugin, "src/global.css");
+  const configPath = path.join(plugin.path.plugin, "src/config");
+  const catchPath = path.join(plugin.path.cache);
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
@@ -56,25 +67,36 @@ function onLoad(plugin, liteloader) {
   // 保存配置和默认配置执行一次合并，以适配新增功能
   options = Object.assign(defaultOptions, fileOptions);
 
-  if (options.debug && false) {
-    inspector.open(8899, "localhost", true);
+  if (options.debug) {
     try {
+      // 调试工具
+      const inspector = require("node:inspector");
+      inspector.open(8899, "localhost", true);
+    } catch (err) {
+      console.log("当前版本无法开启远程调试");
+    }
+
+    try {
+      // 编译样式
       const sass = require("sass");
-      // 开启debug模式后开始监听并编译style.scss
-      const sassPath = path.join(plugin.path.plugin, "src/style.scss");
+      // 监听并编译style.scss
       fs.watch(
-        sassPath,
+        styleSassPath,
         "utf-8",
         debounce(() => {
-          fs.writeFileSync(stylePath, sass.compile(sassPath).css);
+          const cssText = sass.compile(styleSassPath).css;
+          fs.writeFileSync(stylePath, cssText);
+          updateStyle(cssText, "style");
         }, 100)
       );
-      // 开启debug才监听css文件变动，避免锁定文件导致插件更新失败
+      // 监听并编译global.scss
       fs.watch(
-        stylePath,
+        globalScssPath,
         "utf-8",
         debounce(() => {
-          updateStyle();
+          const cssText = sass.compile(globalScssPath).css;
+          fs.writeFileSync(globalPath, cssText);
+          updateStyle(cssText, "global");
         }, 100)
       );
     } catch {
@@ -83,6 +105,15 @@ function onLoad(plugin, liteloader) {
   } else {
     log = () => {};
   }
+
+  log("轻量工具箱已加载", plugin);
+
+  // 返回消息id对应的发送时间
+  ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
+    // 只保留100条数据，减轻数据传递压力
+    msgIdList = msgIdList.slice(-100);
+    return msgIdList;
+  });
 
   // 打开网址
   ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
@@ -101,16 +132,19 @@ function onLoad(plugin, liteloader) {
     return list;
   });
 
-  // 打开网址
-  ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
-    shell.openExternal(url);
-  });
-
-  // 更新聊天框上方功能列表
+  // 更新输入框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
     let res = new Map(),
       concat = options.textAreaFuncList.concat(list);
     options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
+    updateOptions();
+  });
+
+  // 更新聊天框上方功能列表
+  ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (event, list) => {
+    let res = new Map(),
+      concat = options.chatAreaFuncList.concat(list);
+    options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
     updateOptions();
   });
 
@@ -127,13 +161,40 @@ function onLoad(plugin, liteloader) {
   });
 
   // 控制台日志打印
-  ipcMain.on("LiteLoader.lite_tools.log", (event, message) => {
-    log("轻量工具箱 [渲染进程]: ", message);
+  ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
+    log("轻量工具箱 [渲染进程]: ", ...message);
   });
 
-  // 动态样式调整
+  // 获取全局样式
+  ipcMain.handle("LiteLoader.lite_tools.getGlobalStyle", (event) => {
+    try {
+      return fs.readFileSync(globalPath, "utf-8");
+    } catch (err) {
+      if (fs.existsSync(globalScssPath)) {
+        const cssText = sass.compile(globalScssPath).css;
+        fs.writeFileSync(globalPath, cssText);
+        return cssText;
+      } else {
+        log("无法找到源scss文件");
+        return "";
+      }
+    }
+  });
+
+  // 获取自定义样式
   ipcMain.handle("LiteLoader.lite_tools.getStyle", (event) => {
-    return fs.readFileSync(stylePath, "utf-8");
+    try {
+      return fs.readFileSync(stylePath, "utf-8");
+    } catch (err) {
+      if (fs.existsSync(styleSassPath)) {
+        const cssText = sass.compile(styleSassPath).css;
+        fs.writeFileSync(stylePath, cssText);
+        return cssText;
+      } else {
+        log("无法找到源scss文件");
+        return "";
+      }
+    }
   });
 
   ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
@@ -161,11 +222,14 @@ function onLoad(plugin, liteloader) {
       });
   });
 
-  function updateStyle() {
-    const styleText = fs.readFileSync(stylePath, "utf-8");
+  function updateStyle(styleText, type) {
     listenList.forEach((window) => {
       if (!window.isDestroyed()) {
-        window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
+        if (type === "style") {
+          window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
+        } else if (type === "global") {
+          window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
+        }
       }
     });
   }
@@ -193,14 +257,32 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
+  // ipcMain 监听事件patch 仅9.9.0有效
+  window.webContents.on("ipc-message", (_, channel, ...args) => {
+    // log("ipc-msg被拦截", channel, args);
+    if (args[1] && args[1][0] === "nodeIKernelMsgService/sendMsg") {
+      // log("消息发送事件", args[1]);
+      if (args[1][1] && args[1][1].msgElements) {
+        if (options.tail.enabled) {
+          args[1][1].msgElements.forEach((el) => {
+            if (el.textElement && el.textElement.length !== 0) {
+              el.textElement.content += options.tail.content;
+            }
+          });
+        }
+      }
+    }
+  });
+  // window.webContents.on("ipc-message-sync", (_, channel, ...args) => {
+  //   log("ipc-msg-sync被拦截", channel, args);
+  // });
+
   // 复写并监听ipc通信内容
-  const original_send =
-    (window.webContents.__qqntim_original_object && window.webContents.__qqntim_original_object.send) ||
-    window.webContents.send;
+  const original_send = window.webContents.send;
 
   const patched_send = function (channel, ...args) {
-    log(channel, args);
-    if (options.message.convertBiliBiliArk) {
+    // log(channel, args);
+    if (options.message.convertBiliBiliArk || options.message.showMsgTime) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
         (item) =>
@@ -213,9 +295,14 @@ function onBrowserWindowCreated(window, plugin) {
       if (msgListIndex !== -1) {
         args[msgListIndex].msgList.forEach((msgItem) => {
           log("解析到消息数据", msgItem);
+          // 获取消息id和发送时间存入map
+          if (options.message.showMsgTime) {
+            msgIdList.push([msgItem.msgId, msgItem.msgTime * 1000]);
+          }
+          // 处理小程序卡片
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
-            if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json?.meta?.detail_1?.appid === "1109937557") {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
@@ -232,9 +319,17 @@ function onBrowserWindowCreated(window, plugin) {
         : -1;
       if (onAddSendMsg !== -1) {
         log("这是我发送的新消息", args[1]);
+        // 获取消息id和发送时间存入map
+        if (options.message.showMsgTime) {
+          msgIdList.push([
+            args[1][onAddSendMsg].payload.msgRecord.msgId,
+            args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
+          ]);
+        }
+        // 处理小程序卡片
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
-          if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+          if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
             const json = JSON.parse(msgElements.arkElement.bytesData);
             if (json?.meta?.detail_1?.appid === "1109937557") {
               msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
@@ -251,9 +346,27 @@ function onBrowserWindowCreated(window, plugin) {
       if (onRecvMsg !== -1) {
         log("这是新接收到的消息", args[1]);
         args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
+          // 获取消息id和发送时间存入map
+          if (options.message.showMsgTime) {
+            msgIdList.push([arrs.msgId, arrs.msgTime * 1000]);
+          }
+          // 打开发给自己的链接
+          if (options.message.autoOpenURL) {
+            if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
+              log("这是我的手机的消息", arrs);
+              arrs.elements.forEach((msgElements) => {
+                if (msgElements.textElement) {
+                  if (/^http(s)?:\/\//.test(msgElements.textElement.content)) {
+                    shell.openExternal(msgElements.textElement.content.split(" ")[0]);
+                  }
+                }
+              });
+            }
+          }
+          // 处理小程序卡片
           const msg_seq = arrs.msgSeq;
           arrs.elements.forEach((msgElements) => {
-            if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json?.meta?.detail_1?.appid === "1109937557") {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
@@ -264,6 +377,8 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
 
+    // 记录下可能会用到的时间名称
+
     // 视频加载完成事件
     // cmdName: "nodeIKernelMsgListener/onRichMediaDownloadComplete";
 
@@ -273,11 +388,7 @@ function onBrowserWindowCreated(window, plugin) {
     return original_send.call(window.webContents, channel, ...args);
   };
 
-  if (window.webContents.__qqntim_original_object) {
-    window.webContents.__qqntim_original_object.send = patched_send;
-  } else {
-    window.webContents.send = patched_send;
-  }
+  window.webContents.send = patched_send;
 }
 
 // 卡片替换函数

@@ -1,7 +1,7 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options,
   styleText,
-  log = console.log;
+  idTImeMap = new Map();
 
 // 首次执行检测，只有第一次执行时返回true
 function First() {
@@ -12,8 +12,20 @@ function First() {
 }
 const first = First();
 
+// 防抖函数
+function debounce(fn, time) {
+  let timer = null;
+  return function (...args) {
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, time);
+  };
+}
+
 // 通用初始化函数
 function initFunction(func) {
+  // 由于出现问题的概率较高，禁用第一种加载方式
   if (!options.spareInitialization && false) {
     // 全局监听器，在页面创建30秒后自动销毁
     const observer = new MutationObserver(func);
@@ -41,7 +53,7 @@ function initFunction(func) {
 
 // 通用样式加载函数
 async function updateWallpaper() {
-  const backgroundStyle = document.querySelector(".backgroundStyle");
+  const backgroundStyle = document.querySelector(".background-style");
   if (options.background.enabled) {
     if (!styleText) {
       styleText = await lite_tools.getStyle();
@@ -50,8 +62,7 @@ async function updateWallpaper() {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
       document.querySelector(".background-wallpaper-video")?.remove();
-      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
-        `;
+      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
     } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
       let videoEl = document.querySelector(".background-wallpaper-video");
       if (!videoEl) {
@@ -69,7 +80,7 @@ async function updateWallpaper() {
         } else if (document.querySelector("#app.forward")) {
           document.querySelector("#app.forward").appendChild(videoEl);
         } else {
-          log("自定义视频挂载失败");
+          console.log("自定义视频挂载失败");
         }
       } else {
         if (videoEl.getAttribute("src") !== options.background.url) {
@@ -89,28 +100,11 @@ async function updateWallpaper() {
 // 媒体预览增强
 function imageViewer() {
   // 修复弹窗字体模糊
-  const element = document.createElement("style");
-  document.head.appendChild(element);
-  element.textContent = `
-  .main-area__loading-tip,
-  .image-viewer__tip{
-    pointer-events: none;
-    width: 145px !important;
-    transform: none !important;
-    top:0 !important;
-    left:0 !important;
-    right:0 !important;
-    bottom:0 !important;
-    margin:auto !important;
-  }
-  `;
+  document.body.classList.add("image-viewer");
   // 针对图片的单击关闭图片
-  if (options.imageViewer.quickClose) {
-  }
   const appEl = document.querySelector("#app");
   const option = { attributes: false, childList: true, subtree: true };
   const callback = (mutationsList, observer) => {
-    // lite_tools.log("observer触发");
     const img = document.querySelector(".main-area__image");
     const video = document.querySelector("embed");
     if (img && options.imageViewer.quickClose) {
@@ -133,8 +127,8 @@ function imageViewer() {
         }
       });
     } else if (video) {
+      // 判断打开的是视频
       observer.disconnect();
-      lite_tools.log(`视频播放器`);
     }
   };
   const observer = new MutationObserver(callback);
@@ -159,7 +153,6 @@ async function mainMessage() {
           }
         }
       });
-
       // 更新输入框上方功能列表
       const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
         return {
@@ -175,11 +168,73 @@ async function mainMessage() {
       subtree: true,
     });
   }
+
+  function observeChatTopFunc() {
+    new MutationObserver((mutations, observe) => {
+      document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
+        const name = el.querySelector(".icon-item").getAttribute("aria-label");
+        const find = options.chatAreaFuncList.find((el) => el.name === name);
+        if (find) {
+          if (find.disabled) {
+            el.classList.add("disabled");
+          } else {
+            el.classList.remove("disabled");
+          }
+        }
+      });
+      // 更新输入框上方功能列表
+      const textAreaList = Array.from(document.querySelectorAll(".panel-header__action .func-bar .bar-icon")).map(
+        (el) => {
+          return {
+            name: el.querySelector(".icon-item").getAttribute("aria-label"),
+            id: el.querySelector(".icon-item").id,
+            disabled: el.className.includes(".disabled"),
+          };
+        }
+      );
+      lite_tools.sendChatTopList(textAreaList);
+    }).observe(document.querySelector(".panel-header__action .func-bar"), {
+      attributes: false,
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  function observerMessageList() {
+    new MutationObserver(async (mutations, observe) => {
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+          const find = idTImeMap.get(el.id);
+          if (find) {
+            const msgElement = el.querySelector(".message-content__wrapper");
+            if (msgElement && !el.querySelector(".message-content-time")) {
+              const timeEl = document.createElement("div");
+              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.classList.add("message-content-time");
+              if (options.message.showMsgTimeHover) {
+                timeEl.classList.add("hover-show");
+              }
+              msgElement.appendChild(timeEl);
+            }
+          }
+        });
+      }
+    }).observe(document.querySelector(".ml-list.list"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+  }
+
   // 刷新页面配置
   async function updatePage() {
     // 初始化推荐表情
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
+    } else {
+      document.querySelector(".sticker-bar")?.classList.remove("disabled");
     }
     // 初始化顶部侧边栏
     document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
@@ -204,37 +259,44 @@ async function mainMessage() {
       }
     });
     // 禁用GIF热图
-    let disabledHotGIF = document.querySelector(".disabledHotGIF");
     if (options.message.disabledHotGIF) {
-      if (!disabledHotGIF) {
-        disabledHotGIF = document.createElement("style");
-        disabledHotGIF.classList.add("disabledHotGIF");
-        document.body.appendChild(disabledHotGIF);
-      }
-      disabledHotGIF.textContent = `.sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title="GIF热图"] {
-        display: none !important;
-      }`;
+      document.body.classList.add("disabled-sticker-hot-gif");
     } else {
-      if (disabledHotGIF) {
-        disabledHotGIF.textContent = ``;
-      }
+      document.body.classList.remove("disabled-sticker-hot-gif");
     }
     // 禁用小红点
     if (options.message.disabledBadge) {
-      let disabledBadge = document.createElement("style");
-      disabledBadge.innerHTML = `.q-badge .q-badge-sub,.q-badge .q-badge-num,.q-badge .q-badge__red{display:none !important;}`;
-      disabledBadge.classList.add("disabledBadge");
-      document.body.appendChild(disabledBadge);
+      document.body.classList.add("disabled-badge");
     } else {
-      document.querySelectorAll(".disabledBadge").forEach((el) => el.remove());
+      document.body.classList.remove("disabled-badge");
     }
     // 初始化输入框上方功能
     if (document.querySelector(".chat-input-area") && first("chat-input-area")) {
       observerChatArea();
     }
+    // 初始化聊天框上方功能
+    if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
+      observeChatTopFunc();
+    }
+    // 消息列表监听器
+    if (document.querySelector(".ml-list.list") && first("msgList")) {
+      observerMessageList();
+    }
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
       const find = options.textAreaFuncList.find((el) => el.name === name);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+
+    document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
+      const name = el.querySelector(".icon-item").getAttribute("aria-label");
+      const find = options.chatAreaFuncList.find((el) => el.name === name);
       if (find) {
         if (find.disabled) {
           el.classList.add("disabled");
@@ -252,20 +314,10 @@ async function mainMessage() {
 
   // 配置文件更新
   lite_tools.updateOptions((event, opt) => {
-    log("新接口获取配置更新");
+    console.log("新接口获取配置更新");
     options = opt;
     updateWallpaper();
     updatePage();
-  });
-
-  // 调试用css刷新
-  lite_tools.updateStyle((event, message) => {
-    let backgroundImage = "";
-    if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
-        `;
-    }
-    document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
   });
 
   // 设置页面获取侧边栏项目
@@ -329,22 +381,14 @@ function chatMessage() {
     // 禁用贴纸
     if (options.message.disabledSticker) {
       document.querySelector(".sticker-bar")?.classList.add("disabled");
+    } else {
+      document.querySelector(".sticker-bar")?.classList.remove("disabled");
     }
     // 禁用GIF热图
-    let disabledHotGIF = document.querySelector(".disabledHotGIF");
     if (options.message.disabledHotGIF) {
-      if (!disabledHotGIF) {
-        disabledHotGIF = document.createElement("style");
-        disabledHotGIF.classList.add("disabledHotGIF");
-        document.body.appendChild(disabledHotGIF);
-      }
-      disabledHotGIF.textContent = `.sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title="GIF热图"] {
-        display: none !important;
-      }`;
+      document.body.classList.add("disabled-sticker-hot-gif");
     } else {
-      if (disabledHotGIF) {
-        disabledHotGIF.textContent = ``;
-      }
+      document.body.classList.remove("disabled-sticker-hot-gif");
     }
     // 禁用输入框上方功能
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
@@ -359,33 +403,63 @@ function chatMessage() {
       }
     });
 
+    // 禁用聊天框上方功能
+    document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
+      const name = el.querySelector(".icon-item").getAttribute("aria-label");
+      const find = options.chatAreaFuncList.find((el) => el.name === name);
+      if (find) {
+        if (find.disabled) {
+          el.classList.add("disabled");
+        } else {
+          el.classList.remove("disabled");
+        }
+      }
+    });
+
     // 更新自定义样式
     if (first("init-wallpaper")) {
       updateWallpaper();
     }
   }
-
+  // 配置更新
   lite_tools.updateOptions((event, opt) => {
-    log("新接口获取配置更新");
     options = opt;
     updateWallpaper();
     updatePage();
   });
-
-  // 调试用css刷新
-  lite_tools.updateStyle((event, message) => {
-    let backgroundImage = "";
-    if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
-          `;
-    }
-    document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
-  });
+  // 附加消息发送时间
+  function observerMessageList() {
+    new MutationObserver(async (mutations, observe) => {
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+          const find = idTImeMap.get(el.id);
+          if (find) {
+            const msgElement = el.querySelector(".message-content__wrapper");
+            if (msgElement && !el.querySelector(".message-content-time")) {
+              const timeEl = document.createElement("div");
+              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.classList.add("message-content-time");
+              if (options.message.showMsgTimeHover) {
+                timeEl.classList.add("hover-show");
+              }
+              msgElement.appendChild(timeEl);
+            }
+          }
+        });
+      }
+    }).observe(document.querySelector(".ml-list.list"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+  }
+  observerMessageList();
 }
 
 // 转发消息界面
 function forwardMessage() {
-  lite_tools.log("转发消息界面");
   document.querySelector("#app").classList.add("forward");
   updatePage();
   async function updatePage() {
@@ -394,21 +468,44 @@ function forwardMessage() {
       updateWallpaper();
     }
   }
+
+  // 附加消息发送时间
+  function observerMessageList() {
+    new MutationObserver(async (mutations, observe) => {
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
+        document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
+          const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
+          if (find) {
+            lite_tools.log("找到对应消息id时间", find);
+            const msgElement = el.querySelector(".message-content__wrapper");
+            if (msgElement && !el.querySelector(".message-content-time")) {
+              const timeEl = document.createElement("div");
+              timeEl.innerText = new Date(find).toLocaleString();
+              timeEl.classList.add("message-content-time");
+              if (options.message.showMsgTimeHover) {
+                timeEl.classList.add("hover-show");
+              }
+              msgElement.appendChild(timeEl);
+            }
+          }
+        });
+      }
+    }).observe(document.querySelector(".list .q-scroll-view"), {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+  }
+  observerMessageList();
+
   lite_tools.updateOptions((event, opt) => {
-    log("新接口获取配置更新");
+    console.log("新接口获取配置更新");
     options = opt;
     updateWallpaper();
     updatePage();
-  });
-
-  // 调试用css刷新
-  lite_tools.updateStyle((event, message) => {
-    let backgroundImage = "";
-    if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}
-          `;
-    }
-    document.querySelector(".backgroundStyle").textContent = backgroundImage + message;
   });
 }
 
@@ -417,35 +514,55 @@ async function onLoad() {
   // 获取最新的配置信息
   options = await lite_tools.config();
 
-  if (!options.debug) {
-    log = () => {};
-  }
-
   // 插入自定义样式style容器
   const backgroundStyle = document.createElement("style");
-  backgroundStyle.classList.add("backgroundStyle");
+  backgroundStyle.classList.add("background-style");
   document.body.appendChild(backgroundStyle);
 
   // 全局加载通用样式
-  const style = document.createElement("style");
-  style.innerText = `
-.disabled{display:none !important};
-.message-panel .sticker-panel {
-  max-width: 600px !important;
-}
-.message-panel .sticker-panel .sticker-panel__pages {
-  width: 100% !important;
-}
+  const globalStyle = document.createElement("style");
+  globalStyle.textContent = await lite_tools.getGlobalStyle();
+  globalStyle.classList.add("global-style");
+  document.body.append(globalStyle);
 
-.sticker-panel__bar .tabs-container .tabs-container-item {
-  width: unset !important;
-}
-.sticker-panel__bar .tabs-container .tabs-container-item .q-icon,
-.sticker-panel__bar .tabs-container .tabs-container-item div.tabs-container-item-img {
-  text-align: center;
-  width: 40px !important;
-}`;
-  document.body.append(style);
+  // 调试用-styleCss刷新
+  lite_tools.updateStyle((event, message) => {
+    const element = document.querySelector(".background-style");
+    if (element) {
+      console.log("更新背景样式");
+      let backgroundImage = "";
+      if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
+        backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
+      }
+      element.textContent = backgroundImage + message;
+    }
+  });
+  // 调试用-globalCss刷新
+  lite_tools.updateGlobalStyle((event, message) => {
+    const element = document.querySelector(".global-style");
+    element.removeAttribute("href");
+    if (element) {
+      console.log("更新全局样式");
+      element.textContent = message;
+    }
+  });
+
+  // 所有页面都需要执行的更新操作
+  updatePage();
+  lite_tools.updateOptions((event, opt) => {
+    console.log("新接口获取配置更新");
+    options = opt;
+    updatePage();
+  });
+
+  function updatePage() {
+    // 禁用滑动多选消息
+    if (options.message.disabledSlideMultipleSelection) {
+      document.body.classList.add("disabled-slide-multiple-selection");
+    } else {
+      document.body.classList.remove("disabled-slide-multiple-selection");
+    }
+  }
 
   // 监听导航跳转
   navigation.addEventListener("navigatesuccess", () => {
@@ -475,8 +592,6 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
-  // 部分代码来自
-  // https://github.com/mo-jinran/LiteLoaderQQNT-Config-View
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
   const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
@@ -496,14 +611,11 @@ async function onConfigView(view) {
   // 更新配置信息
   options = await lite_tools.config();
 
-  if (!options.debug) {
-    log = () => {};
-  }
-
+  // 显示插件版本信息
+  view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
   view.querySelector(".version .link").addEventListener("click", () => {
     lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/v3");
   });
-  view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
 
   // 向设置界面插入动态选项
   function addOptionLi(list, element, objKey, key) {
@@ -542,6 +654,9 @@ async function onConfigView(view) {
   // 添加输入框上方功能列表
   addOptionLi(options.textAreaFuncList, view.querySelector(".textArea ul"), "textAreaFuncList", "disabled");
 
+  // 添加聊天框上方功能列表
+  addOptionLi(options.chatAreaFuncList, view.querySelector(".chatArea ul"), "chatAreaFuncList", "disabled");
+
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
     el.addEventListener("click", function (event) {
@@ -569,8 +684,53 @@ async function onConfigView(view) {
   // 将哔哩哔哩小程序替换为url卡片
   addSwitchEventlistener("message.convertBiliBiliArk", ".switchDisabledMiniPrgm");
 
+  // 自动打开来自手机的链接或者卡片消息
+  addSwitchEventlistener("message.autoOpenURL", ".switchAutoOpenURL");
+
   // debug开关
   addSwitchEventlistener("debug", ".switchDebug");
+
+  // 显示每条消息发送时间
+  addSwitchEventlistener("message.showMsgTime", ".showMsgTime", (event, enabled) => {
+    if (enabled) {
+      view.querySelector(".hover-show-hidden").classList.remove("hidden");
+    } else {
+      view.querySelector(".hover-show-hidden").classList.add("hidden");
+    }
+  });
+  if (options.message.showMsgTime) {
+    view.querySelector(".hover-show-hidden").classList.remove("hidden");
+  } else {
+    view.querySelector(".hover-show-hidden").classList.add("hidden");
+  }
+
+  // 添加消息后缀
+  addSwitchEventlistener("tail.enabled", ".msg-tail", (event, enabled) => {
+    if (enabled) {
+      view.querySelector(".message-tail").classList.remove("hidden");
+    } else {
+      view.querySelector(".message-tail").classList.add("hidden");
+    }
+  });
+  view.querySelector(".tail-content").value = options.tail.content;
+  if (options.tail.enabled) {
+    view.querySelector(".message-tail").classList.remove("hidden");
+  } else {
+    view.querySelector(".message-tail").classList.add("hidden");
+  }
+  view.querySelector(".tail-content").addEventListener(
+    "input",
+    debounce(() => {
+      options.tail.content = view.querySelector(".tail-content").value;
+      lite_tools.config(options);
+    }, 100)
+  );
+
+  // 移入才显示时间
+  addSwitchEventlistener("message.showMsgTimeHover", ".showMsgTimeHover");
+
+  // 禁用滑动多选消息
+  addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
 
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (event, enabled) => {
