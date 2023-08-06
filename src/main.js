@@ -2,8 +2,11 @@
 const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
-let log = console.log;
 let mainMessage, options;
+
+let log = function (...args) {
+  console.log(...args);
+};
 
 // 默认配置文件
 const defaultOptions = {
