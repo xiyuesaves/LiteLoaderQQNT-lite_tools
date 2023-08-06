@@ -99,6 +99,11 @@
         .message-content__wrapper {
           position: relative;
           overflow: unset !important;
+          [aria-label="卡片"] {
+            & > div {
+              min-height: unset !important;
+            }
+          }
           /* 加入时间样式 */
           .message-content-time {
             position: absolute;

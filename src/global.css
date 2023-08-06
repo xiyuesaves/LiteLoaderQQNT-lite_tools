@@ -82,6 +82,10 @@
   overflow: unset !important;
   /* 加入时间样式 */
 }
+.show-time .q-scroll-view > div .message .message-container .message-content__wrapper [aria-label=卡片] > div,
+.show-time .ml-item .message .message-container .message-content__wrapper [aria-label=卡片] > div {
+  min-height: unset !important;
+}
 .show-time .q-scroll-view > div .message .message-container .message-content__wrapper .message-content-time,
 .show-time .ml-item .message .message-container .message-content__wrapper .message-content-time {
   position: absolute;
