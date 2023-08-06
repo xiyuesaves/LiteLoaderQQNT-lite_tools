@@ -19,7 +19,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | 禁用表情窗口里的GIF热图 |
 | 隐藏小红点 |
 | 自定义背景图片/视频 |
-| 浏览器打开哔哩哔哩分享内容 |
+| 小程序分享转为url卡片 |
 | 自动打开来自手机的链接 |
 | 阻止拖拽多选消息 |
 | 消息显示发送时间 |
