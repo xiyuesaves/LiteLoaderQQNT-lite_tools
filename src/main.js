@@ -360,7 +360,7 @@ function onBrowserWindowCreated(window, plugin) {
           : -1
         : -1;
       if (onAddSendMsg !== -1) {
-        // log("这是我发送的新消息", args[1]);
+        log("这是我发送的新消息", args[1]);
         // 获取消息id和发送时间存入map
         if (options.message.showMsgTime) {
           msgIdList.push([
@@ -395,7 +395,7 @@ function onBrowserWindowCreated(window, plugin) {
           // 打开发给自己的链接
           if (options.message.autoOpenURL) {
             if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
-              // log("这是我的手机的消息", arrs);
+              log("这是我的手机的消息", arrs);
               arrs.elements.forEach((msgElements) => {
                 if (msgElements.textElement) {
                   if (/^http(s)?:\/\//.test(msgElements.textElement.content)) {
