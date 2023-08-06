@@ -49,8 +49,6 @@ function onLoad(plugin) {
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
   const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
   const globalPath = path.join(plugin.path.plugin, "src/global.css");
-  const configPath = path.join(plugin.path.plugin, "src/config");
-  const catchPath = path.join(plugin.path.cache);
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
