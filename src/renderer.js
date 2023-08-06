@@ -154,15 +154,20 @@ async function mainMessage() {
         }
       });
       // 更新输入框上方功能列表
-      const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon")).map((el) => {
-        return {
-          name: el.querySelector(".icon-item").getAttribute("aria-label"),
-          id: el.querySelector(".icon-item").id,
-          disabled: el.className.includes(".disabled"),
-        };
-      });
-      lite_tools.sendTextAreaList(textAreaList);
-    }).observe(document.querySelector(".chat-input-area"), {
+      const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon"))
+        .map((el) => {
+          return {
+            name: el.querySelector(".icon-item").getAttribute("aria-label"),
+            id: el.querySelector(".icon-item").id,
+            disabled: el.className.includes(".disabled"),
+          };
+        })
+        .filter((el) => !options.textAreaFuncList.find((_el) => _el.name === el.name));
+      if (textAreaList.length) {
+        console.log("发送输入框上方功能列表");
+        lite_tools.sendTextAreaList(textAreaList);
+      }
+    }).observe(document.querySelector(".chat-input-area .chat-func-bar"), {
       attributes: false,
       childList: true,
       subtree: true,
@@ -182,17 +187,20 @@ async function mainMessage() {
           }
         }
       });
-      // 更新输入框上方功能列表
-      const textAreaList = Array.from(document.querySelectorAll(".panel-header__action .func-bar .bar-icon")).map(
-        (el) => {
+      // 更新聊天框上方功能列表
+      const textAreaList = Array.from(document.querySelectorAll(".panel-header__action .func-bar .bar-icon"))
+        .map((el) => {
           return {
             name: el.querySelector(".icon-item").getAttribute("aria-label"),
             id: el.querySelector(".icon-item").id,
             disabled: el.className.includes(".disabled"),
           };
-        }
-      );
-      lite_tools.sendChatTopList(textAreaList);
+        })
+        .filter((el) => !options.chatAreaFuncList.find((_el) => _el.name === el.name));
+      if (textAreaList.length) {
+        console.log("发送聊天框上方功能列表");
+        lite_tools.sendChatTopList(textAreaList);
+      }
     }).observe(document.querySelector(".panel-header__action .func-bar"), {
       attributes: false,
       childList: true,
@@ -274,7 +282,7 @@ async function mainMessage() {
       document.body.classList.remove("disabled-badge");
     }
     // 初始化输入框上方功能
-    if (document.querySelector(".chat-input-area") && first("chat-input-area")) {
+    if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
       observerChatArea();
     }
     // 初始化聊天框上方功能
