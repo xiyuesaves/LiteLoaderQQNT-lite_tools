@@ -700,7 +700,7 @@ async function onConfigView(view) {
   addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
 
   // 将哔哩哔哩小程序替换为url卡片
-  addSwitchEventlistener("message.convertBiliBiliArk", ".switchDisabledMiniPrgm");
+  addSwitchEventlistener("message.convertMiniPrgmArk", ".switchDisabledMiniPrgm");
 
   // 自动打开来自手机的链接或者卡片消息
   addSwitchEventlistener("message.autoOpenURL", ".switchAutoOpenURL");

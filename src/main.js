@@ -21,7 +21,7 @@ const defaultOptions = {
     disabledHotGIF: false,
     disabledBadge: false,
     disabledSlideMultipleSelection: false,
-    convertBiliBiliArk: false,
+    convertMiniPrgmArk: false,
     showMsgTime: false,
     showMsgTimeHover: false,
     autoOpenURL: false,
@@ -106,7 +106,11 @@ function onLoad(plugin) {
     log = () => {};
   }
 
-  log("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;", plugin);
+  log(
+    "%c轻量工具箱已加载",
+    "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
+    plugin
+  );
 
   // 返回消息id对应的发送时间
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
@@ -291,7 +295,7 @@ function onBrowserWindowCreated(window, plugin) {
         args[3]
       );
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
-        log("%c消息发送事件", "background:#5b9a8b;color:#fff;", args[3][1][1]);
+        log("%c消息发送事件", "background:#5b9a8b;color:#fff;", args);
         if (args[3][1][1] && args[3][1][1].msgElements) {
           if (options.tail.enabled) {
             args[3][1][1].msgElements.forEach((el) => {
@@ -320,7 +324,7 @@ function onBrowserWindowCreated(window, plugin) {
       args[1]?.[0],
       args
     );
-    if (options.message.convertBiliBiliArk || options.message.showMsgTime) {
+    if (options.message.convertMiniPrgmArk || options.message.showMsgTime) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
         (item) =>
@@ -340,9 +344,9 @@ function onBrowserWindowCreated(window, plugin) {
           // 处理小程序卡片
           let msg_seq = msgItem.msgSeq;
           msgItem.elements.forEach((msgElements) => {
-            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertMiniPrgmArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json?.meta?.detail_1?.appid === "1109937557") {
+              if (json?.prompt.includes("[QQ小程序]")) {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
               }
             }
@@ -356,7 +360,7 @@ function onBrowserWindowCreated(window, plugin) {
           : -1
         : -1;
       if (onAddSendMsg !== -1) {
-        log("这是我发送的新消息", args[1]);
+        // log("这是我发送的新消息", args[1]);
         // 获取消息id和发送时间存入map
         if (options.message.showMsgTime) {
           msgIdList.push([
@@ -367,9 +371,9 @@ function onBrowserWindowCreated(window, plugin) {
         // 处理小程序卡片
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
         args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
-          if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
+          if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertMiniPrgmArk) {
             const json = JSON.parse(msgElements.arkElement.bytesData);
-            if (json?.meta?.detail_1?.appid === "1109937557") {
+            if (json?.prompt.includes("[QQ小程序]")) {
               msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
             }
           }
@@ -391,7 +395,7 @@ function onBrowserWindowCreated(window, plugin) {
           // 打开发给自己的链接
           if (options.message.autoOpenURL) {
             if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
-              log("这是我的手机的消息", arrs);
+              // log("这是我的手机的消息", arrs);
               arrs.elements.forEach((msgElements) => {
                 if (msgElements.textElement) {
                   if (/^http(s)?:\/\//.test(msgElements.textElement.content)) {
@@ -404,9 +408,9 @@ function onBrowserWindowCreated(window, plugin) {
           // 处理小程序卡片
           const msg_seq = arrs.msgSeq;
           arrs.elements.forEach((msgElements) => {
-            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertBiliBiliArk) {
+            if (msgElements.arkElement && msgElements.arkElement.bytesData && options.message.convertMiniPrgmArk) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json?.meta?.detail_1?.appid === "1109937557") {
+              if (json?.prompt.includes("[QQ小程序]")) {
                 msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
               }
             }
@@ -431,33 +435,44 @@ function onBrowserWindowCreated(window, plugin) {
 
 // 卡片替换函数
 function replaceArk(json, msg_seq) {
-  log("%c替换哔哩哔哩小程序卡片", "background:#fba1b7;color:#fff;");
+  log("%c替换小程序卡片", "background:#fba1b7;color:#fff;", json);
   return JSON.stringify({
     app: "com.tencent.structmsg",
     config: json.config,
     desc: "新闻",
-    extra: { app_type: 1, appid: 100951776, msg_seq, uin: json.meta.detail_1.host.uin },
+    extra: { app_type: 1, appid: json.meta.detail_1.appid, msg_seq, uin: json.meta.detail_1.host.uin },
     meta: {
       news: {
         action: "",
         android_pkg_name: "",
         app_type: 1,
-        appid: 100951776,
+        appid: json.meta.detail_1.appid,
         ctime: json.config.ctime,
         desc: json.meta.detail_1.desc,
         jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
         preview: json.meta.detail_1.preview,
         source_icon: json.meta.detail_1.icon,
         source_url: "",
-        tag: "哔哩哔哩",
-        title: "哔哩哔哩",
+        tag: getArkData(json),
+        title: getArkData(json),
         uin: json.meta.detail_1.host.uin,
       },
     },
-    prompt: "[分享]哔哩哔哩",
+    prompt: `[分享]${getArkData(json)}`,
     ver: "0.0.0.1",
     view: "news",
   });
+}
+
+// appid对应小程序名称
+const appidName = new Map([
+  ["1109224783", "微博"],
+  ["1109937557", "哔哩哔哩"],
+]);
+
+// 获取ark卡片对应内容
+function getArkData(json) {
+  return json.meta.detail_1.title || appidName.get(json.meta.detail_1.appid) || json.meta.detail_1.desc;
 }
 
 // 防抖函数
