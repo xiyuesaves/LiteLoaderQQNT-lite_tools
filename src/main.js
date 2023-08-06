@@ -73,7 +73,7 @@ function onLoad(plugin) {
       const inspector = require("node:inspector");
       inspector.open(8899, "localhost", true);
     } catch (err) {
-      console.log("当前版本无法开启远程调试");
+      log("%c当前版本无法开启远程调试", "background:#fe0000;color:#fff;");
     }
 
     try {
@@ -100,13 +100,13 @@ function onLoad(plugin) {
         }, 100)
       );
     } catch {
-      log("当前环境未安装sass，动态更新样式未启用");
+      log("%c当前环境未安装sass，动态更新样式未启用", "background:#fe0000;color:#fff;");
     }
   } else {
     log = () => {};
   }
 
-  log("轻量工具箱已加载", plugin);
+  log("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;", plugin);
 
   // 返回消息id对应的发送时间
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
@@ -151,18 +151,18 @@ function onLoad(plugin) {
   // 获取/修改配置信息
   ipcMain.handle("LiteLoader.lite_tools.config", (event, opt) => {
     if (opt) {
-      log("更新配置信息", opt);
+      log("%c更新配置信息", "background:#1a5d1a;color:#fff;", opt);
       options = opt;
       updateOptions();
     } else {
-      log("获取配置信息", options);
+      log("%c获取配置信息", "background:#1a5d1a;color:#fff;", options);
     }
     return options;
   });
 
   // 控制台日志打印
   ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
-    log("轻量工具箱 [渲染进程]: ", ...message);
+    log("%c轻量工具箱 [渲染进程]: ", "background:#272829;color:#fff;", ...message);
   });
 
   // 获取全局样式
@@ -252,20 +252,27 @@ function onBrowserWindowCreated(window, plugin) {
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
-      log("捕获到主窗口");
+      log("捕获到主窗口", window);
       mainMessage = window;
     }
   });
 
   // ipcMain 监听事件patch 仅9.9.0有效
   window.webContents.on("ipc-message", (_, channel, ...args) => {
-    // log("ipc-msg被拦截", channel, args);
-    if (args[1] && args[1][0] === "nodeIKernelMsgService/sendMsg") {
+    log(
+      "%cipc-message被拦截",
+      "background:#4477ce;color:#fff;",
+      channel,
+      args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel,
+      args[1]?.[0],
+      args
+    );
+    if (args[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
       // log("消息发送事件", args[1]);
       if (args[1][1] && args[1][1].msgElements) {
         if (options.tail.enabled) {
           args[1][1].msgElements.forEach((el) => {
-            if (el.textElement && el.textElement.length !== 0) {
+            if (el.textElement && el.textElement?.content?.length !== 0) {
               el.textElement.content += options.tail.content;
             }
           });
@@ -273,15 +280,46 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
   });
-  // window.webContents.on("ipc-message-sync", (_, channel, ...args) => {
-  //   log("ipc-msg-sync被拦截", channel, args);
-  // });
+
+  const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
+    apply(target, thisArg, args) {
+      log(
+        "%c-ipc-message被拦截",
+        "background:#f6ca00;color:#fff;",
+        args[2],
+        args[3]?.[0]?.eventName ? args[3]?.[0]?.eventName : args[3]?.[0],
+        args[3]
+      );
+      if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
+        log("%c消息发送事件", "background:#5b9a8b;color:#fff;", args[3][1][1]);
+        if (args[3][1][1] && args[3][1][1].msgElements) {
+          if (options.tail.enabled) {
+            args[3][1][1].msgElements.forEach((el) => {
+              if (el.textElement && el.textElement?.content?.length !== 0) {
+                el.textElement.content += options.tail.content;
+                log("%c消息增加后缀", "background:#5b9a8b;color:#fff;", el.textElement.content);
+              }
+            });
+          }
+        }
+      }
+      return target.apply(thisArg, args);
+    },
+  });
+  window.webContents._events["-ipc-message"] = proxyIpcMsg;
 
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
 
   const patched_send = function (channel, ...args) {
-    // log(channel, args);
+    log(
+      "%cipc-send被拦截",
+      "background:#74a488;color:#fff;",
+      channel,
+      args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel,
+      args[1]?.[0],
+      args
+    );
     if (options.message.convertBiliBiliArk || options.message.showMsgTime) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(
@@ -393,6 +431,7 @@ function onBrowserWindowCreated(window, plugin) {
 
 // 卡片替换函数
 function replaceArk(json, msg_seq) {
+  log("%c替换哔哩哔哩小程序卡片", "background:#fba1b7;color:#fff;");
   return JSON.stringify({
     app: "com.tencent.structmsg",
     config: json.config,
