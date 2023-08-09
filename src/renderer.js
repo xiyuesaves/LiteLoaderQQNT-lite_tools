@@ -140,9 +140,10 @@ async function mainMessage() {
   // 初始化页面
   initFunction(updatePage);
 
+  // 监听输入框上方功能
   function observerChatArea() {
     new MutationObserver((mutations, observe) => {
-      document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
+      document.querySelectorAll(".chat-input-area .chat-func-bar .bar-icon").forEach((el) => {
         const name = el.querySelector(".icon-item").getAttribute("aria-label");
         const find = options.textAreaFuncList.find((el) => el.name === name);
         if (find) {
@@ -167,13 +168,14 @@ async function mainMessage() {
         console.log("发送输入框上方功能列表");
         lite_tools.sendTextAreaList(textAreaList);
       }
-    }).observe(document.querySelector(".chat-input-area .chat-func-bar"), {
+    }).observe(document.querySelector(".chat-input-area"), {
       attributes: false,
       childList: true,
       subtree: true,
     });
   }
 
+  // 监听聊天框上方功能
   function observeChatTopFunc() {
     new MutationObserver((mutations, observe) => {
       document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
@@ -201,13 +203,14 @@ async function mainMessage() {
         console.log("发送聊天框上方功能列表");
         lite_tools.sendChatTopList(textAreaList);
       }
-    }).observe(document.querySelector(".panel-header__action .func-bar"), {
+    }).observe(document.querySelector(".panel-header__action"), {
       attributes: false,
       childList: true,
       subtree: true,
     });
   }
 
+  // 插入时间元素
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
       if (options.message.showMsgTime) {
@@ -221,11 +224,17 @@ async function mainMessage() {
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
               timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+              timeEl.title = new Date(find).toLocaleString("zh-CN");
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
                 msgElement.classList.add("hover-show");
               }
-              msgElement.appendChild(timeEl);
+              // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
+              if (el.querySelector(".message-container--self")) {
+                msgElement.insertBefore(timeEl, msgElement.firstChild);
+              } else {
+                msgElement.appendChild(timeEl);
+              }
             }
           }
         });
@@ -282,11 +291,11 @@ async function mainMessage() {
       document.body.classList.remove("disabled-badge");
     }
     // 初始化输入框上方功能
-    if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
+    if (document.querySelector(".chat-input-area") && first("chat-input-area")) {
       observerChatArea();
     }
     // 初始化聊天框上方功能
-    if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
+    if (document.querySelector(".panel-header__action") && first("chat-message-area")) {
       observeChatTopFunc();
     }
     // 消息列表监听器
@@ -387,7 +396,7 @@ async function mainMessage() {
 // 独立聊天窗口
 function chatMessage() {
   updatePage();
-  // initFunction(updatePage);
+  initFunction(updatePage);
   async function updatePage() {
     // 禁用贴纸
     if (options.message.disabledSticker) {
@@ -452,11 +461,17 @@ function chatMessage() {
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
               timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+              timeEl.title = new Date(find).toLocaleString("zh-CN");
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
                 msgElement.classList.add("hover-show");
               }
-              msgElement.appendChild(timeEl);
+              // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
+              if (el.querySelector(".message-container--self")) {
+                msgElement.insertBefore(timeEl, msgElement.firstChild);
+              } else {
+                msgElement.appendChild(timeEl);
+              }
             }
           }
         });
@@ -500,11 +515,17 @@ function forwardMessage() {
             if (msgElement && !el.querySelector(".message-content-time")) {
               const timeEl = document.createElement("div");
               timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+              timeEl.title = new Date(find).toLocaleString("zh-CN");
               timeEl.classList.add("message-content-time");
               if (options.message.showMsgTimeHover) {
                 msgElement.classList.add("hover-show");
               }
-              msgElement.appendChild(timeEl);
+              // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
+              if (el.className.includes("message-container--self")) {
+                msgElement.insertBefore(timeEl, msgElement.firstChild);
+              } else {
+                msgElement.appendChild(timeEl);
+              }
             }
           }
         });

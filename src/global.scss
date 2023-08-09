@@ -97,8 +97,14 @@
       .message-container {
         /* 消息块样式调整 */
         .message-content__wrapper {
-          position: relative;
+          display: flex;
+          align-items: flex-end;
           overflow: unset !important;
+          /* pointer-events: none;
+          & * {
+            pointer-events: auto;
+          } */
+          /* 修复一下卡片渲染有时div和canvas大小不一致的问题 */
           [aria-label="卡片"] {
             & > div {
               min-height: unset !important;
@@ -106,25 +112,32 @@
           }
           /* 加入时间样式 */
           .message-content-time {
-            position: absolute;
-            bottom: 0;
             font-size: 12px;
+            text-align: center;
             white-space: nowrap;
             color: var(--text-color);
             background-color: var(--background-color-05);
             backdrop-filter: blur(28px);
-            padding: 4px 12px;
+            padding: 4px 0;
+            overflow: hidden;
             border-radius: 50px;
             box-shadow: var(--box-shadow);
-            pointer-events: none;
+            flex-shrink: 0;
+            width: 50px;
           }
+          /* 移入样式 */
           &.hover-show {
             .message-content-time {
-              transition: 150ms;
+              transition: 300ms;
+              font-size: 0;
+              width: 0;
+              opacity: 0;
+              margin: 0;
             }
             &:hover {
               .message-content-time {
-                transform: scale(1);
+                width: 55px;
+                font-size: 12px;
                 opacity: 1;
               }
             }
@@ -132,36 +145,29 @@
         }
         /* 其他人发的消息 */
         &:not(.message-container--self) {
-          padding-right: 30px;
           .message-content-time {
-            left: calc(100% + 4px);
+            margin-left: 4px;
           }
           .hover-show {
-            .message-content-time {
-              transform-origin: left bottom;
-              transform: scale(0.5);
-              opacity: 0;
+            &:hover {
+              .message-content-time {
+                margin-left: 4px;
+              }
             }
           }
         }
         /* 自己发的消息 */
         &.message-container--self {
-          padding-left: 30px;
           .message-content-time {
-            right: calc(100% + 4px);
+            margin-right: 4px;
           }
           .hover-show {
-            .message-content-time {
-              transform-origin: right bottom;
-              transform: scale(0.5);
-              opacity: 0;
+            &:hover {
+              .message-content-time {
+                margin-right: 4px;
+              }
             }
           }
-        }
-
-        /* 移除文件图标 */
-        .content-status {
-          display: none;
         }
       }
     }
