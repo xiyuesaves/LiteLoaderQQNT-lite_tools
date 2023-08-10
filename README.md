@@ -23,6 +23,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | 阻止拖拽多选消息 |
 | 消息显示发送时间 |
 | 自定义消息后缀 |
+| 划词搜索 |
 
 ## 声明
 
