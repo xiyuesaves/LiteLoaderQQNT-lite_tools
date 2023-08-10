@@ -564,7 +564,7 @@ function webSearch() {
   new MutationObserver(() => {
     const qContextMenu = document.querySelector("#qContextMenu");
     console.log("body节点元素变动", qContextMenu);
-    if (qContextMenu && isRightClick && selectText.length) {
+    if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
       const searchText = selectText;
       const tempEl = document.createElement("div");
       tempEl.innerHTML = document
@@ -585,8 +585,7 @@ function webSearch() {
         item.querySelector(".q-context-menu-item__text").innerText = "搜索";
       }
       item.addEventListener("click", () => {
-        console.log("搜索关键词", searchText);
-        lite_tools.openWeb(`https://www.google.com/search?q=${encodeURIComponent(searchText)}`);
+        lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%",encodeURIComponent(searchText)));
         qContextMenu.remove();
       });
       qContextMenu.appendChild(item);
@@ -757,8 +756,26 @@ async function onConfigView(view) {
     });
   });
 
-  // 切换初始化方式
-  addSwitchEventlistener("spareInitialization", ".switchSpare");
+  // 划词搜索
+  addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
+    if (enabled) {
+      view.querySelector(".select-search-url").classList.remove("hidden");
+    } else {
+      view.querySelector(".select-search-url").classList.add("hidden");
+    }
+    if (first("init-worldSearch-option")) {
+      const searchEl = view.querySelector(".search-url");
+      searchEl.value = options.wordSearch.searchUrl;
+      searchEl.addEventListener(
+        "input",
+        debounce(() => {
+          options.wordSearch.searchUrl = searchEl.value;
+          console.log("更新搜索url", searchEl.value);
+          lite_tools.config(options);
+        }, 100)
+      );
+    }
+  });
 
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
@@ -782,40 +799,33 @@ async function onConfigView(view) {
   addSwitchEventlistener("debug", ".switchDebug");
 
   // 显示每条消息发送时间
-  addSwitchEventlistener("message.showMsgTime", ".showMsgTime", (event, enabled) => {
+  addSwitchEventlistener("message.showMsgTime", ".showMsgTime", (_, enabled) => {
     if (enabled) {
       view.querySelector(".hover-show-hidden").classList.remove("hidden");
     } else {
       view.querySelector(".hover-show-hidden").classList.add("hidden");
     }
   });
-  if (options.message.showMsgTime) {
-    view.querySelector(".hover-show-hidden").classList.remove("hidden");
-  } else {
-    view.querySelector(".hover-show-hidden").classList.add("hidden");
-  }
 
   // 添加消息后缀
-  addSwitchEventlistener("tail.enabled", ".msg-tail", (event, enabled) => {
+  addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {
     if (enabled) {
       view.querySelector(".message-tail").classList.remove("hidden");
     } else {
       view.querySelector(".message-tail").classList.add("hidden");
     }
+    if (first("init-tail-option")) {
+      const tailEl = view.querySelector(".tail-content");
+      tailEl.value = options.tail.content;
+      tailEl.addEventListener(
+        "input",
+        debounce(() => {
+          options.tail.content = tailEl.value;
+          lite_tools.config(options);
+        }, 100)
+      );
+    }
   });
-  view.querySelector(".tail-content").value = options.tail.content;
-  if (options.tail.enabled) {
-    view.querySelector(".message-tail").classList.remove("hidden");
-  } else {
-    view.querySelector(".message-tail").classList.add("hidden");
-  }
-  view.querySelector(".tail-content").addEventListener(
-    "input",
-    debounce(() => {
-      options.tail.content = view.querySelector(".tail-content").value;
-      lite_tools.config(options);
-    }, 100)
-  );
 
   // 移入才显示时间
   addSwitchEventlistener("message.showMsgTimeHover", ".showMsgTimeHover");
@@ -824,23 +834,20 @@ async function onConfigView(view) {
   addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
 
   // 自定义背景
-  addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (event, enabled) => {
+  addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
     if (enabled) {
       view.querySelector(".select-path").classList.remove("hidden");
     } else {
       view.querySelector(".select-path").classList.add("hidden");
     }
-  });
-  if (options.background.enabled) {
-    view.querySelector(".select-path").classList.remove("hidden");
-  } else {
-    view.querySelector(".select-path").classList.add("hidden");
-  }
-  view.querySelector(".select-path input").value = options.background.url;
-  view.querySelectorAll(".select-file").forEach((el) => {
-    el.addEventListener("click", () => {
-      lite_tools.openSelectBackground();
-    });
+    if (first("init-background-option")) {
+      view.querySelector(".select-path input").value = options.background.url;
+      view.querySelectorAll(".select-file").forEach((el) => {
+        el.addEventListener("click", () => {
+          lite_tools.openSelectBackground();
+        });
+      });
+    }
   });
 
   // 初始化设置界面
@@ -850,6 +857,10 @@ async function onConfigView(view) {
       view.querySelector(switchClass).classList.add("is-active");
     } else {
       view.querySelector(switchClass).classList.remove("is-active");
+    }
+    // 初始化时执行一次callback方法
+    if (callback) {
+      callback(null, option);
     }
     view.querySelector(switchClass).addEventListener("click", function (event) {
       this.classList.toggle("is-active");

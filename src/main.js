@@ -7,37 +7,44 @@ let mainMessage, options;
 let log = function (...args) {
   console.log(...args);
 };
-
 // 默认配置文件
 const defaultOptions = {
-  spareInitialization: false,
-  debug: false,
+  spareInitialization: true, // 默认使用setTimeout循环初始化，observer经测试有很大概率无法正常工作
+  debug: false, // debug开关
+  // 划词搜索
+  wordSearch: {
+    enabled: false,
+    searchUrl: "https://www.google.com/search?q=%search%",
+  },
+  // 侧边栏功能开关
   sidebar: {
     top: [],
     bottom: [],
   },
+  // 媒体预览分类
   imageViewer: {
-    quickClose: false,
+    quickClose: false, // 快速关闭图片预览
   },
+  //  聊天界面分类
   message: {
-    disabledSticker: false,
-    disabledHotGIF: false,
-    disabledBadge: false,
-    disabledSlideMultipleSelection: false,
-    convertMiniPrgmArk: false,
-    showMsgTime: false,
-    showMsgTimeHover: false,
-    autoOpenURL: false,
+    disabledSticker: false, // 禁用弹出贴纸
+    disabledHotGIF: false, // 禁用GIF热图
+    disabledBadge: false, // 禁用小红点
+    disabledSlideMultipleSelection: false, // 禁用滑动多选消息
+    convertMiniPrgmArk: false, // 小程序分享转url卡片
+    showMsgTime: false, // 显示消息发送时间
+    showMsgTimeHover: false, // 移入显示消息发送时间
+    autoOpenURL: false, // 自动打开来自手机的链接
   },
   tail: {
-    enabled: false,
-    content: "",
+    enabled: false, // 消息后缀
+    content: "", // 消息后缀内容
   },
-  textAreaFuncList: [],
-  chatAreaFuncList: [],
+  textAreaFuncList: [], // 输入框上方功能
+  chatAreaFuncList: [], // 消息框上方功能
   background: {
-    enabled: false,
-    url: "",
+    enabled: false, // 背景图
+    url: "", // 背景图地址
   },
 };
 

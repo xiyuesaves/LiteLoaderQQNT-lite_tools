@@ -117,7 +117,7 @@
 }
 .show-time .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show:hover .message-content-time,
 .show-time .ml-item .message .message-container .message-content__wrapper.hover-show:hover .message-content-time {
-  width: 55px;
+  width: 50px;
   font-size: 12px;
   opacity: 1;
 }
