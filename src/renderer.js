@@ -213,33 +213,69 @@ async function mainMessage() {
   // 插入时间元素
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
-      if (options.message.showMsgTime) {
-        document.body.classList.add("show-time");
-        const msgList = await lite_tools.getMsgIdAndTime();
-        idTImeMap = new Map([...idTImeMap, ...msgList]);
+      if (options.message.showMsgTime || options.switchReplace) {
+        // 获取id和对应时间
+        if (options.message.showMsgTime) {
+          document.body.classList.add("show-time");
+          const msgList = await lite_tools.getMsgIdAndTime();
+          idTImeMap = new Map([...idTImeMap, ...msgList]);
+        }
+        // 显示+1按钮
+        if (options.switchReplace) {
+          document.body.classList.add("show-replace");
+        }
         document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
-          const find = idTImeMap.get(el.id);
-          if (find) {
-            const msgElement = el.querySelector(".message-content__wrapper");
-            if (msgElement && !el.querySelector(".message-content-time")) {
-              const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-              timeEl.title = new Date(find).toLocaleString("zh-CN");
-              timeEl.classList.add("message-content-time");
-              if (options.message.showMsgTimeHover) {
-                msgElement.classList.add("hover-show");
+          // 创建通用侧边容器
+          const msgElement = el.querySelector(".message-content__wrapper");
+          const sideContainer = document.createElement("div");
+          sideContainer.classList.add("lite-tools-side-container");
+
+          if (msgElement) {
+            // 插入时间气泡
+            if (options.message.showMsgTime) {
+              if (!el.querySelector(".message-content-time")) {
+                const find = idTImeMap.get(el.id);
+                if (find) {
+                  const timeEl = document.createElement("div");
+                  timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+                  timeEl.title = new Date(find).toLocaleString("zh-CN");
+                  timeEl.classList.add("message-content-time");
+                  if (options.message.showMsgTimeHover) {
+                    msgElement.classList.add("hover-show");
+                  }
+                  sideContainer.appendChild(timeEl);
+                }
               }
-              // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
-              if (el.querySelector(".message-container--self")) {
-                msgElement.insertBefore(timeEl, msgElement.firstChild);
-              } else {
-                msgElement.appendChild(timeEl);
+            }
+
+            // 插入+1按钮
+            if (options.switchReplace) {
+              if (!el.querySelector(".message-content-replace")) {
+                const replaceEl = document.createElement("div");
+                replaceEl.innerText = "+1";
+                replaceEl.classList.add("message-content-replace");
+                replaceEl.addEventListener("click", (event) => {
+                  console.log("+1被触发了");
+                });
+                sideContainer.insertBefore(replaceEl, sideContainer.firstChild);
               }
+            }
+
+            // 通用侧边插入容器
+            if (el.querySelector(".message-container--self")) {
+              msgElement.insertBefore(sideContainer, msgElement.firstChild);
+            } else {
+              msgElement.appendChild(sideContainer);
             }
           }
         });
       } else {
-        document.body.classList.remove("show-time");
+        if (!options.message.showMsgTime) {
+          document.body.classList.remove("show-time");
+        }
+        if (!options.switchReplace) {
+          document.body.classList.remove("show-replace");
+        }
       }
     }).observe(document.querySelector(".ml-list.list"), {
       attributes: false,
@@ -582,7 +618,7 @@ function webSearch() {
         item.querySelector(".q-context-menu-item__text").innerText = "搜索";
       }
       item.addEventListener("click", () => {
-        lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%",encodeURIComponent(searchText)));
+        lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
         qContextMenu.remove();
       });
       qContextMenu.appendChild(item);
@@ -774,6 +810,9 @@ async function onConfigView(view) {
 
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
+
+  // 复读机
+  addSwitchEventlistener("switchReplace", ".switchReplace");
 
   // 禁用推荐表情
   addSwitchEventlistener("message.disabledSticker", ".switchSticker");

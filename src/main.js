@@ -11,6 +11,7 @@ let log = function (...args) {
 const defaultOptions = {
   spareInitialization: true, // 默认使用setTimeout循环初始化，observer经测试有很大概率无法正常工作
   debug: false, // debug开关
+  switchReplace: false, // 复读按钮
   // 划词搜索
   wordSearch: {
     enabled: false,
