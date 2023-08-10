@@ -14,7 +14,7 @@ const defaultOptions = {
   // 划词搜索
   wordSearch: {
     enabled: false,
-    searchUrl: "https://www.google.com/search?q=%search%",
+    searchUrl: "https://www.bing.com/search?q=%search%",
   },
   // 侧边栏功能开关
   sidebar: {
