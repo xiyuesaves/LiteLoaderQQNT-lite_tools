@@ -4,13 +4,12 @@ let options,
   idTImeMap = new Map();
 
 // 首次执行检测，只有第一次执行时返回true
-function First() {
+const first = (() => {
   const set = new Set();
   return (tag) => {
     return !set.has(tag) && !!set.add(tag);
   };
-}
-const first = First();
+})();
 
 // 防抖函数
 function debounce(fn, time) {
@@ -25,28 +24,13 @@ function debounce(fn, time) {
 
 // 通用初始化函数
 function initFunction(func) {
-  // 由于出现问题的概率较高，禁用第一种加载方式
-  if (!options.spareInitialization && false) {
-    // 全局监听器，在页面创建30秒后自动销毁
-    const observer = new MutationObserver(func);
-    observer.observe(document.querySelector("#app"), {
-      attributes: false,
-      childList: true,
-      subtree: false,
-    });
-    // 页面加载完成30秒后取消监听
-    setTimeout(() => {
-      observer.disconnect();
-    }, 30000);
-  } else {
-    // 窗口启动的1分钟之内每隔10ms应用一次配置信息
-    let timeout = new Date().getTime() + 30 * 1000;
-    loop();
-    function loop() {
-      if (timeout > new Date().getTime()) {
-        setTimeout(loop, 10);
-        func();
-      }
+  // 窗口启动的1分钟之内每隔10ms应用一次配置信息
+  let timeout = new Date().getTime() + 30 * 1000;
+  loop();
+  function loop() {
+    if (timeout > new Date().getTime()) {
+      setTimeout(loop, 10);
+      func();
     }
   }
 }
@@ -210,9 +194,23 @@ async function mainMessage() {
     });
   }
 
-  // 插入时间元素
+  // 插入插槽和对应功能元素
   function observerMessageList() {
     new MutationObserver(async (mutations, observe) => {
+      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+        if (!el.querySelector(".lite-tools-side-container")) {
+          // 插入侧边插槽
+          const sideContainer = document.createElement("div");
+          sideContainer.classList.add("lite-tools-side-container");
+          el.appendChild(sideContainer);
+        }
+        if (!el.querySelector(".lite-tools-bottom-container")) {
+          // 插入底部插槽
+          const bottomContainer = document.createElement("div");
+          bottomContainer.classList.add("lite-tools-bottom-container");
+        }
+      });
+
       if (options.message.showMsgTime || options.switchReplace) {
         // 获取id和对应时间
         if (options.message.showMsgTime) {
@@ -227,8 +225,6 @@ async function mainMessage() {
         document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
           // 创建通用侧边容器
           const msgElement = el.querySelector(".message-content__wrapper");
-          const sideContainer = document.createElement("div");
-          sideContainer.classList.add("lite-tools-side-container");
 
           if (msgElement) {
             // 插入时间气泡

@@ -71,20 +71,20 @@
 }
 .lite-tools-side-container {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: flex-end;
   align-items: flex-end;
   max-height: 100%;
 }
 
-.show-time .q-scroll-view > div .message .message-container,
-.show-time .ml-item .message .message-container {
+.show-time-disabled .q-scroll-view > div .message .message-container,
+.show-time-disabled .ml-item .message .message-container {
   /* 消息块样式调整 */
   /* 其他人发的消息 */
   /* 自己发的消息 */
 }
-.show-time .q-scroll-view > div .message .message-container .message-content__wrapper,
-.show-time .ml-item .message .message-container .message-content__wrapper {
+.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper,
+.show-time-disabled .ml-item .message .message-container .message-content__wrapper {
   display: flex;
   align-items: flex-end;
   overflow: unset !important;
@@ -96,56 +96,66 @@
   /* 加入时间样式 */
   /* 移入样式 */
 }
-.show-time .q-scroll-view > div .message .message-container .message-content__wrapper [aria-label=卡片] > div,
-.show-time .ml-item .message .message-container .message-content__wrapper [aria-label=卡片] > div {
+.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper [aria-label=卡片] > div,
+.show-time-disabled .ml-item .message .message-container .message-content__wrapper [aria-label=卡片] > div {
   min-height: unset !important;
 }
-.show-time .q-scroll-view > div .message .message-container .message-content__wrapper .message-content-time,
-.show-time .ml-item .message .message-container .message-content__wrapper .message-content-time {
-  font-size: 10px;
+.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper .message-content-time,
+.show-time-disabled .ml-item .message .message-container .message-content__wrapper .message-content-time {
+  font-size: 12px;
   text-align: center;
   white-space: nowrap;
   color: var(--text-color);
   background-color: var(--background-color-05);
   backdrop-filter: blur(28px);
-  padding: 2px 0;
+  padding: 4px 0;
   overflow: hidden;
   border-radius: 50px;
   box-shadow: var(--box-shadow);
   flex-shrink: 0;
-  width: 40px;
+  width: 50px;
 }
-.show-time .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show .message-content-time,
-.show-time .ml-item .message .message-container .message-content__wrapper.hover-show .message-content-time {
+.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show .message-content-time,
+.show-time-disabled .ml-item .message .message-container .message-content__wrapper.hover-show .message-content-time {
   transition: 300ms;
   font-size: 0;
   width: 0;
   opacity: 0;
   margin: 0;
 }
-.show-time .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show:hover .message-content-time,
-.show-time .ml-item .message .message-container .message-content__wrapper.hover-show:hover .message-content-time {
-  width: 40px;
-  font-size: 10px;
+.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show:hover .message-content-time,
+.show-time-disabled .ml-item .message .message-container .message-content__wrapper.hover-show:hover .message-content-time {
+  width: 50px;
+  font-size: 12px;
   opacity: 1;
 }
-.show-time .q-scroll-view > div .message .message-container:not(.message-container--self) .message-content-time,
-.show-time .ml-item .message .message-container:not(.message-container--self) .message-content-time {
+.show-time-disabled .q-scroll-view > div .message .message-container:not(.message-container--self) .message-content-time,
+.show-time-disabled .ml-item .message .message-container:not(.message-container--self) .message-content-time {
   margin-left: 4px;
 }
-.show-time .q-scroll-view > div .message .message-container:not(.message-container--self) .hover-show:hover .message-content-time,
-.show-time .ml-item .message .message-container:not(.message-container--self) .hover-show:hover .message-content-time {
+.show-time-disabled .q-scroll-view > div .message .message-container:not(.message-container--self) .hover-show:hover .message-content-time,
+.show-time-disabled .ml-item .message .message-container:not(.message-container--self) .hover-show:hover .message-content-time {
   margin-left: 4px;
 }
-.show-time .q-scroll-view > div .message .message-container.message-container--self .message-content-time,
-.show-time .ml-item .message .message-container.message-container--self .message-content-time {
+.show-time-disabled .q-scroll-view > div .message .message-container.message-container--self .message-content-time,
+.show-time-disabled .ml-item .message .message-container.message-container--self .message-content-time {
   margin-right: 4px;
 }
-.show-time .q-scroll-view > div .message .message-container.message-container--self .hover-show:hover .message-content-time,
-.show-time .ml-item .message .message-container.message-container--self .hover-show:hover .message-content-time {
+.show-time-disabled .q-scroll-view > div .message .message-container.message-container--self .hover-show:hover .message-content-time,
+.show-time-disabled .ml-item .message .message-container.message-container--self .hover-show:hover .message-content-time {
   margin-right: 4px;
 }
 
+.message-container .message-content__wrapper .lite-tools-side-container {
+  background-color: red;
+  min-width: 10px;
+  min-height: 10px;
+}
+.message-container .message-content__wrapper .lite-tools-bottom-container {
+  background-color: blue;
+  min-width: 10px;
+  min-height: 10px;
+}
 .show-replace .message-container .message-content__wrapper .message-content-replace {
   transition: 300ms;
   border-radius: 50px;
@@ -156,7 +166,7 @@
   box-sizing: border-box;
   background-color: var(--background-color-05);
   backdrop-filter: blur(28px);
-  margin-bottom: 3px;
+  /* margin-bottom: 3px; */
   letter-spacing: -2px;
   text-indent: -2px;
   box-shadow: var(--box-shadow);
@@ -166,9 +176,9 @@
   height: 0;
 }
 .show-replace .message-container .message-content__wrapper:hover .message-content-replace {
-  font-size: 10px;
-  width: 18px;
-  height: 18px;
+  font-size: 12px;
+  width: 23px;
+  height: 23px;
 }
 .show-replace .message-container:not(.message-container--self) .lite-tools-side-container {
   align-items: flex-start;

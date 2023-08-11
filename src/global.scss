@@ -93,13 +93,13 @@
 
 .lite-tools-side-container {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: flex-end;
   align-items: flex-end;
   max-height: 100%;
 }
 
-.show-time {
+.show-time-disabled {
   .q-scroll-view > div,
   .ml-item {
     .message {
@@ -121,18 +121,18 @@
           }
           /* 加入时间样式 */
           .message-content-time {
-            font-size: 10px;
+            font-size: 12px;
             text-align: center;
             white-space: nowrap;
             color: var(--text-color);
             background-color: var(--background-color-05);
             backdrop-filter: blur(28px);
-            padding: 2px 0;
+            padding: 4px 0;
             overflow: hidden;
             border-radius: 50px;
             box-shadow: var(--box-shadow);
             flex-shrink: 0;
-            width: 40px;
+            width: 50px;
           }
           /* 移入样式 */
           &.hover-show {
@@ -145,8 +145,8 @@
             }
             &:hover {
               .message-content-time {
-                width: 40px;
-                font-size: 10px;
+                width: 50px;
+                font-size: 12px;
                 opacity: 1;
               }
             }
@@ -182,6 +182,79 @@
     }
   }
 }
+
+// 消息块
+.message-container {
+  // 右对齐样式-应该是和本人消息绑定的，移除即可本人消息左对齐
+  &.message-container--align-right {
+    .user-name--selfRole {
+    }
+  }
+  // 本人消息
+  &.message-container--self {
+  }
+  // 非本人消息
+  &:not(.message-container--self) {
+  }
+  // 消息气泡容器
+  .message-content__wrapper {
+    // 轻量工具箱消息侧边插槽
+    .lite-tools-side-container {
+      background-color: red;
+      min-width: 10px;
+      min-height: 10px;
+    }
+    // 轻量工具箱消息底部插槽
+    .lite-tools-bottom-container {
+      background-color: blue;
+      min-width: 10px;
+      min-height: 10px;
+    }
+    // 文件消息
+    .file-message--content {
+    }
+    // 消息内容容器
+    .msg-content-container {
+      // 混合消息容器-包含图片，语音消息
+      &.mix-message__container {
+      }
+      // 红包消息
+      &.wallet-message__container {
+      }
+      // 图片消息
+      &.mix-message__container--pic {
+      }
+      // 语音消息
+      &.ptt-message {
+      }
+      // 卡片消息容器
+      &.ark-msg-content-container {
+      }
+      // 本人消息
+      &.container--self {
+      }
+      // 非本人消息
+      &:not(.container--self) {
+      }
+    }
+  }
+  // 消息状态
+  .content-status {
+    // 本人消息
+    .file-status--self {
+      // 打开文件图标
+      &.file-status {
+      }
+    }
+    // 非本人消息
+    &:not(.file-status--self) {
+      // 打开文件图标
+      &.file-status {
+      }
+    }
+  }
+}
+
 .show-replace {
   .message-container {
     .message-content__wrapper {
@@ -195,7 +268,7 @@
         box-sizing: border-box;
         background-color: var(--background-color-05);
         backdrop-filter: blur(28px);
-        margin-bottom: 3px;
+        /* margin-bottom: 3px; */
         letter-spacing: -2px;
         text-indent: -2px;
         box-shadow: var(--box-shadow);
@@ -205,9 +278,9 @@
         height: 0;
       }
       &:hover .message-content-replace {
-        font-size: 10px;
-        width: 18px;
-        height: 18px;
+        font-size: 12px;
+        width: 23px;
+        height: 23px;
       }
     }
 
