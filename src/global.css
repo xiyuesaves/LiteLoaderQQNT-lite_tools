@@ -69,83 +69,6 @@
     --text-color: rgba(255, 255, 255, 0.8);
   }
 }
-.lite-tools-side-container {
-  display: flex;
-  /* flex-direction: column; */
-  justify-content: flex-end;
-  align-items: flex-end;
-  max-height: 100%;
-}
-
-.show-time-disabled .q-scroll-view > div .message .message-container,
-.show-time-disabled .ml-item .message .message-container {
-  /* 消息块样式调整 */
-  /* 其他人发的消息 */
-  /* 自己发的消息 */
-}
-.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper,
-.show-time-disabled .ml-item .message .message-container .message-content__wrapper {
-  display: flex;
-  align-items: flex-end;
-  overflow: unset !important;
-  /* pointer-events: none;
-  & * {
-    pointer-events: auto;
-  } */
-  /* 修复一下卡片渲染有时div和canvas大小不一致的问题 */
-  /* 加入时间样式 */
-  /* 移入样式 */
-}
-.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper [aria-label=卡片] > div,
-.show-time-disabled .ml-item .message .message-container .message-content__wrapper [aria-label=卡片] > div {
-  min-height: unset !important;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper .message-content-time,
-.show-time-disabled .ml-item .message .message-container .message-content__wrapper .message-content-time {
-  font-size: 12px;
-  text-align: center;
-  white-space: nowrap;
-  color: var(--text-color);
-  background-color: var(--background-color-05);
-  backdrop-filter: blur(28px);
-  padding: 4px 0;
-  overflow: hidden;
-  border-radius: 50px;
-  box-shadow: var(--box-shadow);
-  flex-shrink: 0;
-  width: 50px;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show .message-content-time,
-.show-time-disabled .ml-item .message .message-container .message-content__wrapper.hover-show .message-content-time {
-  transition: 300ms;
-  font-size: 0;
-  width: 0;
-  opacity: 0;
-  margin: 0;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container .message-content__wrapper.hover-show:hover .message-content-time,
-.show-time-disabled .ml-item .message .message-container .message-content__wrapper.hover-show:hover .message-content-time {
-  width: 50px;
-  font-size: 12px;
-  opacity: 1;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container:not(.message-container--self) .message-content-time,
-.show-time-disabled .ml-item .message .message-container:not(.message-container--self) .message-content-time {
-  margin-left: 4px;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container:not(.message-container--self) .hover-show:hover .message-content-time,
-.show-time-disabled .ml-item .message .message-container:not(.message-container--self) .hover-show:hover .message-content-time {
-  margin-left: 4px;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container.message-container--self .message-content-time,
-.show-time-disabled .ml-item .message .message-container.message-container--self .message-content-time {
-  margin-right: 4px;
-}
-.show-time-disabled .q-scroll-view > div .message .message-container.message-container--self .hover-show:hover .message-content-time,
-.show-time-disabled .ml-item .message .message-container.message-container--self .hover-show:hover .message-content-time {
-  margin-right: 4px;
-}
-
 :root {
   --opacity-1: 0.5;
 }
@@ -175,6 +98,10 @@
   position: relative;
 }
 
+.message-container:hover .bubble-outside,
+.message-container:hover .bubble-inside {
+  visibility: visible !important;
+}
 .message-container .bubble-outside {
   left: calc(100% + 4px);
 }
@@ -186,6 +113,9 @@
   overflow: unset !important;
   position: relative;
 }
+.message-container .message-content__wrapper .wallet-message__container {
+  bottom: -26px;
+}
 .message-container .message-content__wrapper .bubble-outside {
   left: calc(100% + 4px);
   bottom: 0;
@@ -193,6 +123,9 @@
   line-height: 14px;
 }
 
+.lite-tools-time {
+  user-select: none;
+}
 .lite-tools-time.embed {
   right: 0px;
   float: right;
@@ -250,23 +183,6 @@
   backdrop-filter: blur(28px);
 }
 
-.message-container:hover .bubble-outside,
-.message-container:hover .bubble-inside {
-  visibility: visible !important;
-}
-.message-container .message-content__wrapper {
-  overflow: unset !important;
-}
-.message-container .message-content__wrapper .lite-tools-side-container {
-  background-color: red;
-  min-width: 10px;
-  min-height: 10px;
-}
-.message-container .message-content__wrapper .lite-tools-bottom-container {
-  background-color: blue;
-  min-width: 10px;
-  min-height: 10px;
-}
 .show-replace .message-container .message-content__wrapper .message-content-replace {
   transition: 300ms;
   border-radius: 50px;

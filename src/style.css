@@ -210,7 +210,7 @@
 
 /* 消息内容块 */
 .forward-msg,
-.msg-content-container,
+.msg-content-container:not(.wallet-message__container),
 .mix-message__container {
   background: unset !important;
   color: var(--text-color) !important;
@@ -223,22 +223,22 @@
   /* 别人的消息 */
 }
 .forward-msg *::selection,
-.msg-content-container *::selection,
+.msg-content-container:not(.wallet-message__container) *::selection,
 .mix-message__container *::selection {
   background-color: rgba(0, 153, 255, 0.5) !important;
 }
 .forward-msg:focus .image:after, .forward-msg:focus:before,
 .forward-msg .image:focus:after,
-.msg-content-container:focus .image:after,
-.msg-content-container:focus:before,
-.msg-content-container .image:focus:after,
+.msg-content-container:not(.wallet-message__container):focus .image:after,
+.msg-content-container:not(.wallet-message__container):focus:before,
+.msg-content-container:not(.wallet-message__container) .image:focus:after,
 .mix-message__container:focus .image:after,
 .mix-message__container:focus:before,
 .mix-message__container .image:focus:after {
   background: unset !important;
 }
 .forward-msg::after,
-.msg-content-container::after,
+.msg-content-container:not(.wallet-message__container)::after,
 .mix-message__container::after {
   content: "";
   display: block;
@@ -252,12 +252,12 @@
   z-index: -1;
 }
 .forward-msg .text-link,
-.msg-content-container .text-link,
+.msg-content-container:not(.wallet-message__container) .text-link,
 .mix-message__container .text-link {
   color: var(--link-url-color) !important;
 }
 .forward-msg .reply-element,
-.msg-content-container .reply-element,
+.msg-content-container:not(.wallet-message__container) .reply-element,
 .mix-message__container .reply-element {
   color: var(--text-color) !important;
 }

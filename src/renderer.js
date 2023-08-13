@@ -22,18 +22,6 @@ function debounce(fn, time) {
   };
 }
 
-// 节流函数
-function throttle(func, delay) {
-  let lastTime = 0;
-  return function (...args) {
-    const currentTime = new Date().getTime();
-    if (currentTime - lastTime >= delay) {
-      func.apply(this, args);
-      lastTime = currentTime;
-    }
-  };
-}
-
 // 通用初始化函数
 function initFunction(func) {
   // 窗口启动的1分钟之内每隔10ms应用一次配置信息
@@ -248,97 +236,11 @@ async function mainMessage() {
           }
         });
       }
-
-      // if (options.message.showMsgTime || options.switchReplace) {
-      //   // 获取id和对应时间
-      //   if (options.message.showMsgTime) {
-      //     document.body.classList.add("show-time");
-      //     const msgList = await lite_tools.getMsgIdAndTime();
-      //     idTImeMap = new Map([...idTImeMap, ...msgList]);
-      //   }
-      //   // 显示+1按钮
-      //   if (options.switchReplace) {
-      //     document.body.classList.add("show-replace");
-      //   }
-      //   document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
-      //     // 创建通用侧边容器
-      //     const msgElement = el.querySelector(".message-content__wrapper");
-
-      //     if (msgElement) {
-      //       // 插入时间气泡
-      //       if (options.message.showMsgTime) {
-      //         if (!el.querySelector(".message-content-time")) {
-      //           const find = idTImeMap.get(el.id);
-      //           if (find) {
-      //             const timeEl = document.createElement("div");
-      //             timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-      //             timeEl.title = new Date(find).toLocaleString("zh-CN");
-      //             timeEl.classList.add("message-content-time");
-      //             if (options.message.showMsgTimeHover) {
-      //               msgElement.classList.add("hover-show");
-      //             }
-      //             sideContainer.appendChild(timeEl);
-      //           }
-      //         }
-      //       }
-
-      //       // 插入+1按钮
-      //       if (options.switchReplace) {
-      //         if (!el.querySelector(".message-content-replace")) {
-      //           const replaceEl = document.createElement("div");
-      //           replaceEl.innerText = "+1";
-      //           replaceEl.classList.add("message-content-replace");
-      //           replaceEl.addEventListener("click", (event) => {
-      //             console.log("+1被触发了");
-      //           });
-      //           sideContainer.insertBefore(replaceEl, sideContainer.firstChild);
-      //         }
-      //       }
-
-      //       // 通用侧边插入容器
-      //       if (el.querySelector(".message-container--self")) {
-      //         msgElement.insertBefore(sideContainer, msgElement.firstChild);
-      //       } else {
-      //         msgElement.appendChild(sideContainer);
-      //       }
-      //     }
-      //   });
-      // } else {
-      //   if (!options.message.showMsgTime) {
-      //     document.body.classList.remove("show-time");
-      //   }
-      //   if (!options.switchReplace) {
-      //     document.body.classList.remove("show-replace");
-      //   }
-      // }
     }).observe(document.querySelector(".ml-list.list"), {
       attributes: true,
       attributeFilter: ["style"],
       childList: true,
       subtree: false,
-    });
-  }
-
-  function resizeMessage() {
-    const listEl = document.querySelector(".ml-list.list");
-    const itemClass = ".ml-item";
-    listEl.addEventListener("resize", (event) => {
-      console.log("尺寸调整");
-      listEl.querySelectorAll(itemClass).forEach((el) => {
-        const mixContent = el.querySelector(".message-content.mix-message__inner");
-        const timeEl = el.querySelector(".lite-tools-time");
-        if (mixContent && timeEl) {
-          const tempHeight = mixContent.offsetHeight;
-          timeEl.style.marginTop = "1px";
-          const tempHeight2 = mixContent.offsetHeight;
-          if (tempHeight !== tempHeight2) {
-            timeEl.removeAttribute("style");
-            timeEl.classList.add("inline");
-          } else {
-            timeEl.classList.remove("inline");
-          }
-        }
-      });
     });
   }
 
@@ -395,7 +297,6 @@ async function mainMessage() {
     // 消息列表监听器
     if (document.querySelector(".ml-list.list") && first("msgList")) {
       observerMessageList();
-      resizeMessage();
     }
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");

@@ -91,98 +91,6 @@
   }
 }
 
-.lite-tools-side-container {
-  display: flex;
-  /* flex-direction: column; */
-  justify-content: flex-end;
-  align-items: flex-end;
-  max-height: 100%;
-}
-
-.show-time-disabled {
-  .q-scroll-view > div,
-  .ml-item {
-    .message {
-      .message-container {
-        /* 消息块样式调整 */
-        .message-content__wrapper {
-          display: flex;
-          align-items: flex-end;
-          overflow: unset !important;
-          /* pointer-events: none;
-          & * {
-            pointer-events: auto;
-          } */
-          /* 修复一下卡片渲染有时div和canvas大小不一致的问题 */
-          [aria-label="卡片"] {
-            & > div {
-              min-height: unset !important;
-            }
-          }
-          /* 加入时间样式 */
-          .message-content-time {
-            font-size: 12px;
-            text-align: center;
-            white-space: nowrap;
-            color: var(--text-color);
-            background-color: var(--background-color-05);
-            backdrop-filter: blur(28px);
-            padding: 4px 0;
-            overflow: hidden;
-            border-radius: 50px;
-            box-shadow: var(--box-shadow);
-            flex-shrink: 0;
-            width: 50px;
-          }
-          /* 移入样式 */
-          &.hover-show {
-            .message-content-time {
-              transition: 300ms;
-              font-size: 0;
-              width: 0;
-              opacity: 0;
-              margin: 0;
-            }
-            &:hover {
-              .message-content-time {
-                width: 50px;
-                font-size: 12px;
-                opacity: 1;
-              }
-            }
-          }
-        }
-        /* 其他人发的消息 */
-        &:not(.message-container--self) {
-          .message-content-time {
-            margin-left: 4px;
-          }
-          .hover-show {
-            &:hover {
-              .message-content-time {
-                margin-left: 4px;
-              }
-            }
-          }
-        }
-        /* 自己发的消息 */
-        &.message-container--self {
-          .message-content-time {
-            margin-right: 4px;
-          }
-          .hover-show {
-            &:hover {
-              .message-content-time {
-                margin-right: 4px;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 // 时间显示原本样式预处理
 // 默认文件
 :root {
@@ -217,6 +125,12 @@
 
 // 时间样式通用调整
 .message-container {
+  &:hover {
+    .bubble-outside,
+    .bubble-inside {
+      visibility: visible !important;
+    }
+  }
   .bubble-outside {
     left: calc(100% + 4px);
   }
@@ -229,7 +143,10 @@
   .message-content__wrapper {
     overflow: unset !important;
     position: relative;
-
+    // 红包卡片微调
+    .wallet-message__container {
+      bottom: -26px;
+    }
     .bubble-outside {
       left: calc(100% + 4px);
       bottom: 0;
@@ -296,85 +213,6 @@
       left: 0;
       content: "";
       backdrop-filter: blur(28px);
-    }
-  }
-}
-
-// 消息块
-.message-container {
-  &:hover {
-    .bubble-outside,
-    .bubble-inside {
-      visibility: visible !important;
-    }
-  }
-  // 右对齐样式-应该是和本人消息绑定的，移除即可本人消息左对齐
-  &.message-container--align-right {
-    .user-name--selfRole {
-    }
-  }
-  // 本人消息
-  &.message-container--self {
-  }
-  // 非本人消息
-  &:not(.message-container--self) {
-  }
-  // 消息气泡容器
-  .message-content__wrapper {
-    overflow: unset !important;
-    // 轻量工具箱消息侧边插槽
-    .lite-tools-side-container {
-      background-color: red;
-      min-width: 10px;
-      min-height: 10px;
-    }
-    // 轻量工具箱消息底部插槽
-    .lite-tools-bottom-container {
-      background-color: blue;
-      min-width: 10px;
-      min-height: 10px;
-    }
-    // 文件消息
-    .file-message--content {
-    }
-    // 消息内容容器
-    .msg-content-container {
-      // 混合消息容器-包含图片，语音消息
-      &.mix-message__container {
-      }
-      // 红包消息
-      &.wallet-message__container {
-      }
-      // 图片消息
-      &.mix-message__container--pic {
-      }
-      // 语音消息
-      &.ptt-message {
-      }
-      // 卡片消息容器
-      &.ark-msg-content-container {
-      }
-      // 本人消息
-      &.container--self {
-      }
-      // 非本人消息
-      &:not(.container--self) {
-      }
-    }
-  }
-  // 消息状态
-  .content-status {
-    // 本人消息
-    .file-status--self {
-      // 打开文件图标
-      &.file-status {
-      }
-    }
-    // 非本人消息
-    &:not(.file-status--self) {
-      // 打开文件图标
-      &.file-status {
-      }
     }
   }
 }

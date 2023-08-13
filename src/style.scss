@@ -217,7 +217,7 @@
 
 /* 消息内容块 */
 .forward-msg,
-.msg-content-container,
+.msg-content-container:not(.wallet-message__container),
 .mix-message__container {
   background: unset !important;
   color: var(--text-color) !important;
