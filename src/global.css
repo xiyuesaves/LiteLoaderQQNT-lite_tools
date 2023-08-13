@@ -146,6 +146,117 @@
   margin-right: 4px;
 }
 
+:root {
+  --opacity-1: 0.5;
+}
+
+.normal-file.file-element .file-info {
+  position: relative;
+}
+.normal-file.file-element .file-info .embed {
+  pointer-events: auto;
+}
+.normal-file.file-element .file-info .embed::after {
+  opacity: 0.5 !important;
+}
+
+.file-info-mask p:last-child {
+  position: relative;
+  pointer-events: auto;
+}
+.file-info-mask p:last-child .embed {
+  pointer-events: auto;
+}
+.file-info-mask p:last-child .embed::after {
+  opacity: 0.8 !important;
+}
+
+.message-content__wrapper .count {
+  position: relative;
+}
+
+.message-container .bubble-outside {
+  left: calc(100% + 4px);
+}
+.message-container.message-container--self .bubble-outside {
+  left: unset !important;
+  right: calc(100% + 4px);
+}
+.message-container .message-content__wrapper {
+  overflow: unset !important;
+  position: relative;
+}
+.message-container .message-content__wrapper .bubble-outside {
+  left: calc(100% + 4px);
+  bottom: 0;
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.lite-tools-time.embed {
+  right: 0px;
+  float: right;
+  font-size: 12px;
+  line-height: 14px;
+  margin-left: 6px;
+  visibility: hidden;
+  user-select: none;
+}
+.lite-tools-time.embed::after {
+  content: attr(time);
+  visibility: visible;
+  position: absolute;
+  display: block;
+  font-size: 12px;
+  line-height: 14px;
+  bottom: 0;
+  right: 0;
+  opacity: 0.5;
+}
+.lite-tools-time.bubble-inside {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 4px 6px;
+  color: #ffffff;
+  font-size: 12px;
+  border-radius: 4px;
+  visibility: hidden;
+}
+.lite-tools-time.bubble-outside {
+  white-space: nowrap;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--background-color-05);
+  padding: 4px 6px;
+  color: var(--text-color-05);
+  opacity: var(--opacity-1);
+  box-shadow: var(--box-shadow);
+  font-size: 12px;
+  border-radius: 4px;
+  visibility: hidden;
+  overflow: hidden;
+}
+.lite-tools-time.bubble-outside::after {
+  z-index: -1;
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  content: "";
+  backdrop-filter: blur(28px);
+}
+
+.message-container:hover .bubble-outside,
+.message-container:hover .bubble-inside {
+  visibility: visible !important;
+}
+.message-container .message-content__wrapper {
+  overflow: unset !important;
+}
 .message-container .message-content__wrapper .lite-tools-side-container {
   background-color: red;
   min-width: 10px;

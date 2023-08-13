@@ -183,8 +183,130 @@
   }
 }
 
+// 时间显示原本样式预处理
+// 默认文件
+:root {
+  --opacity-1: 0.5;
+}
+.normal-file.file-element {
+  .file-info {
+    position: relative;
+    .embed {
+      pointer-events: auto;
+      &::after {
+        opacity: 0.5 !important;
+      }
+    }
+  }
+}
+// 图片文件
+.file-info-mask p:last-child {
+  position: relative;
+  .embed {
+    pointer-events: auto;
+    &::after {
+      opacity: 0.8 !important;
+    }
+  }
+  pointer-events: auto;
+}
+// 合并转发消息
+.message-content__wrapper .count {
+  position: relative;
+}
+
+// 接收到的表情
+.message-container {
+  .bubble-outside {
+    left: calc(100% + 4px);
+  }
+  &.message-container--self {
+    .bubble-outside {
+      left: unset !important;
+      right: calc(100% + 4px);
+    }
+  }
+  .message-content__wrapper {
+    overflow: unset !important;
+    position: relative;
+
+    .bubble-outside {
+      left: calc(100% + 4px);
+      bottom: 0;
+      font-size: 12px;
+      line-height: 14px;
+    }
+  }
+}
+
+// 时间显示样式
+.lite-tools-time {
+  &.embed {
+    right: 0px;
+    float: right;
+    font-size: 12px;
+    line-height: 14px;
+    margin-left: 6px;
+    visibility: hidden;
+    user-select: none;
+    &::after {
+      content: attr(time);
+      visibility: visible;
+      position: absolute;
+      display: block;
+      font-size: 12px;
+      line-height: 14px;
+      bottom: 0;
+      right: 0;
+      opacity: 0.5;
+    }
+  }
+  &.bubble-inside {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 4px 6px;
+    color: #ffffff;
+    font-size: 12px;
+    border-radius: 4px;
+    visibility: hidden;
+  }
+  &.bubble-outside {
+    white-space: nowrap;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.3);
+    background-color: var(--background-color-05);
+    padding: 4px 6px;
+    color: var(--text-color-05);
+    opacity: var(--opacity-1);
+    box-shadow: var(--box-shadow);
+    font-size: 12px;
+    border-radius: 4px;
+    visibility: hidden;
+    overflow: hidden;
+    &::after {
+      z-index: -1;
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      content: "";
+      backdrop-filter: blur(28px);
+    }
+  }
+}
+
 // 消息块
 .message-container {
+  &:hover {
+    .bubble-outside,
+    .bubble-inside {
+      visibility: visible !important;
+    }
+  }
   // 右对齐样式-应该是和本人消息绑定的，移除即可本人消息左对齐
   &.message-container--align-right {
     .user-name--selfRole {
@@ -198,6 +320,7 @@
   }
   // 消息气泡容器
   .message-content__wrapper {
+    overflow: unset !important;
     // 轻量工具箱消息侧边插槽
     .lite-tools-side-container {
       background-color: red;

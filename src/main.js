@@ -34,7 +34,6 @@ const defaultOptions = {
     disabledSlideMultipleSelection: false, // 禁用滑动多选消息
     convertMiniPrgmArk: false, // 小程序分享转url卡片
     showMsgTime: false, // 显示消息发送时间
-    showMsgTimeHover: false, // 移入显示消息发送时间
     autoOpenURL: false, // 自动打开来自手机的链接
   },
   tail: {
@@ -255,7 +254,8 @@ function onLoad(plugin) {
         } else if (type === "global") {
           window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
         } else if(type === "setting"){
-          window.webContents.send("LiteLoader.lite_tools.updateSettingStyle", styleText);
+          // 因为设置界面是使用url获取的css，所以只需刷新链接即可
+          window.webContents.send("LiteLoader.lite_tools.updateSettingStyle");
         }
       }
     });
@@ -347,6 +347,18 @@ function onBrowserWindowCreated(window, plugin) {
       args[1]?.[0],
       args
     );
+    // log(JSON.stringify(args))
+    // if(JSON.stringify(args).includes("课堂")){
+    //   log("%c获取到特殊消息","background:red",args)
+    // }
+
+
+    // 拦截侧边栏数据
+    // if(args[1] && args[1]?.configData?.group && args[1]?.configData?.content){
+    //   const temp =  JSON.parse(args[1].configData.content);
+    //   args[1].configData.content = temp.map(el => {el.status = 2; return el})
+    // }
+
     if (options.message.convertMiniPrgmArk || options.message.showMsgTime) {
       // 替换历史消息中的小程序卡片
       const msgListIndex = args.findIndex(

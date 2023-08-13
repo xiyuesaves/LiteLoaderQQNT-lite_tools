@@ -1,6 +1,7 @@
 /* 独立所有变量 */
 :root {
   --box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+  --opacity-1: 1!important;
 }
 @media (prefers-color-scheme: light) {
   :root {
@@ -11,6 +12,7 @@
     --background-color-07: rgba(255, 255, 255, 0.7);
     --background-color-1: rgba(255, 255, 255, 1);
     --text-color: rgba(0, 0, 0, 0.8);
+    --text-color-05: rgba(0, 0, 0, 0.5);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(0, 153, 255, 1);
     --voice-color-1: rgba(0, 153, 255, 1);
@@ -25,6 +27,7 @@
     --background-color-07: rgba(0, 0, 0, 0.7);
     --background-color-1: rgba(0, 0, 0, 1);
     --text-color: rgba(255, 255, 255, 0.8);
+    --text-color-05: rgba(255, 255, 255, 0.5);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(255, 255, 255, 1);
     --voice-color-1: rgba(255, 255, 255, 1);
