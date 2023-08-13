@@ -215,7 +215,7 @@
   position: relative;
 }
 
-// 接收到的表情
+// 时间样式通用调整
 .message-container {
   .bubble-outside {
     left: calc(100% + 4px);
@@ -241,6 +241,7 @@
 
 // 时间显示样式
 .lite-tools-time {
+  user-select: none;
   &.embed {
     right: 0px;
     float: right;
