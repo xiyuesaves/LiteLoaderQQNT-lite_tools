@@ -9,6 +9,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updateStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateStyle", callback),
   // 更新全局样式
   updateGlobalStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateGlobalStyle", callback),
+  // 更新设置界面样式
+  updateSettingStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateSettingStyle", callback),
   // 更新配置信息
   updateOptions: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateOptions", callback),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息

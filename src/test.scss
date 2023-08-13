@@ -1,0 +1,70 @@
+message-container message-container--self message-container--align-right  // 卡片-本人消息
+
+message-container message-container--self message-container--align-right file-message // 文件-本人消息
+
+
+file-message--content // 文件-消息气泡
+
+msg-content-container container--self is-rendering mix-message__container // 纯文本-消息气泡
+
+msg-content-container container--self is-rendering ark-msg-content-container // 消息卡片-消息气泡
+
+// 消息块
+.message-container {
+  // 右对齐样式-应该是和本人消息绑定的，移除即可本人消息左对齐
+  &.message-container--align-right {
+    .user-name--selfRole {
+    }
+  }
+  // 本人消息
+  &.message-container--self {
+  }
+  // 非本人消息
+  &:not(.message-container--self) {
+  }
+  // 消息气泡容器
+  .message-content__wrapper {
+    // 文件消息
+    .file-message--content {
+    }
+    // 消息内容容器
+    .msg-content-container {
+      // 混合消息容器-包含图片，语音消息
+      &.mix-message__container {
+      }
+      // 红包消息
+      &.wallet-message__container {
+      }
+      // 图片消息
+      &.mix-message__container--pic {
+      }
+      // 语音消息
+      &.ptt-message {
+      }
+      // 卡片消息容器
+      &.ark-msg-content-container {
+      }
+      // 本人消息
+      &.container--self {
+      }
+      // 非本人消息
+      &:not(.container--self) {
+      }
+    }
+  }
+  // 消息状态
+  .content-status {
+    // 本人消息
+    .file-status--self {
+      // 打开文件图标
+      &.file-status {
+      }
+    }
+    // 非本人消息
+    &:not(.file-status--self) {
+      // 打开文件图标
+      &.file-status {
+      }
+    }
+  }
+}

@@ -60,6 +60,8 @@ function onLoad(plugin) {
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
   const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
   const globalPath = path.join(plugin.path.plugin, "src/global.css");
+  const settingScssPath = path.join(plugin.path.plugin, "src/config/view.scss");
+  const settingPath = path.join(plugin.path.plugin, "src/config/view.css");
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
@@ -106,6 +108,16 @@ function onLoad(plugin) {
           const cssText = sass.compile(globalScssPath).css;
           fs.writeFileSync(globalPath, cssText);
           updateStyle(cssText, "global");
+        }, 100)
+      );
+      // 监听并编译view.scss
+      fs.watch(
+        settingScssPath,
+        "utf-8",
+        debounce(() => {
+          const cssText = sass.compile(settingScssPath).css;
+          fs.writeFileSync(settingPath, cssText);
+          updateStyle(cssText, "setting");
         }, 100)
       );
     } catch {
@@ -242,6 +254,8 @@ function onLoad(plugin) {
           window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
         } else if (type === "global") {
           window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
+        } else if(type === "setting"){
+          window.webContents.send("LiteLoader.lite_tools.updateSettingStyle", styleText);
         }
       }
     });

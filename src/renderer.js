@@ -725,6 +725,11 @@ async function onConfigView(view) {
   const doc = parser.parseFromString(html_text, "text/html");
   doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
 
+  lite_tools.updateSettingStyle((event,message) => {
+    console.log("更新设置样式");
+    link_element.href = css_file_path+`?r=${new Date()}`;
+  })
+
   // 更新配置信息
   options = await lite_tools.config();
 
