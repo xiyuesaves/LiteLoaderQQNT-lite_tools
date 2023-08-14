@@ -81,6 +81,79 @@ async function updateWallpaper() {
   }
 }
 
+// 通用监听消息列表方法
+function observerMessageList(msgListEl, msgItemEl, isForward = false) {
+  console.log("开始处理消息", msgListEl, msgItemEl);
+  new MutationObserver(async (mutations, observe) => {
+    console.log("监听器触发");
+    if (options.message.showMsgTime) {
+      const msgList = await lite_tools.getMsgIdAndTime();
+      console.log("开始插入消息时间", document.querySelectorAll(msgItemEl), msgList);
+      idTImeMap = new Map([...idTImeMap, ...msgList]);
+      document.querySelectorAll(msgItemEl).forEach((el) => {
+        const timeEl = el.querySelector(".lite-tools-time");
+        if (!timeEl) {
+          const newTimeEl = document.createElement("div");
+          let find;
+          if (isForward) {
+            find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
+          } else {
+            find = idTImeMap.get(el.id);
+          }
+          if (find) {
+            const showTime = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+            newTimeEl.classList.add("lite-tools-time");
+            newTimeEl.innerText = showTime;
+            newTimeEl.setAttribute("time", showTime);
+            newTimeEl.title = new Date(find).toLocaleString("zh-CN");
+
+            // 气泡-嵌入（必须含有文本内容的消息,文件消息）
+            const bubbleEmbed = el.querySelector(
+              ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
+            );
+            // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
+            const bubbleInside = el.querySelector(
+              ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
+            );
+            // 气泡-外部消息（兜底样式）
+            const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
+
+            if (bubbleEmbed) {
+              console.log("嵌入式");
+              newTimeEl.classList.add("embed");
+              bubbleEmbed.appendChild(newTimeEl);
+            } else if (bubbleInside) {
+              // 如果目标是图片消息，则额外处理图片样式
+              if (bubbleInside.className.includes("mix-message__container--pic")) {
+                const picEl = bubbleInside.querySelector(".pic-element");
+                if (picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50) {
+                  newTimeEl.classList.add("bubble-inside");
+                  bubbleInside.appendChild(newTimeEl);
+                } else {
+                  newTimeEl.classList.add("bubble-outside");
+                  bubbleInside.classList.add("hidden-background");
+                  bubbleInside.parentElement.appendChild(newTimeEl);
+                }
+              } else {
+                newTimeEl.classList.add("bubble-inside");
+                bubbleInside.appendChild(newTimeEl);
+              }
+            } else if (bubbleOutside) {
+              newTimeEl.classList.add("bubble-outside");
+              bubbleOutside.appendChild(newTimeEl);
+            }
+          }
+        }
+      });
+    }
+  }).observe(document.querySelector(msgListEl), {
+    attributes: true,
+    attributeFilter: ["style"],
+    childList: true,
+    subtree: false,
+  });
+}
+
 // 媒体预览增强
 function imageViewer() {
   // 修复弹窗字体模糊
@@ -194,70 +267,6 @@ async function mainMessage() {
     });
   }
 
-  // 插入插槽和对应功能元素
-  function observerMessageList() {
-    new MutationObserver(async (mutations, observe) => {
-      if (options.message.showMsgTime) {
-        const msgList = await lite_tools.getMsgIdAndTime();
-        idTImeMap = new Map([...idTImeMap, ...msgList]);
-        document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
-          const timeEl = el.querySelector(".lite-tools-time");
-          if (!timeEl) {
-            const newTimeEl = document.createElement("div");
-            const find = idTImeMap.get(el.id);
-            if (find) {
-              const showTime = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-              newTimeEl.classList.add("lite-tools-time");
-              newTimeEl.innerText = showTime;
-              newTimeEl.setAttribute("time", showTime);
-              newTimeEl.title = new Date(find).toLocaleString("zh-CN");
-
-              // 气泡-嵌入（必须含有文本内容的消息,文件消息）
-              const bubbleEmbed = el.querySelector(
-                ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
-              );
-              // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-              const bubbleInside = el.querySelector(
-                ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
-              );
-              // 气泡-外部消息（兜底样式）
-              const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
-
-              if (bubbleEmbed) {
-                newTimeEl.classList.add("embed");
-                bubbleEmbed.appendChild(newTimeEl);
-              } else if (bubbleInside) {
-                // 如果目标是图片消息，则额外处理图片样式
-                if (bubbleInside.className.includes("mix-message__container--pic")) {
-                  const picEl = bubbleInside.querySelector(".pic-element");
-                  if (picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50) {
-                    newTimeEl.classList.add("bubble-inside");
-                    bubbleInside.appendChild(newTimeEl);
-                  } else {
-                    newTimeEl.classList.add("bubble-outside");
-                    bubbleInside.classList.add("hidden-background");
-                    bubbleInside.parentElement.appendChild(newTimeEl);
-                  }
-                } else {
-                  newTimeEl.classList.add("bubble-inside");
-                  bubbleInside.appendChild(newTimeEl);
-                }
-              } else if (bubbleOutside) {
-                newTimeEl.classList.add("bubble-outside");
-                bubbleOutside.appendChild(newTimeEl);
-              }
-            }
-          }
-        });
-      }
-    }).observe(document.querySelector(".ml-list.list"), {
-      attributes: true,
-      attributeFilter: ["style"],
-      childList: true,
-      subtree: false,
-    });
-  }
-
   // 刷新页面配置
   async function updatePage() {
     // 初始化推荐表情
@@ -310,7 +319,7 @@ async function mainMessage() {
     }
     // 消息列表监听器
     if (document.querySelector(".ml-list.list") && first("msgList")) {
-      observerMessageList();
+      observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
     }
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
@@ -458,48 +467,11 @@ function chatMessage() {
     updatePage();
   });
   // 附加消息发送时间
-  function observerMessageList() {
-    new MutationObserver(async (mutations, observe) => {
-      if (options.message.showMsgTime) {
-        document.body.classList.add("show-time");
-        const msgList = await lite_tools.getMsgIdAndTime();
-        idTImeMap = new Map([...idTImeMap, ...msgList]);
-        document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
-          const find = idTImeMap.get(el.id);
-          if (find) {
-            const msgElement = el.querySelector(".message-content__wrapper");
-            if (msgElement && !el.querySelector(".message-content-time")) {
-              const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-              timeEl.title = new Date(find).toLocaleString("zh-CN");
-              timeEl.classList.add("message-content-time");
-              if (options.message.showMsgTimeHover) {
-                msgElement.classList.add("hover-show");
-              }
-              // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
-              if (el.querySelector(".message-container--self")) {
-                msgElement.insertBefore(timeEl, msgElement.firstChild);
-              } else {
-                msgElement.appendChild(timeEl);
-              }
-            }
-          }
-        });
-      } else {
-        document.body.classList.remove("show-time");
-      }
-    }).observe(document.querySelector(".ml-list.list"), {
-      attributes: false,
-      childList: true,
-      subtree: false,
-    });
-  }
-  observerMessageList();
+  observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
 }
 
 // 转发消息界面
 function forwardMessage() {
-  document.querySelector("#app").classList.add("show-time");
   document.querySelector("#app").classList.add("forward");
   updatePage();
   async function updatePage() {
@@ -510,45 +482,45 @@ function forwardMessage() {
   }
 
   // 附加消息发送时间
-  function observerMessageList() {
-    new MutationObserver(async (mutations, observe) => {
-      if (options.message.showMsgTime) {
-        document.body.classList.add("show-time");
-        const msgList = await lite_tools.getMsgIdAndTime();
-        idTImeMap = new Map([...idTImeMap, ...msgList]);
-        lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
-        document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
-          const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
-          if (find) {
-            lite_tools.log("找到对应消息id时间", find);
-            const msgElement = el.querySelector(".message-content__wrapper");
-            if (msgElement && !el.querySelector(".message-content-time")) {
-              const timeEl = document.createElement("div");
-              timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-              timeEl.title = new Date(find).toLocaleString("zh-CN");
-              timeEl.classList.add("message-content-time");
-              if (options.message.showMsgTimeHover) {
-                msgElement.classList.add("hover-show");
-              }
-              // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
-              if (el.className.includes("message-container--self")) {
-                msgElement.insertBefore(timeEl, msgElement.firstChild);
-              } else {
-                msgElement.appendChild(timeEl);
-              }
-            }
-          }
-        });
-      } else {
-        document.body.classList.remove("show-time");
-      }
-    }).observe(document.querySelector(".list .q-scroll-view"), {
-      attributes: false,
-      childList: true,
-      subtree: false,
-    });
-  }
-  observerMessageList();
+  // function observerMessageList() {
+  //   new MutationObserver(async (mutations, observe) => {
+  //     if (options.message.showMsgTime) {
+  //       document.body.classList.add("show-time");
+  //       const msgList = await lite_tools.getMsgIdAndTime();
+  //       idTImeMap = new Map([...idTImeMap, ...msgList]);
+  //       lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
+  //       document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
+  //         const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
+  //         if (find) {
+  //           lite_tools.log("找到对应消息id时间", find);
+  //           const msgElement = el.querySelector(".message-content__wrapper");
+  //           if (msgElement && !el.querySelector(".message-content-time")) {
+  //             const timeEl = document.createElement("div");
+  //             timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+  //             timeEl.title = new Date(find).toLocaleString("zh-CN");
+  //             timeEl.classList.add("message-content-time");
+  //             if (options.message.showMsgTimeHover) {
+  //               msgElement.classList.add("hover-show");
+  //             }
+  //             // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
+  //             if (el.className.includes("message-container--self")) {
+  //               msgElement.insertBefore(timeEl, msgElement.firstChild);
+  //             } else {
+  //               msgElement.appendChild(timeEl);
+  //             }
+  //           }
+  //         }
+  //       });
+  //     } else {
+  //       document.body.classList.remove("show-time");
+  //     }
+  //   }).observe(document.querySelector(".list .q-scroll-view"), {
+  //     attributes: false,
+  //     childList: true,
+  //     subtree: false,
+  //   });
+  // }
+  observerMessageList(".list .q-scroll-view", ".list .q-scroll-view .message-container", true);
 
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");

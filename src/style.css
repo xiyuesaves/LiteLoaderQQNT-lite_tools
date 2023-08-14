@@ -104,6 +104,10 @@
 .forward#app .list {
   background: unset !important;
 }
+.forward#app .bubble-outside {
+  visibility: visible;
+  z-index: 1;
+}
 .forward#app::after {
   content: "";
   display: block;

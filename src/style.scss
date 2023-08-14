@@ -107,6 +107,10 @@
   .list {
     background: unset !important;
   }
+  .bubble-outside{
+    visibility: visible;
+    z-index: 1;
+  }
   &::after {
     content: "";
     display: block;
