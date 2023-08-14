@@ -473,60 +473,12 @@ function chatMessage() {
 // 转发消息界面
 function forwardMessage() {
   document.querySelector("#app").classList.add("forward");
-  updatePage();
-  async function updatePage() {
-    // 更新自定义样式
-    if (first("init-wallpaper")) {
-      updateWallpaper();
-    }
-  }
-
-  // 附加消息发送时间
-  // function observerMessageList() {
-  //   new MutationObserver(async (mutations, observe) => {
-  //     if (options.message.showMsgTime) {
-  //       document.body.classList.add("show-time");
-  //       const msgList = await lite_tools.getMsgIdAndTime();
-  //       idTImeMap = new Map([...idTImeMap, ...msgList]);
-  //       lite_tools.log("查找对象", document.querySelectorAll(".list .q-scroll-view .message-container").length);
-  //       document.querySelectorAll(".list .q-scroll-view .message-container").forEach((el) => {
-  //         const find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
-  //         if (find) {
-  //           lite_tools.log("找到对应消息id时间", find);
-  //           const msgElement = el.querySelector(".message-content__wrapper");
-  //           if (msgElement && !el.querySelector(".message-content-time")) {
-  //             const timeEl = document.createElement("div");
-  //             timeEl.innerText = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-  //             timeEl.title = new Date(find).toLocaleString("zh-CN");
-  //             timeEl.classList.add("message-content-time");
-  //             if (options.message.showMsgTimeHover) {
-  //               msgElement.classList.add("hover-show");
-  //             }
-  //             // 自己发送的消息插入到最前面，其他人发送的消息插入到最后面
-  //             if (el.className.includes("message-container--self")) {
-  //               msgElement.insertBefore(timeEl, msgElement.firstChild);
-  //             } else {
-  //               msgElement.appendChild(timeEl);
-  //             }
-  //           }
-  //         }
-  //       });
-  //     } else {
-  //       document.body.classList.remove("show-time");
-  //     }
-  //   }).observe(document.querySelector(".list .q-scroll-view"), {
-  //     attributes: false,
-  //     childList: true,
-  //     subtree: false,
-  //   });
-  // }
+  updateWallpaper();
   observerMessageList(".list .q-scroll-view", ".list .q-scroll-view .message-container", true);
-
   lite_tools.updateOptions((event, opt) => {
     console.log("新接口获取配置更新");
     options = opt;
     updateWallpaper();
-    updatePage();
   });
 }
 
@@ -610,6 +562,9 @@ async function onLoad() {
     }
   });
 
+  // 全局加载监听选中文本事件
+  webSearch();
+
   // 所有页面都需要执行的更新操作
   updatePage();
   lite_tools.updateOptions((event, opt) => {
@@ -624,10 +579,6 @@ async function onLoad() {
       document.body.classList.add("disabled-slide-multiple-selection");
     } else {
       document.body.classList.remove("disabled-slide-multiple-selection");
-    }
-    // 全局加载监听选中文本事件
-    if (first("web-search")) {
-      webSearch();
     }
   }
 
