@@ -13,6 +13,7 @@
     --background-color-07: rgba(255, 255, 255, 0.7);
     --background-color-1: rgba(255, 255, 255, 1);
     --text-color: rgba(0, 0, 0, 0.8);
+    --text-color-06: rgba(0, 0, 0, 0.6);
     --text-color-05: rgba(0, 0, 0, 0.5);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(0, 153, 255, 1);
@@ -29,6 +30,7 @@
     --background-color-07: rgba(0, 0, 0, 0.7);
     --background-color-1: rgba(0, 0, 0, 1);
     --text-color: rgba(255, 255, 255, 0.8);
+    --text-color-06: rgba(255, 255, 255, 0.6);
     --text-color-05: rgba(255, 255, 255, 0.5);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(255, 255, 255, 1);
@@ -219,47 +221,49 @@
 
 /* 消息内容块 */
 .forward-msg,
-.msg-content-container:not(.wallet-message__container),
+.msg-content-container,
 .mix-message__container {
-  background: unset !important;
-  color: var(--text-color) !important;
-  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
-  box-shadow: var(--box-shadow);
-  overflow: hidden !important;
-  position: relative;
-  backdrop-filter: blur(28px);
-  & *::selection {
-    background-color: rgba(0, 153, 255, 0.5) !important;
-  }
-
   &:focus .image:after,
   &:focus:before,
   .image:focus:after {
     background: unset !important;
   }
-  /* 我的消息 */
-  &.container--self {
-  }
-  /* 别人的消息 */
-  &.container--others {
-  }
-  &::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    backdrop-filter: blur(28px);
-    background-color: var(--background-color-05);
-    z-index: -1;
-  }
-  .text-link {
-    color: var(--link-url-color) !important;
-  }
-  .reply-element {
+  &:not(.wallet-message__container, .hidden-background) {
+    background: unset !important;
     color: var(--text-color) !important;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: var(--box-shadow);
+    overflow: hidden !important;
+    position: relative;
+    backdrop-filter: blur(28px);
+    & *::selection {
+      background-color: rgba(0, 153, 255, 0.5) !important;
+    }
+
+    /* 我的消息 */
+    &.container--self {
+    }
+    /* 别人的消息 */
+    &.container--others {
+    }
+    &::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      backdrop-filter: blur(28px);
+      background-color: var(--background-color-05);
+      z-index: -1;
+    }
+    .text-link {
+      color: var(--link-url-color) !important;
+    }
+    .reply-element {
+      color: var(--text-color) !important;
+    }
   }
 }
 

@@ -15,6 +15,7 @@
     --background-color-07: rgba(255, 255, 255, 0.7);
     --background-color-1: rgba(255, 255, 255, 1);
     --text-color: rgba(0, 0, 0, 0.8);
+    --text-color-06: rgba(0, 0, 0, 0.6);
     --text-color-05: rgba(0, 0, 0, 0.5);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(0, 153, 255, 1);
@@ -31,6 +32,7 @@
     --background-color-07: rgba(0, 0, 0, 0.7);
     --background-color-1: rgba(0, 0, 0, 1);
     --text-color: rgba(255, 255, 255, 0.8);
+    --text-color-06: rgba(255, 255, 255, 0.6);
     --text-color-05: rgba(255, 255, 255, 0.5);
     --link-url-color: rgb(45, 119, 229);
     --voice-color-07: rgba(255, 255, 255, 1);
@@ -211,9 +213,19 @@
 }
 
 /* 消息内容块 */
-.forward-msg,
-.msg-content-container:not(.wallet-message__container),
-.mix-message__container {
+.forward-msg:focus .image:after, .forward-msg:focus:before,
+.forward-msg .image:focus:after,
+.msg-content-container:focus .image:after,
+.msg-content-container:focus:before,
+.msg-content-container .image:focus:after,
+.mix-message__container:focus .image:after,
+.mix-message__container:focus:before,
+.mix-message__container .image:focus:after {
+  background: unset !important;
+}
+.forward-msg:not(.wallet-message__container, .hidden-background),
+.msg-content-container:not(.wallet-message__container, .hidden-background),
+.mix-message__container:not(.wallet-message__container, .hidden-background) {
   background: unset !important;
   color: var(--text-color) !important;
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
@@ -224,24 +236,14 @@
   /* 我的消息 */
   /* 别人的消息 */
 }
-.forward-msg *::selection,
-.msg-content-container:not(.wallet-message__container) *::selection,
-.mix-message__container *::selection {
+.forward-msg:not(.wallet-message__container, .hidden-background) *::selection,
+.msg-content-container:not(.wallet-message__container, .hidden-background) *::selection,
+.mix-message__container:not(.wallet-message__container, .hidden-background) *::selection {
   background-color: rgba(0, 153, 255, 0.5) !important;
 }
-.forward-msg:focus .image:after, .forward-msg:focus:before,
-.forward-msg .image:focus:after,
-.msg-content-container:not(.wallet-message__container):focus .image:after,
-.msg-content-container:not(.wallet-message__container):focus:before,
-.msg-content-container:not(.wallet-message__container) .image:focus:after,
-.mix-message__container:focus .image:after,
-.mix-message__container:focus:before,
-.mix-message__container .image:focus:after {
-  background: unset !important;
-}
-.forward-msg::after,
-.msg-content-container:not(.wallet-message__container)::after,
-.mix-message__container::after {
+.forward-msg:not(.wallet-message__container, .hidden-background)::after,
+.msg-content-container:not(.wallet-message__container, .hidden-background)::after,
+.mix-message__container:not(.wallet-message__container, .hidden-background)::after {
   content: "";
   display: block;
   width: 100%;
@@ -253,14 +255,14 @@
   background-color: var(--background-color-05);
   z-index: -1;
 }
-.forward-msg .text-link,
-.msg-content-container:not(.wallet-message__container) .text-link,
-.mix-message__container .text-link {
+.forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
+.msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
+.mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
   color: var(--link-url-color) !important;
 }
-.forward-msg .reply-element,
-.msg-content-container:not(.wallet-message__container) .reply-element,
-.mix-message__container .reply-element {
+.forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
+.msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
+.mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
   color: var(--text-color) !important;
 }
 

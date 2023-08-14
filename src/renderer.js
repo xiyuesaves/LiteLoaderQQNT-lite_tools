@@ -222,12 +222,26 @@ async function mainMessage() {
               );
               // 气泡-外部消息（兜底样式）
               const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
+
               if (bubbleEmbed) {
                 newTimeEl.classList.add("embed");
                 bubbleEmbed.appendChild(newTimeEl);
               } else if (bubbleInside) {
-                newTimeEl.classList.add("bubble-inside");
-                bubbleInside.appendChild(newTimeEl);
+                // 如果目标是图片消息，则额外处理图片样式
+                if (bubbleInside.className.includes("mix-message__container--pic")) {
+                  const picEl = bubbleInside.querySelector(".pic-element");
+                  if (picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50) {
+                    newTimeEl.classList.add("bubble-inside");
+                    bubbleInside.appendChild(newTimeEl);
+                  } else {
+                    newTimeEl.classList.add("bubble-outside");
+                    bubbleInside.classList.add("hidden-background");
+                    bubbleInside.parentElement.appendChild(newTimeEl);
+                  }
+                } else {
+                  newTimeEl.classList.add("bubble-inside");
+                  bubbleInside.appendChild(newTimeEl);
+                }
               } else if (bubbleOutside) {
                 newTimeEl.classList.add("bubble-outside");
                 bubbleOutside.appendChild(newTimeEl);

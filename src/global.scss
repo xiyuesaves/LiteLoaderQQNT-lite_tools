@@ -152,22 +152,6 @@
       }
       pointer-events: auto;
     }
-    // 图片处理
-    .mix-message__container--pic {
-      min-width: 80px;
-      min-height: 60px;
-      background-color: var(--background-color-0, rgba(0, 0, 0, 0.1)) !important;
-      .pic-element {
-        min-width: 80px !important;
-        min-height: 60px !important;
-        text-align: center;
-        border-radius: unset;
-        img {
-          min-height: 60px;
-          width: auto;
-        }
-      }
-    }
   }
 }
 
@@ -211,7 +195,7 @@
     position: absolute;
     background-color: var(--background-color-05, rgba(0, 0, 0, 0.3));
     padding: 4px 6px;
-    color: var(--text-color-05, #ffffff);
+    color: var(--text-color-06, #ffffff);
     opacity: var(--opacity-1, 0.5);
     box-shadow: var(--box-shadow, unset);
     font-size: 12px;
