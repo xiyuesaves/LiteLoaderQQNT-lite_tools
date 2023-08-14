@@ -83,19 +83,22 @@
 @media (prefers-color-scheme: light) {
   :root {
     --text-color: rgba(0, 0, 0, 0.8);
+    --background-color-cb: #ffffff;
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: rgba(255, 255, 255, 0.8);
+    --background-color-cb: #262626;
   }
 }
 
 // 时间显示原本样式预处理
 
-// 时间样式通用调整
+// 插入元素通用调整
 .message-container {
   &:hover {
+    .message-content-replace,
     .bubble-outside,
     .bubble-inside {
       visibility: visible !important;
@@ -103,11 +106,28 @@
   }
   .bubble-outside {
     left: calc(100% + 4px);
+    &.compatible-replace {
+      left: calc(100% + 28px);
+      border-radius: 4px 0 0 4px;
+      padding-right: 2px;
+    }
+  }
+  .message-content-replace {
+    left: calc(100% + 6px);
   }
   &.message-container--self {
     .bubble-outside {
       left: unset !important;
       right: calc(100% + 4px);
+      &.compatible-replace {
+        right: calc(100% + 28px);
+        border-radius: 4px 0 0 4px;
+        padding-right: 2px;
+      }
+    }
+    .message-content-replace {
+      left: unset;
+      right: calc(100% + 6px);
     }
   }
   .message-content__wrapper {
@@ -193,10 +213,10 @@
   &.bubble-outside {
     white-space: nowrap;
     position: absolute;
-    background-color: var(--background-color-05, rgba(0, 0, 0, 0.3));
-    padding: 4px 6px;
-    color: var(--text-color-06, #ffffff);
-    opacity: var(--opacity-1, 0.5);
+    background-color: var(--background-color-05, var(--background-color-cb));
+    padding: 4px 8px;
+    color: var(--text-color);
+    opacity: var(--opacity-1, 0.8);
     box-shadow: var(--box-shadow, unset);
     font-size: 12px;
     line-height: 14px;
@@ -218,51 +238,38 @@
   }
 }
 
-.show-replace {
-  .message-container {
-    .message-content__wrapper {
-      .message-content-replace {
-        transition: 300ms;
-        border-radius: 50px;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: var(--text-color);
-        box-sizing: border-box;
-        background-color: var(--background-color-05);
-        backdrop-filter: blur(28px);
-        letter-spacing: -2px;
-        text-indent: -2px;
-        box-shadow: var(--box-shadow);
-        display: flex;
-        font-size: 0;
-        width: 0;
-        height: 0;
-      }
-      &:hover .message-content-replace {
-        font-size: 12px;
-        width: 23px;
-        height: 23px;
-      }
-    }
-
-    &:not(.message-container--self) {
-      .lite-tools-side-container {
-        align-items: flex-start;
-      }
-      .message-content__wrapper:hover {
-        .message-content-replace {
-          margin-left: 4px;
-        }
-      }
-    }
-
-    &.message-container--self {
-      .message-content__wrapper:hover {
-        .message-content-replace {
-          margin-right: 4px;
-        }
-      }
-    }
+.message-content-replace {
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  box-sizing: border-box;
+  background-color: var(--background-color-05, var(--background-color-cb));
+  letter-spacing: -2px;
+  text-indent: -2px;
+  box-shadow: var(--box-shadow);
+  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  line-height: 14px;
+  bottom: 0;
+  cursor: pointer;
+  visibility: hidden;
+  &::after {
+    z-index: -1;
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    content: "";
+    backdrop-filter: blur(28px);
+  }
+  &.compatible-time {
+    border-radius: 0 50px 50px 0;
+    text-indent: -4px;
   }
 }

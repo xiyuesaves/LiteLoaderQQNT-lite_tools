@@ -1,7 +1,8 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options,
   styleText,
-  idTImeMap = new Map();
+  idTImeMap = new Map(),
+  log = console.log;
 
 // 首次执行检测，只有第一次执行时返回true
 const first = (() => {
@@ -64,7 +65,7 @@ async function updateWallpaper() {
         } else if (document.querySelector("#app.forward")) {
           document.querySelector("#app.forward").appendChild(videoEl);
         } else {
-          console.log("自定义视频挂载失败");
+          log("自定义视频挂载失败");
         }
       } else {
         if (videoEl.getAttribute("src") !== options.background.url) {
@@ -83,12 +84,23 @@ async function updateWallpaper() {
 
 // 通用监听消息列表方法
 function observerMessageList(msgListEl, msgItemEl, isForward = false) {
-  console.log("开始处理消息", msgListEl, msgItemEl);
   new MutationObserver(async (mutations, observe) => {
-    console.log("监听器触发");
+    // 开启背景时优化小图展示
+    if (options.background.enabled) {
+      document.querySelectorAll(msgItemEl).forEach((el) => {
+        // 过小尺寸的图片移除气泡效果
+        const mixPicEl = el.querySelector(".mix-message__container--pic");
+        if (mixPicEl) {
+          const picEl = mixPicEl.querySelector(".pic-element");
+          if (picEl.offsetWidth < 80 && picEl.offsetHeight < 50) {
+            mixPicEl.classList.add("hidden-background");
+          }
+        }
+      });
+    }
+    // 插入时间气泡
     if (options.message.showMsgTime) {
       const msgList = await lite_tools.getMsgIdAndTime();
-      console.log("开始插入消息时间", document.querySelectorAll(msgItemEl), msgList);
       idTImeMap = new Map([...idTImeMap, ...msgList]);
       document.querySelectorAll(msgItemEl).forEach((el) => {
         const timeEl = el.querySelector(".lite-tools-time");
@@ -119,7 +131,6 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
 
             if (bubbleEmbed) {
-              console.log("嵌入式");
               newTimeEl.classList.add("embed");
               bubbleEmbed.appendChild(newTimeEl);
             } else if (bubbleInside) {
@@ -131,7 +142,6 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
                   bubbleInside.appendChild(newTimeEl);
                 } else {
                   newTimeEl.classList.add("bubble-outside");
-                  bubbleInside.classList.add("hidden-background");
                   bubbleInside.parentElement.appendChild(newTimeEl);
                 }
               } else {
@@ -143,6 +153,36 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
               bubbleOutside.appendChild(newTimeEl);
             }
           }
+        }
+      });
+    }
+    // 插入复读按钮
+    if (options.message.switchReplace && !isForward) {
+      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+        const msgEl = el.querySelector(".message-content__wrapper");
+        const oldReplaceEl = el.querySelector(".message-content-replace");
+        if (
+          msgEl &&
+          el.querySelector(
+            ":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container"
+          ) &&
+          !oldReplaceEl
+        ) {
+          const replaceEl = document.createElement("div");
+          const msgId = el.id;
+          replaceEl.classList.add("message-content-replace");
+          replaceEl.innerText = "+1";
+          replaceEl.addEventListener("click", async () => {
+            const peer = await lite_tools.getPeer();
+            log("点击了复读按钮", peer, msgId);
+            lite_tools.forwardMessage(peer, peer, [msgId]);
+          });
+          const showTimeEl = el.querySelector(".bubble-outside");
+          if (showTimeEl) {
+            showTimeEl.classList.add("compatible-replace");
+            replaceEl.classList.add("compatible-time");
+          }
+          msgEl.appendChild(replaceEl);
         }
       });
     }
@@ -222,7 +262,7 @@ async function mainMessage() {
         })
         .filter((el) => !options.textAreaFuncList.find((_el) => _el.name === el.name));
       if (textAreaList.length) {
-        console.log("发送输入框上方功能列表");
+        log("发送输入框上方功能列表");
         lite_tools.sendTextAreaList(textAreaList);
       }
     }).observe(document.querySelector(".chat-input-area"), {
@@ -257,7 +297,7 @@ async function mainMessage() {
         })
         .filter((el) => !options.chatAreaFuncList.find((_el) => _el.name === el.name));
       if (textAreaList.length) {
-        console.log("发送聊天框上方功能列表");
+        log("发送聊天框上方功能列表");
         lite_tools.sendChatTopList(textAreaList);
       }
     }).observe(document.querySelector(".panel-header__action"), {
@@ -353,7 +393,7 @@ async function mainMessage() {
 
   // 配置文件更新
   lite_tools.updateOptions((event, opt) => {
-    console.log("新接口获取配置更新");
+    log("新接口获取配置更新");
     options = opt;
     updateWallpaper();
     updatePage();
@@ -476,7 +516,7 @@ function forwardMessage() {
   updateWallpaper();
   observerMessageList(".list .q-scroll-view", ".list .q-scroll-view .message-container", true);
   lite_tools.updateOptions((event, opt) => {
-    console.log("新接口获取配置更新");
+    log("新接口获取配置更新");
     options = opt;
     updateWallpaper();
   });
@@ -529,6 +569,11 @@ async function onLoad() {
   // 获取最新的配置信息
   options = await lite_tools.config();
 
+  // 判断是否输出日志
+  if (!options.debug) {
+    log = () => {};
+  }
+
   // 插入自定义样式style容器
   const backgroundStyle = document.createElement("style");
   backgroundStyle.classList.add("background-style");
@@ -544,7 +589,7 @@ async function onLoad() {
   lite_tools.updateStyle((event, message) => {
     const element = document.querySelector(".background-style");
     if (element) {
-      console.log("更新背景样式");
+      log("更新背景样式");
       let backgroundImage = "";
       if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
         backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
@@ -557,7 +602,7 @@ async function onLoad() {
     const element = document.querySelector(".global-style");
     element.removeAttribute("href");
     if (element) {
-      console.log("更新全局样式");
+      log("更新全局样式");
       element.textContent = message;
     }
   });
@@ -568,7 +613,7 @@ async function onLoad() {
   // 所有页面都需要执行的更新操作
   updatePage();
   lite_tools.updateOptions((event, opt) => {
-    console.log("新接口获取配置更新");
+    log("新接口获取配置更新");
     options = opt;
     updatePage();
   });
@@ -579,6 +624,12 @@ async function onLoad() {
       document.body.classList.add("disabled-slide-multiple-selection");
     } else {
       document.body.classList.remove("disabled-slide-multiple-selection");
+    }
+    // 是否开启日志输出
+    if (options.debug) {
+      log = console.log;
+    } else {
+      log = () => {};
     }
   }
 
@@ -703,7 +754,7 @@ async function onConfigView(view) {
         "input",
         debounce(() => {
           options.wordSearch.searchUrl = searchEl.value;
-          console.log("更新搜索url", searchEl.value);
+          log("更新搜索url", searchEl.value);
           lite_tools.config(options);
         }, 100)
       );
@@ -714,7 +765,7 @@ async function onConfigView(view) {
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
 
   // 复读机
-  addSwitchEventlistener("switchReplace", ".switchReplace");
+  addSwitchEventlistener("message.switchReplace", ".switchReplace");
 
   // 禁用推荐表情
   addSwitchEventlistener("message.disabledSticker", ".switchSticker");

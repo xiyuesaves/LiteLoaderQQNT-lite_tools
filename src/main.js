@@ -11,7 +11,6 @@ let log = function (...args) {
 const defaultOptions = {
   spareInitialization: true, // 默认使用setTimeout循环初始化，observer经测试有很大概率无法正常工作
   debug: false, // debug开关
-  switchReplace: false, // 复读按钮
   // 划词搜索
   wordSearch: {
     enabled: false,
@@ -35,6 +34,7 @@ const defaultOptions = {
     convertMiniPrgmArk: false, // 小程序分享转url卡片
     showMsgTime: false, // 显示消息发送时间
     autoOpenURL: false, // 自动打开来自手机的链接
+    switchReplace: false, // 复读按钮
   },
   tail: {
     enabled: false, // 消息后缀
@@ -50,6 +50,7 @@ const defaultOptions = {
 
 const listenList = [];
 let msgIdList = [];
+let peer = null;
 
 // 加载插件时触发
 function onLoad(plugin) {
@@ -131,6 +132,11 @@ function onLoad(plugin) {
     "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
     plugin
   );
+
+  // 返回当前激活的peer数据
+  ipcMain.handle("LiteLoader.lite_tools.getPeer", (event) => {
+    return peer;
+  });
 
   // 返回消息id对应的发送时间
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
@@ -253,7 +259,7 @@ function onLoad(plugin) {
           window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
         } else if (type === "global") {
           window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
-        } else if(type === "setting"){
+        } else if (type === "setting") {
           // 因为设置界面是使用url获取的css，所以只需刷新链接即可
           window.webContents.send("LiteLoader.lite_tools.updateSettingStyle");
         }
@@ -315,7 +321,8 @@ function onBrowserWindowCreated(window, plugin) {
         "background:#f6ca00;color:#fff;",
         args[2],
         args[3]?.[0]?.eventName ? args[3]?.[0]?.eventName : args[3]?.[0],
-        args[3]
+        args[3],
+        args
       );
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
         log("%c消息发送事件", "background:#5b9a8b;color:#fff;", args);
@@ -329,6 +336,13 @@ function onBrowserWindowCreated(window, plugin) {
             });
           }
         }
+      }
+      if (args[3]?.[1]?.[0] === "changeRecentContacPeerUid") {
+        peer = {
+          chatType: args[3]?.[1]?.[1].peerUid[0] === "u" ? "friend" : "group",
+          uid: args[3]?.[1]?.[1].peerUid,
+        };
+        log("%c切换聊天窗口", "background:#b3642d;color:#fff;", peer);
       }
       return target.apply(thisArg, args);
     },
@@ -351,7 +365,6 @@ function onBrowserWindowCreated(window, plugin) {
     // if(JSON.stringify(args).includes("课堂")){
     //   log("%c获取到特殊消息","background:red",args)
     // }
-
 
     // 拦截侧边栏数据
     // if(args[1] && args[1]?.configData?.group && args[1]?.configData?.content){

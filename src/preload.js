@@ -23,6 +23,39 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
   // 获取消息列表id对应时间
   getMsgIdAndTime: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMsgIdAndTime"),
+  // 获取当前窗口peer
+  getPeer: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPeer"),
+  // 转发消息
+  forwardMessage: (srcpeer, dstpeer, msgIds) => {
+    ipcRenderer.send(
+      "IPC_UP_2",
+      {
+        type: "request",
+        callbackId: self.crypto.randomUUID(),
+        eventName: "ns-ntApi-2",
+      },
+      [
+        "nodeIKernelMsgService/forwardMsgWithComment",
+        {
+          msgIds: msgIds,
+          srcContact: {
+            chatType: srcpeer.chatType == "friend" ? 1 : srcpeer.chatType == "group" ? 2 : 1,
+            peerUid: srcpeer.uid,
+            guildId: "",
+          },
+          dstContacts: [
+            {
+              chatType: dstpeer.chatType == "friend" ? 1 : dstpeer.chatType == "group" ? 2 : 1,
+              peerUid: dstpeer.uid,
+              guildId: "",
+            },
+          ],
+          commentElements: [],
+        },
+        undefined,
+      ]
+    );
+  },
   // 消息窗口向主进程发送输入框上方功能列表
   sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 打开选择背景图片窗口
