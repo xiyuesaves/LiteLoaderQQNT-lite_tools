@@ -92,33 +92,6 @@
 }
 
 // 时间显示原本样式预处理
-// 默认文件
-.normal-file.file-element {
-  .file-info {
-    position: relative;
-    .embed {
-      pointer-events: auto;
-      &::after {
-        opacity: 0.5 !important;
-      }
-    }
-  }
-}
-// 图片文件
-.file-info-mask p:last-child {
-  position: relative;
-  .embed {
-    pointer-events: auto;
-    &::after {
-      opacity: 0.8 !important;
-    }
-  }
-  pointer-events: auto;
-}
-// 合并转发消息
-.message-content__wrapper .count {
-  position: relative;
-}
 
 // 时间样式通用调整
 .message-container {
@@ -144,11 +117,56 @@
     .wallet-message__container {
       bottom: -26px;
     }
-    .bubble-outside {
-      left: calc(100% + 4px);
-      bottom: 0;
-      font-size: 12px;
-      line-height: 14px;
+    // 合并转发消息
+    .count {
+      position: relative;
+      .embed {
+        &::after {
+          opacity: 0.8 !important;
+          bottom: 0;
+        }
+      }
+    }
+    // 默认文件
+    .normal-file.file-element {
+      .file-info {
+        position: relative;
+        .embed {
+          pointer-events: auto;
+          &::after {
+            opacity: 0.5 !important;
+            bottom: 0;
+          }
+        }
+      }
+    }
+    // 图片文件
+    .file-info-mask p:last-child {
+      position: relative;
+      .embed {
+        pointer-events: auto;
+        &::after {
+          opacity: 0.8 !important;
+          bottom: 0;
+        }
+      }
+      pointer-events: auto;
+    }
+    // 图片处理
+    .mix-message__container--pic {
+      min-width: 80px;
+      min-height: 60px;
+      background-color: var(--background-color-0, rgba(0, 0, 0, 0.1)) !important;
+      .pic-element {
+        min-width: 80px !important;
+        min-height: 60px !important;
+        text-align: center;
+        border-radius: unset;
+        img {
+          min-height: 60px;
+          width: auto;
+        }
+      }
     }
   }
 }
@@ -184,6 +202,7 @@
     padding: 4px 6px;
     color: #ffffff;
     font-size: 12px;
+    line-height: 14px;
     border-radius: 4px;
     visibility: hidden;
   }
@@ -196,9 +215,11 @@
     opacity: var(--opacity-1, 0.5);
     box-shadow: var(--box-shadow, unset);
     font-size: 12px;
+    line-height: 14px;
     border-radius: 4px;
     visibility: hidden;
     overflow: hidden;
+    bottom: 0;
     &::after {
       z-index: -1;
       display: block;

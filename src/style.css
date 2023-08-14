@@ -2,11 +2,12 @@
 /* 独立所有变量 */
 :root {
   --box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
-  --opacity-1: 1!important;
+  --opacity-1: 1 !important;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
+    --background-color-0: transparent;
     --background-color-008: rgba(255, 255, 255, 0.08);
     --background-color-015: rgba(255, 255, 255, 0.15);
     --background-color-03: rgba(255, 255, 255, 0.3);
@@ -22,6 +23,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
+    --background-color-0: transparent;
     --background-color-008: rgba(0, 0, 0, 0.08);
     --background-color-015: rgba(0, 0, 0, 0.15);
     --background-color-03: rgba(0, 0, 0, 0.3);
