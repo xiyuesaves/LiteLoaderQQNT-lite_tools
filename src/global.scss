@@ -93,9 +93,6 @@
 
 // 时间显示原本样式预处理
 // 默认文件
-:root {
-  --opacity-1: 0.5;
-}
 .normal-file.file-element {
   .file-info {
     position: relative;
@@ -174,7 +171,7 @@
       display: block;
       font-size: 12px;
       line-height: 14px;
-      bottom: 0;
+      bottom: -2px;
       right: 0;
       opacity: 0.5;
     }
@@ -193,12 +190,11 @@
   &.bubble-outside {
     white-space: nowrap;
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.3);
-    background-color: var(--background-color-05);
+    background-color: var(--background-color-05, rgba(0, 0, 0, 0.3));
     padding: 4px 6px;
-    color: var(--text-color-05);
-    opacity: var(--opacity-1);
-    box-shadow: var(--box-shadow);
+    color: var(--text-color-05, #ffffff);
+    opacity: var(--opacity-1, 0.5);
+    box-shadow: var(--box-shadow, unset);
     font-size: 12px;
     border-radius: 4px;
     visibility: hidden;
@@ -230,7 +226,6 @@
         box-sizing: border-box;
         background-color: var(--background-color-05);
         backdrop-filter: blur(28px);
-        /* margin-bottom: 3px; */
         letter-spacing: -2px;
         text-indent: -2px;
         box-shadow: var(--box-shadow);
