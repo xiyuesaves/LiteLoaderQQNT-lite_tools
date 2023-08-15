@@ -143,7 +143,7 @@
   right: 0px;
   float: right;
   font-size: 12px;
-  line-height: 14px;
+  line-height: 10px;
   margin-left: 6px;
   visibility: hidden;
   user-select: none;
@@ -154,7 +154,7 @@
   position: absolute;
   display: block;
   font-size: 12px;
-  line-height: 14px;
+  line-height: 12px;
   bottom: -2px;
   right: 0;
   opacity: 0.6;
