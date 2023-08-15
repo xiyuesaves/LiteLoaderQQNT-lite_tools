@@ -83,12 +83,21 @@
   border-radius: 50px 0 0 50px;
   padding-right: 2px;
   width: 42px;
+  background-color: transparent;
+  box-shadow: unset;
+}
+.message-container .bubble-outside.compatible-replace::after {
+  display: none !important;
 }
 .message-container .message-content-replace {
   left: calc(100% + 6px);
 }
 .message-container .message-content-replace.compatible-time {
   left: calc(100% + 46px);
+}
+.message-container .message-content-replace.compatible-time::after {
+  width: 66px;
+  left: -42px;
 }
 .message-container.message-container--self .bubble-outside {
   left: unset;
@@ -187,11 +196,13 @@
   border-radius: 50px;
   width: 48px;
   text-align: center;
+  z-index: 10;
   visibility: hidden;
   overflow: hidden;
   bottom: 0;
 }
 .lite-tools-time.bubble-outside::after {
+  content: "";
   z-index: -1;
   display: block;
   position: absolute;
@@ -199,7 +210,6 @@
   height: 100%;
   top: 0;
   left: 0;
-  content: "";
   backdrop-filter: blur(28px);
 }
 
@@ -210,10 +220,8 @@
   justify-content: center;
   color: var(--text-color);
   box-sizing: border-box;
-  background-color: var(--background-color-05, var(--background-color-cb));
   letter-spacing: -2px;
   text-indent: -2px;
-  box-shadow: var(--box-shadow);
   font-size: 12px;
   width: 22px;
   height: 22px;
@@ -231,7 +239,10 @@
   height: 100%;
   top: 0;
   left: 0;
+  border-radius: 50px;
   content: "";
+  box-shadow: var(--box-shadow);
+  background-color: var(--background-color-05, var(--background-color-cb));
   backdrop-filter: blur(28px);
 }
 .message-content-replace.compatible-time {

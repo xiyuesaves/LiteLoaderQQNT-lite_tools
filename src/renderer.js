@@ -92,7 +92,10 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         const mixPicEl = el.querySelector(".mix-message__container--pic");
         if (mixPicEl) {
           const picEl = mixPicEl.querySelector(".pic-element");
-          if (picEl.offsetWidth < 80 || picEl.offsetHeight < 50) {
+          if (
+            !picEl.className.includes("hidden-background") &&
+            !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)
+          ) {
             mixPicEl.classList.add("hidden-background");
           }
         }

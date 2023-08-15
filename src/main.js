@@ -300,18 +300,6 @@ function onBrowserWindowCreated(window, plugin) {
       args[1]?.[0],
       args
     );
-    // if (args[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
-    //   // log("消息发送事件", args[1]);
-    //   if (args[1][1] && args[1][1].msgElements) {
-    //     if (options.tail.enabled) {
-    //       args[1][1].msgElements.forEach((el) => {
-    //         if (el.textElement && el.textElement?.content?.length !== 0) {
-    //           el.textElement.content += options.tail.content;
-    //         }
-    //       });
-    //     }
-    //   }
-    // }
   });
 
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
@@ -361,10 +349,6 @@ function onBrowserWindowCreated(window, plugin) {
       args[1]?.[0],
       args
     );
-    // log(JSON.stringify(args))
-    // if(JSON.stringify(args).includes("课堂")){
-    //   log("%c获取到特殊消息","background:red",args)
-    // }
 
     // 拦截侧边栏数据
     // if(args[1] && args[1]?.configData?.group && args[1]?.configData?.content){
