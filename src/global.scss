@@ -107,21 +107,24 @@
   .bubble-outside {
     left: calc(100% + 4px);
     &.compatible-replace {
-      left: calc(100% + 28px);
-      border-radius: 4px 0 0 4px;
+      border-radius: 50px 0 0 50px;
       padding-right: 2px;
+      width: 42px;
     }
   }
   .message-content-replace {
     left: calc(100% + 6px);
+    &.compatible-time {
+      left: calc(100% + 46px);
+    }
   }
   &.message-container--self {
     .bubble-outside {
-      left: unset !important;
+      left: unset;
       right: calc(100% + 4px);
       &.compatible-replace {
         right: calc(100% + 28px);
-        border-radius: 4px 0 0 4px;
+        border-radius: 50px 0 0 50px;
         padding-right: 2px;
       }
     }
@@ -220,7 +223,9 @@
     box-shadow: var(--box-shadow, unset);
     font-size: 12px;
     line-height: 14px;
-    border-radius: 4px;
+    border-radius: 50px;
+    width: 48px;
+    text-align: center;
     visibility: hidden;
     overflow: hidden;
     bottom: 0;

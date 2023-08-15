@@ -92,7 +92,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         const mixPicEl = el.querySelector(".mix-message__container--pic");
         if (mixPicEl) {
           const picEl = mixPicEl.querySelector(".pic-element");
-          if (picEl.offsetWidth < 80 && picEl.offsetHeight < 50) {
+          if (picEl.offsetWidth < 80 || picEl.offsetHeight < 50) {
             mixPicEl.classList.add("hidden-background");
           }
         }
@@ -178,6 +178,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             lite_tools.forwardMessage(peer, peer, [msgId]);
           });
           const showTimeEl = el.querySelector(".bubble-outside");
+          // 如果已经启用显示消息时间，且这条消息的显示方法是外部气泡时，添加合并样式
           if (showTimeEl) {
             showTimeEl.classList.add("compatible-replace");
             replaceEl.classList.add("compatible-time");
