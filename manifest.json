@@ -12,7 +12,7 @@
     },
     "repository": {
         "repo": "xiyuesaves/lite_tools",
-        "branch": "v3",
+        "branch": "main",
         "use_release":{
           "tag":"latest",
           "name":"lite_tools.zip"
