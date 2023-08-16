@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "form-data": "^4.0.0",
     "sass": "^1.64.1"
   }
 }

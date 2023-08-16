@@ -1,8 +1,10 @@
 // 运行在 Electron 主进程 下的插件入口
-const { ipcMain, dialog, shell } = require("electron");
+const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
+var FormData = require("form-data");
+const http = require("http");
 const path = require("path");
 const fs = require("fs");
-let mainMessage, options;
+let mainMessage, options, searchImageWindow;
 
 let log = function (...args) {
   console.log(...args);
@@ -15,6 +17,10 @@ const defaultOptions = {
   wordSearch: {
     enabled: false,
     searchUrl: "https://www.bing.com/search?q=%search%",
+  },
+  // 以图搜图
+  imageSearch: {
+    enabled: false,
   },
   // 侧边栏功能开关
   sidebar: {
@@ -62,6 +68,7 @@ function onLoad(plugin) {
   const globalPath = path.join(plugin.path.plugin, "src/global.css");
   const settingScssPath = path.join(plugin.path.plugin, "src/config/view.scss");
   const settingPath = path.join(plugin.path.plugin, "src/config/view.css");
+  const loadingPage = path.join(plugin.path.plugin, "src/loadingPage.html");
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
@@ -127,11 +134,48 @@ function onLoad(plugin) {
     log = () => {};
   }
 
+  // 控制台输出项目logo
   log(
     "%c轻量工具箱已加载",
     "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
     plugin
   );
+
+  // 以图搜索
+  ipcMain.on("LiteLoader.lite_tools.imageSearch", async (event, path) => {
+    if (searchImageWindow && !searchImageWindow.isDestroyed()) {
+      searchImageWindow.focus();
+    } else {
+      searchImageWindow = new BrowserWindow();
+    }
+    function getHtml(path) {
+      log("%c尝试搜索", "background-color:#b67b64;color:#ffffff;", path);
+      const postData = new FormData();
+      postData.append("file", fs.createReadStream(path));
+      return new Promise((respone, rej) => {
+        postData.submit("http://www.iqdb.org/", (err, res) => {
+          let data;
+          res.on("data", (chunk) => {
+            log("%c接收数据", "background-color:#b67b64;color:#ffffff;", chunk);
+            data += chunk;
+          });
+          res.on("end", () => {
+            log("%c数据接收完成", "background-color:#b67b64;color:#ffffff;");
+            data = data.replace(/href="\/\//g, 'href="http://');
+            data = data.replace(/src='\//g, "src='http://www.iqdb.org/");
+            respone(data);
+          });
+        });
+      });
+    }
+    // 加载界面
+    searchImageWindow.loadFile(loadingPage);
+    searchImageWindow.setTitle("图片搜索-功能验证版");
+    searchImageWindow.setMenu(null);
+    const html = await getHtml(path);
+    log("%c获取到html", "background-color:#b67b64;color:#ffffff;");
+    searchImageWindow.loadURL(`data:text/html,${html}`);
+  });
 
   // 返回当前激活的peer数据
   ipcMain.handle("LiteLoader.lite_tools.getPeer", (event) => {
