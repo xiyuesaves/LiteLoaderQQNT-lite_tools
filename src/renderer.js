@@ -605,12 +605,21 @@ function addQContextMenu(qContextMenu, icon, title, callback) {
 
 // 页面加载完成时触发
 async function onLoad() {
+  // 输出logo
+  log(
+    "%c轻量工具箱已加载",
+    "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;"
+  );
+
   // 获取最新的配置信息
   options = await lite_tools.config();
-
+  log("已获取最新配置文件", options);
+  
   // 判断是否输出日志
   if (!options.debug) {
     log = () => {};
+  } else {
+    log("已开启debug");
   }
 
   // 插入自定义样式style容器
@@ -623,6 +632,7 @@ async function onLoad() {
   globalStyle.textContent = await lite_tools.getGlobalStyle();
   globalStyle.classList.add("global-style");
   document.body.append(globalStyle);
+  log("插入全局样式元素");
 
   // 调试用-styleCss刷新
   lite_tools.updateStyle((event, message) => {
@@ -671,6 +681,7 @@ async function onLoad() {
       log = () => {};
     }
   }
+  log("初始化已完成，等待监听导航跳转");
 
   // 监听导航跳转
   navigation.addEventListener("navigatesuccess", () => {
@@ -681,6 +692,7 @@ async function onLoad() {
       hash = "#/forward";
     }
     lite_tools.log(`新页面参数 ${hash}`);
+    log("监听到导航跳转", hash);
     switch (hash) {
       case "#/imageViewer":
         imageViewer();
