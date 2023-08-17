@@ -175,7 +175,8 @@ function onLoad(plugin) {
     let res = new Map(),
       concat = options.textAreaFuncList.concat(list);
     options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
-    updateOptions();
+    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+    globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
   });
 
   // 更新聊天框上方功能列表
@@ -183,7 +184,8 @@ function onLoad(plugin) {
     let res = new Map(),
       concat = options.chatAreaFuncList.concat(list);
     options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
-    updateOptions();
+    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+    globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
   });
 
   // 获取/修改配置信息
@@ -191,7 +193,8 @@ function onLoad(plugin) {
     if (opt) {
       log("%c更新配置信息", "background:#1a5d1a;color:#fff;", opt);
       options = opt;
-      updateOptions();
+      fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+      globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
     } else {
       log("%c获取配置信息", "background:#1a5d1a;color:#fff;", options);
     }
@@ -252,7 +255,8 @@ function onLoad(plugin) {
         log("选择了文件", result);
         if (!result.canceled) {
           options.background.url = path.join(result.filePaths[0]).replace(/\\/g, "/");
-          updateOptions();
+          fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+          globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
         }
       })
       .catch((err) => {
@@ -265,31 +269,6 @@ function onLoad(plugin) {
     listenList.forEach((window) => {
       if (!window.isDestroyed()) {
         window.webContents.send(channel, data);
-      }
-    });
-  }
-
-  // 即将被替代-主动更新样式
-  // function updateStyle(styleText, type) {
-  //   listenList.forEach((window) => {
-  //     if (!window.isDestroyed()) {
-  //       if (type === "style") {
-  //         window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
-  //       } else if (type === "global") {
-  //         window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
-  //       } else if (type === "setting") {
-  //         // 因为设置界面是使用url获取的css，所以只需刷新链接即可
-  //         window.webContents.send("LiteLoader.lite_tools.updateSettingStyle");
-  //       }
-  //     }
-  //   });
-  // }
-
-  function updateOptions() {
-    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    listenList.forEach((window) => {
-      if (!window.isDestroyed()) {
-        window.webContents.send("LiteLoader.lite_tools.updateOptions", options);
       }
     });
   }

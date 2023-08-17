@@ -400,7 +400,7 @@ async function mainMessage() {
 
   // 配置文件更新
   lite_tools.updateOptions((event, opt) => {
-    log("新接口获取配置更新");
+    log("首页配置更新");
     options = opt;
     updateWallpaper();
     updatePage();
@@ -509,6 +509,7 @@ function chatMessage() {
   }
   // 配置更新
   lite_tools.updateOptions((event, opt) => {
+    console.log("独立聊天配置更新");
     options = opt;
     updateWallpaper();
     updatePage();
@@ -523,7 +524,7 @@ function forwardMessage() {
   updateWallpaper();
   observerMessageList(".list .q-scroll-view", ".list .q-scroll-view .message-container", true);
   lite_tools.updateOptions((event, opt) => {
-    log("新接口获取配置更新");
+    log("转发页面配置更新");
     options = opt;
     updateWallpaper();
   });
@@ -614,7 +615,7 @@ async function onLoad() {
   // 获取最新的配置信息
   options = await lite_tools.config();
   log("已获取最新配置文件", options);
-  
+
   // 判断是否输出日志
   if (!options.debug) {
     log = () => {};
@@ -626,13 +627,14 @@ async function onLoad() {
   const backgroundStyle = document.createElement("style");
   backgroundStyle.classList.add("background-style");
   document.body.appendChild(backgroundStyle);
+  log("插入自定义样式style容器");
 
   // 全局加载通用样式
   const globalStyle = document.createElement("style");
   globalStyle.textContent = await lite_tools.getGlobalStyle();
   globalStyle.classList.add("global-style");
   document.body.append(globalStyle);
-  log("插入全局样式元素");
+  log("插入全局通用样式");
 
   // 调试用-styleCss刷新
   lite_tools.updateStyle((event, message) => {
@@ -651,7 +653,7 @@ async function onLoad() {
     const element = document.querySelector(".global-style");
     element.removeAttribute("href");
     if (element) {
-      log("更新全局样式");
+      log("更新全局通用样式");
       element.textContent = message;
     }
   });
@@ -662,7 +664,7 @@ async function onLoad() {
   // 所有页面都需要执行的更新操作
   updatePage();
   lite_tools.updateOptions((event, opt) => {
-    log("新接口获取配置更新");
+    log("全局设置更新");
     options = opt;
     updatePage();
   });
@@ -927,6 +929,7 @@ async function onConfigView(view) {
 
   // 监听设置文件变动
   lite_tools.updateOptions((event, opt) => {
+    console.log("设置界面配置更新");
     options = opt;
     view.querySelector(".select-path input").value = options.background.url;
   });
