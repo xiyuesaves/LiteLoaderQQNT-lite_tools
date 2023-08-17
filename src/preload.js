@@ -64,8 +64,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
   // 聊天窗口顶部功能列表
   sendChatTopList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendChatTopList", list),
-  // 搜索图片
-  searchImage: (path) => ipcRenderer.send("LiteLoader.lite_tools.imageSearch", path),
   // 在浏览器打开页面
   openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
   // 在主进程的终端打印渲染进程日志

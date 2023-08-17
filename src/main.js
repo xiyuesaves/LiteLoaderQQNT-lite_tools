@@ -1,7 +1,5 @@
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
-var FormData = require("form-data");
-const http = require("http");
 const path = require("path");
 const fs = require("fs");
 let mainMessage, options, searchImageWindow;
@@ -21,6 +19,7 @@ const defaultOptions = {
   // 以图搜图
   imageSearch: {
     enabled: false,
+    searchUrl: "https://saucenao.com/search.php?url=%search%",
   },
   // 侧边栏功能开关
   sidebar: {
@@ -41,6 +40,7 @@ const defaultOptions = {
     showMsgTime: false, // 显示消息发送时间
     autoOpenURL: false, // 自动打开来自手机的链接
     switchReplace: false, // 复读按钮
+    preventMessageRecall: false, // 防撤回
   },
   tail: {
     enabled: false, // 消息后缀
@@ -104,7 +104,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(styleSassPath).css;
           fs.writeFileSync(stylePath, cssText);
-          updateStyle(cssText, "style");
+          globalBroadcast("LiteLoader.lite_tools.updateStyle", cssText);
         }, 100)
       );
       // 监听并编译global.scss
@@ -114,7 +114,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(globalScssPath).css;
           fs.writeFileSync(globalPath, cssText);
-          updateStyle(cssText, "global");
+          globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle", cssText);
         }, 100)
       );
       // 监听并编译view.scss
@@ -124,7 +124,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(settingScssPath).css;
           fs.writeFileSync(settingPath, cssText);
-          updateStyle(cssText, "setting");
+          globalBroadcast("LiteLoader.lite_tools.updateSettingStyle");
         }, 100)
       );
     } catch {
@@ -140,42 +140,6 @@ function onLoad(plugin) {
     "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
     plugin
   );
-
-  // 以图搜索
-  ipcMain.on("LiteLoader.lite_tools.imageSearch", async (event, path) => {
-    if (searchImageWindow && !searchImageWindow.isDestroyed()) {
-      searchImageWindow.focus();
-    } else {
-      searchImageWindow = new BrowserWindow();
-    }
-    function getHtml(path) {
-      log("%c尝试搜索", "background-color:#b67b64;color:#ffffff;", path);
-      const postData = new FormData();
-      postData.append("file", fs.createReadStream(path));
-      return new Promise((respone, rej) => {
-        postData.submit("http://www.iqdb.org/", (err, res) => {
-          let data;
-          res.on("data", (chunk) => {
-            log("%c接收数据", "background-color:#b67b64;color:#ffffff;", chunk);
-            data += chunk;
-          });
-          res.on("end", () => {
-            log("%c数据接收完成", "background-color:#b67b64;color:#ffffff;");
-            data = data.replace(/href="\/\//g, 'href="http://');
-            data = data.replace(/src='\//g, "src='http://www.iqdb.org/");
-            respone(data);
-          });
-        });
-      });
-    }
-    // 加载界面
-    searchImageWindow.loadFile(loadingPage);
-    searchImageWindow.setTitle("图片搜索-功能验证版");
-    searchImageWindow.setMenu(null);
-    const html = await getHtml(path);
-    log("%c获取到html", "background-color:#b67b64;color:#ffffff;");
-    searchImageWindow.loadURL(`data:text/html,${html}`);
-  });
 
   // 返回当前激活的peer数据
   ipcMain.handle("LiteLoader.lite_tools.getPeer", (event) => {
@@ -296,20 +260,30 @@ function onLoad(plugin) {
       });
   });
 
-  function updateStyle(styleText, type) {
+  // 向所有未销毁页面发送广播
+  function globalBroadcast(channel, data) {
     listenList.forEach((window) => {
       if (!window.isDestroyed()) {
-        if (type === "style") {
-          window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
-        } else if (type === "global") {
-          window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
-        } else if (type === "setting") {
-          // 因为设置界面是使用url获取的css，所以只需刷新链接即可
-          window.webContents.send("LiteLoader.lite_tools.updateSettingStyle");
-        }
+        window.webContents.send(channel, data);
       }
     });
   }
+
+  // 即将被替代-主动更新样式
+  // function updateStyle(styleText, type) {
+  //   listenList.forEach((window) => {
+  //     if (!window.isDestroyed()) {
+  //       if (type === "style") {
+  //         window.webContents.send("LiteLoader.lite_tools.updateStyle", styleText);
+  //       } else if (type === "global") {
+  //         window.webContents.send("LiteLoader.lite_tools.updateGlobalStyle", styleText);
+  //       } else if (type === "setting") {
+  //         // 因为设置界面是使用url获取的css，所以只需刷新链接即可
+  //         window.webContents.send("LiteLoader.lite_tools.updateSettingStyle");
+  //       }
+  //     }
+  //   });
+  // }
 
   function updateOptions() {
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));

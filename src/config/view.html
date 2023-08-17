@@ -49,10 +49,20 @@
       <div class="vertical-list-item">
         <div>
           <h2>搜索图片</h2>
-          <span class="secondary-text">右键图片以尝试搜索，暂不支持更换搜索引擎</span>
+          <span class="secondary-text">右键图片搜索，%search%替换链接中搜索值</span>
         </div>
         <div class="switchImageSearch q-switch">
           <span class="q-switch__handle"></span>
+        </div>
+      </div>
+      <div class="hidden image-select-search-url">
+        <div class="vertical-list-item">
+          <input
+            placeholder="https://www.google.com/search?q=%search%"
+            class="img-search-url input-text text_color"
+            type="text"
+            spellcheck="false"
+          />
         </div>
       </div>
     </div>
