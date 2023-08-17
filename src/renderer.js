@@ -161,7 +161,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     }
     // 插入复读按钮
     if (options.message.switchReplace && !isForward) {
-      document.querySelectorAll(".ml-list.list .ml-item").forEach((el) => {
+      document.querySelectorAll(msgItemEl).forEach((el) => {
         const msgEl = el.querySelector(".message-content__wrapper");
         const oldReplaceEl = el.querySelector(".message-content-replace");
         if (
