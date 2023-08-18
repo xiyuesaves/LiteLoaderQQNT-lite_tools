@@ -2,6 +2,7 @@
 let options,
   styleText,
   idTImeMap = new Map(),
+  MessageRecallId = new Set(),
   log = console.log,
   initLog = console.log;
 
@@ -86,7 +87,12 @@ async function updateWallpaper() {
 // 通用监听消息列表方法
 function observerMessageList(msgListEl, msgItemEl, isForward = false) {
   new MutationObserver(async (mutations, observe) => {
-    // 尝试优化执行速度
+    // 获取撤回消息对应id
+    if (false && options.message.preventMessageRecall) {
+      const msgId = await lite_tools.getMessageRecallId();
+      MessageRecallId = new Set([...MessageRecallId, ...msgId]);
+    }
+    // 获取消息id对应时间
     if (options.message.showMsgTime) {
       const msgList = await lite_tools.getMsgIdAndTime();
       idTImeMap = new Map([...idTImeMap, ...msgList]);
@@ -191,7 +197,10 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         }
       }
       // 后处理被撤回的消息
-      if (options.message.preventMessageRecall) {
+      if (false && options.message.preventMessageRecall && !isForward) {
+        const find = MessageRecallId.has(el.id);
+        if (find) {
+        }
       }
     });
   }).observe(document.querySelector(msgListEl), {
@@ -859,6 +868,9 @@ async function onConfigView(view) {
       );
     }
   });
+
+  // 阻止撤回
+  addSwitchEventlistener("message.preventMessageRecall", ".preventMessageRecall");
 
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
