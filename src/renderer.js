@@ -2,7 +2,8 @@
 let options,
   styleText,
   idTImeMap = new Map(),
-  log = console.log;
+  log = console.log,
+  initLog = console.log;
 
 // 首次执行检测，只有第一次执行时返回true
 const first = (() => {
@@ -607,14 +608,14 @@ function addQContextMenu(qContextMenu, icon, title, callback) {
 // 页面加载完成时触发
 async function onLoad() {
   // 输出logo
-  log(
+  initLog(
     "%c轻量工具箱已加载",
     "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;"
   );
 
   // 获取最新的配置信息
   options = await lite_tools.config();
-  log("已获取最新配置文件", options);
+  initLog("已获取最新配置文件", options);
 
   // 判断是否输出日志
   if (!options.debug) {
@@ -627,14 +628,14 @@ async function onLoad() {
   const backgroundStyle = document.createElement("style");
   backgroundStyle.classList.add("background-style");
   document.body.appendChild(backgroundStyle);
-  log("插入自定义样式style容器");
+  initLog("插入自定义样式style容器");
 
   // 全局加载通用样式
   const globalStyle = document.createElement("style");
   globalStyle.textContent = await lite_tools.getGlobalStyle();
   globalStyle.classList.add("global-style");
   document.body.append(globalStyle);
-  log("插入全局通用样式");
+  initLog("插入全局通用样式");
 
   // 调试用-styleCss刷新
   lite_tools.updateStyle((event, message) => {
@@ -683,33 +684,58 @@ async function onLoad() {
       log = () => {};
     }
   }
-  log("初始化已完成，等待监听导航跳转");
+  initLog("初始化已完成，等待监听导航跳转");
 
   // 监听导航跳转
-  navigation.addEventListener("navigatesuccess", () => {
+  navigation.addEventListener("navigatesuccess", navigateChange);
+  function navigateChange() {
+    initLog("监听到导航跳转");
+    updateHash();
+    // 移除监听，销毁该函数
+    navigation.removeEventListener("navigatesuccess", navigateChange);
+  }
+
+  // 如果因为加载过久导致hash已经变动，这是备用触发方式
+  updateHash();
+  function updateHash() {
     let hash = location.hash;
     if (hash.includes("#/chat/")) {
       hash = "#/chat/message";
     } else if (hash.includes("#/forward")) {
       hash = "#/forward";
     }
-    lite_tools.log(`新页面参数 ${hash}`);
-    log("监听到导航跳转", hash);
+    // 没有捕获到正确hash，直接退出
+    if (hash === "#/blank") {
+      return;
+    }
+    initLog(`页面参数 ${hash}`);
     switch (hash) {
       case "#/imageViewer":
-        imageViewer();
+        if (first("is-active")) {
+          initLog("加载图片预览窗口函数");
+          imageViewer();
+        }
         break;
       case "#/main/message":
-        mainMessage();
+        if (first("is-active")) {
+          initLog("加载主窗口函数");
+          mainMessage();
+        }
         break;
       case "#/chat/message":
-        chatMessage();
+        if (first("is-active")) {
+          initLog("加载独立聊天窗口函数");
+          chatMessage();
+        }
         break;
       case "#/forward":
-        forwardMessage();
+        if (first("is-active")) {
+          initLog("加载转发消息窗口函数");
+          forwardMessage();
+        }
         break;
     }
-  });
+  }
 }
 
 // 打开设置界面时触发
