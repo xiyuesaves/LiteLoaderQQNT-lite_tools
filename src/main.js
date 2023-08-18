@@ -100,6 +100,7 @@ class MessageRecallList {
   }
   set(key, value) {
     if (this.messageRecallPath) {
+      this.map.set(key, value);
       if (this.map.size >= this.limit) {
         log("缓存撤回消息超过阈值，开始切片");
         const newFileName = `${new Date().getTime()}.json`;
@@ -107,7 +108,6 @@ class MessageRecallList {
         this.newFileEvent.forEach((callback) => callback(newFileName));
         this.map = new Map();
       }
-      this.map.set(key, value);
       fs.writeFileSync(this.latestPath, JSON.stringify(Array.from(this.map)));
     } else {
       console.error("该实例工作在只读模式");
@@ -543,7 +543,7 @@ function onBrowserWindowCreated(window, plugin) {
                       // 没有记录的消息暂时不进行操作
                       // log(`%c ${msgItem.msgId} 没有记录消息内容`, "background-color:#e64a19;color:#ffffff;");
                       // 获取消息发送时间-在实际时间后面加1秒的原因是如果刚好处于文件切片位置，切片文件因为精度问题会大于该时间1秒以内
-                      const msgRecallTime = parseInt(msgItem.recallTime) * 1000 + 1000;
+                      const msgRecallTime = parseInt(msgItem.recallTime) * 1000;
                       // 根据时间找到可能含有数据的历史记录切片
                       const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime);
                       log(
