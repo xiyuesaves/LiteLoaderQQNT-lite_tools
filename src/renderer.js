@@ -86,9 +86,15 @@ async function updateWallpaper() {
 // 通用监听消息列表方法
 function observerMessageList(msgListEl, msgItemEl, isForward = false) {
   new MutationObserver(async (mutations, observe) => {
-    // 开启背景时优化小图展示
-    if (options.background.enabled) {
-      document.querySelectorAll(msgItemEl).forEach((el) => {
+    // 尝试优化执行速度
+    if (options.message.showMsgTime) {
+      const msgList = await lite_tools.getMsgIdAndTime();
+      idTImeMap = new Map([...idTImeMap, ...msgList]);
+    }
+    // 所有功能使用同一个循环执行
+    document.querySelectorAll(msgItemEl).forEach((el) => {
+      // 开启背景时优化小图展示
+      if (options.background.enabled) {
         // 过小尺寸的图片移除气泡效果
         const mixPicEl = el.querySelector(".mix-message__container--pic");
         if (mixPicEl) {
@@ -100,13 +106,9 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             mixPicEl.classList.add("hidden-background");
           }
         }
-      });
-    }
-    // 插入时间气泡
-    if (options.message.showMsgTime) {
-      const msgList = await lite_tools.getMsgIdAndTime();
-      idTImeMap = new Map([...idTImeMap, ...msgList]);
-      document.querySelectorAll(msgItemEl).forEach((el) => {
+      }
+      // 插入时间气泡
+      if (options.message.showMsgTime) {
         const timeEl = el.querySelector(".lite-tools-time");
         if (!timeEl) {
           const newTimeEl = document.createElement("div");
@@ -158,11 +160,9 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             }
           }
         }
-      });
-    }
-    // 插入复读按钮
-    if (options.message.switchReplace && !isForward) {
-      document.querySelectorAll(msgItemEl).forEach((el) => {
+      }
+      // 插入复读按钮
+      if (options.message.switchReplace && !isForward) {
         const msgEl = el.querySelector(".message-content__wrapper");
         const oldReplaceEl = el.querySelector(".message-content-replace");
         if (
@@ -189,11 +189,11 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
           }
           msgEl.appendChild(replaceEl);
         }
-      });
-    }
-    // 后处理被撤回的消息
-    if (options.message.preventMessageRecall) {
-    }
+      }
+      // 后处理被撤回的消息
+      if (options.message.preventMessageRecall) {
+      }
+    });
   }).observe(document.querySelector(msgListEl), {
     attributes: true,
     attributeFilter: ["style"],
@@ -691,8 +691,6 @@ async function onLoad() {
   function navigateChange() {
     initLog("监听到导航跳转");
     updateHash();
-    // 移除监听，销毁该函数
-    navigation.removeEventListener("navigatesuccess", navigateChange);
   }
 
   // 如果因为加载过久导致hash已经变动，这是备用触发方式
@@ -708,6 +706,7 @@ async function onLoad() {
     if (hash === "#/blank") {
       return;
     }
+    navigation.removeEventListener("navigatesuccess", navigateChange);
     initLog(`页面参数 ${hash}`);
     switch (hash) {
       case "#/imageViewer":
