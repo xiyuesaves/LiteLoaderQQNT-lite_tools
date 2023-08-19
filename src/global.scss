@@ -81,6 +81,36 @@
     .bubble-inside {
       visibility: visible !important;
     }
+    // 内部气泡的兼容样式
+    .bubble-inside {
+      &.compatible-time {
+        right: 46px;
+        padding-right: 0;
+        border-radius: 4px 0 0 4px;
+      }
+      &.compatible-recall {
+        width: 42px;
+        padding-left: 4px;
+        border-radius: 0 4px 4px 0;
+      }
+    }
+    // 外部气泡的兼容样式
+    .bubble-outside {
+      &.compatible-time {
+        width: 86px;
+        text-align: left;
+      }
+      &.compatible-recall {
+        z-index: 100;
+        left: calc(100% + 44px);
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+  .mix-message__inner {
+    overflow: unset !important;
   }
   .bubble-outside {
     left: calc(100% + 4px);
@@ -113,6 +143,10 @@
         right: calc(100% + 28px);
         border-radius: 50px 0 0 50px;
         padding-right: 2px;
+      }
+      &.compatible-recall {
+        left: unset;
+        right: calc(100% + 8px);
       }
     }
     .message-content-replace {
@@ -173,6 +207,8 @@
     float: right;
     font-size: 12px;
     line-height: 12px;
+    width: 32px;
+    text-align: right;
     margin-left: 6px;
     visibility: hidden;
     user-select: none;
@@ -181,6 +217,8 @@
       visibility: visible;
       position: absolute;
       display: block;
+      width: 32px;
+      text-align: right;
       font-size: 12px;
       line-height: 12px;
       bottom: -2px;
@@ -196,6 +234,8 @@
     padding: 4px 6px;
     color: #ffffff;
     font-size: 12px;
+    width: 44px;
+    text-align: center;
     line-height: 14px;
     border-radius: 4px;
     visibility: hidden;
@@ -203,19 +243,15 @@
   &.bubble-outside {
     white-space: nowrap;
     position: absolute;
-    background-color: var(--background-color-05, var(--background-color-cb));
     padding: 4px 8px;
     color: var(--text-color);
     opacity: var(--opacity-1, 0.8);
-    box-shadow: var(--box-shadow, unset);
     font-size: 12px;
     line-height: 14px;
-    border-radius: 50px;
     width: 48px;
     text-align: center;
     z-index: 10;
     visibility: hidden;
-    overflow: hidden;
     bottom: 0;
     &::after {
       content: "";
@@ -226,11 +262,91 @@
       height: 100%;
       top: 0;
       left: 0;
+      border-radius: 50px;
+      box-shadow: var(--box-shadow, unset);
+      background-color: var(--background-color-05, var(--background-color-cb));
       backdrop-filter: blur(28px);
     }
   }
 }
 
+// 撤回样式
+.lite-tools-recall {
+  user-select: none;
+  &.embed {
+    right: 0px;
+    float: right;
+    font-size: 12px;
+    line-height: 12px;
+    margin-left: 6px;
+    visibility: hidden;
+    user-select: none;
+    &::after {
+      content: attr(data-recall);
+      visibility: visible;
+      position: absolute;
+      display: block;
+      font-size: 12px;
+      line-height: 12px;
+      bottom: -2px;
+      right: 0;
+      opacity: 0.6;
+    }
+    &.compatible-time {
+      margin-left: 2px;
+    }
+    &.compatible-time::after {
+      right: 34px;
+    }
+  }
+  &.bubble-inside {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 4px 6px;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 14px;
+    border-radius: 4px;
+  }
+  &.bubble-outside {
+    white-space: nowrap;
+    position: absolute;
+    padding: 4px 8px;
+    color: var(--text-color);
+    opacity: var(--opacity-1, 0.8);
+    font-size: 12px;
+    line-height: 14px;
+    width: 52px;
+    text-align: center;
+    z-index: 9;
+    bottom: 0;
+    &::after {
+      content: "";
+      z-index: -1;
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      border-radius: 50px;
+      box-shadow: var(--box-shadow, unset);
+      background-color: var(--background-color-05, var(--background-color-cb));
+      backdrop-filter: blur(28px);
+    }
+  }
+}
+
+// 如果消息被标记为撤回内容，则隐藏复读按钮
+.ml-item.lite-tools-recall-msg {
+  .message-content-replace {
+    display: none !important;
+  }
+}
+
+// 复读样式
 .message-content-replace {
   border-radius: 50px;
   display: flex;
@@ -258,7 +374,7 @@
     left: 0;
     border-radius: 50px;
     content: "";
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--box-shadow, unset);
     background-color: var(--background-color-05, var(--background-color-cb));
     backdrop-filter: blur(28px);
   }

@@ -1,5 +1,7 @@
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
+const http = require("http");
+const https = require("https");
 const path = require("path");
 const fs = require("fs");
 let mainMessage, options, recordMessageRecallIdList, messageRecallPath, messageRecallJson;
@@ -144,6 +146,81 @@ let MessageRecallId = []; // 撤回的消息内容-用于向渲染端提供标�
 let peer = null; // 激活聊天界面信息
 let historyMessageRecallList = new Map(); // 只读历史消息实例暂存数组
 
+// 向所有未销毁页面发送广播
+function globalBroadcast(channel, data) {
+  listenList.forEach((window) => {
+    if (!window.isDestroyed()) {
+      window.webContents.send(channel, data);
+    }
+  });
+}
+
+// 下载被撤回的图片
+function processPic(msgItem) {
+  msgItem?.elements?.forEach(async (el) => {
+    if (el?.picElement) {
+      log("该消息含有图片", el);
+      const pic = el.picElement;
+      const picName = pic.md5HexStr.toUpperCase();
+      const picUrl = `https://gchat.qpic.cn/gchatpic_new/0/0-0-${picName}/`;
+      if (!fs.existsSync(pic.sourcePath)) {
+        log("下载原图", `${picUrl}0`);
+        const body = await downloadPic(`${picUrl}0`);
+        fs.mkdirSync(path.dirname(pic.sourcePath), { recursive: true });
+        fs.writeFileSync(pic.sourcePath, body);
+      }
+      // 修复本地数据中的错误
+      if (pic?.thumbPath && (pic.thumbPath instanceof Array || pic.thumbPath instanceof Object)) {
+        pic.thumbPath = new Map([
+          [0, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_0")],
+          [198, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_198")],
+          [720, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_720")],
+        ]);
+      }
+      if (pic?.thumbPath && (pic.thumbPath instanceof Array || pic.thumbPath instanceof Map)) {
+        pic.thumbPath.forEach(async (el, key) => {
+          if (!fs.existsSync(el)) {
+            log("下载缩略图", `${picUrl}${key}`);
+            const body = await downloadPic(`${picUrl}${key}`);
+            fs.mkdirSync(path.dirname(el), { recursive: true });
+            fs.writeFileSync(el, body);
+          }
+        });
+      }
+    }
+  });
+}
+
+// 下载方法
+function downloadPic(url) {
+  const protocolModule = url.startsWith("https") ? https : http;
+  return new Promise((resolve, reject) => {
+    function doRequest(url) {
+      log("下载撤回消息中的图片", url);
+      protocolModule.get(url, (response) => {
+        if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+          doRequest(response.headers.location);
+        } else {
+          const chunks = [];
+          response.on("data", (chunk) => {
+            chunks.push(chunk);
+          });
+          response.on("end", () => {
+            const responseData = Buffer.concat(chunks);
+            resolve(responseData); // 解析 Promise 并传递数据
+            log("下载图片完成");
+          });
+          response.on("error", (err) => {
+            log("下载图片失败", err);
+            reject(err); // 解析 Promise 并传递错误
+          });
+        }
+      });
+    }
+    doRequest(url);
+  });
+}
+
 // 加载插件时触发
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
@@ -266,13 +343,23 @@ function onLoad(plugin) {
 
   // 返回当前激活的peer数据
   ipcMain.handle("LiteLoader.lite_tools.getPeer", (event) => {
+    log("返回peer", peer);
     return peer;
+  });
+
+  // 返回查询到的撤回数据
+  ipcMain.handle("LiteLoader.lite_tools.getMessageRecallId", (event) => {
+    // 去重且只保留100条数据，减轻数据传递压力
+    MessageRecallId = Array.from(new Map(MessageRecallId)).slice(-100);
+    log("返回撤回id和详情", MessageRecallId);
+    return MessageRecallId;
   });
 
   // 返回消息id对应的发送时间
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
-    // 只保留100条数据，减轻数据传递压力
-    msgIdList = msgIdList.slice(-100);
+    // 去重且只保留100条数据，减轻数据传递压力
+    msgIdList = Array.from(new Map(msgIdList)).slice(-100);
+    log("返回id对应时间", msgIdList);
     return msgIdList;
   });
 
@@ -386,15 +473,6 @@ function onLoad(plugin) {
         log("无效操作", err);
       });
   });
-
-  // 向所有未销毁页面发送广播
-  function globalBroadcast(channel, data) {
-    listenList.forEach((window) => {
-      if (!window.isDestroyed()) {
-        window.webContents.send(channel, data);
-      }
-    });
-  }
 }
 
 // 创建窗口时触发
@@ -450,9 +528,6 @@ function onBrowserWindowCreated(window, plugin) {
           chatType: args[3]?.[1]?.[1].peerUid[0] === "u" ? "friend" : "group",
           uid: args[3]?.[1]?.[1].peerUid,
         };
-        // 切换聊天窗口清空时间和撤回数组
-        msgIdList = [];
-        MessageRecallId = [];
         log("%c切换聊天窗口", "background:#b3642d;color:#fff;", peer);
       }
       return target.apply(thisArg, args);
@@ -530,6 +605,8 @@ function onBrowserWindowCreated(window, plugin) {
                     catchMsgList.delete(msgItem.msgId);
                     // 将撤回信息数据写入到id对应时间里
                     msgIdList.push([findInCatch.msgId, findInCatch.msgTime * 1000]);
+                    // 下载消息内的图片并修复数据结构
+                    processPic(findInCatch);
                     // 替换撤回标记
                     msgList[index] = findInCatch;
                   } else {
@@ -543,6 +620,9 @@ function onBrowserWindowCreated(window, plugin) {
                       );
                       // 将撤回信息数据写入到id对应时间里
                       msgIdList.push([findInRecord.msgId, findInRecord.msgTime * 1000]);
+                      // 下载消息内的图片并修复数据结构
+                      processPic(findInRecord);
+                      // 替换撤回标记
                       msgList[index] = findInRecord;
                     } else {
                       // 没有记录的消息暂时不进行操作
@@ -575,6 +655,9 @@ function onBrowserWindowCreated(window, plugin) {
                           );
                           // 将撤回信息数据写入到id对应时间里
                           msgIdList.push([findInHistory.msgId, findInHistory.msgTime * 1000]);
+                          // 下载消息内的图片并修复数据结构
+                          processPic(findInHistory);
+                          // 替换撤回标记
                           msgList[index] = findInHistory;
                         } else {
                           // 没有记录的消息暂时不进行操作
@@ -688,14 +771,31 @@ function onBrowserWindowCreated(window, plugin) {
       : -1;
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
-      const msgList = args[1][0]?.payload?.msgList[0];
-      if (msgList.elements[0]?.grayTipElement?.revokeElement) {
-        if (!msgList.elements[0].grayTipElement.revokeElement.isSelfOperate) {
+      const msgItem = args[1][0]?.payload?.msgList[0];
+      if (msgItem.elements[0]?.grayTipElement?.revokeElement) {
+        if (!msgItem.elements[0].grayTipElement.revokeElement.isSelfOperate) {
           log("捕获到撤回事件，已被阻止");
-          const findInCatch = catchMsgList.get(msgList.msgId);
+          const findInCatch = catchMsgList.get(msgItem.msgId);
+          const RecallData = [
+            msgItem.msgId,
+            {
+              operatorNick: msgItem.elements[0].grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
+              origMsgSenderNick: msgItem.elements[0].grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+              recallTime: msgItem.recallTime, // 撤回时间
+            },
+          ];
+          // 记录撤回标记
+          MessageRecallId.push(RecallData);
+          // 广播撤回事件
+          globalBroadcast("LiteLoader.lite_tools.onMessageRecall", RecallData);
+          // 写入常驻内存缓存
           recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
-          catchMsgList.delete(msgList.msgId);
-          args[1][0].cmdName = "empty";
+          // 从消息列表缓存移除
+          catchMsgList.delete(msgItem.msgId);
+          // 下载消息内的图片并修复数据结构
+          processPic(findInCatch);
+          // 替换撤回内容
+          msgItem = findInCatch;
         } else {
           log("本人发起的撤回，放行");
         }

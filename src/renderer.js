@@ -84,18 +84,75 @@ async function updateWallpaper() {
   }
 }
 
+// 通用消息撤回方法
+function messageRecall(el, find) {
+  log("该消息为撤回内容", el);
+
+  // 气泡-嵌入（必须含有文本内容的消息,文件消息）
+  const bubbleEmbed = el.querySelector(
+    ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
+  );
+  // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
+  const bubbleInside = el.querySelector(
+    ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
+  );
+  // 气泡-外部消息（兜底样式）
+  const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
+
+  // 标记为已撤回消息
+  el.classList.add("lite-tools-recall-msg");
+
+  // 创建撤回标记元素
+  const messageRecallEl = document.createElement("div");
+  const showTimeEl = el.querySelector(".lite-tools-time");
+  messageRecallEl.innerText = "已撤回";
+  messageRecallEl.setAttribute("data-recall", "已撤回");
+  messageRecallEl.title = `消息于 ${new Date(find.recallTime * 1000).toLocaleString()} 被 ${find.operatorNick} 撤回`;
+  messageRecallEl.classList.add("lite-tools-recall");
+  // 如果同时开启了时间显示，则插入兼容样式
+  if (showTimeEl) {
+    messageRecallEl.classList.add("compatible-time");
+    showTimeEl.classList.add("compatible-recall");
+  }
+  // 根据消息元素类型决定标记插入位置
+  if (bubbleEmbed) {
+    messageRecallEl.classList.add("embed");
+    bubbleEmbed.appendChild(messageRecallEl);
+  } else if (bubbleInside) {
+    // 如果目标是图片消息，则额外处理图片样式
+    if (bubbleInside.classList.contains("mix-message__container--pic")) {
+      const picEl = bubbleInside.querySelector(".pic-element");
+      if (picEl && picEl.offsetWidth >= 100 && picEl.offsetHeight >= 50) {
+        messageRecallEl.classList.add("bubble-inside");
+        bubbleInside.appendChild(messageRecallEl);
+      } else {
+        messageRecallEl.classList.add("bubble-outside");
+        bubbleInside.parentElement.appendChild(messageRecallEl);
+      }
+    } else {
+      messageRecallEl.classList.add("bubble-inside");
+      bubbleInside.appendChild(messageRecallEl);
+    }
+  } else if (bubbleOutside) {
+    messageRecallEl.classList.add("bubble-outside");
+    bubbleOutside.appendChild(messageRecallEl);
+  }
+}
+
 // 通用监听消息列表方法
 function observerMessageList(msgListEl, msgItemEl, isForward = false) {
   new MutationObserver(async (mutations, observe) => {
     // 获取撤回消息对应id
-    if (false && options.message.preventMessageRecall) {
+    if (options.message.preventMessageRecall) {
       const msgId = await lite_tools.getMessageRecallId();
-      MessageRecallId = new Set([...MessageRecallId, ...msgId]);
+      MessageRecallId = new Map([...MessageRecallId, ...msgId]);
+      log("获取到撤回id列表", MessageRecallId);
     }
     // 获取消息id对应时间
     if (options.message.showMsgTime) {
       const msgList = await lite_tools.getMsgIdAndTime();
       idTImeMap = new Map([...idTImeMap, ...msgList]);
+      log("获取到id对应时间列表", idTImeMap);
     }
     // 所有功能使用同一个循环执行
     document.querySelectorAll(msgItemEl).forEach((el) => {
@@ -106,6 +163,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         if (mixPicEl) {
           const picEl = mixPicEl.querySelector(".pic-element");
           if (
+            picEl &&
             !picEl.classList.contains("hidden-background") &&
             !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)
           ) {
@@ -115,8 +173,19 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
       }
       // 插入时间气泡
       if (options.message.showMsgTime) {
+        // 时间插入元素
         const timeEl = el.querySelector(".lite-tools-time");
         if (!timeEl) {
+          // 气泡-嵌入（必须含有文本内容的消息,文件消息）
+          const bubbleEmbed = el.querySelector(
+            ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
+          );
+          // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
+          const bubbleInside = el.querySelector(
+            ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
+          );
+          // 气泡-外部消息（兜底样式）
+          const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
           const newTimeEl = document.createElement("div");
           let find;
           if (isForward) {
@@ -129,18 +198,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             newTimeEl.classList.add("lite-tools-time");
             newTimeEl.innerText = showTime;
             newTimeEl.setAttribute("time", showTime);
-            newTimeEl.title = new Date(find).toLocaleString("zh-CN");
-
-            // 气泡-嵌入（必须含有文本内容的消息,文件消息）
-            const bubbleEmbed = el.querySelector(
-              ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
-            );
-            // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-            const bubbleInside = el.querySelector(
-              ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
-            );
-            // 气泡-外部消息（兜底样式）
-            const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
+            newTimeEl.title = `发送于 ${new Date(find).toLocaleString("zh-CN")}`;
 
             if (bubbleEmbed) {
               newTimeEl.classList.add("embed");
@@ -149,7 +207,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
               // 如果目标是图片消息，则额外处理图片样式
               if (bubbleInside.classList.contains("mix-message__container--pic")) {
                 const picEl = bubbleInside.querySelector(".pic-element");
-                if (picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50) {
+                if (picEl && picEl.offsetWidth >= 100 && picEl.offsetHeight >= 50) {
                   newTimeEl.classList.add("bubble-inside");
                   bubbleInside.appendChild(newTimeEl);
                 } else {
@@ -167,22 +225,35 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
           }
         }
       }
+      // 后处理被撤回的消息
+      if (options.message.preventMessageRecall && !isForward) {
+        // 撤回插入元素
+        const recallEl = el.querySelector(".lite-tools-recall");
+        if (!recallEl) {
+          const find = MessageRecallId.get(el.id);
+          if (find) {
+            // 通用消息撤回处理方法
+            messageRecall(el, find);
+          }
+        }
+      }
       // 插入复读按钮
       if (options.message.switchReplace && !isForward) {
         const msgEl = el.querySelector(".message-content__wrapper");
-        const oldReplaceEl = el.querySelector(".message-content-replace");
+        // +1插入元素
+        const replaceEl = el.querySelector(".message-content-replace");
         if (
           msgEl &&
           el.querySelector(
             ":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container"
           ) &&
-          !oldReplaceEl
+          !replaceEl
         ) {
-          const replaceEl = document.createElement("div");
+          const newReplaceEl = document.createElement("div");
           const msgId = el.id;
-          replaceEl.classList.add("message-content-replace");
-          replaceEl.innerText = "+1";
-          replaceEl.addEventListener("click", async () => {
+          newReplaceEl.classList.add("message-content-replace");
+          newReplaceEl.innerText = "+1";
+          newReplaceEl.addEventListener("click", async () => {
             const peer = await lite_tools.getPeer();
             log("点击了复读按钮", peer, msgId);
             lite_tools.forwardMessage(peer, peer, [msgId]);
@@ -191,15 +262,9 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
           // 如果已经启用显示消息时间，且这条消息的显示方法是外部气泡时，添加合并样式
           if (showTimeEl) {
             showTimeEl.classList.add("compatible-replace");
-            replaceEl.classList.add("compatible-time");
+            newReplaceEl.classList.add("compatible-time");
           }
-          msgEl.appendChild(replaceEl);
-        }
-      }
-      // 后处理被撤回的消息
-      if (false && options.message.preventMessageRecall && !isForward) {
-        const find = MessageRecallId.has(el.id);
-        if (find) {
+          msgEl.appendChild(newReplaceEl);
         }
       }
     });
@@ -208,6 +273,24 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     attributeFilter: ["style"],
     childList: true,
     subtree: false,
+  });
+}
+
+// 新的撤回事件触发该方法
+function newMessageRecall(msgItemEl) {
+  lite_tools.onMessageRecall((event, recallData) => {
+    console.log("触发撤回事件", recallData);
+    MessageRecallId.set(recallData[0], recallData[1]);
+    document.querySelectorAll(msgItemEl)?.forEach((el) => {
+      // 撤回插入元素
+      const recallEl = el.querySelector(".lite-tools-recall");
+      if (!recallEl) {
+        const find = MessageRecallId.get(el.id);
+        if (find) {
+          messageRecall(el, find);
+        }
+      }
+    });
   });
 }
 
@@ -715,6 +798,9 @@ async function onLoad() {
       element.textContent = message;
     }
   });
+
+  // 全局注册撤回事件监听
+  newMessageRecall(".ml-list.list .ml-item");
 
   // 全局加载监听选中文本事件
   qContextMenu();

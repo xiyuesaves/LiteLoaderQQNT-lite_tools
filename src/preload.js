@@ -13,6 +13,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updateSettingStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateSettingStyle", callback),
   // 更新配置信息
   updateOptions: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateOptions", callback),
+  // 撤回事件监听
+  onMessageRecall: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onMessageRecall", callback),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
   // 获取和更新配置文件
@@ -25,6 +27,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getMsgIdAndTime: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMsgIdAndTime"),
   // 获取当前窗口peer
   getPeer: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPeer"),
+  // 获取撤回信息数据
+  getMessageRecallId: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMessageRecallId"),
   // 转发消息
   forwardMessage: (srcpeer, dstpeer, msgIds) => {
     ipcRenderer.send(

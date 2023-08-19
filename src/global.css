@@ -63,6 +63,30 @@
 .message-container:hover .bubble-inside {
   visibility: visible !important;
 }
+.message-container:hover .bubble-inside.compatible-time {
+  right: 46px;
+  padding-right: 0;
+  border-radius: 4px 0 0 4px;
+}
+.message-container:hover .bubble-inside.compatible-recall {
+  width: 42px;
+  padding-left: 4px;
+  border-radius: 0 4px 4px 0;
+}
+.message-container:hover .bubble-outside.compatible-time {
+  width: 86px;
+  text-align: left;
+}
+.message-container:hover .bubble-outside.compatible-recall {
+  z-index: 100;
+  left: calc(100% + 44px);
+}
+.message-container:hover .bubble-outside.compatible-recall::after {
+  display: none;
+}
+.message-container .mix-message__inner {
+  overflow: unset !important;
+}
 .message-container .bubble-outside {
   left: calc(100% + 4px);
 }
@@ -94,6 +118,10 @@
   right: calc(100% + 28px);
   border-radius: 50px 0 0 50px;
   padding-right: 2px;
+}
+.message-container.message-container--self .bubble-outside.compatible-recall {
+  left: unset;
+  right: calc(100% + 8px);
 }
 .message-container.message-container--self .message-content-replace {
   left: unset;
@@ -143,6 +171,8 @@
   float: right;
   font-size: 12px;
   line-height: 12px;
+  width: 32px;
+  text-align: right;
   margin-left: 6px;
   visibility: hidden;
   user-select: none;
@@ -152,6 +182,8 @@
   visibility: visible;
   position: absolute;
   display: block;
+  width: 32px;
+  text-align: right;
   font-size: 12px;
   line-height: 12px;
   bottom: -2px;
@@ -166,6 +198,8 @@
   padding: 4px 6px;
   color: #ffffff;
   font-size: 12px;
+  width: 44px;
+  text-align: center;
   line-height: 14px;
   border-radius: 4px;
   visibility: hidden;
@@ -173,19 +207,15 @@
 .lite-tools-time.bubble-outside {
   white-space: nowrap;
   position: absolute;
-  background-color: var(--background-color-05, var(--background-color-cb));
   padding: 4px 8px;
   color: var(--text-color);
   opacity: var(--opacity-1, 0.8);
-  box-shadow: var(--box-shadow, unset);
   font-size: 12px;
   line-height: 14px;
-  border-radius: 50px;
   width: 48px;
   text-align: center;
   z-index: 10;
   visibility: hidden;
-  overflow: hidden;
   bottom: 0;
 }
 .lite-tools-time.bubble-outside::after {
@@ -197,7 +227,82 @@
   height: 100%;
   top: 0;
   left: 0;
+  border-radius: 50px;
+  box-shadow: var(--box-shadow, unset);
+  background-color: var(--background-color-05, var(--background-color-cb));
   backdrop-filter: blur(28px);
+}
+
+.lite-tools-recall {
+  user-select: none;
+}
+.lite-tools-recall.embed {
+  right: 0px;
+  float: right;
+  font-size: 12px;
+  line-height: 12px;
+  margin-left: 6px;
+  visibility: hidden;
+  user-select: none;
+}
+.lite-tools-recall.embed::after {
+  content: attr(data-recall);
+  visibility: visible;
+  position: absolute;
+  display: block;
+  font-size: 12px;
+  line-height: 12px;
+  bottom: -2px;
+  right: 0;
+  opacity: 0.6;
+}
+.lite-tools-recall.embed.compatible-time {
+  margin-left: 2px;
+}
+.lite-tools-recall.embed.compatible-time::after {
+  right: 34px;
+}
+.lite-tools-recall.bubble-inside {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 4px 6px;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 14px;
+  border-radius: 4px;
+}
+.lite-tools-recall.bubble-outside {
+  white-space: nowrap;
+  position: absolute;
+  padding: 4px 8px;
+  color: var(--text-color);
+  opacity: var(--opacity-1, 0.8);
+  font-size: 12px;
+  line-height: 14px;
+  width: 52px;
+  text-align: center;
+  z-index: 9;
+  bottom: 0;
+}
+.lite-tools-recall.bubble-outside::after {
+  content: "";
+  z-index: -1;
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 50px;
+  box-shadow: var(--box-shadow, unset);
+  background-color: var(--background-color-05, var(--background-color-cb));
+  backdrop-filter: blur(28px);
+}
+
+.ml-item.lite-tools-recall-msg .message-content-replace {
+  display: none !important;
 }
 
 .message-content-replace {
@@ -228,7 +333,7 @@
   left: 0;
   border-radius: 50px;
   content: "";
-  box-shadow: var(--box-shadow);
+  box-shadow: var(--box-shadow, unset);
   background-color: var(--background-color-05, var(--background-color-cb));
   backdrop-filter: blur(28px);
 }

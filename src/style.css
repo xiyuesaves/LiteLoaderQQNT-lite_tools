@@ -13,6 +13,7 @@
     --background-color-03: rgba(255, 255, 255, 0.3);
     --background-color-05: rgba(255, 255, 255, 0.5);
     --background-color-07: rgba(255, 255, 255, 0.7);
+    --background-color-08: rgba(255, 255, 255, 0.8);
     --background-color-1: rgba(255, 255, 255, 1);
     --text-color: rgba(0, 0, 0, 0.8);
     --text-color-06: rgba(0, 0, 0, 0.6);
@@ -30,6 +31,7 @@
     --background-color-03: rgba(0, 0, 0, 0.3);
     --background-color-05: rgba(0, 0, 0, 0.5);
     --background-color-07: rgba(0, 0, 0, 0.7);
+    --background-color-08: rgba(0, 0, 0, 0.8);
     --background-color-1: rgba(0, 0, 0, 1);
     --text-color: rgba(255, 255, 255, 0.8);
     --text-color-06: rgba(255, 255, 255, 0.6);
