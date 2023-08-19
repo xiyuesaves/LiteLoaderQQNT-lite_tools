@@ -231,7 +231,6 @@ function onLoad(plugin) {
   const globalPath = path.join(plugin.path.plugin, "src/global.css");
   const settingScssPath = path.join(plugin.path.plugin, "src/config/view.scss");
   const settingPath = path.join(plugin.path.plugin, "src/config/view.css");
-  const loadingPage = path.join(plugin.path.plugin, "src/loadingPage.html");
   messageRecallPath = path.join(pluginDataPath, "/messageRecall");
   messageRecallJson = path.join(pluginDataPath, "/messageRecall/latestRecallMessage.json");
 
