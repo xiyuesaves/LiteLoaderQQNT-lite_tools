@@ -1102,3 +1102,6 @@ async function onConfigView(view) {
 
 // 这两个函数都是可选的
 export { onLoad, onConfigView };
+
+// 输入框方法
+// document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance.data
