@@ -4,19 +4,6 @@
   display: none !important;
 }
 
-/* 禁用滑动多选 */
-.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div {
-  pointer-events: none !important;
-}
-.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .gray-tip-content a,
-.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .gray-tip-element a {
-  pointer-events: auto !important;
-}
-.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .message .message-container .avatar,
-.disabled-slide-multiple-selection .group-chat .chat-msg-area .ml-list.list > div .message .message-container .message-content__wrapper {
-  pointer-events: auto !important;
-}
-
 /* 禁用GIF热图 */
 .disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title=GIF热图] {
   display: none !important;

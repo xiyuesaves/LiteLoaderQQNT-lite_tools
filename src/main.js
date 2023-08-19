@@ -528,6 +528,9 @@ function onBrowserWindowCreated(window, plugin) {
                     recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
                     // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
                     catchMsgList.delete(msgItem.msgId);
+                    // 将撤回信息数据写入到id对应时间里
+                    msgIdList.push([findInCatch.msgId, findInCatch.msgTime * 1000]);
+                    // 替换撤回标记
                     msgList[index] = findInCatch;
                   } else {
                     // 从常驻撤回消息中查找消息id
@@ -538,6 +541,8 @@ function onBrowserWindowCreated(window, plugin) {
                         "background-color:#7eb047;color:#ffffff;",
                         findInRecord
                       );
+                      // 将撤回信息数据写入到id对应时间里
+                      msgIdList.push([findInRecord.msgId, findInRecord.msgTime * 1000]);
                       msgList[index] = findInRecord;
                     } else {
                       // 没有记录的消息暂时不进行操作
@@ -568,6 +573,8 @@ function onBrowserWindowCreated(window, plugin) {
                             "background-color:#7eb047;color:#ffffff;",
                             findInHistory
                           );
+                          // 将撤回信息数据写入到id对应时间里
+                          msgIdList.push([findInHistory.msgId, findInHistory.msgTime * 1000]);
                           msgList[index] = findInHistory;
                         } else {
                           // 没有记录的消息暂时不进行操作

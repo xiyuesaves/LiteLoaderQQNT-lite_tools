@@ -2,28 +2,6 @@
 .disabled {
   display: none !important;
 }
-/* 禁用滑动多选 */
-.disabled-slide-multiple-selection {
-  .group-chat {
-    .chat-msg-area {
-      .ml-list.list > div {
-        pointer-events: none !important;
-        .gray-tip-content,
-        .gray-tip-element {
-          a {
-            pointer-events: auto !important;
-          }
-        }
-        .message .message-container {
-          .avatar,
-          .message-content__wrapper {
-            pointer-events: auto !important;
-          }
-        }
-      }
-    }
-  }
-}
 /* 禁用GIF热图 */
 .disabled-sticker-hot-gif {
   .sticker-panel__bar {

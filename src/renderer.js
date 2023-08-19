@@ -106,7 +106,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         if (mixPicEl) {
           const picEl = mixPicEl.querySelector(".pic-element");
           if (
-            !picEl.className.includes("hidden-background") &&
+            !picEl.classList.contains("hidden-background") &&
             !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)
           ) {
             mixPicEl.classList.add("hidden-background");
@@ -147,7 +147,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
               bubbleEmbed.appendChild(newTimeEl);
             } else if (bubbleInside) {
               // 如果目标是图片消息，则额外处理图片样式
-              if (bubbleInside.className.includes("mix-message__container--pic")) {
+              if (bubbleInside.classList.contains("mix-message__container--pic")) {
                 const picEl = bubbleInside.querySelector(".pic-element");
                 if (picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50) {
                   newTimeEl.classList.add("bubble-inside");
@@ -209,6 +209,48 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     childList: true,
     subtree: false,
   });
+}
+
+// 阻止拖拽多选消息
+function touchMoveSelectin(className) {
+  let interception;
+  document.querySelector("#app").addEventListener("mousedown", (event) => {
+    if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+      interception = interception =
+        !(
+          event.target.classList.contains("message-content__wrapper") ||
+          doesParentHaveClass(event.target, "message-content__wrapper")
+        ) &&
+        (event.target.classList.contains(className) || doesParentHaveClass(event.target, className));
+    }
+  });
+  document.querySelector(`.${className}`).addEventListener("mousedown", (event) => {
+    if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+      if (document.querySelector("#qContextMenu")) {
+        document.querySelector("#qContextMenu").remove();
+      }
+    }
+  });
+  document.querySelector("#app").addEventListener("mousemove", (event) => {
+    if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+      if (interception) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+  });
+}
+
+// 判断父元素是否包含指定类名
+function doesParentHaveClass(element, className) {
+  let parentElement = element.parentElement;
+  while (parentElement !== null) {
+    if (parentElement.classList.contains(className)) {
+      return true;
+    }
+    parentElement = parentElement.parentElement;
+  }
+  return false;
 }
 
 // 媒体预览增强
@@ -274,7 +316,7 @@ async function mainMessage() {
           return {
             name: el.querySelector(".icon-item").getAttribute("aria-label"),
             id: el.querySelector(".icon-item").id,
-            disabled: el.className.includes(".disabled"),
+            disabled: el.classList.contains(".disabled"),
           };
         })
         .filter((el) => !options.textAreaFuncList.find((_el) => _el.name === el.name));
@@ -309,7 +351,7 @@ async function mainMessage() {
           return {
             name: el.querySelector(".icon-item").getAttribute("aria-label"),
             id: el.querySelector(".icon-item").id,
-            disabled: el.className.includes(".disabled"),
+            disabled: el.classList.contains(".disabled"),
           };
         })
         .filter((el) => !options.chatAreaFuncList.find((_el) => _el.name === el.name));
@@ -378,6 +420,11 @@ async function mainMessage() {
     if (document.querySelector(".ml-list.list") && first("msgList")) {
       observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
     }
+    // 禁用滑动多选消息
+    if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
+      touchMoveSelectin("chat-msg-area");
+    }
+    // 处理输入框上方功能列表
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
       const find = options.textAreaFuncList.find((el) => el.name === name);
@@ -389,7 +436,7 @@ async function mainMessage() {
         }
       }
     });
-
+    // 处理消息列表上方功能列表
     document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
       const find = options.chatAreaFuncList.find((el) => el.name === name);
@@ -401,7 +448,6 @@ async function mainMessage() {
         }
       }
     });
-
     // 更新自定义样式
     if (first("init-wallpaper")) {
       updateWallpaper();
@@ -424,26 +470,26 @@ async function mainMessage() {
           return {
             name: "消息",
             index,
-            disabled: el.className.includes("disabled"),
+            disabled: el.classList.contains("disabled"),
           };
         } else {
           return {
             name: el.getAttribute("aria-label"),
             index,
-            disabled: el.className.includes("disabled"),
+            disabled: el.classList.contains("disabled"),
           };
         }
       } else if (el.querySelector(".game-center-item")) {
         return {
           name: "游戏中心",
           index,
-          disabled: el.className.includes("disabled"),
+          disabled: el.classList.contains("disabled"),
         };
       } else {
         return {
           name: "未知功能",
           index,
-          disabled: el.className.includes("disabled"),
+          disabled: el.classList.contains("disabled"),
         };
       }
     });
@@ -452,13 +498,13 @@ async function mainMessage() {
         return {
           name: el.querySelector(".icon-item").getAttribute("aria-label"),
           index,
-          disabled: el.className.includes("disabled"),
+          disabled: el.classList.contains("disabled"),
         };
       } else {
         return {
           name: "未知功能",
           index,
-          disabled: el.className.includes("disabled"),
+          disabled: el.classList.contains("disabled"),
         };
       }
     });
@@ -486,6 +532,10 @@ function chatMessage() {
     } else {
       document.body.classList.remove("disabled-sticker-hot-gif");
     }
+    // 禁用滑动多选消息
+    if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
+      touchMoveSelectin("chat-msg-area");
+    }
     // 禁用输入框上方功能
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
@@ -498,7 +548,6 @@ function chatMessage() {
         }
       }
     });
-
     // 禁用聊天框上方功能
     document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
@@ -511,7 +560,6 @@ function chatMessage() {
         }
       }
     });
-
     // 更新自定义样式
     if (first("init-wallpaper")) {
       updateWallpaper();
@@ -550,7 +598,7 @@ function qContextMenu() {
       isRightClick = true;
       selectText = window.getSelection().toString();
       let imgEl = event.target;
-      if (imgEl.className.includes("image-content")) {
+      if (imgEl.classList.contains("image-content")) {
         imagePath = imgEl?.src?.replace("appimg://", "");
       } else {
         imagePath = "";
@@ -602,7 +650,7 @@ function addQContextMenu(qContextMenu, icon, title, callback) {
   if (item.querySelector(".q-icon")) {
     item.querySelector(".q-icon").innerHTML = icon;
   }
-  if (item.className.includes("q-context-menu-item__text")) {
+  if (item.classList.contains("q-context-menu-item__text")) {
     item.innerText = title;
   } else {
     item.querySelector(".q-context-menu-item__text").innerText = title;
@@ -680,12 +728,6 @@ async function onLoad() {
   });
 
   function updatePage() {
-    // 禁用滑动多选消息
-    if (options.message.disabledSlideMultipleSelection) {
-      document.body.classList.add("disabled-slide-multiple-selection");
-    } else {
-      document.body.classList.remove("disabled-slide-multiple-selection");
-    }
     // 是否开启日志输出
     if (options.debug) {
       log = console.log;
@@ -792,7 +834,7 @@ async function onConfigView(view) {
       }
       switchEl.setAttribute("index", index);
       switchEl.addEventListener("click", function () {
-        Function("options", `options.${objKey}[${index}].${key} = ${this.className.includes("is-active")}`)(options);
+        Function("options", `options.${objKey}[${index}].${key} = ${this.classList.contains("is-active")}`)(options);
         this.classList.toggle("is-active");
         lite_tools.config(options);
       });
@@ -955,11 +997,11 @@ async function onConfigView(view) {
       this.classList.toggle("is-active");
       options = Object.assign(
         options,
-        Function("options", `options.${optionKey} = ${this.className.includes("is-active")}; return options`)(options)
+        Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options)
       );
       lite_tools.config(options);
       if (callback) {
-        callback(event, this.className.includes("is-active"));
+        callback(event, this.classList.contains("is-active"));
       }
     });
   }
