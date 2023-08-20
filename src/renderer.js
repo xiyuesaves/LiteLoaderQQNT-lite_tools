@@ -146,13 +146,13 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     if (options.message.preventMessageRecall) {
       const msgId = await lite_tools.getMessageRecallId();
       MessageRecallId = new Map([...MessageRecallId, ...msgId]);
-      log("获取到撤回id列表", MessageRecallId);
+      // log("获取到撤回id列表", MessageRecallId);
     }
     // 获取消息id对应时间
     if (options.message.showMsgTime) {
       const msgList = await lite_tools.getMsgIdAndTime();
       idTImeMap = new Map([...idTImeMap, ...msgList]);
-      log("获取到id对应时间列表", idTImeMap);
+      // log("获取到id对应时间列表", idTImeMap);
     }
     // 所有功能使用同一个循环执行
     document.querySelectorAll(msgItemEl).forEach((el) => {
@@ -274,6 +274,50 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     childList: true,
     subtree: false,
   });
+}
+
+// 通用监听输入框编辑事件
+function observeChatBox() {
+  const ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
+  let isReply = false;
+
+  const originalApplyOperation = ckeditorInstance.editing.model.applyOperation;
+  const patchedApplyOperation = function (...args) {
+    // 在检测到插入回复节点后，在10ms内阻止插入At节点和空格消息
+    if (options.message.removeReplyAt) {
+      if (args[0]?.nodes?._nodes[0]?.name === "msg-reply" && !isReply) {
+        isReply = true;
+        setTimeout(() => {
+          isReply = false;
+        });
+      }
+      if (args[0]?.nodes?._nodes[0]?.name === "msg-at" && isReply) {
+        args[0].nodes._nodes = [];
+      }
+      if (args[0]?.nodes?._nodes[0]?._data === " " && isReply) {
+        args[0].nodes._nodes = [];
+        isReply = false;
+      }
+    }
+    return originalApplyOperation.call(ckeditorInstance.editing.model, ...args);
+  };
+  ckeditorInstance.editing.model.applyOperation = patchedApplyOperation;
+
+  // addMethodListener(ckeditorInstance);
+  // // 调试函数
+  // function addMethodListener(obj, parent = "", deep = 0, maxDeep = 10) {
+  //   for (const prop in obj) {
+  //     if (typeof obj[prop] === "function") {
+  //       const originalMethod = obj[prop];
+  //       obj[prop] = function (...args) {
+  //         console.log(`方法 "${parent}${parent ? "." : ""}${prop}" 被调用，参数：`, args);
+  //         return originalMethod.call(obj, ...args);
+  //       };
+  //     } else if (maxDeep > deep && typeof obj[prop] === "object") {
+  //       addMethodListener(obj[prop], `${parent}${parent ? "." : ""}${prop}`, deep);
+  //     }
+  //   }
+  // }
 }
 
 // 新的撤回事件触发该方法
@@ -507,6 +551,10 @@ async function mainMessage() {
     if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
       touchMoveSelectin("chat-msg-area");
     }
+    // 绑定输入框
+    if (document.querySelector(".ck.ck-content.ck-editor__editable") && first(".ck.ck-content.ck-editor__editable")) {
+      observeChatBox();
+    }
     // 处理输入框上方功能列表
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
@@ -618,6 +666,10 @@ function chatMessage() {
     // 禁用滑动多选消息
     if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
       touchMoveSelectin("chat-msg-area");
+    }
+    // 绑定输入框
+    if (document.querySelector(".ck.ck-content.ck-editor__editable") && first(".ck.ck-content.ck-editor__editable")) {
+      observeChatBox();
     }
     // 禁用输入框上方功能
     document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
@@ -996,6 +1048,8 @@ async function onConfigView(view) {
       );
     }
   });
+  // 移除回复时的@标记
+  addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
 
   // 阻止撤回
   addSwitchEventlistener("message.preventMessageRecall", ".preventMessageRecall");

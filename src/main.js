@@ -1,5 +1,5 @@
 // 运行在 Electron 主进程 下的插件入口
-const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
+const { ipcMain, dialog, shell } = require("electron");
 const http = require("http");
 const https = require("https");
 const path = require("path");
@@ -43,6 +43,7 @@ const defaultOptions = {
     autoOpenURL: false, // 自动打开来自手机的链接
     switchReplace: false, // 复读按钮
     preventMessageRecall: false, // 防撤回
+    removeReplyAt: false, // 移除回复时的@标记
   },
   tail: {
     enabled: false, // 消息后缀
