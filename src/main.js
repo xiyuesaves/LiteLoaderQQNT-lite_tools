@@ -99,7 +99,7 @@ class MessageRecallList {
     this.messageRecallPath = messageRecallPath;
     this.latestPath = messageRecallJson;
     this.newFileEvent = [];
-    this.map = new Map(Array.from(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" })))); // 从文件中初始化撤回信息
+    this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
   }
   set(key, value) {
     if (this.messageRecallPath) {
