@@ -2,6 +2,7 @@
 let options,
   styleText,
   idTImeMap = new Map(),
+  idUidMap = new Map(),
   MessageRecallId = new Set(),
   log = console.log,
   initLog = console.log;
@@ -86,7 +87,7 @@ async function updateWallpaper() {
 
 // 通用消息撤回方法
 function messageRecall(el, find) {
-  log("该消息为撤回内容", el);
+  // log("该消息为撤回内容", el);
 
   // 气泡-嵌入（必须含有文本内容的消息,文件消息）
   const bubbleEmbed = el.querySelector(
@@ -141,6 +142,8 @@ function messageRecall(el, find) {
 
 // 通用监听消息列表方法
 function observerMessageList(msgListEl, msgItemEl, isForward = false) {
+  let lastMessageNodeList = new Set();
+
   new MutationObserver(async (mutations, observe) => {
     // 获取撤回消息对应id
     if (options.message.preventMessageRecall) {
@@ -154,8 +157,21 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
       idTImeMap = new Map([...idTImeMap, ...msgList]);
       // log("获取到id对应时间列表", idTImeMap);
     }
+
+    // 获取消息id对应Uid-因为ipc通信耗时过长，启用会导致消息列表闪烁
+    if (false) {
+      const msgList = await lite_tools.getMsgIdAndUid();
+      idUidMap = new Map([...idUidMap, ...msgList]);
+      // log("获取到id对应Uid列表", idUidMap);
+    }
+
+    // 循环元素列表
+    const currentItemList = Array.from(document.querySelectorAll(msgItemEl));
+    const validItemList = currentItemList.filter((current) => !lastMessageNodeList.has(current));
+    lastMessageNodeList = new Set(currentItemList);
     // 所有功能使用同一个循环执行
-    document.querySelectorAll(msgItemEl).forEach((el) => {
+    for (let index = 0; index < validItemList.length; index++) {
+      const el = validItemList[index];
       // 开启背景时优化小图展示
       if (options.background.enabled) {
         // 过小尺寸的图片移除气泡效果
@@ -267,7 +283,31 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
           msgEl.appendChild(newReplaceEl);
         }
       }
-    });
+      // 合并消息头像-因为ipc通信耗时过长，启用会导致消息列表闪烁
+      if (false && !isForward) {
+        const isMerge = false; // el.classList.contains("merge");
+        const notMsg = el.querySelector(".avatar-span");
+        if (!isMerge && notMsg) {
+          const msgId = isForward ? el.querySelector(".avatar-span").id.replace("-msgAvatar", "") : el.id;
+          const prevElMsgId = validItemList[index + 1]
+            ? isForward
+              ? validItemList[index + 1].querySelector(".avatar-span")?.id?.replace("-msgAvatar", "")
+              : validItemList[index + 1].querySelector(".avatar-span")
+              ? validItemList[index + 1].id
+              : null
+            : null;
+          if (idUidMap.get(prevElMsgId) === idUidMap.get(msgId)) {
+            // log("和上一条消息id一致，判定为附属消息", el);
+            el.classList.remove("merge-main");
+            el.classList.add("merge", "merge-child");
+          } else {
+            // log("和上一条消息id不一致，判定为主消息", el);
+            el.classList.remove("merge-child");
+            el.classList.add("merge", "merge-main");
+          }
+        }
+      }
+    }
   }).observe(document.querySelector(msgListEl), {
     attributes: true,
     attributeFilter: ["style"],
@@ -872,6 +912,12 @@ async function onLoad() {
     } else {
       log = () => {};
     }
+    // 以tg模式显示聊天消息-因为ipc通信耗时过长，启用会导致消息列表闪烁
+    // if (false) {
+    //   document.body.classList.add("merge-display");
+    // } else {
+    //   document.body.classList.remove("merge-display");
+    // }
   }
   initLog("初始化已完成，等待监听导航跳转");
 

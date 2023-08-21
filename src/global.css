@@ -341,3 +341,24 @@
   border-radius: 0 50px 50px 0;
   text-indent: -4px;
 }
+
+.merge-display .merge .message__timestamp {
+  display: none;
+}
+.merge-display .merge .message {
+  padding-bottom: 0 !important;
+}
+.merge-display .merge.merge-main .message-container {
+  transition: unset !important;
+}
+.merge-display .merge.merge-child .avatar-span {
+  visibility: hidden !important;
+}
+.merge-display .merge.merge-child .user-name.no-copy.text-ellipsis {
+  display: none !important;
+}
+.merge-display .merge.merge-child .message-container {
+  transition: unset !important;
+  padding-top: 0 !important;
+  margin-top: -2px;
+}

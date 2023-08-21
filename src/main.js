@@ -359,8 +359,16 @@ function onLoad(plugin) {
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
     // 去重且只保留100条数据，减轻数据传递压力
     msgIdList = Array.from(new Map(msgIdList)).slice(-100);
-    log("返回id对应时间", msgIdList);
-    return msgIdList;
+    log("返回消息id对应时间", msgIdList);
+    return msgIdList.map((el) => [el[0], el[1].msgTime]);
+  });
+
+  // 返回消息id对应的用户id
+  ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndUid", (event) => {
+    // 去重且只保留100条数据，减轻数据传递压力
+    msgIdList = Array.from(new Map(msgIdList)).slice(-100);
+    log("返回消息id对应Uid", msgIdList);
+    return msgIdList.map((el) => [el[0], el[1].senderUid]);
   });
 
   // 打开网址
@@ -563,7 +571,7 @@ function onBrowserWindowCreated(window, plugin) {
         msgList.forEach((msgItem, index) => {
           // 获取消息id和发送时间存入map
           if (options.message.showMsgTime) {
-            msgIdList.push([msgItem.msgId, msgItem.msgTime * 1000]);
+            msgIdList.push([msgItem.msgId, { msgTime: msgItem.msgTime * 1000, senderUid: msgItem.senderUid }]);
           }
           let msg_seq = msgItem.msgSeq;
           // 遍历消息内容数组
@@ -604,7 +612,10 @@ function onBrowserWindowCreated(window, plugin) {
                     // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
                     catchMsgList.delete(msgItem.msgId);
                     // 将撤回信息数据写入到id对应时间里
-                    msgIdList.push([findInCatch.msgId, findInCatch.msgTime * 1000]);
+                    msgIdList.push([
+                      findInCatch.msgId,
+                      { msgTime: findInCatch.msgTime * 1000, senderUid: findInCatch.senderUid },
+                    ]);
                     // 下载消息内的图片并修复数据结构
                     processPic(findInCatch);
                     // 替换撤回标记
@@ -619,7 +630,10 @@ function onBrowserWindowCreated(window, plugin) {
                         findInRecord
                       );
                       // 将撤回信息数据写入到id对应时间里
-                      msgIdList.push([findInRecord.msgId, findInRecord.msgTime * 1000]);
+                      msgIdList.push([
+                        findInRecord.msgId,
+                        { msgTime: findInRecord.msgTime * 1000, senderUid: findInRecord.senderUid },
+                      ]);
                       // 下载消息内的图片并修复数据结构
                       processPic(findInRecord);
                       // 替换撤回标记
@@ -654,7 +668,10 @@ function onBrowserWindowCreated(window, plugin) {
                             findInHistory
                           );
                           // 将撤回信息数据写入到id对应时间里
-                          msgIdList.push([findInHistory.msgId, findInHistory.msgTime * 1000]);
+                          msgIdList.push([
+                            findInHistory.msgId,
+                            { msgTime: findInHistory.msgTime * 1000, senderUid: findInHistory.senderUid },
+                          ]);
                           // 下载消息内的图片并修复数据结构
                           processPic(findInHistory);
                           // 替换撤回标记
@@ -700,7 +717,10 @@ function onBrowserWindowCreated(window, plugin) {
       if (options.message.showMsgTime) {
         msgIdList.push([
           args[1][onAddSendMsg].payload.msgRecord.msgId,
-          args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
+          {
+            msgTime: args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
+            senderUid: args[1][onAddSendMsg].payload.msgRecord.senderUid,
+          },
         ]);
       }
       // 处理小程序卡片
@@ -733,7 +753,7 @@ function onBrowserWindowCreated(window, plugin) {
         }
         // 获取消息id和发送时间存入数组
         if (options.message.showMsgTime) {
-          msgIdList.push([arrs.msgId, arrs.msgTime * 1000]);
+          msgIdList.push([arrs.msgId, { msgTime: arrs.msgTime * 1000, senderUid: arrs.senderUid }]);
         }
         // 打开发给自己的链接
         if (options.message.autoOpenURL) {
