@@ -733,7 +733,7 @@ function qContextMenu() {
       isRightClick = true;
       selectText = window.getSelection().toString();
       let imgEl = event.target;
-      if (imgEl.classList.contains("image-content")) {
+      if (imgEl.classList.contains("image-content") && imgEl?.src?.startsWith("appimg://")) {
         imagePath = imgEl?.src?.replace("appimg://", "");
       } else {
         imagePath = "";
@@ -1081,6 +1081,9 @@ async function onConfigView(view) {
   // 显示每条消息发送时间
   addSwitchEventlistener("message.showMsgTime", ".showMsgTime");
 
+  // 禁用滑动多选消息
+  addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
+
   // 添加消息后缀
   addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {
     if (enabled) {
@@ -1100,9 +1103,6 @@ async function onConfigView(view) {
       );
     }
   });
-
-  // 禁用滑动多选消息
-  addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
 
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
