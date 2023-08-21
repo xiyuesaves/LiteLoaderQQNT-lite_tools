@@ -5,7 +5,7 @@ let options,
   idUidMap = new Map(),
   MessageRecallId = new Set(),
   log = console.log,
-  initLog = console.log;
+  initLog = () => {}; // console.log;
 
 // 首次执行检测，只有第一次执行时返回true
 const first = (() => {
