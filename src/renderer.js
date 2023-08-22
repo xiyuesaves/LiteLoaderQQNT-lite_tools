@@ -363,18 +363,20 @@ function observeChatBox() {
 // 新的撤回事件触发该方法
 function newMessageRecall(msgItemEl) {
   lite_tools.onMessageRecall((event, recallData) => {
-    console.log("触发撤回事件", recallData);
-    MessageRecallId.set(recallData[0], recallData[1]);
-    document.querySelectorAll(msgItemEl)?.forEach((el) => {
-      // 撤回插入元素
-      const recallEl = el.querySelector(".lite-tools-recall");
-      if (!recallEl) {
-        const find = MessageRecallId.get(el.id);
-        if (find) {
-          messageRecall(el, find);
+    if (MessageRecallId instanceof Map) {
+      log("触发撤回事件", recallData);
+      MessageRecallId.set(recallData[0], recallData[1]);
+      document.querySelectorAll(msgItemEl)?.forEach((el) => {
+        // 撤回插入元素
+        const recallEl = el.querySelector(".lite-tools-recall");
+        if (!recallEl) {
+          const find = MessageRecallId.get(el.id);
+          if (find) {
+            messageRecall(el, find);
+          }
         }
-      }
-    });
+      });
+    }
   });
 }
 
