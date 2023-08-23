@@ -110,7 +110,6 @@
     }
   }
   .mix-message__inner {
-    overflow: unset !important;
   }
   .bubble-outside {
     left: calc(100% + 4px);
@@ -206,7 +205,7 @@
     right: 0px;
     float: right;
     font-size: 12px;
-    line-height: 12px;
+    line-height: 13px;
     width: 32px;
     text-align: right;
     margin-left: 6px;
@@ -220,8 +219,8 @@
       width: 32px;
       text-align: right;
       font-size: 12px;
-      line-height: 12px;
-      bottom: -2px;
+      line-height: 11px;
+      bottom: 0;
       right: 0;
       opacity: 0.6;
     }
@@ -287,8 +286,8 @@
       position: absolute;
       display: block;
       font-size: 12px;
-      line-height: 12px;
-      bottom: -2px;
+      line-height: 11px;
+      bottom: 0;
       right: 0;
       opacity: 0.6;
     }

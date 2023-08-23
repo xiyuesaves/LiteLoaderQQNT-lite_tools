@@ -1096,6 +1096,7 @@ async function onConfigView(view) {
       );
     }
   });
+  
   // 移除回复时的@标记
   addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
 
