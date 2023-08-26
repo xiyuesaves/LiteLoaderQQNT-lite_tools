@@ -44,7 +44,10 @@ const defaultOptions = {
     switchReplace: false, // 复读按钮
     preventMessageRecall: false, // 防撤回
     removeReplyAt: false, // 移除回复时的@标记
-    avatarSticky: false, // 头像黏贴效果
+    avatarSticky: {
+      enabled: false,
+      toBottom: false,
+    },
   },
   tail: {
     enabled: false, // 消息后缀
@@ -275,6 +278,10 @@ function onLoad(plugin) {
 
   // 获取本地配置文件
   fileOptions = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
+  // 兼容性调整
+  if (typeof fileOptions.message.avatarSticky === "boolean") {
+    fileOptions.message.avatarSticky = defaultOptions.message.avatarSticky;
+  }
   // 保存配置和默认配置执行一次合并，以适配新增功能
   options = Object.assign(defaultOptions, fileOptions);
 

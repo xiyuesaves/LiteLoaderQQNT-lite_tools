@@ -916,10 +916,15 @@ async function onLoad() {
       log = () => {};
     }
     // 判断是否开启头像黏贴效果
-    if (options.message.avatarSticky) {
+    if (options.message.avatarSticky.enabled) {
       document.body.classList.add("avatar-sticky");
+      if (options.message.avatarSticky.toBottom) {
+        document.body.classList.add("avatar-end");
+      } else {
+        document.body.classList.remove("avatar-end");
+      }
     } else {
-      document.body.classList.remove("avatar-sticky");
+      document.body.classList.remove("avatar-sticky", "avatar-end");
     }
     // 以tg模式显示聊天消息-因为ipc通信耗时过长，启用会导致消息列表闪烁
     // if (false) {
@@ -1105,7 +1110,16 @@ async function onConfigView(view) {
   });
 
   // 头像黏贴消息框效果
-  addSwitchEventlistener("message.avatarSticky", ".avatarSticky");
+  addSwitchEventlistener("message.avatarSticky.enabled", ".avatarSticky", (_, enabled) => {
+    if (enabled) {
+      view.querySelector(".avatar-bottom-li").classList.remove("hidden");
+    } else {
+      view.querySelector(".avatar-bottom-li").classList.add("hidden");
+    }
+  });
+
+  // 头像置底
+  addSwitchEventlistener("message.avatarSticky.toBottom", ".avatar-bottom");
 
   // 移除回复时的@标记
   addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");

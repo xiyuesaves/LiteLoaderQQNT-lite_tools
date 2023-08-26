@@ -362,7 +362,11 @@
 
 .avatar-sticky .avatar-span {
   top: 10px !important;
+  bottom: 10px !important;
   position: sticky !important;
+}
+.avatar-sticky.avatar-end .avatar-span {
+  align-self: end !important;
 }
 .avatar-sticky .ml-root.q-scroll-view .ml-list {
   overflow: unset !important;
