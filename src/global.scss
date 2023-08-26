@@ -411,3 +411,14 @@
     }
   }
 }
+
+// 头像黏贴消息框效果
+.avatar-sticky {
+  .avatar-span {
+    top: 10px !important;
+    position: sticky !important;
+  }
+  .ml-root.q-scroll-view *:not(.message-content__wrapper):not(.message-content__wrapper *) {
+    overflow: unset !important;
+  }
+}

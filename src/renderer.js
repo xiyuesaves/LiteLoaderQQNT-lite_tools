@@ -915,6 +915,12 @@ async function onLoad() {
     } else {
       log = () => {};
     }
+    // 判断是否开启头像黏贴效果
+    if (options.message.avatarSticky) {
+      document.body.classList.add("avatar-sticky");
+    } else {
+      document.body.classList.remove("avatar-sticky");
+    }
     // 以tg模式显示聊天消息-因为ipc通信耗时过长，启用会导致消息列表闪烁
     // if (false) {
     //   document.body.classList.add("merge-display");
@@ -1098,6 +1104,9 @@ async function onConfigView(view) {
     }
   });
 
+  // 头像黏贴消息框效果
+  addSwitchEventlistener("message.avatarSticky", ".avatarSticky");
+
   // 移除回复时的@标记
   addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
 
@@ -1204,7 +1213,7 @@ async function onConfigView(view) {
   });
 }
 
-// hookVue3 功能来自 LLAPI 
+// hookVue3 功能来自 LLAPI
 
 const elements = new WeakMap();
 window.__VUE_ELEMENTS__ = elements;
@@ -1238,6 +1247,11 @@ function watchComponentMount(component) {
     set(newValue) {
       value = newValue;
       if (value) {
+        // if (value?.classList?.contains("message")) {
+        //   console.log(value, component);
+        //   value.querySelector(".avatar-span")?.remove();
+        //   value.querySelector(".user-name")?.remove();
+        // }
         recordComponent(component);
       }
     },
@@ -1249,7 +1263,6 @@ function recordComponent(component) {
   while (!(element instanceof HTMLElement)) {
     element = element.parentElement;
   }
-
   //将组件公开给元素的 __VUE__ 属性
   if (element.__VUE__) {
     element.__VUE__.push(component);

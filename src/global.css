@@ -359,3 +359,11 @@
   padding-top: 0 !important;
   margin-top: -2px;
 }
+
+.avatar-sticky .avatar-span {
+  top: 10px !important;
+  position: sticky !important;
+}
+.avatar-sticky .ml-root.q-scroll-view *:not(.message-content__wrapper):not(.message-content__wrapper *) {
+  overflow: unset !important;
+}
