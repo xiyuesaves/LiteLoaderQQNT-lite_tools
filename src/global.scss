@@ -418,7 +418,9 @@
     top: 10px !important;
     position: sticky !important;
   }
-  .ml-root.q-scroll-view *:not(.message-content__wrapper):not(.message-content__wrapper *) {
-    overflow: unset !important;
+  .ml-root.q-scroll-view {
+    .ml-list {
+      overflow: unset !important;
+    }
   }
 }

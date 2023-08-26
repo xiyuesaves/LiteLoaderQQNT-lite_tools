@@ -364,6 +364,6 @@
   top: 10px !important;
   position: sticky !important;
 }
-.avatar-sticky .ml-root.q-scroll-view *:not(.message-content__wrapper):not(.message-content__wrapper *) {
+.avatar-sticky .ml-root.q-scroll-view .ml-list {
   overflow: unset !important;
 }
