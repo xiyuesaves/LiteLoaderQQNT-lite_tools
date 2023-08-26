@@ -145,30 +145,32 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
   let lastMessageNodeList = new Set();
 
   new MutationObserver(async (mutations, observe) => {
-    // 获取撤回消息对应id
-    if (options.message.preventMessageRecall) {
-      const msgId = await lite_tools.getMessageRecallId();
-      MessageRecallId = new Map([...MessageRecallId, ...msgId]);
-      log("获取到撤回id列表", MessageRecallId);
-    }
-    // 获取消息id对应时间
-    if (options.message.showMsgTime) {
-      const msgList = await lite_tools.getMsgIdAndTime();
-      idTImeMap = new Map([...idTImeMap, ...msgList]);
-      log("获取到id对应时间列表", idTImeMap);
-    }
-
-    // 获取消息id对应Uid-因为ipc通信耗时过长，启用会导致消息列表闪烁
-    if (false) {
-      const msgList = await lite_tools.getMsgIdAndUid();
-      idUidMap = new Map([...idUidMap, ...msgList]);
-      log("获取到id对应Uid列表", idUidMap);
-    }
-
     // 循环元素列表
     const currentItemList = Array.from(document.querySelectorAll(msgItemEl));
     const validItemList = currentItemList.filter((current) => !lastMessageNodeList.has(current));
     lastMessageNodeList = new Set(currentItemList);
+    // 只有消息列表元素有修改后再发起ipc通信
+    if (validItemList.length) {
+      // 获取撤回消息对应id
+      if (options.message.preventMessageRecall) {
+        const msgId = await lite_tools.getMessageRecallId();
+        MessageRecallId = new Map([...MessageRecallId, ...msgId]);
+        // log("获取到撤回id列表", MessageRecallId);
+      }
+      // 获取消息id对应时间
+      if (options.message.showMsgTime) {
+        const msgList = await lite_tools.getMsgIdAndTime();
+        idTImeMap = new Map([...idTImeMap, ...msgList]);
+        // log("获取到id对应时间列表", idTImeMap);
+      }
+
+      // 获取消息id对应Uid-因为ipc通信耗时过长，启用会导致消息列表闪烁
+      if (false) {
+        const msgList = await lite_tools.getMsgIdAndUid();
+        idUidMap = new Map([...idUidMap, ...msgList]);
+        log("获取到id对应Uid列表", idUidMap);
+      }
+    }
     // 所有功能使用同一个循环执行
     for (let index = 0; index < validItemList.length; index++) {
       const el = validItemList[index];
