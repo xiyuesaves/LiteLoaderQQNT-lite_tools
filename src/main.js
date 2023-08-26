@@ -64,6 +64,9 @@ class LimitedMap {
     this.map = new Map();
     this.keys = [];
   }
+  getRawMap() {
+    return this.map;
+  }
   set(key, value) {
     // 如果当前map存储消息超过指定大小，则删除最后一条数据
     if (this.map.size >= this.limit) {
@@ -139,11 +142,11 @@ class MessageRecallList {
   }
 }
 
-const catchMsgList = new LimitedMap(2000); // 内存缓存消息记录-用于根据消息id获取撤回原始内容
 const listenList = []; // 所有打开过的窗口对象
-const messageRecallFileList = []; // 所有存储消息用的文件列表
-let msgIdList = []; // 消息id和时间对应数组
-let MessageRecallId = []; // 撤回的消息内容-用于向渲染端提供标记
+const catchMsgList = new LimitedMap(2000); // 内存缓存消息记录-用于根据消息id获取撤回原始内容
+const messageRecallFileList = []; // 所有撤回消息本地切片列表
+let msgIdList = new LimitedMap(200); // 消息id和时间对应数组
+let MessageRecallId = new LimitedMap(200); // 撤回的消息内容-用于向渲染端提供标记
 let peer = null; // 激活聊天界面信息
 let historyMessageRecallList = new Map(); // 只读历史消息实例暂存数组
 
@@ -350,25 +353,25 @@ function onLoad(plugin) {
   // 返回查询到的撤回数据
   ipcMain.handle("LiteLoader.lite_tools.getMessageRecallId", (event) => {
     // 去重且只保留100条数据，减轻数据传递压力
-    MessageRecallId = Array.from(new Map(MessageRecallId)).slice(-100);
-    log("返回撤回id和详情", MessageRecallId);
-    return MessageRecallId;
+    // MessageRecallId = Array.from(new Map(MessageRecallId)).slice(-100);
+    log("返回撤回id和详情", MessageRecallId.getRawMap());
+    return MessageRecallId.getRawMap();
   });
 
   // 返回消息id对应的发送时间
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndTime", (event) => {
     // 去重且只保留100条数据，减轻数据传递压力
-    msgIdList = Array.from(new Map(msgIdList)).slice(-100);
-    log("返回消息id对应时间", msgIdList);
-    return msgIdList.map((el) => [el[0], el[1].msgTime]);
+    // msgIdList = Array.from(new Map(msgIdList)).slice(-100);
+    log("返回消息id对应时间", msgIdList.getRawMap());
+    return msgIdList.getRawMap();
   });
 
   // 返回消息id对应的用户id
   ipcMain.handle("LiteLoader.lite_tools.getMsgIdAndUid", (event) => {
     // 去重且只保留100条数据，减轻数据传递压力
-    msgIdList = Array.from(new Map(msgIdList)).slice(-100);
-    log("返回消息id对应Uid", msgIdList);
-    return msgIdList.map((el) => [el[0], el[1].senderUid]);
+    // msgIdList = Array.from(new Map(msgIdList)).slice(-100);
+    log("返回消息id对应Uid", msgIdList.getRawMap());
+    return msgIdList.getRawMap();
   });
 
   // 打开网址
@@ -571,7 +574,7 @@ function onBrowserWindowCreated(window, plugin) {
         msgList.forEach((msgItem, index) => {
           // 获取消息id和发送时间存入map
           if (options.message.showMsgTime) {
-            msgIdList.push([msgItem.msgId, { msgTime: msgItem.msgTime * 1000, senderUid: msgItem.senderUid }]);
+            msgIdList.set(msgItem.msgId, { msgTime: msgItem.msgTime * 1000, senderUid: msgItem.senderUid });
           }
           let msg_seq = msgItem.msgSeq;
           // 遍历消息内容数组
@@ -591,14 +594,11 @@ function onBrowserWindowCreated(window, plugin) {
                   !msgElements?.grayTipElement?.revokeElement?.isSelfOperate
                 ) {
                   // 记录撤回标记
-                  MessageRecallId.push([
-                    msgItem.msgId,
-                    {
-                      operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
-                      origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
-                      recallTime: msgItem.recallTime, // 撤回时间
-                    },
-                  ]);
+                  MessageRecallId.set(msgItem.msgId, {
+                    operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
+                    origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+                    recallTime: msgItem.recallTime, // 撤回时间
+                  });
                   // 尝试从内存中查找对应消息并替换元素
                   const findInCatch = catchMsgList.get(msgItem.msgId);
                   if (findInCatch) {
@@ -612,10 +612,10 @@ function onBrowserWindowCreated(window, plugin) {
                     // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
                     catchMsgList.delete(msgItem.msgId);
                     // 将撤回信息数据写入到id对应时间里
-                    msgIdList.push([
-                      findInCatch.msgId,
-                      { msgTime: findInCatch.msgTime * 1000, senderUid: findInCatch.senderUid },
-                    ]);
+                    msgIdList.set(findInCatch.msgId, {
+                      msgTime: findInCatch.msgTime * 1000,
+                      senderUid: findInCatch.senderUid,
+                    });
                     // 下载消息内的图片并修复数据结构
                     processPic(findInCatch);
                     // 替换撤回标记
@@ -630,10 +630,10 @@ function onBrowserWindowCreated(window, plugin) {
                         findInRecord
                       );
                       // 将撤回信息数据写入到id对应时间里
-                      msgIdList.push([
-                        findInRecord.msgId,
-                        { msgTime: findInRecord.msgTime * 1000, senderUid: findInRecord.senderUid },
-                      ]);
+                      msgIdList.set(findInRecord.msgId, {
+                        msgTime: findInRecord.msgTime * 1000,
+                        senderUid: findInRecord.senderUid,
+                      });
                       // 下载消息内的图片并修复数据结构
                       processPic(findInRecord);
                       // 替换撤回标记
@@ -668,10 +668,10 @@ function onBrowserWindowCreated(window, plugin) {
                             findInHistory
                           );
                           // 将撤回信息数据写入到id对应时间里
-                          msgIdList.push([
-                            findInHistory.msgId,
-                            { msgTime: findInHistory.msgTime * 1000, senderUid: findInHistory.senderUid },
-                          ]);
+                          msgIdList.set(findInHistory.msgId, {
+                            msgTime: findInHistory.msgTime * 1000,
+                            senderUid: findInHistory.senderUid,
+                          });
                           // 下载消息内的图片并修复数据结构
                           processPic(findInHistory);
                           // 替换撤回标记
@@ -715,13 +715,10 @@ function onBrowserWindowCreated(window, plugin) {
       }
       // 获取消息id和发送时间存入map
       if (options.message.showMsgTime) {
-        msgIdList.push([
-          args[1][onAddSendMsg].payload.msgRecord.msgId,
-          {
-            msgTime: args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
-            senderUid: args[1][onAddSendMsg].payload.msgRecord.senderUid,
-          },
-        ]);
+        msgIdList.set(args[1][onAddSendMsg].payload.msgRecord.msgId, {
+          msgTime: args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
+          senderUid: args[1][onAddSendMsg].payload.msgRecord.senderUid,
+        });
       }
       // 处理小程序卡片
       if (options.message.convertMiniPrgmArk) {
@@ -753,7 +750,7 @@ function onBrowserWindowCreated(window, plugin) {
         }
         // 获取消息id和发送时间存入数组
         if (options.message.showMsgTime) {
-          msgIdList.push([arrs.msgId, { msgTime: arrs.msgTime * 1000, senderUid: arrs.senderUid }]);
+          msgIdList.set(arrs.msgId, { msgTime: arrs.msgTime * 1000, senderUid: arrs.senderUid });
         }
         // 打开发给自己的链接
         if (options.message.autoOpenURL) {
@@ -805,7 +802,7 @@ function onBrowserWindowCreated(window, plugin) {
             },
           ];
           // 记录撤回标记
-          MessageRecallId.push(RecallData);
+          MessageRecallId.push(...RecallData);
           // 广播撤回事件
           globalBroadcast("LiteLoader.lite_tools.onMessageRecall", RecallData);
           // 写入常驻内存缓存

@@ -149,20 +149,20 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     if (options.message.preventMessageRecall) {
       const msgId = await lite_tools.getMessageRecallId();
       MessageRecallId = new Map([...MessageRecallId, ...msgId]);
-      // log("获取到撤回id列表", MessageRecallId);
+      log("获取到撤回id列表", MessageRecallId);
     }
     // 获取消息id对应时间
     if (options.message.showMsgTime) {
       const msgList = await lite_tools.getMsgIdAndTime();
       idTImeMap = new Map([...idTImeMap, ...msgList]);
-      // log("获取到id对应时间列表", idTImeMap);
+      log("获取到id对应时间列表", idTImeMap);
     }
 
     // 获取消息id对应Uid-因为ipc通信耗时过长，启用会导致消息列表闪烁
     if (false) {
       const msgList = await lite_tools.getMsgIdAndUid();
       idUidMap = new Map([...idUidMap, ...msgList]);
-      // log("获取到id对应Uid列表", idUidMap);
+      log("获取到id对应Uid列表", idUidMap);
     }
 
     // 循环元素列表
@@ -210,12 +210,11 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             find = idTImeMap.get(el.id);
           }
           if (find) {
-            const showTime = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+            const showTime = new Date(find.msgTime).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
             newTimeEl.classList.add("lite-tools-time");
             newTimeEl.innerText = showTime;
             newTimeEl.setAttribute("time", showTime);
-            newTimeEl.title = `发送于 ${new Date(find).toLocaleString("zh-CN")}`;
-
+            newTimeEl.title = `发送于 ${new Date(find.msgTime).toLocaleString("zh-CN")}`;
             if (bubbleEmbed) {
               newTimeEl.classList.add("embed");
               bubbleEmbed.appendChild(newTimeEl);
@@ -1096,7 +1095,7 @@ async function onConfigView(view) {
       );
     }
   });
-  
+
   // 移除回复时的@标记
   addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
 
