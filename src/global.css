@@ -360,14 +360,47 @@
   margin-top: -2px;
 }
 
+.avatar-sticky.avatar-end .avatar {
+  align-self: end !important;
+}
 .avatar-sticky .avatar-span {
+  position: absolute;
+  top: 0;
+  display: grid;
+}
+.avatar-sticky .avatar-span .avatar {
   top: 10px !important;
   bottom: 10px !important;
   position: sticky !important;
 }
-.avatar-sticky.avatar-end .avatar-span {
-  align-self: end !important;
-}
-.avatar-sticky .ml-root.q-scroll-view .ml-list {
+.avatar-sticky .ml-root.q-scroll-view .ml-list,
+.avatar-sticky .ml-root.q-scroll-view .avatar-span {
   overflow: unset !important;
+}
+
+.ml-root.q-scroll-view .ml-item.merge.merge-main {
+  padding-top: 10px;
+}
+.ml-root.q-scroll-view .ml-item.merge.merge-child .user-name {
+  display: none !important;
+}
+.ml-root.q-scroll-view .ml-item.merge.merge-child .avatar-span {
+  display: none !important;
+}
+
+.chat-msg-area__vlist .virtual-scroll-area .ml-list.list .ml-item:first-child {
+  padding-bottom: 10px;
+}
+
+.message {
+  padding-bottom: 0 !important;
+}
+.message .message-container {
+  padding-bottom: 4px;
+}
+.message .message__timestamp {
+  display: none;
+}
+.message .message-container {
+  padding-top: 0;
 }

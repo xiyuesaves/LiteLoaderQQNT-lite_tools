@@ -414,19 +414,60 @@
 
 // 头像黏贴消息框效果
 .avatar-sticky {
-  .avatar-span {
-    top: 10px !important;
-    bottom: 10px !important;
-    position: sticky !important;
-  }
   &.avatar-end {
-    .avatar-span {
+    .avatar {
       align-self: end !important;
     }
   }
+  .avatar-span {
+    position: absolute;
+    top: 0;
+    display: grid;
+    .avatar {
+      top: 10px !important;
+      bottom: 10px !important;
+      position: sticky !important;
+    }
+  }
   .ml-root.q-scroll-view {
-    .ml-list {
+    .ml-list,
+    .avatar-span {
       overflow: unset !important;
     }
+  }
+}
+
+.ml-root.q-scroll-view {
+  .ml-item {
+    &.merge {
+      &.merge-main {
+        padding-top: 10px;
+      }
+      &.merge-child {
+        .user-name {
+          display: none !important;
+        }
+        .avatar-span {
+          display: none !important;
+        }
+      }
+    }
+  }
+}
+.chat-msg-area__vlist .virtual-scroll-area .ml-list.list {
+  .ml-item:first-child {
+    padding-bottom: 10px;
+  }
+}
+.message {
+  padding-bottom: 0 !important;
+  .message-container {
+    padding-bottom: 4px;
+  }
+  .message__timestamp {
+    display: none;
+  }
+  .message-container {
+    padding-top: 0;
   }
 }

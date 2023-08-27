@@ -1,9 +1,6 @@
 // 运行在 Electron 渲染进程 下的页面脚本
 let options,
   styleText,
-  idTImeMap = new Map(),
-  idUidMap = new Map(),
-  MessageRecallId = new Set(),
   log = console.log,
   initLog = () => {}; // console.log;
 
@@ -142,38 +139,23 @@ function messageRecall(el, find) {
 
 // 通用监听消息列表方法
 function observerMessageList(msgListEl, msgItemEl, isForward = false) {
-  let lastMessageNodeList = new Set();
-
+  let lastMessageNodeList = [];
+  let childElHeight = new Map();
   new MutationObserver(async (mutations, observe) => {
     // 循环元素列表
     const currentItemList = Array.from(document.querySelectorAll(msgItemEl));
-    const validItemList = currentItemList.filter((current) => !lastMessageNodeList.has(current));
-    lastMessageNodeList = new Set(currentItemList);
-    // 只有消息列表元素有修改后再发起ipc通信
-    if (validItemList.length) {
-      // 获取撤回消息对应id
-      if (options.message.preventMessageRecall) {
-        const msgId = await lite_tools.getMessageRecallId();
-        MessageRecallId = new Map([...MessageRecallId, ...msgId]);
-        // log("获取到撤回id列表", MessageRecallId);
-      }
-      // 获取消息id对应时间
-      if (options.message.showMsgTime) {
-        const msgList = await lite_tools.getMsgIdAndTime();
-        idTImeMap = new Map([...idTImeMap, ...msgList]);
-        // log("获取到id对应时间列表", idTImeMap);
-      }
-
-      // 获取消息id对应Uid-因为ipc通信耗时过长，启用会导致消息列表闪烁
-      if (false) {
-        const msgList = await lite_tools.getMsgIdAndUid();
-        idUidMap = new Map([...idUidMap, ...msgList]);
-        log("获取到id对应Uid列表", idUidMap);
-      }
-    }
+    const validItemList = currentItemList; //.filter((current) => !lastMessageNodeList.includes(current));
+    validItemList.unshift(lastMessageNodeList.pop());
+    lastMessageNodeList = currentItemList;
     // 所有功能使用同一个循环执行
+    log("---新循环---");
     for (let index = 0; index < validItemList.length; index++) {
       const el = validItemList[index];
+      const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
+      // 跳过不存在vue实例的元素
+      if (!elProps) {
+        continue;
+      }
       // 开启背景时优化小图展示
       if (options.background.enabled) {
         // 过小尺寸的图片移除气泡效果
@@ -205,18 +187,13 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
           // 气泡-外部消息（兜底样式）
           const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
           const newTimeEl = document.createElement("div");
-          let find;
-          if (isForward) {
-            find = idTImeMap.get(el.querySelector(".avatar-span").id.replace("-msgAvatar", ""));
-          } else {
-            find = idTImeMap.get(el.id);
-          }
+          const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
           if (find) {
-            const showTime = new Date(find.msgTime).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+            const showTime = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
             newTimeEl.classList.add("lite-tools-time");
             newTimeEl.innerText = showTime;
             newTimeEl.setAttribute("time", showTime);
-            newTimeEl.title = `发送于 ${new Date(find.msgTime).toLocaleString("zh-CN")}`;
+            newTimeEl.title = `发送于 ${new Date(find).toLocaleString("zh-CN")}`;
             if (bubbleEmbed) {
               newTimeEl.classList.add("embed");
               bubbleEmbed.appendChild(newTimeEl);
@@ -247,7 +224,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         // 撤回插入元素
         const recallEl = el.querySelector(".lite-tools-recall");
         if (!recallEl) {
-          const find = MessageRecallId.get(el.id);
+          const find = elProps?.msgRecord?.lite_tools_recall;
           if (find) {
             // 通用消息撤回处理方法
             messageRecall(el, find);
@@ -285,26 +262,24 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         }
       }
       // 合并消息头像-因为ipc通信耗时过长，启用会导致消息列表闪烁
-      if (false && !isForward) {
-        const isMerge = false; // el.classList.contains("merge");
-        const notMsg = el.querySelector(".avatar-span");
-        if (!isMerge && notMsg) {
-          const msgId = isForward ? el.querySelector(".avatar-span").id.replace("-msgAvatar", "") : el.id;
-          const prevElMsgId = validItemList[index + 1]
-            ? isForward
-              ? validItemList[index + 1].querySelector(".avatar-span")?.id?.replace("-msgAvatar", "")
-              : validItemList[index + 1].querySelector(".avatar-span")
-              ? validItemList[index + 1].id
-              : null
-            : null;
-          if (idUidMap.get(prevElMsgId) === idUidMap.get(msgId)) {
+      if (true) {
+        const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
+        if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
+          const senderUid = elProps?.msgRecord?.senderUid;
+          const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
+          const prevElUid = prevProps?.msgRecord?.senderUid;
+          if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && senderUid === prevElUid) {
             // log("和上一条消息id一致，判定为附属消息", el);
             el.classList.remove("merge-main");
             el.classList.add("merge", "merge-child");
+            childElHeight.set(senderUid, (childElHeight.get(senderUid) ?? 0) + el.offsetHeight);
           } else {
             // log("和上一条消息id不一致，判定为主消息", el);
             el.classList.remove("merge-child");
             el.classList.add("merge", "merge-main");
+            const avatarEl = el.querySelector(".avatar-span");
+            avatarEl.style.height = `${childElHeight.get(senderUid) + el.offsetHeight - 20}px`;
+            childElHeight.set(senderUid, 0);
           }
         }
       }
@@ -362,21 +337,12 @@ function observeChatBox() {
 }
 
 // 新的撤回事件触发该方法
-function newMessageRecall(msgItemEl) {
-  lite_tools.onMessageRecall((event, recallData) => {
-    if (MessageRecallId instanceof Map) {
-      log("触发撤回事件", recallData);
-      MessageRecallId.set(recallData[0], recallData[1]);
-      document.querySelectorAll(msgItemEl)?.forEach((el) => {
-        // 撤回插入元素
-        const recallEl = el.querySelector(".lite-tools-recall");
-        if (!recallEl) {
-          const find = MessageRecallId.get(el.id);
-          if (find) {
-            messageRecall(el, find);
-          }
-        }
-      });
+function newMessageRecall() {
+  lite_tools.onMessageRecall((_, message) => {
+    log("触发撤回事件", message);
+    const el = document.querySelector(`[id="${message.msgId}"]`);
+    if (!el.querySelector(".lite-tools-recall")) {
+      messageRecall(el, message.recallData);
     }
   });
 }
@@ -758,7 +724,7 @@ function chatMessage() {
 function forwardMessage() {
   document.querySelector("#app").classList.add("forward");
   updateWallpaper();
-  observerMessageList(".list .q-scroll-view", ".list .q-scroll-view .message-container", true);
+  observerMessageList(".list .q-scroll-view", ".list .q-scroll-view > div", true);
   lite_tools.updateOptions((event, opt) => {
     log("转发页面配置更新");
     options = opt;
@@ -1261,11 +1227,6 @@ function watchComponentMount(component) {
     set(newValue) {
       value = newValue;
       if (value) {
-        // if (value?.classList?.contains("message")) {
-        //   console.log(value, component);
-        //   value.querySelector(".avatar-span")?.remove();
-        //   value.querySelector(".user-name")?.remove();
-        // }
         recordComponent(component);
       }
     },
