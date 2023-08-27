@@ -44,6 +44,7 @@ const defaultOptions = {
     switchReplace: false, // 复读按钮
     preventMessageRecall: false, // 防撤回
     removeReplyAt: false, // 移除回复时的@标记
+    mergeMessage: false, // 合并消息
     avatarSticky: {
       enabled: false,
       toBottom: false,

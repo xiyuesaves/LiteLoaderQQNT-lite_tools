@@ -415,19 +415,19 @@
 // 头像黏贴消息框效果
 .avatar-sticky {
   &.avatar-end {
-    .avatar {
+    .avatar-span {
       align-self: end !important;
+    }
+    &.merge-message {
+      .avatar {
+        align-self: end !important;
+      }
     }
   }
   .avatar-span {
-    position: absolute;
-    top: 0;
-    display: grid;
-    .avatar {
-      top: 10px !important;
-      bottom: 10px !important;
-      position: sticky !important;
-    }
+    position: sticky !important;
+    top: 10px !important;
+    bottom: 10px !important;
   }
   .ml-root.q-scroll-view {
     .ml-list,
@@ -437,37 +437,49 @@
   }
 }
 
-.ml-root.q-scroll-view {
-  .ml-item {
-    &.merge {
-      &.merge-main {
-        padding-top: 10px;
-      }
-      &.merge-child {
-        .user-name {
-          display: none !important;
+.merge-message {
+  .ml-root.q-scroll-view {
+    .ml-item {
+      &.merge {
+        &.merge-main {
+          padding-top: 10px;
+          .avatar-span {
+            position: absolute !important;
+            display: grid;
+            top: 0 !important;
+            .avatar {
+              position: sticky !important;
+              top: 10px !important;
+              bottom: 10px !important;
+            }
+          }
         }
-        .avatar-span {
-          display: none !important;
+        &.merge-child {
+          .user-name {
+            display: none !important;
+          }
+          .avatar-span {
+            display: none !important;
+          }
         }
       }
     }
   }
-}
-.chat-msg-area__vlist .virtual-scroll-area .ml-list.list {
-  .ml-item:first-child {
-    padding-bottom: 10px;
+  .chat-msg-area__vlist .virtual-scroll-area .ml-list.list {
+    .ml-item:first-child {
+      margin-bottom: 10px;
+    }
   }
-}
-.message {
-  padding-bottom: 0 !important;
-  .message-container {
-    padding-bottom: 4px;
-  }
-  .message__timestamp {
-    display: none;
-  }
-  .message-container {
-    padding-top: 0;
+  .message {
+    padding-bottom: 0 !important;
+    .message-container {
+      padding-bottom: 4px;
+    }
+    .message__timestamp {
+      display: none;
+    }
+    .message-container {
+      padding-top: 0;
+    }
   }
 }

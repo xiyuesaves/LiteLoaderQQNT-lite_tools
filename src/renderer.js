@@ -262,7 +262,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         }
       }
       // 合并消息头像-因为ipc通信耗时过长，启用会导致消息列表闪烁
-      if (true) {
+      if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
         const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
         if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
           const senderUid = elProps?.msgRecord?.senderUid;
@@ -278,7 +278,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             el.classList.remove("merge-child");
             el.classList.add("merge", "merge-main");
             const avatarEl = el.querySelector(".avatar-span");
-            avatarEl.style.height = `${childElHeight.get(senderUid) + el.offsetHeight - 20}px`;
+            avatarEl.style.height = `${childElHeight.get(senderUid) + el.offsetHeight}px`;
             childElHeight.set(senderUid, 0);
           }
         }
@@ -892,12 +892,15 @@ async function onLoad() {
     } else {
       document.body.classList.remove("avatar-sticky", "avatar-end");
     }
-    // 以tg模式显示聊天消息-因为ipc通信耗时过长，启用会导致消息列表闪烁
-    // if (false) {
-    //   document.body.classList.add("merge-display");
-    // } else {
-    //   document.body.classList.remove("merge-display");
-    // }
+    // 是否开启消息合并
+    if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
+      document.body.classList.add("merge-message");
+    } else {
+      document.body.classList.remove("merge-message");
+      document.querySelectorAll(".avatar-span").forEach((el) => {
+        el.style.height = "unset";
+      });
+    }
   }
   initLog("初始化已完成，等待监听导航跳转");
 
@@ -1083,6 +1086,9 @@ async function onConfigView(view) {
       view.querySelector(".avatar-bottom-li").classList.add("hidden");
     }
   });
+
+  // 合并消息
+  addSwitchEventlistener("message.mergeMessage", ".mergeMessage");
 
   // 头像置底
   addSwitchEventlistener("message.avatarSticky.toBottom", ".avatar-bottom");

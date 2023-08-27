@@ -360,47 +360,53 @@
   margin-top: -2px;
 }
 
-.avatar-sticky.avatar-end .avatar {
+.avatar-sticky.avatar-end .avatar-span {
+  align-self: end !important;
+}
+.avatar-sticky.avatar-end.merge-message .avatar {
   align-self: end !important;
 }
 .avatar-sticky .avatar-span {
-  position: absolute;
-  top: 0;
-  display: grid;
-}
-.avatar-sticky .avatar-span .avatar {
+  position: sticky !important;
   top: 10px !important;
   bottom: 10px !important;
-  position: sticky !important;
 }
 .avatar-sticky .ml-root.q-scroll-view .ml-list,
 .avatar-sticky .ml-root.q-scroll-view .avatar-span {
   overflow: unset !important;
 }
 
-.ml-root.q-scroll-view .ml-item.merge.merge-main {
+.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main {
   padding-top: 10px;
 }
-.ml-root.q-scroll-view .ml-item.merge.merge-child .user-name {
+.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main .avatar-span {
+  position: absolute !important;
+  display: grid;
+  top: 0 !important;
+}
+.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main .avatar-span .avatar {
+  position: sticky !important;
+  top: 10px !important;
+  bottom: 10px !important;
+}
+.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-child .user-name {
   display: none !important;
 }
-.ml-root.q-scroll-view .ml-item.merge.merge-child .avatar-span {
+.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-child .avatar-span {
   display: none !important;
 }
-
-.chat-msg-area__vlist .virtual-scroll-area .ml-list.list .ml-item:first-child {
-  padding-bottom: 10px;
+.merge-message .chat-msg-area__vlist .virtual-scroll-area .ml-list.list .ml-item:first-child {
+  margin-bottom: 10px;
 }
-
-.message {
+.merge-message .message {
   padding-bottom: 0 !important;
 }
-.message .message-container {
+.merge-message .message .message-container {
   padding-bottom: 4px;
 }
-.message .message__timestamp {
+.merge-message .message .message__timestamp {
   display: none;
 }
-.message .message-container {
+.merge-message .message .message-container {
   padding-top: 0;
 }
