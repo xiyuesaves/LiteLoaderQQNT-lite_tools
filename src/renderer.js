@@ -278,7 +278,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             el.classList.remove("merge-child");
             el.classList.add("merge", "merge-main");
             const avatarEl = el.querySelector(".avatar-span");
-            avatarEl.style.height = `${childElHeight.get(senderUid) + el.offsetHeight}px`;
+            avatarEl.style.height = `${childElHeight.get(senderUid) + el.offsetHeight - 15}px`;
             childElHeight.set(senderUid, 0);
           }
         }
