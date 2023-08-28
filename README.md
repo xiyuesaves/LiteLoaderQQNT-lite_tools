@@ -12,6 +12,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 | ------------------------------------------- |
 | 快速关闭预览图片 |
 | 头像浮动 |
+| 消息合并 |
 | 自定义侧边栏功能 |
 | 自定义输入框上方功能 |
 | 自定义聊天框右上角功能 |
