@@ -440,6 +440,7 @@ function onLoad(plugin) {
     }
   });
 
+  // 选择文件事件
   ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
     dialog
       .showOpenDialog({
@@ -481,16 +482,16 @@ function onBrowserWindowCreated(window, plugin) {
   });
 
   // ipcMain 监听事件patch 仅9.9.0有效
-  window.webContents.on("ipc-message", (_, channel, ...args) => {
-    log(
-      "%cipc-message被拦截",
-      "background:#4477ce;color:#fff;",
-      channel,
-      args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel,
-      args[1]?.[0],
-      args
-    );
-  });
+  // window.webContents.on("ipc-message", (_, channel, ...args) => {
+  //   log(
+  //     "%cipc-message被拦截",
+  //     "background:#4477ce;color:#fff;",
+  //     channel,
+  //     args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel,
+  //     args[1]?.[0],
+  //     args
+  //   );
+  // });
 
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
