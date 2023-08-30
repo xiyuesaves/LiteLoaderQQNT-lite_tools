@@ -261,7 +261,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
           msgEl.appendChild(newReplaceEl);
         }
       }
-      // 合并消息头像-因为ipc通信耗时过长，启用会导致消息列表闪烁
+      // 合并消息头像
       if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
         const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
         if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {

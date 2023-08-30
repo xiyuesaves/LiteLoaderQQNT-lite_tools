@@ -23,10 +23,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
   // 获取全局样式
   getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
-  // 获取消息id对应时间
-  getMsgIdAndTime: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMsgIdAndTime"),
-  // 获取消息id对应Uid
-  getMsgIdAndUid: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMsgIdAndUid"),
   // 获取当前窗口peer
   getPeer: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPeer"),
   // 获取撤回信息数据
