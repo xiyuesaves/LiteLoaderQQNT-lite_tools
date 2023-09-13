@@ -1149,6 +1149,9 @@ async function onConfigView(view) {
     }
   });
 
+  // 后缀是否换行
+  addSwitchEventlistener("tail.newLine", ".msg-tail-newline");
+
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
     if (enabled) {

@@ -52,6 +52,7 @@ const defaultOptions = {
   },
   tail: {
     enabled: false, // 消息后缀
+    newLine: false, // 换行显示
     content: "", // 消息后缀内容
   },
   textAreaFuncList: [], // 输入框上方功能
@@ -509,6 +510,9 @@ function onBrowserWindowCreated(window, plugin) {
           if (options.tail.enabled) {
             args[3][1][1].msgElements.forEach((el) => {
               if (el.textElement && el.textElement?.content?.length !== 0) {
+                if (options.tail.newLine) {
+                  el.textElement.content += "\n";
+                }
                 el.textElement.content += options.tail.content;
                 log("%c消息增加后缀", "background:#5b9a8b;color:#fff;", el.textElement.content);
               }
