@@ -266,18 +266,22 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
         if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
           const senderUid = elProps?.msgRecord?.senderUid;
+          const sendNickName = elProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? elProps?.msgRecord?.sendNickName;
+          const mapTag = senderUid + sendNickName;
           const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
           const prevElUid = prevProps?.msgRecord?.senderUid;
-          if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && senderUid === prevElUid) {
+          const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
+          const prevTag = prevElUid + prevNickName;
+          if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
             el.classList.remove("merge-main");
             el.classList.add("merge", "merge-child");
-            childElHeight.set(senderUid, (childElHeight.get(senderUid) ?? 0) + el.offsetHeight);
+            childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + el.offsetHeight);
           } else {
             el.classList.remove("merge-child");
             el.classList.add("merge", "merge-main");
             const avatarEl = el.querySelector(".avatar-span");
-            avatarEl.style.height = `${childElHeight.get(senderUid) + el.offsetHeight - 15 - 4}px`;
-            childElHeight.set(senderUid, 0);
+            avatarEl.style.height = `${childElHeight.get(mapTag) + el.offsetHeight - 15 - 4}px`;
+            childElHeight.set(mapTag, 0);
           }
         }
       }
