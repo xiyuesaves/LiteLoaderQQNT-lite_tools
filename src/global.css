@@ -8,6 +8,7 @@
 .disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item {
   pointer-events: none;
   background-color: unset !important;
+  width: unset !important;
   margin-right: 0;
   position: relative;
 }
@@ -44,6 +45,7 @@
   justify-content: center;
   pointer-events: auto !important;
   margin-right: 10px;
+  width: 40px;
 }
 .disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title=GIF热图] {
   display: none !important;

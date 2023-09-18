@@ -9,6 +9,7 @@
       .tabs-container-item {
         pointer-events: none;
         background-color: unset !important;
+        width: unset !important;
         &::after {
           top: 0;
           left: 0;
@@ -47,6 +48,7 @@
           justify-content: center;
           pointer-events: auto !important;
           margin-right: 10px;
+          width: 40px;
         }
         .q-icon[title="GIF热图"] {
           display: none !important;
