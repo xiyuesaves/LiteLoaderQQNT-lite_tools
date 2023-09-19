@@ -4,7 +4,7 @@
 
 # LiteLoaderQQNT-lite_tools
 
-LiteLoaderQQNT插件，轻量工具箱，添加了一些能提升使用体验的功能。
+LiteLoaderQQNT 插件 - 轻量工具箱，优化QQNT使用体验。
 
 LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
