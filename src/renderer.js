@@ -91,9 +91,7 @@ function messageRecall(el, find) {
     ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
   );
   // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-  const bubbleInside = el.querySelector(
-    ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
-  );
+  const bubbleInside = el.querySelector(".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview");
   // 气泡-外部消息（兜底样式）
   const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
 
@@ -162,11 +160,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         const mixPicEl = el.querySelector(".mix-message__container--pic");
         if (mixPicEl) {
           const picEl = mixPicEl.querySelector(".pic-element");
-          if (
-            picEl &&
-            !picEl.classList.contains("hidden-background") &&
-            !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)
-          ) {
+          if (picEl && !picEl.classList.contains("hidden-background") && !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)) {
             mixPicEl.classList.add("hidden-background");
           }
         }
@@ -181,9 +175,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
             ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
           );
           // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-          const bubbleInside = el.querySelector(
-            ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview"
-          );
+          const bubbleInside = el.querySelector(".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview");
           // 气泡-外部消息（兜底样式）
           const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
           const newTimeEl = document.createElement("div");
@@ -236,13 +228,7 @@ function observerMessageList(msgListEl, msgItemEl, isForward = false) {
         const msgEl = el.querySelector(".message-content__wrapper");
         // +1插入元素
         const replaceEl = el.querySelector(".message-content-replace");
-        if (
-          msgEl &&
-          el.querySelector(
-            ":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container"
-          ) &&
-          !replaceEl
-        ) {
+        if (msgEl && el.querySelector(":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container") && !replaceEl) {
           const newReplaceEl = document.createElement("div");
           const msgId = el.id;
           newReplaceEl.classList.add("message-content-replace");
@@ -355,10 +341,7 @@ function touchMoveSelectin(className) {
   document.querySelector("#app").addEventListener("mousedown", (event) => {
     if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
       interception = interception =
-        !(
-          event.target.classList.contains("message-content__wrapper") ||
-          doesParentHaveClass(event.target, "message-content__wrapper")
-        ) &&
+        !(event.target.classList.contains("message-content__wrapper") || doesParentHaveClass(event.target, "message-content__wrapper")) &&
         (event.target.classList.contains(className) || doesParentHaveClass(event.target, className));
     }
   });
@@ -811,10 +794,7 @@ function addQContextMenu(qContextMenu, icon, title, callback) {
 // 页面加载完成时触发
 async function onLoad() {
   // 输出logo
-  initLog(
-    "%c轻量工具箱已加载",
-    "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;"
-  );
+  initLog("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;");
 
   // 获取最新的配置信息
   options = await lite_tools.config();
@@ -959,9 +939,17 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
+  // await new Promise((res) => setTimeout(res, 5000));
+
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
   const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
+
+  // 引入更新模块;
+  const { checkUpdate } = await import(`llqqnt://local-file/${plugin_path}/src/modules/checkUpdate.js`);
+
+  // 检查更新
+  checkUpdate(view);
 
   // CSS
   const link_element = document.createElement("link");
@@ -1185,10 +1173,7 @@ async function onConfigView(view) {
     }
     view.querySelector(switchClass).addEventListener("click", function (event) {
       this.classList.toggle("is-active");
-      options = Object.assign(
-        options,
-        Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options)
-      );
+      options = Object.assign(options, Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options));
       lite_tools.config(options);
       if (callback) {
         callback(event, this.classList.contains("is-active"));
