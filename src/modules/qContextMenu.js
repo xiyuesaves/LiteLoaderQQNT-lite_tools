@@ -19,10 +19,11 @@ function addQContextMenu(qContextMenu, icon, title, callback) {
   qContextMenu.appendChild(item);
 }
 // 右键菜单监听
-const addEventqContextMenu = async (options) => {
+const addEventqContextMenu = async () => {
   let selectText = "";
   let isRightClick = false;
   let imagePath = "";
+  const { options } = await import("./options.js");
   document.addEventListener("mouseup", (event) => {
     if (event.button === 2) {
       isRightClick = true;
@@ -40,7 +41,6 @@ const addEventqContextMenu = async (options) => {
     }
   });
   new MutationObserver(() => {
-    console.log(options)
     const qContextMenu = document.querySelector("#qContextMenu");
     // 在网页搜索
     if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {

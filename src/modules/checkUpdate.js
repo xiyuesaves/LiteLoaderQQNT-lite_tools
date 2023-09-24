@@ -19,13 +19,12 @@ function compareVersions(currentVersion, latestVersion) {
   return false; // 当前版本与最新版本相等
 }
 
-export function checkUpdate(view) {
+async function checkUpdate(view) {
   fetch(projectLatestUrl)
     .then((res) => {
       return res.json();
     })
     .then((json) => {
-      console.log("获取最新版本", json);
       if (compareVersions(LiteLoader.plugins.lite_tools.manifest.version, json.tag_name)) {
         const newVersionEl = document.createElement("span");
         const aLink = document.createElement("a");
@@ -40,6 +39,8 @@ export function checkUpdate(view) {
       }
     })
     .catch((err) => {
-      console.log("检查更新失败", err);
+      console.error("检查更新失败", err);
     });
 }
+
+export { checkUpdate };
