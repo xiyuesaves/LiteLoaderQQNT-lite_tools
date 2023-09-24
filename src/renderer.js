@@ -20,18 +20,13 @@ async function onLoad() {
   const { updateWallpaper } = await import("./render_modules/updateWallpaper.js");
   const { observeChatBox } = await import("./render_modules/observeChatBox.js");
   const { chatMessageList } = await import("./render_modules/chatMessageList.js");
+  const { touchMoveSelectin } = await import("./render_modules/touchMoveSelectin.js");
+  const { betterImageViewer } = await import("./render_modules/betterImageViewer.js");
   const { first } = await import("./render_modules/first.js");
 
   // 加载配置信息
   options = opt;
   updateOptions = listenUpdateOptions;
-
-  // 判断是否输出日志
-  if (!options.debug) {
-    log = () => {};
-  } else {
-    log("已开启debug");
-  }
 
   // 在元素上创建组件引用
   hookVue3();
@@ -44,12 +39,6 @@ async function onLoad() {
 
   // 全局注册撤回事件监听
   newMessageRecall();
-
-  // 所有页面都需要执行的更新操作
-  chatMessageList();
-  updateOptions(() => {
-    chatMessageList();
-  });
 
   // 监听导航跳转
   navigation.addEventListener("navigatesuccess", navigateChange);
@@ -74,7 +63,7 @@ async function onLoad() {
     switch (hash) {
       case "#/imageViewer":
         if (first("is-active")) {
-          imageViewer();
+          betterImageViewer();
         }
         break;
       case "#/main/message":
@@ -97,7 +86,7 @@ async function onLoad() {
 
   // 通用初始化函数
   function initFunction(func) {
-    // 窗口启动的1分钟之内每隔10ms应用一次配置信息
+    // 窗口启动的指定时间内按10ms的间隔调用指定函数
     let timeout = new Date().getTime() + 30 * 1000;
     loop();
     function loop() {
@@ -106,83 +95,6 @@ async function onLoad() {
         func();
       }
     }
-  }
-
-  // 阻止拖拽多选消息
-  function touchMoveSelectin(className) {
-    let interception;
-    document.querySelector("#app").addEventListener("mousedown", (event) => {
-      if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
-        interception = interception =
-          !(event.target.classList.contains("message-content__wrapper") || doesParentHaveClass(event.target, "message-content__wrapper")) &&
-          (event.target.classList.contains(className) || doesParentHaveClass(event.target, className));
-      }
-    });
-    document.querySelector(`.${className}`).addEventListener("mousedown", (event) => {
-      if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
-        if (document.querySelector("#qContextMenu")) {
-          document.querySelector("#qContextMenu").remove();
-        }
-      }
-    });
-    document.querySelector("#app").addEventListener("mousemove", (event) => {
-      if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
-        if (interception) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      }
-    });
-  }
-
-  // 判断父元素是否包含指定类名
-  function doesParentHaveClass(element, className) {
-    let parentElement = element.parentElement;
-    while (parentElement !== null) {
-      if (parentElement.classList.contains(className)) {
-        return true;
-      }
-      parentElement = parentElement.parentElement;
-    }
-    return false;
-  }
-
-  // 媒体预览增强
-  function imageViewer() {
-    // 修复弹窗字体模糊
-    document.body.classList.add("image-viewer");
-    // 针对图片的单击关闭图片
-    const appEl = document.querySelector("#app");
-    const option = { attributes: false, childList: true, subtree: true };
-    const callback = (mutationsList, observer) => {
-      const img = document.querySelector(".main-area__image");
-      const video = document.querySelector("embed");
-      if (img && options.imageViewer.quickClose) {
-        observer.disconnect();
-        let isMove = false;
-        img.addEventListener("mousedown", (event) => {
-          if (event.button === 0) {
-            isMove = false;
-          }
-        });
-        img.addEventListener("mousemove", (event) => {
-          if (event.button === 0) {
-            isMove = true;
-          }
-        });
-        img.addEventListener("mouseup", (event) => {
-          let rightMenu = document.querySelector("#qContextMenu");
-          if (!isMove && event.button === 0 && !rightMenu) {
-            document.querySelector(`div[aria-label="关闭"]`).click();
-          }
-        });
-      } else if (video) {
-        // 判断打开的是视频
-        observer.disconnect();
-      }
-    };
-    const observer = new MutationObserver(callback);
-    observer.observe(appEl, option);
   }
 
   // 首页处理
@@ -275,9 +187,10 @@ async function onLoad() {
       if (document.querySelector(".panel-header__action") && first("chat-message-area")) {
         observeChatTopFunc();
       }
-      // 消息列表监听器
+      // 判断消息列表是否已经加载
       if (document.querySelector(".ml-list.list") && first("msgList")) {
         observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
+        chatMessageList();
       }
       // 禁用滑动多选消息
       if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
@@ -320,6 +233,7 @@ async function onLoad() {
     // 配置文件更新
     updateOptions(() => {
       updateWallpaper();
+      chatMessageList();
       updatePage();
     });
 
@@ -401,6 +315,11 @@ async function onLoad() {
       if (document.querySelector(".ck.ck-content.ck-editor__editable") && first(".ck.ck-content.ck-editor__editable")) {
         observeChatBox();
       }
+      // 判断消息列表是否已经加载
+      if (document.querySelector(".ml-list.list") && first("msgList")) {
+        observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
+        chatMessageList();
+      }
       // 禁用输入框上方功能
       document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
         const name = el.querySelector(".icon-item").getAttribute("aria-label");
@@ -433,10 +352,9 @@ async function onLoad() {
     // 配置更新
     updateOptions(() => {
       updateWallpaper();
+      chatMessageList();
       updatePage();
     });
-    // 附加消息发送时间
-    observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
   }
 
   // 转发消息界面
@@ -452,21 +370,28 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
+  // 调试用，等待5秒后再执行
+  // await new Promise((res) => setTimeout(res, 5000));
 
-  // 引入模块
   // 防抖函数
   const { debounce } = await import("./render_modules/debounce.js");
   // 初次执行检查
   const { first } = await import("./render_modules/first.js");
-
+  // 检查更新;
+  const { checkUpdate } = await import(`./render_modules/checkUpdate.js`);
+  // 向设置界面插入动态选项
+  const { addOptionLi } = await import(`./render_modules/addOptionLi.js`);
+  // 初始化设置界面监听方法
+  const { SwitchEventlistener } = await import(`./render_modules/addSwitchEventlistener.js`);
   // 加载配置信息
   const { opt, listenUpdateOptions } = await import("./render_modules/options.js");
+
   updateOptions = listenUpdateOptions;
   options = opt;
 
-  // 引入更新模块;
-  const { checkUpdate } = await import(`./modules/checkUpdate.js`);
+  const addSwitchEventlistener = await SwitchEventlistener(view);
 
+  // 初始化常量
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
   const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
@@ -496,34 +421,6 @@ async function onConfigView(view) {
   view.querySelector(".version .link").addEventListener("click", () => {
     lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools");
   });
-
-  // 向设置界面插入动态选项
-  function addOptionLi(list, element, objKey, key) {
-    list.forEach((el, index) => {
-      const hr = document.createElement("hr");
-      hr.classList.add("horizontal-dividing-line");
-      const li = document.createElement("li");
-      li.classList.add("vertical-list-item");
-      const switchEl = document.createElement("div");
-      switchEl.classList.add("q-switch");
-      if (!el[key]) {
-        switchEl.classList.add("is-active");
-      }
-      switchEl.setAttribute("index", index);
-      switchEl.addEventListener("click", function () {
-        Function("options", `options.${objKey}[${index}].${key} = ${this.classList.contains("is-active")}`)(options);
-        this.classList.toggle("is-active");
-        lite_tools.setOptions(options);
-      });
-      const span = document.createElement("span");
-      span.classList.add("q-switch__handle");
-      switchEl.appendChild(span);
-      const title = document.createElement("h2");
-      title.innerText = el.name;
-      li.append(title, switchEl);
-      element.append(hr, li);
-    });
-  }
 
   // 获取侧边栏按钮列表
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
@@ -679,28 +576,6 @@ async function onConfigView(view) {
     }
   });
 
-  // 初始化设置界面
-  function addSwitchEventlistener(optionKey, switchClass, callback) {
-    const option = Function("options", `return options.${optionKey}`)(options);
-    if (option) {
-      view.querySelector(switchClass).classList.add("is-active");
-    } else {
-      view.querySelector(switchClass).classList.remove("is-active");
-    }
-    // 初始化时执行一次callback方法
-    if (callback) {
-      callback(null, option);
-    }
-    view.querySelector(switchClass).addEventListener("click", function (event) {
-      this.classList.toggle("is-active");
-      let newOptions = Object.assign(options, Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options));
-      lite_tools.setOptions(newOptions);
-      if (callback) {
-        callback(event, this.classList.contains("is-active"));
-      }
-    });
-  }
-
   // 监听设置文件变动
   updateOptions((opt) => {
     view.querySelector(".select-path input").value = opt.background.url;
@@ -709,6 +584,3 @@ async function onConfigView(view) {
 
 // 这两个函数都是可选的
 export { onLoad, onConfigView };
-
-// 输入框方法
-// document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance.data
