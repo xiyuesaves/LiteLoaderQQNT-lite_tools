@@ -10,17 +10,17 @@ async function onLoad() {
 
   // 加载模块
   // 防抖函数
-  const { opt, listenUpdateOptions } = await import("./modules/options.js");
-  const { hookVue3 } = await import("./modules/hookVue3.js");
-  const { addEventqContextMenu } = await import("./modules/qContextMenu.js");
-  const { initStyle } = await import("./modules/initStyle.js");
-  const { newMessageRecall } = await import("./modules/messageRecall.js");
-  const { observerMessageList } = await import("./modules/observerMessageList.js");
-  const { observerChatArea } = await import("./modules/observerChatArea.js");
-  const { updateWallpaper } = await import("./modules/updateWallpaper.js");
-  const { observeChatBox } = await import("./modules/observeChatBox.js");
-  const { chatMessageList } = await import("./modules/chatMessageList.js");
-  const { first } = await import("./modules/first.js");
+  const { opt, listenUpdateOptions } = await import("./render_modules/options.js");
+  const { hookVue3 } = await import("./render_modules/hookVue3.js");
+  const { addEventqContextMenu } = await import("./render_modules/qContextMenu.js");
+  const { initStyle } = await import("./render_modules/initStyle.js");
+  const { newMessageRecall } = await import("./render_modules/messageRecall.js");
+  const { observerMessageList } = await import("./render_modules/observerMessageList.js");
+  const { observerChatArea } = await import("./render_modules/observerChatArea.js");
+  const { updateWallpaper } = await import("./render_modules/updateWallpaper.js");
+  const { observeChatBox } = await import("./render_modules/observeChatBox.js");
+  const { chatMessageList } = await import("./render_modules/chatMessageList.js");
+  const { first } = await import("./render_modules/first.js");
 
   // 加载配置信息
   options = opt;
@@ -319,7 +319,6 @@ async function onLoad() {
 
     // 配置文件更新
     updateOptions(() => {
-      log("首页配置更新");
       updateWallpaper();
       updatePage();
     });
@@ -433,7 +432,6 @@ async function onLoad() {
     }
     // 配置更新
     updateOptions(() => {
-      console.log("独立聊天配置更新");
       updateWallpaper();
       updatePage();
     });
@@ -447,7 +445,6 @@ async function onLoad() {
     updateWallpaper();
     observerMessageList(".list .q-scroll-view", ".list .q-scroll-view > div", true);
     updateOptions(() => {
-      log("转发页面配置更新");
       updateWallpaper();
     });
   }
@@ -458,12 +455,12 @@ async function onConfigView(view) {
 
   // 引入模块
   // 防抖函数
-  const { debounce } = await import("./modules/debounce.js");
+  const { debounce } = await import("./render_modules/debounce.js");
   // 初次执行检查
-  const { first } = await import("./modules/first.js");
+  const { first } = await import("./render_modules/first.js");
 
   // 加载配置信息
-  const { opt, listenUpdateOptions } = await import("./modules/options.js");
+  const { opt, listenUpdateOptions } = await import("./render_modules/options.js");
   updateOptions = listenUpdateOptions;
   options = opt;
 
@@ -706,7 +703,6 @@ async function onConfigView(view) {
 
   // 监听设置文件变动
   updateOptions((opt) => {
-    console.log("设置界面配置更新");
     view.querySelector(".select-path input").value = opt.background.url;
   });
 }
