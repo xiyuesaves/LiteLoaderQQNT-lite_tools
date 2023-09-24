@@ -38,6 +38,8 @@ async function onLoad() {
   const { observerMessageList } = await import("./modules/observerMessageList.js");
   const { observerChatArea } = await import("./modules/observerChatArea.js");
   const { updateWallpaper } = await import("./modules/updateWallpaper.js");
+  const { observeChatBox } = await import("./modules/observeChatBox.js");
+  const { chatMessageList } = await import("./modules/chatMessageList.js");
 
   // 加载配置信息
   options = opt;
@@ -63,45 +65,16 @@ async function onLoad() {
   newMessageRecall();
 
   // 所有页面都需要执行的更新操作
-  updatePage();
+  chatMessageList();
   updateOptions(() => {
-    log("全局设置更新");
-    updatePage();
+    chatMessageList();
   });
-
-  function updatePage() {
-    // 是否开启日志输出
-    if (options.debug) {
-      log = console.log;
-    } else {
-      log = () => {};
-    }
-    // 判断是否开启头像黏贴效果
-    if (options.message.avatarSticky.enabled) {
-      document.body.classList.add("avatar-sticky");
-      if (options.message.avatarSticky.toBottom) {
-        document.body.classList.add("avatar-end");
-      } else {
-        document.body.classList.remove("avatar-end");
-      }
-    } else {
-      document.body.classList.remove("avatar-sticky", "avatar-end");
-    }
-    // 是否开启消息合并
-    if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
-      document.body.classList.add("merge-message");
-    } else {
-      document.body.classList.remove("merge-message");
-      document.querySelectorAll(".avatar-span").forEach((el) => {
-        el.style.height = "unset";
-      });
-    }
-  }
 
   // 监听导航跳转
   navigation.addEventListener("navigatesuccess", navigateChange);
   function navigateChange() {
     updateHash();
+    navigation.removeEventListener("navigatesuccess", navigateChange);
   }
 
   // 如果因为加载过久导致hash已经变动，这是备用触发方式
@@ -117,7 +90,6 @@ async function onLoad() {
     if (hash === "#/blank") {
       return;
     }
-    navigation.removeEventListener("navigatesuccess", navigateChange);
     switch (hash) {
       case "#/imageViewer":
         if (first("is-active")) {
@@ -153,34 +125,6 @@ async function onLoad() {
         func();
       }
     }
-  }
-
-  // 通用监听输入框编辑事件
-  function observeChatBox() {
-    const ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
-    let isReply = false;
-
-    const originalApplyOperation = ckeditorInstance.editing.model.applyOperation;
-    const patchedApplyOperation = function (...args) {
-      // 在检测到插入回复节点后，在10ms内阻止插入At节点和空格消息
-      if (options.message.removeReplyAt) {
-        if (args[0]?.nodes?._nodes[0]?.name === "msg-reply" && !isReply) {
-          isReply = true;
-          setTimeout(() => {
-            isReply = false;
-          });
-        }
-        if (args[0]?.nodes?._nodes[0]?.name === "msg-at" && isReply) {
-          args[0].nodes._nodes = [];
-        }
-        if (args[0]?.nodes?._nodes[0]?._data === " " && isReply) {
-          args[0].nodes._nodes = [];
-          isReply = false;
-        }
-      }
-      return originalApplyOperation.call(ckeditorInstance.editing.model, ...args);
-    };
-    ckeditorInstance.editing.model.applyOperation = patchedApplyOperation;
   }
 
   // 阻止拖拽多选消息
