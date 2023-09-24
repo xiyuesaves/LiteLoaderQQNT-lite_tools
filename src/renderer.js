@@ -3,25 +3,6 @@ let options,
   updateOptions,
   log = console.log;
 
-// 首次执行检测，只有第一次执行时返回true
-const first = (() => {
-  const set = new Set();
-  return (tag) => {
-    return !set.has(tag) && !!set.add(tag);
-  };
-})();
-
-// 防抖函数
-function debounce(fn, time) {
-  let timer = null;
-  return function (...args) {
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, time);
-  };
-}
-
 // 页面加载完成时触发
 async function onLoad() {
   // 输出logo
@@ -29,7 +10,6 @@ async function onLoad() {
 
   // 加载模块
   // 防抖函数
-  // const debounce = await import("./modules/debounce.js");
   const { opt, listenUpdateOptions } = await import("./modules/options.js");
   const { hookVue3 } = await import("./modules/hookVue3.js");
   const { addEventqContextMenu } = await import("./modules/qContextMenu.js");
@@ -40,6 +20,7 @@ async function onLoad() {
   const { updateWallpaper } = await import("./modules/updateWallpaper.js");
   const { observeChatBox } = await import("./modules/observeChatBox.js");
   const { chatMessageList } = await import("./modules/chatMessageList.js");
+  const { first } = await import("./modules/first.js");
 
   // 加载配置信息
   options = opt;
@@ -474,7 +455,12 @@ async function onLoad() {
 
 // 打开设置界面时触发
 async function onConfigView(view) {
-  // await new Promise((res) => setTimeout(res, 5000));
+
+  // 引入模块
+  // 防抖函数
+  const { debounce } = await import("./modules/debounce.js");
+  // 初次执行检查
+  const { first } = await import("./modules/first.js");
 
   // 加载配置信息
   const { opt, listenUpdateOptions } = await import("./modules/options.js");
