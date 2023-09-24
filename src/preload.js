@@ -17,8 +17,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   onMessageRecall: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onMessageRecall", callback),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
-  // 获取和更新配置文件
-  config: (options) => ipcRenderer.invoke("LiteLoader.lite_tools.config", options),
+  // 获取配置文件
+  getOptions: (options) => ipcRenderer.sendSync("LiteLoader.lite_tools.getOptions"),
+  // 更新配置文件
+  setOptions: (options) => ipcRenderer.send("LiteLoader.lite_tools.setOptions", options),
   // 获取背景样式
   getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
   // 获取全局样式

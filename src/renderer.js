@@ -580,9 +580,8 @@ async function mainMessage() {
   }
 
   // 配置文件更新
-  lite_tools.updateOptions((event, opt) => {
+  lite_tools.updateOptions(() => {
     log("首页配置更新");
-    options = opt;
     updateWallpaper();
     updatePage();
   });
@@ -695,9 +694,8 @@ function chatMessage() {
     }
   }
   // 配置更新
-  lite_tools.updateOptions((event, opt) => {
+  lite_tools.updateOptions(() => {
     console.log("独立聊天配置更新");
-    options = opt;
     updateWallpaper();
     updatePage();
   });
@@ -710,85 +708,10 @@ function forwardMessage() {
   document.querySelector("#app").classList.add("forward");
   updateWallpaper();
   observerMessageList(".list .q-scroll-view", ".list .q-scroll-view > div", true);
-  lite_tools.updateOptions((event, opt) => {
+  lite_tools.updateOptions(() => {
     log("转发页面配置更新");
-    options = opt;
     updateWallpaper();
   });
-}
-
-// 右键菜单监听
-function qContextMenu() {
-  let selectText = "";
-  let isRightClick = false;
-  let imagePath = "";
-  document.addEventListener("mouseup", (event) => {
-    if (event.button === 2) {
-      isRightClick = true;
-      selectText = window.getSelection().toString();
-      let imgEl = event.target;
-      if (imgEl.classList.contains("image-content") && imgEl?.src?.startsWith("appimg://")) {
-        imagePath = imgEl?.src?.replace("appimg://", "");
-      } else {
-        imagePath = "";
-      }
-    } else {
-      isRightClick = false;
-      selectText = "";
-      imagePath = "";
-    }
-  });
-  new MutationObserver(() => {
-    const qContextMenu = document.querySelector("#qContextMenu");
-    // 在网页搜索
-    if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
-      const searchText = selectText;
-      addQContextMenu(
-        qContextMenu,
-        '<svg t="1691607468711" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4164" width="200" height="200"><path d="M425.75644445 819.2C211.51288889 819.2 37.09155555 644.89244445 37.09155555 430.53511111c0-214.24355555 174.30755555-388.55111111 388.55111112-388.55111111s388.55111111 174.30755555 388.55111111 388.55111111C814.30755555 644.89244445 640 819.2 425.75644445 819.2z m0-709.06311111c-176.69688889 0-320.39822222 143.70133333-320.39822223 320.39822222S249.05955555 750.93333333 425.75644445 750.93333333s320.39822222-143.70133333 320.39822222-320.39822222-143.70133333-320.39822222-320.39822222-320.39822222z" fill="currentColor" p-id="4165"></path><path d="M828.64355555 900.096c-10.46755555 0-20.93511111-3.98222222-28.89955555-11.94666667L656.49777778 744.90311111c-15.92888889-15.92888889-15.92888889-41.87022222 0-57.91288889 15.92888889-15.92888889 41.87022222-15.92888889 57.91288889 0l143.24622222 143.24622223c15.92888889 15.92888889 15.92888889 41.87022222 0 57.91288888-8.07822222 7.96444445-18.54577778 11.94666667-29.01333334 11.94666667z" fill="currentColor" p-id="4166"></path></svg>',
-        "搜索",
-        () => {
-          lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
-        }
-      );
-    }
-    if (qContextMenu && imagePath && options.imageSearch.enabled) {
-      let localPath = decodeURIComponent(imagePath);
-      addQContextMenu(
-        qContextMenu,
-        '<svg t="1691607468711" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4164" width="200" height="200"><path d="M425.75644445 819.2C211.51288889 819.2 37.09155555 644.89244445 37.09155555 430.53511111c0-214.24355555 174.30755555-388.55111111 388.55111112-388.55111111s388.55111111 174.30755555 388.55111111 388.55111111C814.30755555 644.89244445 640 819.2 425.75644445 819.2z m0-709.06311111c-176.69688889 0-320.39822222 143.70133333-320.39822223 320.39822222S249.05955555 750.93333333 425.75644445 750.93333333s320.39822222-143.70133333 320.39822222-320.39822222-143.70133333-320.39822222-320.39822222-320.39822222z" fill="currentColor" p-id="4165"></path><path d="M828.64355555 900.096c-10.46755555 0-20.93511111-3.98222222-28.89955555-11.94666667L656.49777778 744.90311111c-15.92888889-15.92888889-15.92888889-41.87022222 0-57.91288889 15.92888889-15.92888889 41.87022222-15.92888889 57.91288889 0l143.24622222 143.24622223c15.92888889 15.92888889 15.92888889 41.87022222 0 57.91288888-8.07822222 7.96444445-18.54577778 11.94666667-29.01333334 11.94666667z" fill="currentColor" p-id="4166"></path></svg>',
-        "搜索图片",
-        () => {
-          const filePathArr = localPath.split("/");
-          const fileName = filePathArr[filePathArr.length - 1].split(".")[0].toUpperCase().replace("_0", "");
-          const picSrc = `https://gchat.qpic.cn/gchatpic_new/0/0-0-${fileName}/0`;
-          const openUrl = options.imageSearch.searchUrl.replace("%search%", picSrc);
-          lite_tools.openWeb(openUrl);
-        }
-      );
-    }
-  }).observe(document.querySelector("body"), { childList: true });
-}
-
-// 右键菜单插入功能方法
-function addQContextMenu(qContextMenu, icon, title, callback) {
-  const tempEl = document.createElement("div");
-  tempEl.innerHTML = document.querySelector("#qContextMenu [aria-disabled='false']").outerHTML.replace(/<!---->/g, "");
-  const item = tempEl.firstChild;
-  item.id = "web-search";
-  if (item.querySelector(".q-icon")) {
-    item.querySelector(".q-icon").innerHTML = icon;
-  }
-  if (item.classList.contains("q-context-menu-item__text")) {
-    item.innerText = title;
-  } else {
-    item.querySelector(".q-context-menu-item__text").innerText = title;
-  }
-  item.addEventListener("click", () => {
-    callback();
-    qContextMenu.remove();
-  });
-  qContextMenu.appendChild(item);
 }
 
 // 页面加载完成时触发
@@ -796,8 +719,18 @@ async function onLoad() {
   // 输出logo
   initLog("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;");
 
+  // 加载模块
+  // 防抖函数
+  // const debounce = await import("./modules/debounce.js");
+  const { opt } = await import("./modules/options.js");
+  const { hookVue3 } = await import("./modules/hookVue3.js");
+  const { addEventqContextMenu } = await import("./modules/qContextMenu.js");
+
+  addEventqContextMenu(opt);
+
+  hookVue3();
   // 获取最新的配置信息
-  options = await lite_tools.config();
+  options = opt;
   initLog("已获取最新配置文件", options);
 
   // 判断是否输出日志
@@ -846,13 +779,12 @@ async function onLoad() {
   newMessageRecall(".ml-list.list .ml-item");
 
   // 全局加载监听选中文本事件
-  qContextMenu();
+  // qContextMenu();
 
   // 所有页面都需要执行的更新操作
   updatePage();
-  lite_tools.updateOptions((event, opt) => {
+  lite_tools.updateOptions(() => {
     log("全局设置更新");
-    options = opt;
     updatePage();
   });
 
@@ -941,6 +873,10 @@ async function onLoad() {
 async function onConfigView(view) {
   // await new Promise((res) => setTimeout(res, 5000));
 
+  // 更新配置信息
+  const { opt } = await import("./modules/options.js");
+  options = opt;
+
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
   const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
@@ -968,9 +904,6 @@ async function onConfigView(view) {
     link_element.href = css_file_path + `?r=${new Date().getTime()}`;
   });
 
-  // 更新配置信息
-  options = await lite_tools.config();
-
   // 显示插件版本信息
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
   view.querySelector(".version .link").addEventListener("click", () => {
@@ -993,7 +926,7 @@ async function onConfigView(view) {
       switchEl.addEventListener("click", function () {
         Function("options", `options.${objKey}[${index}].${key} = ${this.classList.contains("is-active")}`)(options);
         this.classList.toggle("is-active");
-        lite_tools.config(options);
+        lite_tools.setOptions(options);
       });
       const span = document.createElement("span");
       span.classList.add("q-switch__handle");
@@ -1041,7 +974,7 @@ async function onConfigView(view) {
         debounce(() => {
           options.wordSearch.searchUrl = searchEl.value;
           log("更新搜索url", searchEl.value);
-          lite_tools.config(options);
+          lite_tools.setOptions(options);
         }, 100)
       );
     }
@@ -1062,7 +995,7 @@ async function onConfigView(view) {
         debounce(() => {
           options.imageSearch.searchUrl = searchEl.value;
           log("更新搜索url", searchEl.value);
-          lite_tools.config(options);
+          lite_tools.setOptions(options);
         }, 100)
       );
     }
@@ -1133,7 +1066,7 @@ async function onConfigView(view) {
         "input",
         debounce(() => {
           options.tail.content = tailEl.value;
-          lite_tools.config(options);
+          lite_tools.setOptions(options);
         }, 100)
       );
     }
@@ -1173,8 +1106,8 @@ async function onConfigView(view) {
     }
     view.querySelector(switchClass).addEventListener("click", function (event) {
       this.classList.toggle("is-active");
-      options = Object.assign(options, Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options));
-      lite_tools.config(options);
+      let newOptions = Object.assign(options, Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options));
+      lite_tools.setOptions(newOptions);
       if (callback) {
         callback(event, this.classList.contains("is-active"));
       }
@@ -1182,96 +1115,11 @@ async function onConfigView(view) {
   }
 
   // 监听设置文件变动
-  lite_tools.updateOptions((event, opt) => {
+  lite_tools.updateOptions(() => {
     console.log("设置界面配置更新");
-    options = opt;
     view.querySelector(".select-path input").value = options.background.url;
   });
 }
-
-// hookVue3 功能来自 LLAPI
-
-const elements = new WeakMap();
-window.__VUE_ELEMENTS__ = elements;
-
-function watchComponentUnmount(component) {
-  if (!component.bum) component.bum = [];
-  component.bum.push(() => {
-    const element = component.vnode.el;
-    if (element) {
-      const components = elements.get(element);
-      if (components?.length == 1) {
-        elements.delete(element);
-      } else {
-        components?.splice(components.indexOf(component));
-      }
-      if (element.__VUE__?.length == 1) {
-        element.__VUE__ = undefined;
-      } else {
-        element.__VUE__?.splice(element.__VUE__.indexOf(component));
-      }
-    }
-  });
-}
-
-function watchComponentMount(component) {
-  let value;
-  Object.defineProperty(component.vnode, "el", {
-    get() {
-      return value;
-    },
-    set(newValue) {
-      value = newValue;
-      if (value) {
-        recordComponent(component);
-      }
-    },
-  });
-}
-
-function recordComponent(component) {
-  let element = component.vnode.el;
-  while (!(element instanceof HTMLElement)) {
-    element = element.parentElement;
-  }
-  //将组件公开给元素的 __VUE__ 属性
-  if (element.__VUE__) {
-    element.__VUE__.push(component);
-  } else {
-    element.__VUE__ = [component];
-  }
-
-  // 添加类名指示该元素为组件-区分LLAPI
-  element.classList.add("lite-tools-vue-component", "vue-component");
-
-  //将元素映射到组件
-  const components = elements.get(element);
-  if (components) {
-    components.push(component);
-  } else {
-    elements.set(element, [component]);
-  }
-  watchComponentUnmount(component);
-}
-
-function hookVue3() {
-  window.Proxy = new Proxy(window.Proxy, {
-    construct(target, [proxyTarget, proxyHandler]) {
-      const component = proxyTarget?._;
-      if (component?.uid >= 0) {
-        const element = component.vnode.el;
-        if (element) {
-          recordComponent(component);
-        } else {
-          watchComponentMount(component);
-        }
-      }
-      return new target(proxyTarget, proxyHandler);
-    },
-  });
-}
-
-hookVue3();
 
 // 这两个函数都是可选的
 export { onLoad, onConfigView };
