@@ -394,7 +394,7 @@ function onLoad(plugin) {
   // 获取配置信息
   ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
     log("%c获取配置信息", "background:#1a5d1a;color:#fff;", options);
-    event.returnValue = options
+    event.returnValue = options;
   });
 
   // 控制台日志打印
@@ -443,7 +443,7 @@ function onLoad(plugin) {
         filters: [
           {
             name: "img",
-            extensions: ["jpg", "png", "gif", "mp4"],
+            extensions: ["jpg", "png", "gif"],
           },
         ], //打开按钮
         buttonLabel: "选择", //回调结果渲染到img标签上

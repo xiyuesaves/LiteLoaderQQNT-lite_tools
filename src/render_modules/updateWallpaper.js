@@ -5,6 +5,7 @@ async function updateWallpaper() {
   const { options } = await import("./options.js");
   const backgroundStyle = document.querySelector(".background-style");
   if (options.background.enabled) {
+    const backgroundUrl = `llqqnt://local-file/${options.background.url}`;
     if (!styleText) {
       styleText = await lite_tools.getStyle();
     }
@@ -12,7 +13,7 @@ async function updateWallpaper() {
     let backgroundImage = "";
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
       document.querySelector(".background-wallpaper-video")?.remove();
-      backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
+      backgroundImage = `:root{--background-wallpaper:url("${backgroundUrl}")}`;
     } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
       let videoEl = document.querySelector(".background-wallpaper-video");
       if (!videoEl) {
@@ -20,7 +21,7 @@ async function updateWallpaper() {
         videoEl.setAttribute("muted", "");
         videoEl.setAttribute("autoplay", "");
         videoEl.setAttribute("loop", "");
-        videoEl.setAttribute("src", options.background.url);
+        videoEl.setAttribute("src", backgroundUrl);
         videoEl.classList.add("background-wallpaper-video");
         videoEl.volume = 0;
         if (document.querySelector(".tab-container")) {
@@ -33,8 +34,8 @@ async function updateWallpaper() {
           console.error("自定义视频挂载失败");
         }
       } else {
-        if (videoEl.getAttribute("src") !== options.background.url) {
-          videoEl.setAttribute("src", options.background.url);
+        if (videoEl.getAttribute("src") !== backgroundUrl) {
+          videoEl.setAttribute("src", backgroundUrl);
         }
       }
     } else {
