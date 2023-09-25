@@ -101,4 +101,14 @@
     margin-left: 4px;
     color: #0099ff;
   }
+  .disabled-switch {
+    .q-switch {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
+  .disabled-input {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 }

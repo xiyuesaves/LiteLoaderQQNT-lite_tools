@@ -1,7 +1,5 @@
 // 运行在 Electron 渲染进程 下的页面脚本
-let options,
-  updateOptions,
-  log = console.log;
+const log = console.log;
 
 // 页面加载完成时触发
 async function onLoad() {
@@ -25,8 +23,8 @@ async function onLoad() {
   const { first } = await import("./render_modules/first.js");
 
   // 加载配置信息
-  options = opt;
-  updateOptions = listenUpdateOptions;
+  const options = opt;
+  const updateOptions = listenUpdateOptions;
 
   // 在元素上创建组件引用
   hookVue3();
@@ -386,9 +384,10 @@ async function onConfigView(view) {
   // 加载配置信息
   const { opt, listenUpdateOptions } = await import("./render_modules/options.js");
 
-  updateOptions = listenUpdateOptions;
-  options = opt;
+  const updateOptions = listenUpdateOptions;
+  const options = opt;
 
+  // 返回通用监听方法
   const addSwitchEventlistener = await SwitchEventlistener(view);
 
   // 初始化常量
@@ -446,9 +445,9 @@ async function onConfigView(view) {
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     if (enabled) {
-      view.querySelector(".select-search-url").classList.remove("hidden");
+      view.querySelector(".select-search-url").classList.remove("disabled-input");
     } else {
-      view.querySelector(".select-search-url").classList.add("hidden");
+      view.querySelector(".select-search-url").classList.add("disabled-input");
     }
     if (first("init-world-search-option")) {
       const searchEl = view.querySelector(".search-url");
@@ -457,7 +456,6 @@ async function onConfigView(view) {
         "input",
         debounce(() => {
           options.wordSearch.searchUrl = searchEl.value;
-          log("更新搜索url", searchEl.value);
           lite_tools.setOptions(options);
         }, 100)
       );
@@ -467,9 +465,9 @@ async function onConfigView(view) {
   // 图片搜索
   addSwitchEventlistener("imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
     if (enabled) {
-      view.querySelector(".image-select-search-url").classList.remove("hidden");
+      view.querySelector(".image-select-search-url").classList.remove("disabled-input");
     } else {
-      view.querySelector(".image-select-search-url").classList.add("hidden");
+      view.querySelector(".image-select-search-url").classList.add("disabled-input");
     }
     if (first("init-image-search-option")) {
       const searchEl = view.querySelector(".img-search-url");
@@ -478,7 +476,6 @@ async function onConfigView(view) {
         "input",
         debounce(() => {
           options.imageSearch.searchUrl = searchEl.value;
-          log("更新搜索url", searchEl.value);
           lite_tools.setOptions(options);
         }, 100)
       );
@@ -488,9 +485,9 @@ async function onConfigView(view) {
   // 头像黏贴消息框效果
   addSwitchEventlistener("message.avatarSticky.enabled", ".avatarSticky", (_, enabled) => {
     if (enabled) {
-      view.querySelector(".avatar-bottom-li").classList.remove("hidden");
+      view.querySelector(".avatar-bottom-li").classList.remove("disabled-switch");
     } else {
-      view.querySelector(".avatar-bottom-li").classList.add("hidden");
+      view.querySelector(".avatar-bottom-li").classList.add("disabled-switch");
     }
   });
 
@@ -562,9 +559,9 @@ async function onConfigView(view) {
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
     if (enabled) {
-      view.querySelector(".select-path").classList.remove("hidden");
+      view.querySelector(".select-path").classList.remove("disabled-input");
     } else {
-      view.querySelector(".select-path").classList.add("hidden");
+      view.querySelector(".select-path").classList.add("disabled-input");
     }
     if (first("init-background-option")) {
       view.querySelector(".select-path input").value = options.background.url;
