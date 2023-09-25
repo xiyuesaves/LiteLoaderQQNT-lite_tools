@@ -7,19 +7,31 @@ async function onLoad() {
   log("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;");
 
   // 加载模块
-  // 防抖函数
+  // 配置信息
   const { options, updateOptions } = await import("./render_modules/options.js");
+  // hook VUE
   const { hookVue3 } = await import("./render_modules/hookVue3.js");
+  // 右键菜单相关操作
   const { addEventqContextMenu } = await import("./render_modules/qContextMenu.js");
+  // 初始化样式数据
   const { initStyle } = await import("./render_modules/initStyle.js");
+  // 撤回事件监听
   const { newMessageRecall } = await import("./render_modules/messageRecall.js");
+  // 消息列表监听
   const { observerMessageList } = await import("./render_modules/observerMessageList.js");
+  // 监听输入框上方功能
   const { observerChatArea } = await import("./render_modules/observerChatArea.js");
+  // 背景壁纸模块
   const { updateWallpaper } = await import("./render_modules/updateWallpaper.js");
+  // 通用监听输入框编辑事件
   const { observeChatBox } = await import("./render_modules/observeChatBox.js");
+  // 通用聊天消息列表处理模块
   const { chatMessageList } = await import("./render_modules/chatMessageList.js");
+  // 阻止拖拽多选消息
   const { touchMoveSelectin } = await import("./render_modules/touchMoveSelectin.js");
+  // 媒体预览增强
   const { betterImageViewer } = await import("./render_modules/betterImageViewer.js");
+  // 首次执行检测，只有第一次执行时返回true
   const { first } = await import("./render_modules/first.js");
 
   // 在元素上创建组件引用
