@@ -6,20 +6,20 @@ lite_tools.updateOptions((event, newOpt) => {
   Object.keys(newOpt).forEach((key) => {
     options[key] = newOpt[key];
   });
-  updateOptions();
+  dispatchUpdateOptions();
 });
 
 // 触发配置更新
-function updateOptions() {
+function dispatchUpdateOptions() {
   updateFunctions.forEach((fun) => {
     fun(options);
   });
 }
 
 // 监听配置更新
-function listenUpdateOptions(callback) {
+function updateOptions(callback) {
   updateFunctions.push(callback);
 }
 
 // 重命名options兼容旧代码
-export { options as opt, options, listenUpdateOptions };
+export { options, updateOptions };

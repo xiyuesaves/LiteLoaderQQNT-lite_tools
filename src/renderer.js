@@ -8,7 +8,7 @@ async function onLoad() {
 
   // 加载模块
   // 防抖函数
-  const { opt, listenUpdateOptions } = await import("./render_modules/options.js");
+  const { options, updateOptions } = await import("./render_modules/options.js");
   const { hookVue3 } = await import("./render_modules/hookVue3.js");
   const { addEventqContextMenu } = await import("./render_modules/qContextMenu.js");
   const { initStyle } = await import("./render_modules/initStyle.js");
@@ -21,10 +21,6 @@ async function onLoad() {
   const { touchMoveSelectin } = await import("./render_modules/touchMoveSelectin.js");
   const { betterImageViewer } = await import("./render_modules/betterImageViewer.js");
   const { first } = await import("./render_modules/first.js");
-
-  // 加载配置信息
-  const options = opt;
-  const updateOptions = listenUpdateOptions;
 
   // 在元素上创建组件引用
   hookVue3();
@@ -382,10 +378,7 @@ async function onConfigView(view) {
   // 初始化设置界面监听方法
   const { SwitchEventlistener } = await import(`./render_modules/addSwitchEventlistener.js`);
   // 加载配置信息
-  const { opt, listenUpdateOptions } = await import("./render_modules/options.js");
-
-  const updateOptions = listenUpdateOptions;
-  const options = opt;
+  const { options, updateOptions } = await import("./render_modules/options.js");
 
   // 返回通用监听方法
   const addSwitchEventlistener = await SwitchEventlistener(view);
