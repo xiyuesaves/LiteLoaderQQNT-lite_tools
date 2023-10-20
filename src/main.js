@@ -4,63 +4,14 @@ const http = require("http");
 const https = require("https");
 const path = require("path");
 const fs = require("fs");
-let mainMessage, options, recordMessageRecallIdList, messageRecallPath, messageRecallJson;
+
+// 本地模块
+let loadOptions = require("./main_modules/loadOptions");
+
+let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson;
 
 let log = function (...args) {
   console.log(...args);
-};
-// 默认配置文件
-const defaultOptions = {
-  spareInitialization: true, // 默认使用setTimeout循环初始化，observer经测试有很大概率无法正常工作
-  debug: false, // debug开关
-  // 划词搜索
-  wordSearch: {
-    enabled: false,
-    searchUrl: "https://www.bing.com/search?q=%search%",
-  },
-  // 以图搜图
-  imageSearch: {
-    enabled: false,
-    searchUrl: "https://saucenao.com/search.php?url=%search%",
-  },
-  // 侧边栏功能开关
-  sidebar: {
-    top: [],
-    bottom: [],
-  },
-  // 媒体预览分类
-  imageViewer: {
-    quickClose: false, // 快速关闭图片预览
-  },
-  //  聊天界面分类
-  message: {
-    disabledSticker: false, // 禁用弹出贴纸
-    disabledHotGIF: false, // 禁用GIF热图
-    disabledBadge: false, // 禁用小红点
-    disabledSlideMultipleSelection: false, // 禁用滑动多选消息
-    convertMiniPrgmArk: false, // 小程序分享转url卡片
-    showMsgTime: false, // 显示消息发送时间
-    autoOpenURL: false, // 自动打开来自手机的链接
-    switchReplace: false, // 复读按钮
-    preventMessageRecall: false, // 防撤回
-    removeReplyAt: false, // 移除回复时的@标记
-    mergeMessage: false, // 合并消息
-    avatarSticky: {
-      enabled: false,
-      toBottom: false,
-    },
-  },
-  tail: {
-    enabled: false, // 消息后缀
-    newLine: false, // 换行显示
-    content: "", // 消息后缀内容
-  },
-  textAreaFuncList: [], // 输入框上方功能
-  chatAreaFuncList: [], // 消息框上方功能
-  background: {
-    enabled: false, // 背景图
-    url: "", // 背景图地址
-  },
 };
 
 // 自定义limitMap，在达到指定数量后清空最后一条记录
@@ -241,11 +192,6 @@ function onLoad(plugin) {
     fs.mkdirSync(pluginDataPath, { recursive: true });
   }
 
-  // 初始化配置文件
-  if (!fs.existsSync(settingsPath)) {
-    fs.writeFileSync(settingsPath, JSON.stringify(defaultOptions, null, 4));
-  }
-
   // 初始化撤回消息列表文件路径
   if (!fs.existsSync(messageRecallPath)) {
     fs.mkdirSync(messageRecallPath, { recursive: true });
@@ -270,14 +216,8 @@ function onLoad(plugin) {
     }
   });
 
-  // 获取本地配置文件
-  fileOptions = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
-  // 兼容性调整
-  if (typeof fileOptions.message.avatarSticky === "boolean") {
-    fileOptions.message.avatarSticky = defaultOptions.message.avatarSticky;
-  }
-  // 保存配置和默认配置执行一次合并，以适配新增功能
-  options = Object.assign(defaultOptions, fileOptions);
+  // 使用配置加载模块解决插件不同版本配置文件差异
+  options = loadOptions(settingsPath);
 
   if (options.debug) {
     try {

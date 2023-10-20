@@ -1,0 +1,46 @@
+{
+  "debug": false,
+  "wordSearch": {
+    "enabled": false,
+    "searchUrl": "https://www.bing.com/search?q=%search%"
+  },
+  "imageSearch": {
+    "enabled": false,
+    "searchUrl": "https://saucenao.com/search.php?url=%search%"
+  },
+  "sidebar": {
+    "top": [],
+    "bottom": []
+  },
+  "imageViewer": {
+    "quickClose": false
+  },
+  "message": {
+    "disabledSticker": false,
+    "disabledHotGIF": false,
+    "disabledBadge": false,
+    "disabledSlideMultipleSelection": false,
+    "convertMiniPrgmArk": false,
+    "showMsgTime": false,
+    "autoOpenURL": false,
+    "switchReplace": false,
+    "preventMessageRecall": false,
+    "removeReplyAt": false,
+    "mergeMessage": false,
+    "avatarSticky": {
+      "enabled": false,
+      "toBottom": false
+    }
+  },
+  "tail": {
+    "enabled": false,
+    "newLine": false,
+    "content": ""
+  },
+  "textAreaFuncList": [],
+  "chatAreaFuncList": [],
+  "background": {
+    "enabled": false,
+    "url": ""
+  }
+}
