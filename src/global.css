@@ -210,7 +210,7 @@
   float: right;
   font-size: 12px;
   line-height: 13px;
-  width: 32px;
+  width: auto;
   text-align: right;
   margin-left: 6px;
   visibility: hidden;
@@ -221,7 +221,7 @@
   visibility: visible;
   position: absolute;
   display: block;
-  width: 32px;
+  width: 100%;
   text-align: right;
   font-size: 12px;
   line-height: 11px;
