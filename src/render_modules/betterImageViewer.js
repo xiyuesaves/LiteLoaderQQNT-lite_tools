@@ -7,22 +7,22 @@ async function betterImageViewer() {
   const appEl = document.querySelector("#app");
   const option = { attributes: false, childList: true, subtree: true };
   const callback = (mutationsList, observer) => {
-    const img = document.querySelector(".main-area__image");
+    const element = document.querySelector(".main-area__content");
     const video = document.querySelector("embed");
-    if (img && options.imageViewer.quickClose) {
+    if (element && options.imageViewer.quickClose) {
       observer.disconnect();
       let isMove = false;
-      img.addEventListener("mousedown", (event) => {
+      element.addEventListener("mousedown", (event) => {
         if (event.button === 0) {
           isMove = false;
         }
       });
-      img.addEventListener("mousemove", (event) => {
+      element.addEventListener("mousemove", (event) => {
         if (event.button === 0) {
           isMove = true;
         }
       });
-      img.addEventListener("mouseup", (event) => {
+      element.addEventListener("mouseup", (event) => {
         let rightMenu = document.querySelector("#qContextMenu");
         if (!isMove && event.button === 0 && !rightMenu) {
           document.querySelector(`div[aria-label="关闭"]`).click();
