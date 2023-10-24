@@ -18,6 +18,7 @@ let htmoDom;
 let openFullPreview = false;
 let openFullPreviewTO = null;
 let showEmoticons = false;
+let insertImg = true;
 function localEmoticons() {
   if (document.querySelector(".lite-tools-bar")) {
     return;
@@ -51,10 +52,10 @@ function localEmoticons() {
     qTooltips.appendChild(icon);
     qTooltips.appendChild(qTooltipsContent);
     barIcon.appendChild(qTooltips);
-    targetPosition.insertBefore(barIcon, targetPosition.querySelector(".bar-icon"));
+    targetPosition.appendChild(barIcon);
     console.log("创建图标");
   } else {
-    targetPosition.insertBefore(barIcon, targetPosition.querySelector(".bar-icon"));
+    targetPosition.appendChild(barIcon);
     console.log("嵌入图标");
   }
 }
@@ -64,6 +65,9 @@ function globalMouseUp(event) {
     clearTimeout(openFullPreviewTO);
     if (openFullPreview) {
       openFullPreview = false;
+      setTimeout(() => {
+        insertImg = true;
+      });
       document.querySelector(".full-screen-preview").classList.remove("show");
     }
   }
@@ -83,6 +87,7 @@ function mouseDown(event) {
     openFullPreviewTO = setTimeout(() => {
       console.log("执行延迟逻辑");
       openFullPreview = true;
+      insertImg = false;
       document.querySelector(".full-screen-preview img").src = event.target.querySelector("img").src;
       document.querySelector(".full-screen-preview").classList.add("show");
     }, 500);
@@ -91,8 +96,18 @@ function mouseDown(event) {
 
 function mouseEnter(event) {
   if (openFullPreview) {
-    document.querySelector(".full-screen-preview img").src = event.target.querySelector("img").src;
+    const showImg = document.querySelector(".full-screen-preview img");
+    if (showImg.src !== event.target.querySelector("img").src) {
+      showImg.src = event.target.querySelector("img").src;
+    }
   }
+}
+
+function insert(event) {
+  if (!insertImg) {
+    return;
+  }
+  console.log("插入图片");
 }
 
 async function loadDom() {
@@ -104,23 +119,43 @@ async function loadDom() {
   htmoDom.querySelectorAll("section").forEach((el) => {
     barIcon.appendChild(el);
   });
-
+  const emoticonsMain = barIcon.querySelector(".lite-tools-local-emoticons-main");
   // 这里加载本地表情包
 
   // 处理表情包监听事件逻辑
-  barIcon.querySelectorAll(".category-item").forEach((el) => {
-    console.log("添加");
-    el.addEventListener("mousedown", mouseDown);
-    el.addEventListener("mouseenter", mouseEnter);
+  emoticonsMain.addEventListener("mousedown", (event) => {
+    if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
+      mouseDown(event);
+    }
   });
+  emoticonsMain.addEventListener("mousemove", (event) => {
+    console.log("mover");
+    if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
+      mouseEnter(event);
+    }
+  });
+  emoticonsMain.addEventListener("click", (event) => {
+    if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
+      insert(event);
+    }
+  });
+  // barIcon.querySelectorAll(".category-item").forEach((el) => {
+  //   console.log("添加");
+  //   el.addEventListener("mousedown", mouseDown);
+  //   el.addEventListener("mouseenter", mouseEnter);
+  //   el.addEventListener("click", insert);
+  // });
 }
 
 // 判断父元素是否包含指定类名
-function doesParentHaveClass(element, className) {
+function doesParentHaveClass(element, className, stopClassName) {
   let parentElement = element.parentElement;
   while (parentElement !== null) {
     if (parentElement.classList.contains(className)) {
       return true;
+    }
+    if (parentElement.classList.contains(stopClassName)) {
+      return false;
     }
     parentElement = parentElement.parentElement;
   }
