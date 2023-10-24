@@ -207,9 +207,11 @@ async function onLoad() {
     }
 
     // 监听打开独立聊天窗口后主窗口样式更新事件
-    new MutationObserver(() => {
-      refresh();
-      initFunction(updatePage);
+    new MutationObserver((news) => {
+      if (news[0].target.style.display !== "none") {
+        refresh();
+        initFunction(updatePage);
+      }
     }).observe(document.querySelector(".aio"), {
       attributeFilter: ["style"],
       attributes: true,

@@ -105,12 +105,24 @@
   :root {
     --text-color: rgba(0, 0, 0, 0.8);
     --background-color-cb: #ffffff;
+
+    --emoticons-folder-name-color: rgba(125, 125, 125, 0.8);
+    --emoticons-main-bf: blur(32px)
+      url('data:image/svg+xml,\ <svg xmlns="http://www.w3.org/2000/svg">\ <filter id="acrylic">\ <feColorMatrix values="0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.850  0.000" result="lumi" />\ <feBlend in="lumi" in2="SourceGraphic" mode="luminosity" result="f1" />\ <feColorMatrix in="SourceGraphic" values="0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.000" result="tint" />\ <feBlend in="tint" in2="f1" mode="color" />\ </filter>\ </svg>#acrylic') !important;
+    --emoticons-category-hover-bg: rgb(150, 150, 150, 0.15);
+    --emoticons-category-full-bg: rgba(255, 255, 255, 0.6);
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: rgba(255, 255, 255, 0.8);
     --background-color-cb: #262626;
+
+    --emoticons-folder-name-color: rgba(255, 255, 255, 0.7);
+    --emoticons-main-bf: blur(32px)
+      url('data:image/svg+xml,\ <svg xmlns="http://www.w3.org/2000/svg">\ <filter id="acrylic">\ <feColorMatrix values="0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.960  0.000" result="lumi" />\ <feBlend in="lumi" in2="SourceGraphic" mode="luminosity" result="f1" />\ <feColorMatrix in="SourceGraphic" values="0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.150  0.000" result="tint" />\ <feBlend in="tint" in2="f1" mode="color" />\ </filter>\ </svg>#acrylic') !important;
+    --emoticons-category-hover-bg: rgb(255, 255, 255, 0.15);
+    --emoticons-category-full-bg: rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -532,22 +544,22 @@
   display: flex;
   margin: 0px 8px;
   position: relative;
-  &:hover {
-    .lite-tools-q-icon {
-      color: var(--brand_standard);
-    }
-    .lite-tools-q-tooltips__content{
-      transition-delay: 0.3s;
-      visibility: visible;
-    }
-  }
   .lite-tools-q-tooltips {
     align-items: center;
     display: flex;
+    &:hover {
+      .lite-tools-q-icon {
+        color: var(--brand_standard);
+      }
+      .lite-tools-q-tooltips__content {
+        transition-delay: 0.2s;
+        visibility: visible;
+      }
+    }
   }
   .lite-tools-q-icon {
-    width: 24px;
-    height: 22px;
+    width: 21px;
+    height: 20px;
   }
   .lite-tools-q-tooltips__content {
     position: relative;
@@ -569,6 +581,116 @@
     font-weight: inherit;
     padding: 4px 7px;
     font-size: 13px;
-    z-index: 1100;
+    z-index: 3100;
+    &.hidden{
+        // transition-delay: unset !important;
+        // visibility: hidden !important;
+    }
+  }
+}
+
+.full-screen-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--emoticons-category-full-bg);
+  z-index: 3200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  transition: 300ms;
+  opacity: 0;
+  &.show {
+    opacity: 1;
+  }
+  img {
+    width: 240px;
+    height: 240px;
+    object-fit: contain;
+  }
+}
+
+.lite-tools-local-emoticons-main {
+  position: absolute;
+  width: calc((64px * 4) + 20px);
+  height: 350px;
+  backdrop-filter: var(--emoticons-main-bf);
+  z-index: 2000;
+  bottom: 42px;
+  right: -230%;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 12px 12px;
+  transition: 150ms;
+  transform: translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  &.show {
+    transform: translateY(0px);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .folder-list {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    padding: 8px 0;
+    .folder-item {
+      width: 100%;
+      height: auto;
+      box-sizing: border-box;
+      padding: 2px 10px;
+      .category-name {
+        font-size: 14px;
+        color: var(--emoticons-folder-name-color);
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .category-list {
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        .category-item {
+          width: 64px;
+          height: 64px;
+          border-radius: 4px;
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          &:hover {
+            background-color: var(--emoticons-category-hover-bg);
+          }
+          .skiter-preview {
+            width: 100%;
+            height: 100%;
+            font-size: 0;
+            box-sizing: border-box;
+            padding: 4px;
+            cursor: pointer;
+            img {
+              pointer-events: none;
+              user-select: none;
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+          // 暂时没用
+          .skiter-name {
+            display: none;
+          }
+        }
+      }
+    }
   }
 }
