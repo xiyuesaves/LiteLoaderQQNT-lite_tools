@@ -11,7 +11,7 @@ async function observerMessageList(msgListEl, msgItemEl, isForward = false) {
     validItemList.unshift(lastMessageNodeList.pop());
     lastMessageNodeList = currentItemList;
     // 所有功能使用同一个循环执行
-    console.log("---新循环---");
+    // console.log("---新循环---");
     for (let index = 0; index < validItemList.length; index++) {
       const el = validItemList[index];
       const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;

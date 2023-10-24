@@ -1,8 +1,11 @@
 // 监听输入框上方功能
 async function observerChatArea() {
   const { options } = await import("./options.js");
+  const { localEmoticons } = await import("./localEmoticons.js");
+
   new MutationObserver((mutations, observe) => {
-    document.querySelectorAll(".chat-input-area .chat-func-bar .bar-icon").forEach((el) => {
+    // 禁用指定功能
+    document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
       const name = el.querySelector(".icon-item").getAttribute("aria-label");
       const find = options.textAreaFuncList.find((el) => el.name === name);
       if (find) {
@@ -13,7 +16,6 @@ async function observerChatArea() {
         }
       }
     });
-    // 更新输入框上方功能列表
     const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon"))
       .map((el) => {
         return {
@@ -26,7 +28,11 @@ async function observerChatArea() {
     if (textAreaList.length) {
       lite_tools.sendTextAreaList(textAreaList);
     }
-  }).observe(document.querySelector(".chat-input-area"), {
+    // 插入图标
+    if (true && !document.querySelector(".lite-tools-bar")) {
+      localEmoticons();
+    }
+  }).observe(document.querySelector(".chat-input-area .chat-func-bar"), {
     attributes: false,
     childList: true,
     subtree: true,

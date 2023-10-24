@@ -32,10 +32,10 @@ async function onLoad() {
   // 媒体预览增强
   const { betterImageViewer } = await import("./render_modules/betterImageViewer.js");
   // 首次执行检测，只有第一次执行时返回true
-  const { first } = await import("./render_modules/first.js");
+  const { first, refresh } = await import("./render_modules/first.js");
   // 更新输入框上方功能列表
   const { observeChatTopFunc } = await import("./render_modules/observeChatTopFunc.js");
-  // 本地表情包
+
   const { localEmoticons } = await import("./render_modules/localEmoticons.js");
 
   // 在元素上创建组件引用
@@ -97,7 +97,7 @@ async function onLoad() {
   // 通用初始化函数
   function initFunction(func) {
     // 窗口启动的指定时间内按10ms的间隔调用指定函数
-    let timeout = new Date().getTime() + 30 * 1000;
+    let timeout = new Date().getTime() + 10 * 1000;
     loop();
     function loop() {
       if (timeout > new Date().getTime()) {
@@ -114,6 +114,7 @@ async function onLoad() {
 
     // 刷新页面配置
     async function updatePage() {
+      localEmoticons();
       // 初始化推荐表情
       if (options.message.disabledSticker) {
         document.querySelector(".sticker-bar")?.classList.add("disabled");
@@ -155,13 +156,12 @@ async function onLoad() {
         document.body.classList.remove("disabled-badge");
       }
       // 初始化输入框上方功能
-      if (document.querySelector(".chat-input-area") && first("chat-input-area")) {
+      if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
         observerChatArea();
       }
       // 初始化聊天框上方功能
-      if (document.querySelector(".panel-header__action") && first("chat-message-area")) {
+      if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
         observeChatTopFunc();
-        // localEmoticons();
       }
       // 判断消息列表是否已经加载
       if (document.querySelector(".ml-list.list") && first("msgList")) {
@@ -206,12 +206,25 @@ async function onLoad() {
       }
     }
 
+    // 监听打开独立聊天窗口后主窗口样式更新事件
+    new MutationObserver(() => {
+      refresh();
+      initFunction(updatePage);
+    }).observe(document.querySelector(".aio"), {
+      attributeFilter: ["style"],
+      attributes: true,
+      childList: false,
+      subtree: false,
+    });
+
     // 配置文件更新
     updateOptions(() => {
       updateWallpaper();
       chatMessageList();
       updatePage();
     });
+
+    // 监听主窗口的聊天界面是否被移除
 
     // 设置页面获取侧边栏项目
     lite_tools.optionsOpen((event, message) => {

@@ -27,9 +27,9 @@ async function observeChatTopFunc() {
       log("发送聊天框上方功能列表");
       lite_tools.sendChatTopList(textAreaList);
     }
-    observe.disconnect();
-  }).observe(document.querySelector(".panel-header__action"), {
-    attributes: false,
+  }).observe(document.querySelector(".panel-header__action .func-bar"), {
+    attributeFilter: ["style"],
+    attributes: true,
     childList: true,
     subtree: true,
   });
