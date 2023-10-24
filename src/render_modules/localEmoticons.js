@@ -19,12 +19,17 @@ let openFullPreview = false;
 let openFullPreviewTO = null;
 let showEmoticons = false;
 let insertImg = true;
+let ckeditorInstance;
+let ckeditEditorModel;
 function localEmoticons() {
   if (document.querySelector(".lite-tools-bar")) {
     return;
   }
   if (!document.querySelector(".chat-input-area .chat-func-bar .func-bar")) {
     return;
+  }
+  if (!ckeditEditorModel) {
+    loadEditorModel();
   }
   document.body.removeEventListener("mouseup", globalMouseUp);
   document.body.removeEventListener("mouseleave", globalMouseUp);
@@ -57,6 +62,16 @@ function localEmoticons() {
   } else {
     targetPosition.appendChild(barIcon);
     console.log("嵌入图标");
+  }
+}
+
+function loadEditorModel() {
+  console.log("尝试捕获编辑器实例");
+  if (document.querySelector(".ck.ck-content.ck-editor__editable") && document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance) {
+    ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
+    ckeditEditorModel = ckeditorInstance.model;
+  } else {
+    setTimeout(loadEditorModel, 100);
   }
 }
 
@@ -107,7 +122,18 @@ function insert(event) {
   if (!insertImg) {
     return;
   }
-  console.log("插入图片");
+  const selection = ckeditEditorModel.document.selection;
+  const position = selection.getFirstPosition();
+  // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
+  const src = decodeURIComponent(event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"));
+  if (ckeditEditorModel) {
+    ckeditEditorModel.change((writer) => {
+      const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
+      writer.insert(writerEl, position);
+    });
+    showEmoticons = false;
+    barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
+  }
 }
 
 async function loadDom() {
