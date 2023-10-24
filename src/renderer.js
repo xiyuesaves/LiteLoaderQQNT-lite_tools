@@ -33,6 +33,10 @@ async function onLoad() {
   const { betterImageViewer } = await import("./render_modules/betterImageViewer.js");
   // 首次执行检测，只有第一次执行时返回true
   const { first } = await import("./render_modules/first.js");
+  // 更新输入框上方功能列表
+  const { observeChatTopFunc } = await import("./render_modules/observeChatTopFunc.js");
+  // 本地表情包
+  const { localEmoticons } = await import("./render_modules/localEmoticons.js");
 
   // 在元素上创建组件引用
   hookVue3();
@@ -108,41 +112,6 @@ async function onLoad() {
     // 初始化页面
     initFunction(updatePage);
 
-    // 监听聊天框上方功能
-    function observeChatTopFunc() {
-      new MutationObserver((mutations, observe) => {
-        document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
-          const name = el.querySelector(".icon-item").getAttribute("aria-label");
-          const find = options.chatAreaFuncList.find((el) => el.name === name);
-          if (find) {
-            if (find.disabled) {
-              el.classList.add("disabled");
-            } else {
-              el.classList.remove("disabled");
-            }
-          }
-        });
-        // 更新聊天框上方功能列表
-        const textAreaList = Array.from(document.querySelectorAll(".panel-header__action .func-bar .bar-icon"))
-          .map((el) => {
-            return {
-              name: el.querySelector(".icon-item").getAttribute("aria-label"),
-              id: el.querySelector(".icon-item").id,
-              disabled: el.classList.contains(".disabled"),
-            };
-          })
-          .filter((el) => !options.chatAreaFuncList.find((_el) => _el.name === el.name));
-        if (textAreaList.length) {
-          log("发送聊天框上方功能列表");
-          lite_tools.sendChatTopList(textAreaList);
-        }
-      }).observe(document.querySelector(".panel-header__action"), {
-        attributes: false,
-        childList: true,
-        subtree: true,
-      });
-    }
-
     // 刷新页面配置
     async function updatePage() {
       // 初始化推荐表情
@@ -192,6 +161,7 @@ async function onLoad() {
       // 初始化聊天框上方功能
       if (document.querySelector(".panel-header__action") && first("chat-message-area")) {
         observeChatTopFunc();
+        // localEmoticons();
       }
       // 判断消息列表是否已经加载
       if (document.querySelector(".ml-list.list") && first("msgList")) {
