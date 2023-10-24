@@ -35,7 +35,7 @@ async function onLoad() {
   const { first, refresh } = await import("./render_modules/first.js");
   // 更新输入框上方功能列表
   const { observeChatTopFunc } = await import("./render_modules/observeChatTopFunc.js");
-
+  // 页面插入本地表情功能
   const { localEmoticons } = await import("./render_modules/localEmoticons.js");
 
   // 在元素上创建组件引用
@@ -284,6 +284,7 @@ async function onLoad() {
     updatePage();
     initFunction(updatePage);
     async function updatePage() {
+      localEmoticons();
       // 禁用贴纸
       if (options.message.disabledSticker) {
         document.querySelector(".sticker-bar")?.classList.add("disabled");
