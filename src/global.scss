@@ -582,9 +582,9 @@
     padding: 4px 7px;
     font-size: 13px;
     z-index: 3100;
-    &.hidden{
-        // transition-delay: unset !important;
-        // visibility: hidden !important;
+    &.hidden {
+      // transition-delay: unset !important;
+      // visibility: hidden !important;
     }
   }
 }
@@ -616,15 +616,16 @@
 
 .lite-tools-local-emoticons-main {
   position: absolute;
-  width: calc((64px * 4) + 20px);
-  height: 350px;
+  width: calc((64px * 5) + 10px);
+  height: 450px;
+  max-height: calc(100vh - var(--inputAreaHeight) - 66px - 20px);
   backdrop-filter: var(--emoticons-main-bf);
   z-index: 2000;
   bottom: 42px;
-  right: -230%;
+  right: -80%;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 12px 12px;
-  transition: 150ms;
+  transition: transform 150ms, opacity 150ms;
   transform: translateY(10px);
   opacity: 0;
   pointer-events: none;
@@ -644,7 +645,7 @@
       width: 100%;
       height: auto;
       box-sizing: border-box;
-      padding: 2px 10px;
+      padding: 2px 5px;
       .category-name {
         font-size: 14px;
         color: var(--emoticons-folder-name-color);
