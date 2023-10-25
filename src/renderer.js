@@ -220,9 +220,17 @@ async function onLoad() {
     }
 
     function sunUpdate() {
-      observerChatArea();
-      observeChatTopFunc();
-      localEmoticons();
+      refresh("chat-input-area");
+      refresh("chat-message-area");
+      // 初始化输入框上方功能
+      if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
+        observerChatArea();
+        localEmoticons();
+      }
+      // 初始化聊天框上方功能
+      if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
+        observeChatTopFunc();
+      }
       // 处理输入框上方功能列表
       document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
         const name = el.querySelector(".icon-item").getAttribute("aria-label");

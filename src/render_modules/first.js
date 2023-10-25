@@ -6,7 +6,7 @@ const first = (() => {
     return !set.has(tag) && !!set.add(tag);
   };
 })();
-function refresh() {
-  set = new Set();
+function refresh(key) {
+  set.delete(key)
 }
 export { first, refresh };
