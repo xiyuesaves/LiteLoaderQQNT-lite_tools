@@ -13,15 +13,16 @@ async function loadEmoticons(folderPath) {
   if (watcher) {
     watcher.close();
   }
-  watcher = fs.watch(folderPath, { recursive: true }, async (event, fileName) => {
-    if (event === "change") {
-      return;
-    }
-    emoticonsList = [];
-    folderNum = 0;
-    await loadFolder(folderPath);
-    dispatchUpdateFile();
-  });
+  watcher = fs.watch(
+    folderPath,
+    { recursive: true },
+    debounce(async () => {
+      emoticonsList = [];
+      folderNum = 0;
+      await loadFolder(folderPath);
+      dispatchUpdateFile();
+    }, 300)
+  );
 }
 
 function loadFolder(folderPath) {
@@ -61,6 +62,16 @@ function loadFolder(folderPath) {
       });
     });
   }
+}
+
+function debounce(fn, time) {
+  let timer = null;
+  return function (...args) {
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, time);
+  };
 }
 
 function dispatchUpdateFile() {

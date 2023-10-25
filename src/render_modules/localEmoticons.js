@@ -30,6 +30,10 @@ function localEmoticons() {
   }
   if (!ckeditEditorModel) {
     loadEditorModel();
+    lite_tools.updateEmoticons((_, list) => {
+      console.log("渲染端更新列表", list);
+      appendEmoticons(list);
+    });
   }
   document.body.removeEventListener("mouseup", globalMouseUp);
   document.body.removeEventListener("mouseleave", globalMouseUp);
@@ -148,28 +152,7 @@ async function loadDom() {
   // 这里加载本地表情包
 
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
-  emoticonsList.forEach((folder) => {
-    const folderEl = document.createElement("div");
-    folderEl.classList.add("folder-item");
-    const categoryName = document.createElement("div");
-    categoryName.classList.add("category-name");
-    categoryName.innerText = folder.name;
-    const categoryList = document.createElement("div");
-    categoryList.classList.add("category-list");
-    folder.list.forEach((item) => {
-      const categoryItem = document.createElement("div");
-      categoryItem.classList.add("category-item");
-      const skiterPreview = document.createElement("div");
-      skiterPreview.classList.add("skiter-preview");
-      const img = document.createElement("img");
-      img.src = "llqqnt://local-file/" + item.path;
-      skiterPreview.appendChild(img);
-      categoryItem.append(skiterPreview);
-      categoryList.appendChild(categoryItem);
-    });
-    folderEl.append(categoryName, categoryList);
-    emoticonsMain.querySelector(".folder-list").appendChild(folderEl);
-  });
+  appendEmoticons(emoticonsList);
   // 处理表情包监听事件逻辑
   emoticonsMain.addEventListener("mousedown", (event) => {
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
@@ -202,6 +185,34 @@ function doesParentHaveClass(element, className, stopClassName) {
     parentElement = parentElement.parentElement;
   }
   return false;
+}
+
+function appendEmoticons(emoticonsList) {
+  document.querySelectorAll(".folder-item").forEach((item) => {
+    item.remove();
+  });
+  emoticonsList.forEach((folder) => {
+    const folderEl = document.createElement("div");
+    folderEl.classList.add("folder-item");
+    const categoryName = document.createElement("div");
+    categoryName.classList.add("category-name");
+    categoryName.innerText = folder.name;
+    const categoryList = document.createElement("div");
+    categoryList.classList.add("category-list");
+    folder.list.forEach((item) => {
+      const categoryItem = document.createElement("div");
+      categoryItem.classList.add("category-item");
+      const skiterPreview = document.createElement("div");
+      skiterPreview.classList.add("skiter-preview");
+      const img = document.createElement("img");
+      img.src = "llqqnt://local-file/" + item.path;
+      skiterPreview.appendChild(img);
+      categoryItem.append(skiterPreview);
+      categoryList.appendChild(categoryItem);
+    });
+    folderEl.append(categoryName, categoryList);
+    document.querySelector(".lite-tools-local-emoticons-main .folder-list").appendChild(folderEl);
+  });
 }
 
 function openLocalEmoticons() {
