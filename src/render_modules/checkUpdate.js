@@ -39,7 +39,7 @@ async function checkUpdate(view) {
       }
     })
     .catch((err) => {
-      console.error("检查更新失败", err);
+      console.log("检查更新失败", err);
     });
 }
 

@@ -8,6 +8,10 @@
     "enabled": false,
     "searchUrl": "https://saucenao.com/search.php?url=%search%"
   },
+  "localEmoticons": {
+    "enabled": true,
+    "localPath": "E:/个人项目/go-文件分类"
+  },
   "sidebar": {
     "top": [],
     "bottom": []

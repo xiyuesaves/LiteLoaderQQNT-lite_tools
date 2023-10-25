@@ -7,6 +7,7 @@ const fs = require("fs");
 
 // 本地模块
 let loadOptions = require("./main_modules/loadOptions");
+const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 
 let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson;
 
@@ -98,6 +99,7 @@ const catchMsgList = new LimitedMap(2000); // 内存缓存消息记录-用于根
 const messageRecallFileList = []; // 所有撤回消息本地切片列表
 let peer = null; // 激活聊天界面信息
 let historyMessageRecallList = new Map(); // 只读历史消息实例暂存数组
+let localEmoticonsList = []; // 本地表情包数据
 
 // 向所有未销毁页面发送广播
 function globalBroadcast(channel, data) {
@@ -271,6 +273,21 @@ function onLoad(plugin) {
   // 控制台输出项目logo
   log("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;", plugin);
 
+  // 监听本地表情包文件夹内的更新
+  onUpdateEmoticons((emoticonsList) => {
+    console.log("本地表情包更新", emoticonsList.length);
+    globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    localEmoticonsList = emoticonsList;
+  });
+
+  // 判断是否启用了本地表情包功能
+  if (options.localEmoticons.enabled) {
+    if (options.localEmoticons.localPath) {
+      console.log("尝试加载本地表情包文件夹");
+      loadEmoticons(options.localEmoticons.localPath);
+    }
+  }
+
   // 初始化常驻撤回消息历史记录-每100条记录切片为一个json文件
   recordMessageRecallIdList = new MessageRecallList(messageRecallJson, messageRecallPath, 100);
 
@@ -280,6 +297,12 @@ function onLoad(plugin) {
     messageRecallFileList.push(newFileName.replace(".json", ""));
     // 排序文件名称
     messageRecallFileList.sort((a, b) => a - b);
+  });
+
+  // 返回本地表情包数据
+  ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", (event) => {
+    log("返回本地表情包数据");
+    return localEmoticonsList;
   });
 
   // 返回当前激活的peer数据
@@ -328,6 +351,12 @@ function onLoad(plugin) {
     log("%c更新配置信息", "background:#1a5d1a;color:#fff;", opt);
     options = opt;
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+    // 判断是否启用了本地表情包功能
+    if (options.localEmoticons.enabled) {
+      if (options.localEmoticons.localPath) {
+        loadEmoticons(options.localEmoticons.localPath);
+      }
+    }
     globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
   });
 
@@ -400,6 +429,27 @@ function onLoad(plugin) {
         log("无效操作", err);
       });
   });
+
+  // 选择文件夹事件
+  ipcMain.on("LiteLoader.lite_tools.openSelectFolder", () => {
+    dialog
+      .showOpenDialog({
+        title: "请选择文件夹", //默认路径,默认选择的文件
+        properties: ["openDirectory"],
+        buttonLabel: "选择",
+      })
+      .then((result) => {
+        console.log("选择了文件夹", result);
+        if (!result.canceled) {
+          options.localEmoticons.localPath = path.join(result.filePaths[0]).replace(/\\/g, "/");
+          fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+          globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
+        }
+      })
+      .catch((err) => {
+        console.log("无效操作", err);
+      });
+  });
 }
 
 // 创建窗口时触发
@@ -429,7 +479,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
-      log("%c-ipc-message被拦截", "background:#f6ca00;color:#fff;", args[2], args[3]?.[0]?.eventName ? args[3]?.[0]?.eventName : args[3]?.[0], args[3], args);
+      // log("%c-ipc-message被拦截", "background:#f6ca00;color:#fff;", args[2], args[3]?.[0]?.eventName ? args[3]?.[0]?.eventName : args[3]?.[0], args[3], args);
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
         log("%c消息发送事件", "background:#5b9a8b;color:#fff;", args);
         if (args[3][1][1] && args[3][1][1].msgElements) {
@@ -468,7 +518,7 @@ function onBrowserWindowCreated(window, plugin) {
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
   const patched_send = function (channel, ...args) {
-    log("%cipc-send被拦截", "background:#74a488;color:#fff;", channel, args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel, args[1]?.[0], args);
+    // log("%cipc-send被拦截", "background:#74a488;color:#fff;", channel, args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel, args[1]?.[0], args);
 
     // 拦截侧边栏数据
     // if(args[1] && args[1]?.configData?.group && args[1]?.configData?.content){

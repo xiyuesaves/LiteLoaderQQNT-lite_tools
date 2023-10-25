@@ -226,10 +226,9 @@ async function onLoad() {
       updatePage();
     });
 
-    // 监听主窗口的聊天界面是否被移除
-
     // 设置页面获取侧边栏项目
     lite_tools.optionsOpen((event, message) => {
+      console.log("获取侧边栏");
       let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
         if (el.getAttribute("aria-label")) {
           if (el.getAttribute("aria-label").includes("消息")) {
@@ -278,6 +277,7 @@ async function onLoad() {
         top,
         bottom,
       });
+      console.log("获取侧边栏-发送");
     });
   }
 
@@ -363,7 +363,7 @@ async function onLoad() {
 // 打开设置界面时触发
 async function onConfigView(view) {
   // 调试用，等待5秒后再执行
-  // await new Promise((res) => setTimeout(res, 5000));
+  await new Promise((res) => setTimeout(res, 3000));
 
   // 防抖函数
   const { debounce } = await import("./render_modules/debounce.js");
@@ -399,13 +399,11 @@ async function onConfigView(view) {
   doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
 
   // 检查更新
-  checkUpdate(view);
-
+  // checkUpdate(view);
   // 调试模式动态更新样式
   lite_tools.updateSettingStyle((event, message) => {
     link_element.href = css_file_path + `?r=${new Date().getTime()}`;
   });
-
   // 显示插件版本信息
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
   view.querySelector(".version .link").addEventListener("click", () => {
@@ -413,6 +411,7 @@ async function onConfigView(view) {
   });
 
   // 获取侧边栏按钮列表
+  console.log("发送获取");
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
   const sidebar = view.querySelector(".sidebar ul");
   addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
