@@ -15,7 +15,7 @@ async function loadEmoticons(folderPath) {
     if (event === "change") {
       return;
     }
-    console.log("文件夹内有变动", event);
+    emoticonsList = [];
     await loadFolder(folderPath);
     dispatchUpdateFile();
   });
@@ -34,6 +34,9 @@ function loadFolder(folderPath, index = 0) {
           });
           if (fileStat) {
             if (fileStat.isFile()) {
+              if (![".gif", ".jpg", ".png"].includes(path.extname(filePath))) {
+                continue;
+              }
               // 初始化对象
               if (!emoticonsList[index]) {
                 emoticonsList[index] = {
@@ -42,7 +45,7 @@ function loadFolder(folderPath, index = 0) {
                 };
               }
               emoticonsList[index].list.push({
-                path: filePath,
+                path: filePath.replace(/\\/g, "/"),
                 name: path.basename(filePath),
               });
             } else if (fileStat.isDirectory()) {

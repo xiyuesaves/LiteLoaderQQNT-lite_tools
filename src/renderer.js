@@ -401,7 +401,7 @@ async function onLoad() {
 // 打开设置界面时触发
 async function onConfigView(view) {
   // 调试用，等待5秒后再执行
-  await new Promise((res) => setTimeout(res, 3000));
+  // await new Promise((res) => setTimeout(res, 3000));
 
   // 防抖函数
   const { debounce } = await import("./render_modules/debounce.js");
@@ -604,6 +604,7 @@ async function onConfigView(view) {
   // 监听设置文件变动
   updateOptions((opt) => {
     view.querySelector(".select-path input").value = opt.background.url;
+    view.querySelector(".select-folder input").value = opt.localEmoticons.localPath;
   });
 }
 

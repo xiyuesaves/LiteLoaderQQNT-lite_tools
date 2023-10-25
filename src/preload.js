@@ -15,6 +15,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updateOptions: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateOptions", callback),
   // 撤回事件监听
   onMessageRecall: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onMessageRecall", callback),
+  // 监听本地表情更新
+  updateEmoticons: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEmoticons", callback),
+  // 主动获取本地表情列表
+  getLocalEmoticonsList: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsList"),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
   // 获取配置文件

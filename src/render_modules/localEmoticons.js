@@ -37,7 +37,6 @@ function localEmoticons() {
   document.body.addEventListener("mouseup", globalMouseUp);
   document.body.addEventListener("mouseleave", globalMouseUp);
   document.body.addEventListener("mousedown", globalMouseDown);
-  console.log("本地表情包模块执行", new Date().toLocaleString());
   if (!htmoDom) {
     loadDom();
   }
@@ -148,6 +147,29 @@ async function loadDom() {
   const emoticonsMain = barIcon.querySelector(".lite-tools-local-emoticons-main");
   // 这里加载本地表情包
 
+  const emoticonsList = await lite_tools.getLocalEmoticonsList();
+  emoticonsList.forEach((folder) => {
+    const folderEl = document.createElement("div");
+    folderEl.classList.add("folder-item");
+    const categoryName = document.createElement("div");
+    categoryName.classList.add("category-name");
+    categoryName.innerText = folder.name;
+    const categoryList = document.createElement("div");
+    categoryList.classList.add("category-list");
+    folder.list.forEach((item) => {
+      const categoryItem = document.createElement("div");
+      categoryItem.classList.add("category-item");
+      const skiterPreview = document.createElement("div");
+      skiterPreview.classList.add("skiter-preview");
+      const img = document.createElement("img");
+      img.src = "llqqnt://local-file/" + item.path;
+      skiterPreview.appendChild(img);
+      categoryItem.append(skiterPreview);
+      categoryList.appendChild(categoryItem);
+    });
+    folderEl.append(categoryName, categoryList);
+    emoticonsMain.querySelector(".folder-list").appendChild(folderEl);
+  });
   // 处理表情包监听事件逻辑
   emoticonsMain.addEventListener("mousedown", (event) => {
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
@@ -165,12 +187,6 @@ async function loadDom() {
       insert(event);
     }
   });
-  // barIcon.querySelectorAll(".category-item").forEach((el) => {
-  //   console.log("添加");
-  //   el.addEventListener("mousedown", mouseDown);
-  //   el.addEventListener("mouseenter", mouseEnter);
-  //   el.addEventListener("click", insert);
-  // });
 }
 
 // 判断父元素是否包含指定类名
