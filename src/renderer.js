@@ -114,7 +114,6 @@ async function onLoad() {
 
     // 刷新页面配置
     async function updatePage() {
-      localEmoticons();
       // 初始化推荐表情
       if (options.message.disabledSticker) {
         document.querySelector(".sticker-bar")?.classList.add("disabled");
@@ -158,6 +157,7 @@ async function onLoad() {
       // 初始化输入框上方功能
       if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
         observerChatArea();
+        localEmoticons();
       }
       // 初始化聊天框上方功能
       if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
@@ -175,6 +175,19 @@ async function onLoad() {
       // 绑定输入框
       if (document.querySelector(".ck.ck-content.ck-editor__editable") && first(".ck.ck-content.ck-editor__editable")) {
         observeChatBox();
+      }
+      if (document.querySelector(".aio") && first("aio")) {
+        // 监听打开独立聊天窗口后主窗口样式更新事件
+        new MutationObserver((news) => {
+          if (news[0].target.style.display !== "none") {
+            initFunction(sunUpdate);
+          }
+        }).observe(document.querySelector(".aio"), {
+          attributeFilter: ["style"],
+          attributes: true,
+          childList: false,
+          subtree: false,
+        });
       }
       // 处理输入框上方功能列表
       document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
@@ -206,18 +219,35 @@ async function onLoad() {
       }
     }
 
-    // 监听打开独立聊天窗口后主窗口样式更新事件
-    new MutationObserver((news) => {
-      if (news[0].target.style.display !== "none") {
-        refresh();
-        initFunction(updatePage);
-      }
-    }).observe(document.querySelector(".aio"), {
-      attributeFilter: ["style"],
-      attributes: true,
-      childList: false,
-      subtree: false,
-    });
+    function sunUpdate() {
+      observerChatArea();
+      observeChatTopFunc();
+      localEmoticons();
+      // 处理输入框上方功能列表
+      document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
+        const name = el.querySelector(".icon-item").getAttribute("aria-label");
+        const find = options.textAreaFuncList.find((el) => el.name === name);
+        if (find) {
+          if (find.disabled) {
+            el.classList.add("disabled");
+          } else {
+            el.classList.remove("disabled");
+          }
+        }
+      });
+      // 处理消息列表上方功能列表
+      document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
+        const name = el.querySelector(".icon-item").getAttribute("aria-label");
+        const find = options.chatAreaFuncList.find((el) => el.name === name);
+        if (find) {
+          if (find.disabled) {
+            el.classList.add("disabled");
+          } else {
+            el.classList.remove("disabled");
+          }
+        }
+      });
+    }
 
     // 配置文件更新
     updateOptions(() => {
