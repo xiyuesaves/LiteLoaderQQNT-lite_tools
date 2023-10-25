@@ -2,10 +2,12 @@ const fs = require("fs");
 const path = require("path");
 let callbackFunc = [];
 let emoticonsList = [];
+let folderNum = 0;
 let watcher;
 
 async function loadEmoticons(folderPath) {
   emoticonsList = [];
+  folderNum = 0;
   await loadFolder(folderPath);
   dispatchUpdateFile();
   if (watcher) {
@@ -16,12 +18,14 @@ async function loadEmoticons(folderPath) {
       return;
     }
     emoticonsList = [];
+    folderNum = 0;
     await loadFolder(folderPath);
     dispatchUpdateFile();
   });
 }
 
-function loadFolder(folderPath, index = 0) {
+function loadFolder(folderPath) {
+  folderNum = emoticonsList.length;
   if (fs.existsSync(folderPath)) {
     fs.readdirSync(folderPath);
     return new Promise((res, rej) => {
@@ -38,18 +42,18 @@ function loadFolder(folderPath, index = 0) {
                 continue;
               }
               // 初始化对象
-              if (!emoticonsList[index]) {
-                emoticonsList[index] = {
+              if (!emoticonsList[folderNum]) {
+                emoticonsList[folderNum] = {
                   name: path.basename(folderPath),
                   list: [],
                 };
               }
-              emoticonsList[index].list.push({
+              emoticonsList[folderNum].list.push({
                 path: filePath.replace(/\\/g, "/"),
                 name: path.basename(filePath),
               });
             } else if (fileStat.isDirectory()) {
-              await loadFolder(filePath, index++);
+              await loadFolder(filePath);
             }
           }
         }
@@ -60,7 +64,6 @@ function loadFolder(folderPath, index = 0) {
 }
 
 function dispatchUpdateFile() {
-  console.log(emoticonsList, emoticonsList.length);
   callbackFunc.forEach((func) => {
     func(emoticonsList);
   });
