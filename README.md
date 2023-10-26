@@ -17,6 +17,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 
 | 功能列表 |
 | ------------------------------------------- |
+| 本地表情包功能 |
 | 快速关闭预览图片 |
 | 头像浮动 |
 | 消息合并 |
