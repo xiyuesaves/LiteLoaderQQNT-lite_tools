@@ -436,13 +436,19 @@ function onLoad(plugin) {
       .showOpenDialog({
         title: "请选择文件夹", //默认路径,默认选择的文件
         properties: ["openDirectory"],
-        buttonLabel: "选择",
+        buttonLabel: "选择文件夹",
       })
       .then((result) => {
         console.log("选择了文件夹", result);
         if (!result.canceled) {
           options.localEmoticons.localPath = path.join(result.filePaths[0]).replace(/\\/g, "/");
           fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+          // 判断是否启用了本地表情包功能
+          if (options.localEmoticons.enabled) {
+            if (options.localEmoticons.localPath) {
+              loadEmoticons(options.localEmoticons.localPath);
+            }
+          }
           globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
         }
       })
