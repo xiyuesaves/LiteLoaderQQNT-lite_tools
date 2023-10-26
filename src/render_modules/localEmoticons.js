@@ -21,6 +21,25 @@ let showEmoticons = false;
 let insertImg = true;
 let ckeditorInstance;
 let ckeditEditorModel;
+
+// 内部自执行函数
+(async () => {
+  const { options, updateOptions } = await import("./options.js");
+  if (options.localEmoticons.enabled) {
+    document.body.classList.add("lite-tools-showLocalEmoticons");
+  } else {
+    document.body.classList.remove("lite-tools-showLocalEmoticons");
+  }
+  updateOptions((opt) => {
+    if (opt.localEmoticons.enabled) {
+      document.body.classList.add("lite-tools-showLocalEmoticons");
+    } else {
+      document.body.classList.remove("lite-tools-showLocalEmoticons");
+    }
+  });
+})();
+
+// 主要导出函数
 function localEmoticons() {
   if (document.querySelector(".lite-tools-bar")) {
     return;
