@@ -463,9 +463,13 @@
   padding-top: 0;
 }
 
+.lite-tools-showLocalEmoticons .lite-tools-bar {
+  display: flex !important;
+}
+
 .lite-tools-bar {
   align-items: center;
-  display: flex;
+  display: none;
   margin: 0px 8px;
   position: relative;
 }
@@ -543,12 +547,13 @@
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 12px 12px;
   transition: transform 150ms, opacity 150ms;
-  transform: translateY(10px);
+  transform: translateY(10px) scale(0.95);
+  transform-origin: right bottom;
   opacity: 0;
   pointer-events: none;
 }
 .lite-tools-local-emoticons-main.show {
-  transform: translateY(0px);
+  transform: translateY(0px) scale(1);
   opacity: 1;
   pointer-events: auto;
 }

@@ -561,6 +561,32 @@ async function onConfigView(view) {
   // 禁用滑动多选消息
   addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
 
+  // 本地表情包功能
+  addSwitchEventlistener("localEmoticons.enabled", ".switchLocalEmoticons", (_, enabled) => {
+    if (enabled) {
+      view.querySelector(".select-folder-input").classList.remove("disabled-input");
+    } else {
+      view.querySelector(".select-folder-input").classList.add("disabled-input");
+    }
+    if (first("switchLocalEmoticons")) {
+      const selectFolderEl = view.querySelector(".select-folder-input input");
+      selectFolderEl.value = options.localEmoticons.localPath;
+      view.querySelectorAll(".select-folder").forEach((el) => {
+        el.addEventListener("click", () => {
+          lite_tools.openSelectFolder();
+        });
+      });
+      // 该输入框禁止输入内容，所以不需要监听变化
+      // selectFolderEl.addEventListener(
+      //   "input",
+      //   debounce(() => {
+      //     options.localEmoticons.localPath = selectFolderEl.value;
+      //     lite_tools.setOptions(options);
+      //   }, 100)
+      // );
+    }
+  });
+
   // 添加消息后缀
   addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {
     if (enabled) {
@@ -604,7 +630,7 @@ async function onConfigView(view) {
   // 监听设置文件变动
   updateOptions((opt) => {
     view.querySelector(".select-path input").value = opt.background.url;
-    view.querySelector(".select-folder input").value = opt.localEmoticons.localPath;
+    view.querySelector(".select-folder-input input").value = opt.localEmoticons.localPath;
   });
 }
 
