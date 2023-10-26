@@ -39,7 +39,7 @@ function loadFolder(folderPath) {
           });
           if (fileStat) {
             if (fileStat.isFile()) {
-              if (![".gif", ".jpg", ".png"].includes(path.extname(filePath))) {
+              if (![".gif", ".jpg", ".png", ".webp"].includes(path.extname(filePath))) {
                 continue;
               }
               // 初始化对象
