@@ -1,4 +1,10 @@
-// 向设置界面插入动态选项
+/**
+ * 向设置界面插入动态选项
+ * @param {Ayyay} list 选项列表
+ * @param {Element} element 指定插入元素
+ * @param {String} objKey 对象路径
+ * @param {String} key 控制键值
+ */
 async function addOptionLi(list, element, objKey, key) {
   const { options } = await import("./options.js");
   list.forEach((el, index) => {

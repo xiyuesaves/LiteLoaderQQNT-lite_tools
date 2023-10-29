@@ -1,4 +1,6 @@
-// 媒体预览增强
+/**
+ * 媒体预览增强
+ */
 async function betterImageViewer() {
   const { options } = await import("./options.js");
   // 修复弹窗字体模糊

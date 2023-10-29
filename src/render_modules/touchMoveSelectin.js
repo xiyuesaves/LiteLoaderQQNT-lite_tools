@@ -1,4 +1,7 @@
-// 阻止拖拽多选消息
+/**
+ * 阻止拖拽多选消息
+ * @param {String} className 禁止拖拽类名
+ */
 async function touchMoveSelectin(className) {
   const { options } = await import("./options.js");
   let interception;
@@ -26,7 +29,12 @@ async function touchMoveSelectin(className) {
   });
 }
 
-// 判断父元素是否包含指定类名
+/**
+ * 判断父元素是否包含指定类名
+ * @param {Element} element 目标元素
+ * @param {className} className 目标类名
+ * @returns 
+ */
 function doesParentHaveClass(element, className) {
   let parentElement = element.parentElement;
   while (parentElement !== null) {

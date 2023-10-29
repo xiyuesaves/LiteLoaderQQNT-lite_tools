@@ -3,6 +3,10 @@
 const elements = new WeakMap();
 window.__VUE_ELEMENTS__ = elements;
 
+/**
+ *
+ * @param {Element} component
+ */
 function watchComponentUnmount(component) {
   if (!component.bum) component.bum = [];
   component.bum.push(() => {
@@ -23,6 +27,10 @@ function watchComponentUnmount(component) {
   });
 }
 
+/**
+ * 
+ * @param {Element} component 
+ */
 function watchComponentMount(component) {
   let value;
   Object.defineProperty(component.vnode, "el", {
@@ -38,6 +46,10 @@ function watchComponentMount(component) {
   });
 }
 
+/**
+ * 
+ * @param {Element} component 
+ */
 function recordComponent(component) {
   let element = component.vnode.el;
   while (!(element instanceof HTMLElement)) {
@@ -63,6 +75,9 @@ function recordComponent(component) {
   watchComponentUnmount(component);
 }
 
+/**
+ * 将Vue组件实例挂载到对应元素上
+ */
 export function hookVue3() {
   window.Proxy = new Proxy(window.Proxy, {
     construct(target, [proxyTarget, proxyHandler]) {

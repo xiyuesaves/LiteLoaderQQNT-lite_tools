@@ -1,4 +1,6 @@
-// 监听输入框上方功能
+/**
+ * 监听输入框上方功能
+ */
 async function observerChatArea() {
   const { options } = await import("./options.js");
   const { localEmoticons } = await import("./localEmoticons.js");

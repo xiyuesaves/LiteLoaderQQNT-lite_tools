@@ -1,4 +1,6 @@
-// 监听聊天框上方功能
+/**
+ * 监听聊天框上方功能
+ */
 async function observeChatTopFunc() {
   const { options } = await import("./options.js");
   new MutationObserver((mutations, observe) => {

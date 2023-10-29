@@ -39,7 +39,10 @@ let ckeditEditorModel;
   });
 })();
 
-// 主要导出函数
+/**
+ * 初始化本地表情包功能
+ * @returns 
+ */
 function localEmoticons() {
   if (document.querySelector(".lite-tools-bar")) {
     return;
@@ -87,6 +90,9 @@ function localEmoticons() {
   }
 }
 
+/**
+ * 捕获编辑器实例
+ */
 function loadEditorModel() {
   console.log("尝试捕获编辑器实例");
   if (document.querySelector(".ck.ck-content.ck-editor__editable") && document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance) {
@@ -97,6 +103,10 @@ function loadEditorModel() {
   }
 }
 
+/**
+ * 捕获全局鼠标按键抬起事件
+ * @param {MouseEvent} event 
+ */
 function globalMouseUp(event) {
   if (event.button === 0) {
     clearTimeout(openFullPreviewTO);
@@ -110,6 +120,10 @@ function globalMouseUp(event) {
   }
 }
 
+/**
+ * 捕获全局鼠标按键按下事件
+ * @param {MouseEvent} event 
+ */
 function globalMouseDown(event) {
   if (!doesParentHaveClass(event.target, "lite-tools-bar")) {
     showEmoticons = false;
@@ -119,6 +133,10 @@ function globalMouseDown(event) {
   }
 }
 
+/**
+ * 鼠标按键按下事件
+ * @param {MouseEvent} event 
+ */
 function mouseDown(event) {
   if (event.button === 0 && !openFullPreview) {
     openFullPreviewTO = setTimeout(() => {
@@ -131,6 +149,10 @@ function mouseDown(event) {
   }
 }
 
+/**
+ * 鼠标指针进入元素事件
+ * @param {MouseEvent} event 
+ */
 function mouseEnter(event) {
   if (openFullPreview) {
     const showImg = document.querySelector(".full-screen-preview img");
@@ -140,6 +162,11 @@ function mouseEnter(event) {
   }
 }
 
+/**
+ * 插入表情包到编辑器
+ * @param {MouseEvent} event 
+ * @returns 
+ */
 function insert(event) {
   if (!insertImg) {
     return;
@@ -158,6 +185,9 @@ function insert(event) {
   }
 }
 
+/**
+ * 加载dom结构
+ */
 async function loadDom() {
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const domUrl = `llqqnt://local-file/${plugin_path}/src/config/localEmoticons.html`;
@@ -191,7 +221,13 @@ async function loadDom() {
   });
 }
 
-// 判断父元素是否包含指定类名
+/**
+ * 判断父元素是否包含指定类名
+ * @param {Element} element 需要判断的元素
+ * @param {className} className 目标样式
+ * @param {className} stopClassName 停止递归样式
+ * @returns 
+ */
 function doesParentHaveClass(element, className, stopClassName) {
   let parentElement = element.parentElement;
   while (parentElement !== null) {
@@ -206,6 +242,10 @@ function doesParentHaveClass(element, className, stopClassName) {
   return false;
 }
 
+/**
+ * 加载表情包列表
+ * @param {Array} emoticonsList 表情包列表
+ */
 function appendEmoticons(emoticonsList) {
   document.querySelectorAll(".folder-item").forEach((item) => {
     item.remove();
@@ -234,8 +274,10 @@ function appendEmoticons(emoticonsList) {
   });
 }
 
+/**
+ * 打开表情包管理菜单
+ */
 function openLocalEmoticons() {
-  console.log("打开表情管理菜单");
   if (htmoDom) {
     if (showEmoticons) {
       showEmoticons = false;

@@ -1,3 +1,6 @@
+/**
+ * 注入全局样式
+ */
 async function initStyle() {
   const { options } = await import("./options.js");
   // 插入自定义样式style容器

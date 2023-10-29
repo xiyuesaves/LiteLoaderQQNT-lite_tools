@@ -1,4 +1,8 @@
-// 初始化设置界面监听方法
+/**
+ * 初始化设置界面监听方法
+ * @param {Element} viewEl 插件设置界面容器
+ * @returns 
+ */
 async function SwitchEventlistener(viewEl) {
   const { options } = await import("./options.js");
   const view = viewEl;

@@ -1,4 +1,9 @@
 // 通用消息撤回方法
+/**
+ * 
+ * @param {Element} el 消息列表元素
+ * @param {Object} find 被撤回消息数据
+ */
 function messageRecall(el, find) {
   // 气泡-嵌入（必须含有文本内容的消息,文件消息）
   const bubbleEmbed = el.querySelector(
@@ -49,7 +54,9 @@ function messageRecall(el, find) {
   }
 }
 
-// 新的撤回事件触发该方法
+/**
+ * 新的撤回事件触发该方法
+ */
 async function newMessageRecall() {
   lite_tools.onMessageRecall((_, message) => {
     const el = document.querySelector(`[id="${message.msgId}"]`);

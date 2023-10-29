@@ -1,4 +1,9 @@
-// 通用监听消息列表方法
+/**
+ * 通用监听消息列表方法
+ * @param {String} msgListEl 消息列表元素类名
+ * @param {String} msgItemEl 消息元素类名
+ * @param {Boolean} isForward 转发界面判断
+ */
 async function observerMessageList(msgListEl, msgItemEl, isForward = false) {
   let lastMessageNodeList = [];
   let childElHeight = new Map();

@@ -1,4 +1,6 @@
-// 通用聊天消息列表处理模块
+/**
+ * 通用聊天消息列表处理模块
+ */
 async function chatMessageList() {
   const { options } = await import("./options.js");
   // 判断是否开启头像黏贴效果

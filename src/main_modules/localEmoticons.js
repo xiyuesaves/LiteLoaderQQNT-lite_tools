@@ -5,6 +5,10 @@ let emoticonsList = [];
 let folderNum = 0;
 let watcher;
 
+/**
+ * 加载本地表情文件夹
+ * @param {String} folderPath 表情文件夹路径
+ */
 async function loadEmoticons(folderPath) {
   emoticonsList = [];
   folderNum = 0;
@@ -25,6 +29,11 @@ async function loadEmoticons(folderPath) {
   );
 }
 
+/**
+ * 递归加载文件夹
+ * @param {String} folderPath 文件夹路径
+ * @returns 
+ */
 function loadFolder(folderPath) {
   folderNum = emoticonsList.length;
   if (fs.existsSync(folderPath)) {
@@ -64,6 +73,12 @@ function loadFolder(folderPath) {
   }
 }
 
+/**
+ * 防抖函数
+ * @param {Function} fn 需要防抖函数
+ * @param {Number} time 需要等待时间
+ * @returns 延迟函数
+ */
 function debounce(fn, time) {
   let timer = null;
   return function (...args) {
@@ -74,12 +89,19 @@ function debounce(fn, time) {
   };
 }
 
+/**
+ * 触发更新回调
+ */
 function dispatchUpdateFile() {
   callbackFunc.forEach((func) => {
     func(emoticonsList);
   });
 }
 
+/**
+ * 注册回调方法
+ * @param {Function} callback 回调函数
+ */
 function onUpdateEmoticons(callback) {
   callbackFunc.push(callback);
 }

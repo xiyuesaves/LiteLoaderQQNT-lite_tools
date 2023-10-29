@@ -1,5 +1,11 @@
 const projectLatestUrl = "https://api.github.com/repos/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest";
 
+/**
+ * 对比版本号
+ * @param {String} currentVersion 当前版本
+ * @param {String} latestVersion 最新版本
+ * @returns 
+ */
 function compareVersions(currentVersion, latestVersion) {
   const currentParts = currentVersion.split(".");
   const latestParts = latestVersion.split(".");
@@ -19,6 +25,10 @@ function compareVersions(currentVersion, latestVersion) {
   return false; // 当前版本与最新版本相等
 }
 
+/**
+ * 检测更新
+ * @param {Element} view 插件设置界面容器
+ */
 async function checkUpdate(view) {
   fetch(projectLatestUrl)
     .then((res) => {

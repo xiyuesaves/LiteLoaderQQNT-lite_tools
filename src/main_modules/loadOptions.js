@@ -1,5 +1,11 @@
 const fs = require("fs");
 const defaultOptions = require("./defaultOptions.json");
+
+/**
+ * 加载本地配置文件
+ * @param {String} optionsPath 配置文件路径
+ * @returns Object 配置信息
+ */
 function loadOptions(optionsPath) {
   try {
     // 判断是否存在配置文件
@@ -19,6 +25,12 @@ function loadOptions(optionsPath) {
   }
 }
 
+/**
+ * 
+ * @param {Object} fileOptions 从文件加载的配置
+ * @param {Object} defaultOptions 默认配置
+ * @returns Object 两个配置合并后的实际配置文件
+ */
 function recursiveAssignment(fileOptions, defaultOptions) {
   if (!fileOptions) {
     return defaultOptions;
