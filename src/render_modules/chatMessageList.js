@@ -1,4 +1,6 @@
-import { options } from "./options.js";
+import { options, updateOptions } from "./options.js";
+
+updateOptions(chatMessageList);
 
 /**
  * 通用聊天消息列表处理模块
