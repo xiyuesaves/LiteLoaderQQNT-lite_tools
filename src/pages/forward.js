@@ -3,7 +3,6 @@ import { observerMessageList } from "../render_modules/observerMessageList.js";
 import { logs } from "../render_modules/logs.js";
 const log = new logs("转发界面").log;
 
-log("进入模块");
 document.querySelector("#app").classList.add("forward");
 updateWallpaper();
 

@@ -43,19 +43,12 @@ function onLoad() {
     } else if (hash.includes("#/forward")) {
       import("./pages/forward.js");
       log("进入转发窗口");
-    }
-    /**
-     * 路径匹配
-     */
-    switch (hash) {
-      case "#/imageViewer":
-        import("./pages/imageViewer.js");
-        log("进入媒体预览窗口");
-        break;
-      case "#/main/message":
-        import("./pages/mainMessage.js");
-        log("进入主窗口");
-        break;
+    } else if (hash.includes("#/main/message")) {
+      import("./pages/mainMessage.js");
+      log("进入主窗口");
+    } else if (hash.includes("#/imageViewer")) {
+      import("./pages/imageViewer.js");
+      log("进入媒体预览窗口");
     }
   }
 }
