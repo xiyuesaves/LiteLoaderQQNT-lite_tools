@@ -1,10 +1,13 @@
 import { options } from "./options.js";
-
+import { logs } from "./logs.js";
+const log = new logs("阻止滑动选择").log;
+let listenTarget = false;
 /**
  * 阻止拖拽多选消息
  * @param {String} className 禁止拖拽类名
  */
 function touchMoveSelectin(className) {
+  log("模块已加载", options.message.disabledSlideMultipleSelection);
   let interception;
   document.querySelector("#app").addEventListener("mousedown", (event) => {
     if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
@@ -13,15 +16,21 @@ function touchMoveSelectin(className) {
         (event.target.classList.contains(className) || doesParentHaveClass(event.target, className));
     }
   });
-  document.querySelector(`.${className}`).addEventListener("mousedown", (event) => {
-    if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
-      if (document.querySelector("#qContextMenu")) {
-        document.querySelector("#qContextMenu").remove();
-      }
-    }
-  });
+
   document.querySelector("#app").addEventListener("mousemove", (event) => {
+    if (!listenTarget && document.querySelector(`.${className}`)) {
+      log("已捕获目标元素");
+      document.querySelector(`.${className}`).addEventListener("mousedown", (event) => {
+        if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+          if (document.querySelector("#qContextMenu")) {
+            document.querySelector("#qContextMenu").remove();
+          }
+        }
+      });
+      listenTarget = true;
+    }
     if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+      log("拖拽事件", interception);
       if (interception) {
         event.preventDefault();
         event.stopPropagation();
