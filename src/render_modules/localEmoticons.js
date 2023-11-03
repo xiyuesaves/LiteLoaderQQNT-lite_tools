@@ -1,3 +1,7 @@
+import { options, updateOptions } from "./options.js";
+import { logs } from "./logs.js";
+const log = logs("本地表情包模块").log;
+
 const svg = `<?xml version="1.0" encoding="utf-8"?>
 <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
@@ -22,26 +26,23 @@ let insertImg = true;
 let ckeditorInstance;
 let ckeditEditorModel;
 
-// 内部自执行函数
-(async () => {
-  const { options, updateOptions } = await import("./options.js");
-  if (options.localEmoticons.enabled) {
+if (options.localEmoticons.enabled) {
+  document.body.classList.add("lite-tools-showLocalEmoticons");
+} else {
+  document.body.classList.remove("lite-tools-showLocalEmoticons");
+}
+updateOptions((opt) => {
+  if (opt.localEmoticons.enabled) {
     document.body.classList.add("lite-tools-showLocalEmoticons");
   } else {
     document.body.classList.remove("lite-tools-showLocalEmoticons");
   }
-  updateOptions((opt) => {
-    if (opt.localEmoticons.enabled) {
-      document.body.classList.add("lite-tools-showLocalEmoticons");
-    } else {
-      document.body.classList.remove("lite-tools-showLocalEmoticons");
-    }
-  });
-})();
+});
+log("本地表情模块已引入");
 
 /**
  * 初始化本地表情包功能
- * @returns 
+ * @returns
  */
 function localEmoticons() {
   if (document.querySelector(".lite-tools-bar")) {
@@ -53,7 +54,7 @@ function localEmoticons() {
   if (!ckeditEditorModel) {
     loadEditorModel();
     lite_tools.updateEmoticons((_, list) => {
-      console.log("渲染端更新列表", list);
+      log("渲染端更新列表", list);
       appendEmoticons(list);
     });
   }
@@ -83,10 +84,10 @@ function localEmoticons() {
     qTooltips.appendChild(qTooltipsContent);
     barIcon.appendChild(qTooltips);
     targetPosition.appendChild(barIcon);
-    console.log("创建图标");
+    log("创建图标");
   } else {
     targetPosition.appendChild(barIcon);
-    console.log("嵌入图标");
+    log("嵌入图标");
   }
 }
 
@@ -94,7 +95,7 @@ function localEmoticons() {
  * 捕获编辑器实例
  */
 function loadEditorModel() {
-  console.log("尝试捕获编辑器实例");
+  log("尝试捕获编辑器实例");
   if (document.querySelector(".ck.ck-content.ck-editor__editable") && document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance) {
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
@@ -105,7 +106,7 @@ function loadEditorModel() {
 
 /**
  * 捕获全局鼠标按键抬起事件
- * @param {MouseEvent} event 
+ * @param {MouseEvent} event
  */
 function globalMouseUp(event) {
   if (event.button === 0) {
@@ -122,7 +123,7 @@ function globalMouseUp(event) {
 
 /**
  * 捕获全局鼠标按键按下事件
- * @param {MouseEvent} event 
+ * @param {MouseEvent} event
  */
 function globalMouseDown(event) {
   if (!doesParentHaveClass(event.target, "lite-tools-bar")) {
@@ -135,12 +136,12 @@ function globalMouseDown(event) {
 
 /**
  * 鼠标按键按下事件
- * @param {MouseEvent} event 
+ * @param {MouseEvent} event
  */
 function mouseDown(event) {
   if (event.button === 0 && !openFullPreview) {
     openFullPreviewTO = setTimeout(() => {
-      console.log("执行延迟逻辑");
+      log("执行延迟逻辑");
       openFullPreview = true;
       insertImg = false;
       document.querySelector(".full-screen-preview img").src = event.target.querySelector("img").src;
@@ -151,7 +152,7 @@ function mouseDown(event) {
 
 /**
  * 鼠标指针进入元素事件
- * @param {MouseEvent} event 
+ * @param {MouseEvent} event
  */
 function mouseEnter(event) {
   if (openFullPreview) {
@@ -164,8 +165,8 @@ function mouseEnter(event) {
 
 /**
  * 插入表情包到编辑器
- * @param {MouseEvent} event 
- * @returns 
+ * @param {MouseEvent} event
+ * @returns
  */
 function insert(event) {
   if (!insertImg) {
@@ -209,7 +210,7 @@ async function loadDom() {
     }
   });
   emoticonsMain.addEventListener("mousemove", (event) => {
-    console.log("mover");
+    log("mover");
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
       mouseEnter(event);
     }
@@ -226,7 +227,7 @@ async function loadDom() {
  * @param {Element} element 需要判断的元素
  * @param {className} className 目标样式
  * @param {className} stopClassName 停止递归样式
- * @returns 
+ * @returns
  */
 function doesParentHaveClass(element, className, stopClassName) {
   let parentElement = element.parentElement;
@@ -289,7 +290,7 @@ function openLocalEmoticons() {
       barIcon.querySelector(".lite-tools-q-tooltips__content").classList.add("hidden");
     }
   } else {
-    console.log("表情菜单还没有加载完成");
+    log("表情菜单还没有加载完成");
   }
 }
 
