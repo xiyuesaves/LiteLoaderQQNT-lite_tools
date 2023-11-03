@@ -37,15 +37,17 @@ async function observerChatArea() {
       }
     });
   }
-  if (document.querySelector(".chat-input-area .chat-func-bar") && first("chatInputAreaFuncBar")) {
-    log("已捕获指定元素");
+  if (document.querySelector(".chat-input-area .chat-func-bar")) {
     disabledFunctions();
-    updateOptions(disabledFunctions);
-    observe.observe(document.querySelector(".chat-input-area .chat-func-bar"), {
-      attributes: false,
-      childList: true,
-      subtree: true,
-    });
+    if (first("chatInputAreaFuncBar")) {
+      log("已捕获指定元素");
+      updateOptions(disabledFunctions);
+      observe.observe(document.querySelector(".chat-input-area .chat-func-bar"), {
+        attributes: false,
+        childList: true,
+        subtree: true,
+      });
+    }
   }
 }
 

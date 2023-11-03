@@ -38,16 +38,18 @@ function observeChatTopFunc() {
     });
   }
 
-  if (document.querySelector(".panel-header__action .func-bar") && first("observePanelHeaderFunctions")) {
-    log("已捕获指定元素");
+  if (document.querySelector(".panel-header__action .func-bar")) {
     disabledFunctions();
-    updateOptions(disabledFunctions);
-    observe.observe(document.querySelector(".panel-header__action .func-bar"), {
-      attributeFilter: ["style"],
-      attributes: true,
-      childList: true,
-      subtree: true,
-    });
+    if (first("observePanelHeaderFunctions")) {
+      log("已捕获指定元素");
+      updateOptions(disabledFunctions);
+      observe.observe(document.querySelector(".panel-header__action .func-bar"), {
+        attributeFilter: ["style"],
+        attributes: true,
+        childList: true,
+        subtree: true,
+      });
+    }
   }
 }
 
