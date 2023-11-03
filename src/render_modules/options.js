@@ -40,6 +40,13 @@
  * @property {Boolean} preventMessageRecall 阻止撤回
  * @property {Boolean} removeReplyAt 移除回复时的At标记
  * @property {Boolean} mergeMessage 合并消息
+ * @property {avatarSticky} avatarSticky 头像浮动
+ */
+
+/**
+ * @typedef avatarSticky
+ * @property {Boolean} enabled 启用头像浮动
+ * @property {Boolean} toBottom 头像置底
  */
 
 /**
