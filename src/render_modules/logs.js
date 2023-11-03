@@ -2,7 +2,7 @@ const logList = [];
 
 window.logs = () => {
   logList.forEach((el) => {
-    console.log(`${el.name}`, ...el.log);
+    console.log(`[${el.name}]`, ...el.log);
   });
 };
 
