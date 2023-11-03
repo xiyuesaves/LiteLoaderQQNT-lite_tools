@@ -1,3 +1,6 @@
+import { options } from "./options.js";
+import { messageRecall } from "./messageRecall.js";
+
 /**
  * 通用监听消息列表方法
  * @param {String} msgListEl 消息列表元素类名
@@ -7,8 +10,6 @@
 async function observerMessageList(msgListEl, msgItemEl, isForward = false) {
   let lastMessageNodeList = [];
   let childElHeight = new Map();
-  const { messageRecall } = await import("./messageRecall.js");
-  const { options } = await import("./options.js");
   new MutationObserver(async (mutations, observe) => {
     // 循环元素列表
     const currentItemList = Array.from(document.querySelectorAll(msgItemEl));

@@ -1,9 +1,10 @@
+import { options } from "./options.js";
+
 /**
  * 阻止拖拽多选消息
  * @param {String} className 禁止拖拽类名
  */
-async function touchMoveSelectin(className) {
-  const { options } = await import("./options.js");
+function touchMoveSelectin(className) {
   let interception;
   document.querySelector("#app").addEventListener("mousedown", (event) => {
     if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
@@ -33,7 +34,7 @@ async function touchMoveSelectin(className) {
  * 判断父元素是否包含指定类名
  * @param {Element} element 目标元素
  * @param {className} className 目标类名
- * @returns 
+ * @returns
  */
 function doesParentHaveClass(element, className) {
   let parentElement = element.parentElement;

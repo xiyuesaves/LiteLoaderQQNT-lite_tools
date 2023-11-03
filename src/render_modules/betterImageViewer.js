@@ -1,8 +1,9 @@
+import { options } from "./options.js";
+
 /**
  * 媒体预览增强
  */
-async function betterImageViewer() {
-  const { options } = await import("./options.js");
+function betterImageViewer() {
   // 修复弹窗字体模糊
   document.body.classList.add("image-viewer");
   // 针对图片的单击关闭图片

@@ -1,8 +1,9 @@
+import { options } from "./options.js";
+
 /**
  * 监听输入框上方功能
  */
 async function observerChatArea() {
-  const { options } = await import("./options.js");
   const { localEmoticons } = await import("./localEmoticons.js");
 
   new MutationObserver((mutations, observe) => {

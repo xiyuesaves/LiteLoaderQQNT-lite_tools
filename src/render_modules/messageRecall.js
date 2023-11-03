@@ -57,7 +57,7 @@ function messageRecall(el, find) {
 /**
  * 新的撤回事件触发该方法
  */
-async function newMessageRecall() {
+function newMessageRecall() {
   lite_tools.onMessageRecall((_, message) => {
     const el = document.querySelector(`[id="${message.msgId}"]`);
     if (!el.querySelector(".lite-tools-recall")) {

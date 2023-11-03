@@ -1,11 +1,11 @@
 // 刷新背景样式
 let styleText = "";
+import { options } from "./options.js";
 
 /**
  * 更新背景元素
  */
 async function updateWallpaper() {
-  const { options } = await import("./options.js");
   const backgroundStyle = document.querySelector(".background-style");
   if (options.background.enabled) {
     const backgroundUrl = `llqqnt://local-file/${options.background.url}`;

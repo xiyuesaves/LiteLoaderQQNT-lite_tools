@@ -1,8 +1,9 @@
+import { options } from "./options.js";
+
 /**
  * 通用监听输入框编辑事件
  */
-async function observeChatBox() {
-  const { options } = await import("./options.js");
+function observeChatBox() {
   const ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
   let isReply = false;
 

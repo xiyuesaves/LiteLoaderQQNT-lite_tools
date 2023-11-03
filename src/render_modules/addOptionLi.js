@@ -1,3 +1,5 @@
+import { options } from "./options.js";
+
 /**
  * 向设置界面插入动态选项
  * @param {Ayyay} list 选项列表
@@ -5,8 +7,7 @@
  * @param {String} objKey 对象路径
  * @param {String} key 控制键值
  */
-async function addOptionLi(list, element, objKey, key) {
-  const { options } = await import("./options.js");
+function addOptionLi(list, element, objKey, key) {
   list.forEach((el, index) => {
     const hr = document.createElement("hr");
     hr.classList.add("horizontal-dividing-line");

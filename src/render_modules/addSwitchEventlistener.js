@@ -1,10 +1,11 @@
+import { options } from "./options.js";
+
 /**
  * 初始化设置界面监听方法
  * @param {Element} viewEl 插件设置界面容器
- * @returns 
+ * @returns
  */
-async function SwitchEventlistener(viewEl) {
-  const { options } = await import("./options.js");
+function SwitchEventlistener(viewEl) {
   const view = viewEl;
   function addSwitchEventlistener(optionKey, switchClass, callback) {
     const option = Function("options", `return options.${optionKey}`)(options);

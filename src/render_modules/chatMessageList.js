@@ -1,8 +1,9 @@
+import { options } from "./options.js";
+
 /**
  * 通用聊天消息列表处理模块
  */
-async function chatMessageList() {
-  const { options } = await import("./options.js");
+function chatMessageList() {
   // 判断是否开启头像黏贴效果
   if (options.message.avatarSticky.enabled) {
     document.body.classList.add("avatar-sticky");
