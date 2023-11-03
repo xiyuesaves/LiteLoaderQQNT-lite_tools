@@ -7,6 +7,9 @@
 import { hookVue3 } from "./render_modules/hookVue3.js";
 // 初始化样式数据
 import { initStyle } from "./render_modules/initStyle.js";
+// 日志模块
+import { logs } from "./render_modules/logs.js";
+const log = new logs("主渲染进程模块").log;
 
 function onLoad() {
   hookVue3();
@@ -36,8 +39,10 @@ function onLoad() {
      */
     if (hash.includes("#/chat/")) {
       import("./pages/chatMessage.js");
+      log("进入独立聊天窗口");
     } else if (hash.includes("#/forward")) {
       import("./pages/forward.js");
+      log("进入转发窗口");
     }
     /**
      * 路径匹配
@@ -45,9 +50,11 @@ function onLoad() {
     switch (hash) {
       case "#/imageViewer":
         import("./pages/imageViewer.js");
+        log("进入媒体预览窗口");
         break;
       case "#/main/message":
         import("./pages/mainMessage.js");
+        log("进入主窗口");
         break;
     }
   }
