@@ -61,7 +61,11 @@ function onLoad() {
 }
 
 // 设置界面函数
-import { onConfigView } from "./pages/configView.js";
+function onConfigView(view) {
+  import("./pages/configView.js").then((module) => {
+    module.onConfigView(view);
+  });
+}
 
 // 这两个函数都是可选的
 export { onLoad, onConfigView };
