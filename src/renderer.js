@@ -1,400 +1,47 @@
-// 运行在 Electron 渲染进程 下的页面脚本
-const log = console.log;
-
-// 页面加载完成时触发
-async function onLoad() {
-  // 输出logo
-  log("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;");
-
-  // 加载模块
-  // 配置信息
-  const { options, updateOptions } = await import("./render_modules/options.js");
-  // hook VUE
-  const { hookVue3 } = await import("./render_modules/hookVue3.js");
-  // 右键菜单相关操作
-  const { addEventqContextMenu } = await import("./render_modules/qContextMenu.js");
-  // 初始化样式数据
-  const { initStyle } = await import("./render_modules/initStyle.js");
-  // 撤回事件监听
-  const { newMessageRecall } = await import("./render_modules/messageRecall.js");
-  // 消息列表监听
-  const { observerMessageList } = await import("./render_modules/observerMessageList.js");
-  // 监听输入框上方功能
-  const { observerChatArea } = await import("./render_modules/observerChatArea.js");
-  // 背景壁纸模块
-  const { updateWallpaper } = await import("./render_modules/updateWallpaper.js");
-  // 通用监听输入框编辑事件
-  const { observeChatBox } = await import("./render_modules/observeChatBox.js");
-  // 通用聊天消息列表处理模块
-  const { chatMessageList } = await import("./render_modules/chatMessageList.js");
-  // 阻止拖拽多选消息
-  const { touchMoveSelectin } = await import("./render_modules/touchMoveSelectin.js");
-  // 媒体预览增强
-  const { betterImageViewer } = await import("./render_modules/betterImageViewer.js");
-  // 首次执行检测，只有第一次执行时返回true
-  const { first, refresh } = await import("./render_modules/first.js");
-  // 更新输入框上方功能列表
-  const { observeChatTopFunc } = await import("./render_modules/observeChatTopFunc.js");
-  // 页面插入本地表情功能
-  const { localEmoticons } = await import("./render_modules/localEmoticons.js");
-
-  // 在元素上创建组件引用
-  hookVue3();
-
-  // 初始化基础样式数据
-  initStyle();
-
-  // 监听右键菜单
-  addEventqContextMenu();
-
-  // 全局注册撤回事件监听
-  newMessageRecall();
-
-  // 监听导航跳转
-  navigation.addEventListener("navigatesuccess", navigateChange);
-  function navigateChange() {
+/**
+ * @author xiyuesaves
+ * @date 2023-11-03
+ */
+function onLoad() {
+  /**
+   * 监听页面 hash 变动
+   */
+  if (location.hash === "#/blank") {
+    navigation.addEventListener("navigatesuccess", updateHash, { once: true });
+  } else {
     updateHash();
-    navigation.removeEventListener("navigatesuccess", navigateChange);
   }
 
-  // 如果因为加载过久导致hash已经变动，这是备用触发方式
-  updateHash();
+  /**
+   * 根据页面 hash 决定执行函数
+   */
   function updateHash() {
     let hash = location.hash;
-    if (hash.includes("#/chat/")) {
-      hash = "#/chat/message";
-    } else if (hash.includes("#/forward")) {
-      hash = "#/forward";
-    }
-    // 没有捕获到正确hash，直接退出
+    /**
+     * 默认 hash 直接返回
+     */
     if (hash === "#/blank") {
       return;
     }
+    /**
+     * 局部匹配
+     */
+    if (hash.includes("#/chat/")) {
+      import("./pages/chatMessage.js");
+    } else if (hash.includes("#/forward")) {
+      import("./pages/forward.js");
+    }
+    /**
+     * 路径匹配
+     */
     switch (hash) {
       case "#/imageViewer":
-        if (first("is-active")) {
-          betterImageViewer();
-        }
+        import("./pages/imageViewer.js");
         break;
       case "#/main/message":
-        if (first("is-active")) {
-          mainMessage();
-        }
-        break;
-      case "#/chat/message":
-        if (first("is-active")) {
-          chatMessage();
-        }
-        break;
-      case "#/forward":
-        if (first("is-active")) {
-          forwardMessage();
-        }
+        import("./pages/mainMessage.js");
         break;
     }
-  }
-
-  // 通用初始化函数
-  function initFunction(func) {
-    // 窗口启动的指定时间内按10ms的间隔调用指定函数
-    let timeout = new Date().getTime() + 10 * 1000;
-    loop();
-    function loop() {
-      if (timeout > new Date().getTime()) {
-        setTimeout(loop, 10);
-        func();
-      }
-    }
-  }
-
-  // 首页处理
-  async function mainMessage() {
-    // 初始化页面
-    initFunction(updatePage);
-
-    // 刷新页面配置
-    async function updatePage() {
-      // 初始化推荐表情
-      if (options.message.disabledSticker) {
-        document.querySelector(".sticker-bar")?.classList.add("disabled");
-      } else {
-        document.querySelector(".sticker-bar")?.classList.remove("disabled");
-      }
-      // 初始化顶部侧边栏
-      document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-        const find = options.sidebar.top.find((opt) => opt.index == index);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 初始化底部侧边栏
-      document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
-        const find = options.sidebar.bottom.find((opt) => opt.index == index);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 禁用GIF热图
-      if (options.message.disabledHotGIF) {
-        document.body.classList.add("disabled-sticker-hot-gif");
-      } else {
-        document.body.classList.remove("disabled-sticker-hot-gif");
-      }
-      // 禁用小红点
-      if (options.message.disabledBadge) {
-        document.body.classList.add("disabled-badge");
-      } else {
-        document.body.classList.remove("disabled-badge");
-      }
-      // 初始化输入框上方功能
-      if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
-        observerChatArea();
-        localEmoticons();
-      }
-      // 初始化聊天框上方功能
-      if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
-        observeChatTopFunc();
-      }
-      // 判断消息列表是否已经加载
-      if (document.querySelector(".ml-list.list") && first("msgList")) {
-        observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
-        chatMessageList();
-      }
-      // 禁用滑动多选消息
-      if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
-        touchMoveSelectin("chat-msg-area");
-      }
-      // 绑定输入框
-      if (document.querySelector(".ck.ck-content.ck-editor__editable") && first(".ck.ck-content.ck-editor__editable")) {
-        observeChatBox();
-      }
-      if (document.querySelector(".aio") && first("aio")) {
-        // 监听打开独立聊天窗口后主窗口样式更新事件
-        new MutationObserver((news) => {
-          if (news[0].target.style.display !== "none") {
-            initFunction(sunUpdate);
-          }
-        }).observe(document.querySelector(".aio"), {
-          attributeFilter: ["style"],
-          attributes: true,
-          childList: false,
-          subtree: false,
-        });
-      }
-      // 处理输入框上方功能列表
-      document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.textAreaFuncList.find((el) => el.name === name);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 处理消息列表上方功能列表
-      document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.chatAreaFuncList.find((el) => el.name === name);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 更新自定义样式
-      if (first("init-wallpaper")) {
-        updateWallpaper();
-      }
-    }
-
-    function sunUpdate() {
-      refresh("chat-input-area");
-      refresh("chat-message-area");
-      // 初始化输入框上方功能
-      if (document.querySelector(".chat-input-area .chat-func-bar") && first("chat-input-area")) {
-        observerChatArea();
-        localEmoticons();
-      }
-      // 初始化聊天框上方功能
-      if (document.querySelector(".panel-header__action .func-bar") && first("chat-message-area")) {
-        observeChatTopFunc();
-      }
-      // 处理输入框上方功能列表
-      document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.textAreaFuncList.find((el) => el.name === name);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 处理消息列表上方功能列表
-      document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.chatAreaFuncList.find((el) => el.name === name);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-    }
-
-    // 配置文件更新
-    updateOptions(() => {
-      updateWallpaper();
-      chatMessageList();
-      updatePage();
-    });
-
-    // 设置页面获取侧边栏项目
-    lite_tools.optionsOpen((event, message) => {
-      console.log("获取侧边栏");
-      let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
-        if (el.getAttribute("aria-label")) {
-          if (el.getAttribute("aria-label").includes("消息")) {
-            return {
-              name: "消息",
-              index,
-              disabled: el.classList.contains("disabled"),
-            };
-          } else {
-            return {
-              name: el.getAttribute("aria-label"),
-              index,
-              disabled: el.classList.contains("disabled"),
-            };
-          }
-        } else if (el.querySelector(".game-center-item")) {
-          return {
-            name: "游戏中心",
-            index,
-            disabled: el.classList.contains("disabled"),
-          };
-        } else {
-          return {
-            name: "未知功能",
-            index,
-            disabled: el.classList.contains("disabled"),
-          };
-        }
-      });
-      let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
-        if (el.querySelector(".icon-item").getAttribute("aria-label")) {
-          return {
-            name: el.querySelector(".icon-item").getAttribute("aria-label"),
-            index,
-            disabled: el.classList.contains("disabled"),
-          };
-        } else {
-          return {
-            name: "未知功能",
-            index,
-            disabled: el.classList.contains("disabled"),
-          };
-        }
-      });
-      lite_tools.sendSidebar({
-        top,
-        bottom,
-      });
-      console.log("获取侧边栏-发送");
-    });
-  }
-
-  // 独立聊天窗口
-  function chatMessage() {
-    updatePage();
-    initFunction(updatePage);
-    async function updatePage() {
-      localEmoticons();
-      // 禁用贴纸
-      if (options.message.disabledSticker) {
-        document.querySelector(".sticker-bar")?.classList.add("disabled");
-      } else {
-        document.querySelector(".sticker-bar")?.classList.remove("disabled");
-      }
-      // 禁用GIF热图
-      if (options.message.disabledHotGIF) {
-        document.body.classList.add("disabled-sticker-hot-gif");
-      } else {
-        document.body.classList.remove("disabled-sticker-hot-gif");
-      }
-      // 禁用滑动多选消息
-      if (document.querySelector(".chat-msg-area") && first("disabledSlideMultipleSelection")) {
-        touchMoveSelectin("chat-msg-area");
-      }
-      // 绑定输入框
-      if (document.querySelector(".ck.ck-content.ck-editor__editable") && first(".ck.ck-content.ck-editor__editable")) {
-        observeChatBox();
-      }
-      // 判断消息列表是否已经加载
-      if (document.querySelector(".ml-list.list") && first("msgList")) {
-        observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
-        chatMessageList();
-      }
-      // 禁用输入框上方功能
-      document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.textAreaFuncList.find((el) => el.name === name);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 禁用聊天框上方功能
-      document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.chatAreaFuncList.find((el) => el.name === name);
-        if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
-        }
-      });
-      // 更新自定义样式
-      if (first("init-wallpaper")) {
-        updateWallpaper();
-      }
-    }
-    // 配置更新
-    updateOptions(() => {
-      updateWallpaper();
-      chatMessageList();
-      updatePage();
-    });
-  }
-
-  // 转发消息界面
-  function forwardMessage() {
-    document.querySelector("#app").classList.add("forward");
-    updateWallpaper();
-    observerMessageList(".list .q-scroll-view", ".list .q-scroll-view > div", true);
-    updateOptions(() => {
-      updateWallpaper();
-    });
   }
 }
 
@@ -576,14 +223,6 @@ async function onConfigView(view) {
           lite_tools.openSelectFolder();
         });
       });
-      // 该输入框禁止输入内容，所以不需要监听变化
-      // selectFolderEl.addEventListener(
-      //   "input",
-      //   debounce(() => {
-      //     options.localEmoticons.localPath = selectFolderEl.value;
-      //     lite_tools.setOptions(options);
-      //   }, 100)
-      // );
     }
   });
 
