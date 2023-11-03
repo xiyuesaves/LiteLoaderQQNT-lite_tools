@@ -1,9 +1,12 @@
 // 刷新背景样式
 let styleText = "";
-import { options } from "./options.js";
+import { options, updateOptions } from "./options.js";
 import { first } from "./first.js";
 import { logs } from "./logs.js";
 const log = new logs("背景模块").log;
+
+updateOptions(updateWallpaper);
+
 /**
  * 更新背景元素
  */
