@@ -1,7 +1,9 @@
 // 刷新背景样式
 let styleText = "";
 import { options } from "./options.js";
-
+import { first } from "./first.js";
+import { logs } from "./logs.js";
+const log = new logs("背景模块").log;
 /**
  * 更新背景元素
  */
@@ -48,6 +50,11 @@ async function updateWallpaper() {
   } else {
     backgroundStyle.textContent = "";
     document.querySelector(".background-wallpaper-video")?.remove();
+  }
+  if (first("wallpaper")) {
+    log("模块已加载");
+  } else {
+    log("更新背景");
   }
 }
 

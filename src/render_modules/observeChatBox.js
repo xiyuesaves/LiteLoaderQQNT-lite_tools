@@ -1,10 +1,17 @@
 import { options } from "./options.js";
+import { logs } from "./logs.js";
+const log = new logs("阻止回复自带At").log;
 
+let ckeditorInstance;
 /**
  * 通用监听输入框编辑事件
  */
 function observeChatBox() {
-  const ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
+  // 获取到编辑器实例后阻止继续调用
+  if (ckeditorInstance) {
+    return;
+  }
+  ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable")?.ckeditorInstance;
   let isReply = false;
 
   const originalApplyOperation = ckeditorInstance.editing.model.applyOperation;
@@ -28,6 +35,7 @@ function observeChatBox() {
     return originalApplyOperation.call(ckeditorInstance.editing.model, ...args);
   };
   ckeditorInstance.editing.model.applyOperation = patchedApplyOperation;
+  log("模块已加载");
 }
 
 export { observeChatBox };
