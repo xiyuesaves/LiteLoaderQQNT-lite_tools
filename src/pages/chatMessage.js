@@ -1,3 +1,4 @@
+import { options, updateOptions } from "../render_modules/options.js";
 // hook VUE
 import { hookVue3 } from "../render_modules/hookVue3.js";
 // 右键菜单相关操作
@@ -34,12 +35,24 @@ newMessageRecall();
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
   childList: true,
-  attributes: true,
   subtree: true,
 });
+updateOptions(chatMessage);
 chatMessage();
 
-function chatMessage() {
+function chatMessage(mutationList) {
+  // 禁用贴纸
+  if (options.message.disabledSticker) {
+    document.querySelector(".sticker-bar")?.classList.add("disabled");
+  } else {
+    document.querySelector(".sticker-bar")?.classList.remove("disabled");
+  }
+  // 禁用GIF热图
+  if (options.message.disabledHotGIF) {
+    document.body.classList.add("disabled-sticker-hot-gif");
+  } else {
+    document.body.classList.remove("disabled-sticker-hot-gif");
+  }
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();
