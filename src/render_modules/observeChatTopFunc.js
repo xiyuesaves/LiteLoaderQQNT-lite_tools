@@ -1,7 +1,7 @@
 import { first } from "./first.js";
 import { options, updateOptions } from "./options.js";
 import { logs } from "./logs.js";
-const log = logs("窗口顶部功能列表").log;
+const log = new logs("窗口顶部功能列表").log;
 
 let observe;
 /**
@@ -39,7 +39,7 @@ function observeChatTopFunc() {
   }
 
   if (document.querySelector(".panel-header__action .func-bar") && first("observePanelHeaderFunctions")) {
-    log("开始监听顶部功能列表", first("observePanelHeaderFunctions"));
+    log("已捕获指定元素");
     disabledFunctions();
     updateOptions(disabledFunctions);
     observe.observe(document.querySelector(".panel-header__action .func-bar"), {
