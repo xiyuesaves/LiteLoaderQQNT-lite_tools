@@ -1,6 +1,6 @@
 import { options, updateOptions } from "./options.js";
 import { logs } from "./logs.js";
-const log = logs("本地表情包模块").log;
+const log = new logs("本地表情包模块").log;
 
 const svg = `<?xml version="1.0" encoding="utf-8"?>
 <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -38,7 +38,7 @@ updateOptions((opt) => {
     document.body.classList.remove("lite-tools-showLocalEmoticons");
   }
 });
-log("本地表情模块已引入");
+log("模块已加载");
 
 /**
  * 初始化本地表情包功能

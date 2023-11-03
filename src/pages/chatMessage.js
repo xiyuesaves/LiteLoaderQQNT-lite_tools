@@ -30,7 +30,7 @@ import { localEmoticons } from "../render_modules/localEmoticons.js";
 initStyle();
 hookVue3();
 addEventqContextMenu();
-touchMoveSelectin();
+touchMoveSelectin("chat-msg-area");
 
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {

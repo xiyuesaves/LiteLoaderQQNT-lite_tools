@@ -6,11 +6,7 @@ window.logs = () => {
   });
 };
 
-function logs(moduleName) {
-  return new NewLogs(moduleName);
-}
-
-class NewLogs {
+class logs {
   constructor(moduleName) {
     this.moduleName = moduleName;
     this.log = (...args) => {
