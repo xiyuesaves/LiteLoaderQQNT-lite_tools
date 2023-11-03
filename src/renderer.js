@@ -2,7 +2,15 @@
  * @author xiyuesaves
  * @date 2023-11-03
  */
+
+// hook VUE
+import { hookVue3 } from "./render_modules/hookVue3.js";
+// 初始化样式数据
+import { initStyle } from "./render_modules/initStyle.js";
+
 function onLoad() {
+  hookVue3();
+  initStyle();
   /**
    * 监听页面 hash 变动
    */

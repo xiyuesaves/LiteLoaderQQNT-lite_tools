@@ -1,10 +1,6 @@
 import { options, updateOptions } from "../render_modules/options.js";
-// hook VUE
-import { hookVue3 } from "../render_modules/hookVue3.js";
 // 右键菜单相关操作
 import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
-// 初始化样式数据
-import { initStyle } from "../render_modules/initStyle.js";
 // 撤回事件监听
 import { newMessageRecall } from "../render_modules/messageRecall.js";
 // 消息列表监听
@@ -24,8 +20,6 @@ import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
 import { localEmoticons } from "../render_modules/localEmoticons.js";
 
-initStyle();
-hookVue3();
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
 chatMessageList();
