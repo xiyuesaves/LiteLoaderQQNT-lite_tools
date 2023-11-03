@@ -1,5 +1,3 @@
-// 配置信息
-import { options, updateOptions } from "../render_modules/options.js";
 // hook VUE
 import { hookVue3 } from "../render_modules/hookVue3.js";
 // 右键菜单相关操作
@@ -20,8 +18,6 @@ import { observeChatBox } from "../render_modules/observeChatBox.js";
 import { chatMessageList } from "../render_modules/chatMessageList.js";
 // 阻止拖拽多选消息
 import { touchMoveSelectin } from "../render_modules/touchMoveSelectin.js";
-// 首次执行检测，只有第一次执行时返回true
-import { first, refresh } from "../render_modules/first.js";
 // 更新输入框上方功能列表
 import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
@@ -31,6 +27,9 @@ initStyle();
 hookVue3();
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
+chatMessageList();
+updateWallpaper();
+newMessageRecall();
 
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
@@ -38,10 +37,12 @@ observe.observe(document.body, {
   attributes: true,
   subtree: true,
 });
-
 chatMessage();
+
 function chatMessage() {
-  console.log("监听器更新");
   localEmoticons();
   observeChatTopFunc();
+  observerChatArea();
+  observeChatBox();
+  observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
 }
