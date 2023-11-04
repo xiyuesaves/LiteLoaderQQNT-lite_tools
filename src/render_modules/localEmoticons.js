@@ -25,6 +25,7 @@ let showEmoticons = false;
 let insertImg = true;
 let ckeditorInstance;
 let ckeditEditorModel;
+let quickPreviewEl;
 
 if (options.localEmoticons.enabled) {
   document.body.classList.add("lite-tools-showLocalEmoticons");
@@ -67,6 +68,10 @@ function localEmoticons() {
   if (!htmoDom) {
     loadDom();
   }
+
+  /**
+   * 插入图标逻辑
+   */
   const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
   if (!barIcon) {
     barIcon = document.createElement("div");
@@ -89,6 +94,39 @@ function localEmoticons() {
     targetPosition.appendChild(barIcon);
     log("嵌入图标");
   }
+
+  function changeListSize() {
+    const previewList = document.querySelector(".preview-list");
+    previewList.style.height = quickPreviewEl.offsetWidth + "px";
+    previewList.style.width = quickPreviewEl.offsetHeight + "px";
+  }
+  /**
+   * 快速选择栏插入位置
+   */
+  const chatMessagePosition = document.querySelector(".expression-bar .sticker-wrapper.expression-bar-inner");
+  if (!quickPreviewEl) {
+    quickPreviewEl = document.createElement("div");
+    quickPreviewEl.classList.add("lite-tools-sticker-bar");
+    const previewList = document.createElement("div");
+    previewList.classList.add("preview-list");
+    quickPreviewEl.appendChild(previewList);
+
+    const resizeObserver = new ResizeObserver(changeListSize);
+    resizeObserver.observe(quickPreviewEl);
+
+    // 测试
+    for (let index = 0; index < 200; index++) {
+      const previewItem = document.createElement("div");
+      previewItem.classList.add("preview-item");
+      previewItem.innerHTML = index;
+      previewList.appendChild(previewItem);
+    }
+    chatMessagePosition.appendChild(quickPreviewEl);
+    changeListSize();
+  } else {
+    chatMessagePosition.appendChild(quickPreviewEl);
+    changeListSize();
+  }
 }
 
 /**
@@ -99,9 +137,34 @@ function loadEditorModel() {
   if (document.querySelector(".ck.ck-content.ck-editor__editable") && document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance) {
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
+
+    const observe = new MutationObserver(() => {
+      const msg = ckeditorInstance.getData();
+      log(msg);
+      if (msg.includes("/abbc")) {
+        ckeditorInstance.setData(msg.replace("/abbc", ""));
+        // 重置光标位置到最后
+        moveCursorToEnd();
+      }
+    });
+    observe.observe(document.querySelector(".ck.ck-content.ck-editor__editable"), {
+      subtree: true,
+      attributes: false,
+      childList: true,
+    });
   } else {
     setTimeout(loadEditorModel, 100);
   }
+}
+
+/**
+ * 光标移动到最后
+ */
+function moveCursorToEnd() {
+  const select = window.getSelection();
+  const msg_list = document.querySelector(".ck.ck-content");
+  select.selectAllChildren(msg_list);
+  select.collapseToEnd();
 }
 
 /**
@@ -177,9 +240,13 @@ function insert(event) {
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   const src = decodeURIComponent(event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"));
   if (ckeditEditorModel) {
+    const msg = ckeditorInstance.getData();
     ckeditEditorModel.change((writer) => {
       const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
       writer.insert(writerEl, position);
+      if (!msg) {
+        moveCursorToEnd();
+      }
     });
     showEmoticons = false;
     barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
