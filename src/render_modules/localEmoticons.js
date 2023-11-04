@@ -23,9 +23,13 @@ let openFullPreview = false;
 let openFullPreviewTO = null;
 let showEmoticons = false;
 let insertImg = true;
+let emoticonsListArr = [];
+let forList = [];
+let regOut;
 let ckeditorInstance;
 let ckeditEditorModel;
 let quickPreviewEl;
+let previewListEl;
 
 if (options.localEmoticons.enabled) {
   document.body.classList.add("lite-tools-showLocalEmoticons");
@@ -96,9 +100,15 @@ function localEmoticons() {
   }
 
   function changeListSize() {
-    const previewList = document.querySelector(".preview-list");
-    previewList.style.height = quickPreviewEl.offsetWidth + "px";
-    previewList.style.width = quickPreviewEl.offsetHeight + "px";
+    if (forList.length) {
+      let fixedWidth = forList.length * 80 - 10 + 20;
+      let maxWidth = document.querySelector(".expression-bar").offsetWidth - 28;
+      if (fixedWidth > maxWidth) {
+        fixedWidth = maxWidth;
+      }
+      quickPreviewEl.style.width = fixedWidth + "px";
+      previewListEl.style.height = fixedWidth + "px";
+    }
   }
   /**
    * 快速选择栏插入位置
@@ -107,20 +117,31 @@ function localEmoticons() {
   if (!quickPreviewEl) {
     quickPreviewEl = document.createElement("div");
     quickPreviewEl.classList.add("lite-tools-sticker-bar");
-    const previewList = document.createElement("div");
-    previewList.classList.add("preview-list");
-    quickPreviewEl.appendChild(previewList);
+    previewListEl = document.createElement("div");
+    previewListEl.classList.add("preview-list");
+    quickPreviewEl.appendChild(previewListEl);
 
+    // 监听窗口宽度变化
     const resizeObserver = new ResizeObserver(changeListSize);
-    resizeObserver.observe(quickPreviewEl);
+    resizeObserver.observe(document.querySelector(".expression-bar"));
 
-    // 测试
-    for (let index = 0; index < 200; index++) {
-      const previewItem = document.createElement("div");
-      previewItem.classList.add("preview-item");
-      previewItem.innerHTML = index;
-      previewList.appendChild(previewItem);
-    }
+    // 处理鼠标相关事件
+    quickPreviewEl.addEventListener("mousedown", (event) => {
+      if (doesParentHaveClass(event.target, "preview-item", "lite-tools-sticker-bar")) {
+        mouseDown(event);
+      }
+    });
+    quickPreviewEl.addEventListener("mousemove", (event) => {
+      if (doesParentHaveClass(event.target, "preview-item", "lite-tools-sticker-bar")) {
+        mouseEnter(event);
+      }
+    });
+    quickPreviewEl.addEventListener("click", (event) => {
+      if (doesParentHaveClass(event.target, "preview-item", "lite-tools-sticker-bar")) {
+        insert(event);
+      }
+    });
+
     chatMessagePosition.appendChild(quickPreviewEl);
     changeListSize();
   } else {
@@ -138,15 +159,7 @@ function loadEditorModel() {
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
 
-    const observe = new MutationObserver(() => {
-      const msg = ckeditorInstance.getData();
-      log(msg);
-      if (msg.includes("/abbc")) {
-        ckeditorInstance.setData(msg.replace("/abbc", ""));
-        // 重置光标位置到最后
-        moveCursorToEnd();
-      }
-    });
+    const observe = new MutationObserver(quickInsertion);
     observe.observe(document.querySelector(".ck.ck-content.ck-editor__editable"), {
       subtree: true,
       attributes: false,
@@ -154,6 +167,62 @@ function loadEditorModel() {
     });
   } else {
     setTimeout(loadEditorModel, 100);
+  }
+}
+
+/**
+ * 处理快捷输入表情命令
+ */
+
+function quickInsertion() {
+  const msg = ckeditorInstance.getData();
+  const msgArr = msg.split("<p>");
+  const lastStr = msgArr[msgArr.length - 1];
+  regOut = lastStr.replace(/<[^>]+>/g, "<element>").match(/\/([^\/]*)(?=<element>$)/);
+  let filterEmocicons = [];
+  if (regOut) {
+    log(regOut);
+    let emoticonsName = regOut[0].slice(1);
+    filterEmocicons = emoticonsListArr.filter((emoticons) => emoticons.name.includes(emoticonsName));
+  }
+
+  if (lastStr.slice(-5) === "/</p>" || filterEmocicons.length) {
+    if (!quickPreviewEl.classList.contains("show")) {
+      quickPreviewEl.classList.add("show");
+    }
+
+    // 如果没有过滤数据，则使用全部图片
+    forList = filterEmocicons.length ? filterEmocicons : emoticonsListArr;
+
+    // 计算浮动窗口宽度
+    let fixedWidth = forList.length * 80 - 10 + 20;
+    let maxWidth = document.querySelector(".expression-bar").offsetWidth - 28;
+    if (fixedWidth > maxWidth) {
+      fixedWidth = maxWidth;
+    }
+    quickPreviewEl.style.width = fixedWidth + "px";
+    previewListEl.style.height = fixedWidth + "px";
+
+    // 清理上一次的数据
+    document.querySelectorAll(".preview-list .preview-item").forEach((el) => el.remove());
+
+    // 插入过滤后的表情列表
+    for (let i = 0; i < forList.length; i++) {
+      const previewItem = document.createElement("div");
+      previewItem.classList.add("preview-item");
+      const skiterPreview = document.createElement("div");
+      skiterPreview.classList.add("skiter-preview");
+      const img = document.createElement("img");
+      img.setAttribute("lazy", "");
+      img.src = "llqqnt://local-file/" + forList[i].path;
+      skiterPreview.appendChild(img);
+      previewItem.appendChild(skiterPreview);
+      previewListEl.appendChild(previewItem);
+    }
+  } else {
+    if (quickPreviewEl.classList.contains("show")) {
+      quickPreviewEl.classList.remove("show");
+    }
   }
 }
 
@@ -235,21 +304,33 @@ function insert(event) {
   if (!insertImg) {
     return;
   }
-  const selection = ckeditEditorModel.document.selection;
-  const position = selection.getFirstPosition();
+
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   const src = decodeURIComponent(event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"));
   if (ckeditEditorModel) {
     const msg = ckeditorInstance.getData();
-    ckeditEditorModel.change((writer) => {
-      const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
-      writer.insert(writerEl, position);
-      if (!msg) {
+    // 移除命令文本
+    if (regOut) {
+      ckeditorInstance.setData(msg.replace(new RegExp(`${regOut[0]}<\\/p>$`), "</p>"));
+      setTimeout(() => {
         moveCursorToEnd();
-      }
-    });
-    showEmoticons = false;
-    barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
+      }, 10);
+    }
+    setTimeout(() => {
+      const selection = ckeditEditorModel.document.selection;
+      const position = selection.getFirstPosition();
+      // 编辑输入框内容
+      ckeditEditorModel.change((writer) => {
+        // 插入表情
+        const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
+        writer.insert(writerEl, position);
+        if (!msg) {
+          moveCursorToEnd();
+        }
+      });
+      showEmoticons = false;
+      barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
+    }, 20);
   }
 }
 
@@ -270,14 +351,13 @@ async function loadDom() {
 
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(emoticonsList);
-  // 处理表情包监听事件逻辑
+  // 处理鼠标相关事件
   emoticonsMain.addEventListener("mousedown", (event) => {
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
       mouseDown(event);
     }
   });
   emoticonsMain.addEventListener("mousemove", (event) => {
-    log("mover");
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
       mouseEnter(event);
     }
@@ -315,6 +395,11 @@ function doesParentHaveClass(element, className, stopClassName) {
  * @param {Array} emoticonsList 表情包列表
  */
 function appendEmoticons(emoticonsList) {
+  // 平铺表情对象数组
+  emoticonsListArr = emoticonsList.flatMap((emoticons) => {
+    return emoticons.list;
+  });
+
   document.querySelectorAll(".folder-item").forEach((item) => {
     item.remove();
   });
@@ -332,6 +417,7 @@ function appendEmoticons(emoticonsList) {
       const skiterPreview = document.createElement("div");
       skiterPreview.classList.add("skiter-preview");
       const img = document.createElement("img");
+      img.setAttribute("lazy", "");
       img.src = "llqqnt://local-file/" + item.path;
       skiterPreview.appendChild(img);
       categoryItem.append(skiterPreview);

@@ -616,3 +616,53 @@
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .skiter-name {
   display: none;
 }
+
+.lite-tools-sticker-bar {
+  position: absolute;
+  max-width: calc(100% - 28px);
+  height: 90px;
+  bottom: 10px;
+  left: 8px;
+  z-index: -1;
+  backdrop-filter: var(--emoticons-main-bf);
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: 150ms;
+  transform: translateY(5px);
+  opacity: 0;
+  pointer-events: none;
+}
+.lite-tools-sticker-bar.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.lite-tools-sticker-bar .preview-list {
+  width: 90px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 0;
+  overflow: auto;
+  transform-origin: top left;
+  transform: translateY(90px) rotate(-90deg);
+}
+.lite-tools-sticker-bar .preview-list .preview-item {
+  transform: rotate(90deg);
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.lite-tools-sticker-bar .preview-list .preview-item img {
+  pointer-events: none;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.lite-tools-sticker-bar .preview-list .preview-item:last-child {
+  margin-bottom: 0;
+}

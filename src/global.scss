@@ -700,3 +700,54 @@
     }
   }
 }
+
+.lite-tools-sticker-bar {
+  position: absolute;
+  max-width: calc(100% - 28px);
+  height: 90px;
+  bottom: 10px;
+  left: 8px;
+  z-index: -1;
+  backdrop-filter: var(--emoticons-main-bf);
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: 150ms;
+  transform: translateY(5px);
+  opacity: 0;
+  pointer-events: none;
+  &.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .preview-list {
+    width: 90px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 0;
+    overflow: auto;
+    transform-origin: top left;
+    transform: translateY(90px) rotate(-90deg);
+    .preview-item {
+      transform: rotate(90deg);
+      width: calc(90px - 20px);
+      height: calc(90px - 20px);
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
+      img {
+        pointer-events: none;
+        user-select: none;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
