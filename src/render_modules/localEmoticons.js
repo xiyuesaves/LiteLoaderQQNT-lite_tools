@@ -54,7 +54,7 @@ function localEmoticons() {
   if (!ckeditEditorModel) {
     loadEditorModel();
     lite_tools.updateEmoticons((_, list) => {
-      log("渲染端更新列表", list);
+      log("渲染端更新列表");
       appendEmoticons(list);
     });
   }

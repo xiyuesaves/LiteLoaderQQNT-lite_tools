@@ -41,7 +41,7 @@ function processMessageElement() {
   validItemList.unshift(lastMessageNodeList.pop());
   lastMessageNodeList = currentItemList;
   // 所有功能使用同一个循环执行
-  log("---新循环---", currentItemList.length);
+  // log("---新循环---", currentItemList.length);
   for (let index = 0; index < validItemList.length; index++) {
     const el = validItemList[index];
     const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;

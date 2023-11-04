@@ -30,7 +30,6 @@ function touchMoveSelectin(className) {
       listenTarget = true;
     }
     if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
-      log("拖拽事件", interception);
       if (interception) {
         event.preventDefault();
         event.stopPropagation();

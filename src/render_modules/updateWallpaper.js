@@ -57,7 +57,7 @@ async function updateWallpaper() {
   if (first("wallpaper")) {
     log("模块已加载");
   } else {
-    log("更新背景");
+    log("重载背景");
   }
 }
 

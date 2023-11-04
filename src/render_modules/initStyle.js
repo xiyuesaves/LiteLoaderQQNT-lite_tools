@@ -1,4 +1,6 @@
 import { options } from "./options.js";
+import { logs } from "./logs.js";
+const log = new logs("全局样式").log;
 
 /**
  * 注入全局样式
@@ -35,5 +37,6 @@ async function initStyle() {
       element.textContent = message;
     }
   });
+  log("模块已加载");
 }
 export { initStyle };
