@@ -47,7 +47,6 @@ log("模块已加载");
 
 /**
  * 初始化本地表情包功能
- * @returns
  */
 function localEmoticons() {
   if (document.querySelector(".lite-tools-bar")) {
@@ -99,6 +98,9 @@ function localEmoticons() {
     log("嵌入图标");
   }
 
+  /**
+   * 监听聊天窗口尺寸变化
+   */
   function changeListSize() {
     if (forList.length) {
       let fixedWidth = forList.length * 80 - 10 + 20;
@@ -110,6 +112,7 @@ function localEmoticons() {
       previewListEl.style.height = fixedWidth + "px";
     }
   }
+
   /**
    * 快速选择栏插入位置
    */
@@ -155,7 +158,10 @@ function localEmoticons() {
  */
 function loadEditorModel() {
   log("尝试捕获编辑器实例");
-  if (document.querySelector(".ck.ck-content.ck-editor__editable") && document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance) {
+  if (
+    document.querySelector(".ck.ck-content.ck-editor__editable") &&
+    document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance
+  ) {
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
 
@@ -173,11 +179,11 @@ function loadEditorModel() {
 /**
  * 处理快捷输入表情命令
  */
-
 function quickInsertion() {
   const msg = ckeditorInstance.getData();
   const msgArr = msg.split("<p>");
   const lastStr = msgArr[msgArr.length - 1];
+  // 一个很抽象的编辑框文本处理方案
   regOut = lastStr.replace(/<[^>]+>/g, "<element>").match(/\/([^\/]*)(?=<element>$)/);
   let filterEmocicons = [];
   if (regOut) {
@@ -304,10 +310,11 @@ function insert(event) {
   if (!insertImg) {
     return;
   }
-
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
-  const src = decodeURIComponent(event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"));
   if (ckeditEditorModel) {
+    const src = decodeURIComponent(
+      event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"),
+    );
     const msg = ckeditorInstance.getData();
     // 移除命令文本
     if (regOut) {
