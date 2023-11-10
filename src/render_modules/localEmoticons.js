@@ -165,10 +165,6 @@ function loadEditorModel() {
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
 
-    // 测试暴露
-    window.ckeditorInstance = ckeditorInstance;
-    window.ckeditEditorModel = ckeditEditorModel;
-
     const observe = new MutationObserver(quickInsertion);
     observe.observe(document.querySelector(".ck.ck-content.ck-editor__editable"), {
       subtree: true,
