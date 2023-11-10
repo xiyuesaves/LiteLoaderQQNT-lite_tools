@@ -123,7 +123,7 @@ function processMessageElement() {
       const msgEl = el.querySelector(".message-content__wrapper");
       // +1插入元素
       const replaceEl = el.querySelector(".message-content-replace");
-      if (msgEl && el.querySelector(":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container") && !replaceEl) {
+      if (msgEl && el.querySelector(":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container,.msg-content-container") && !replaceEl) {
         const newReplaceEl = document.createElement("div");
         const msgId = el.id;
         newReplaceEl.classList.add("message-content-replace");
