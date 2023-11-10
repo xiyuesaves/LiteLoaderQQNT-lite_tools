@@ -165,6 +165,10 @@ function loadEditorModel() {
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
 
+    // 测试暴露
+    window.ckeditorInstance = ckeditorInstance;
+    window.ckeditEditorModel = ckeditEditorModel;
+
     const observe = new MutationObserver(quickInsertion);
     observe.observe(document.querySelector(".ck.ck-content.ck-editor__editable"), {
       subtree: true,
@@ -233,16 +237,6 @@ function quickInsertion() {
 }
 
 /**
- * 光标移动到最后
- */
-function moveCursorToEnd() {
-  const select = window.getSelection();
-  const msg_list = document.querySelector(".ck.ck-content");
-  select.selectAllChildren(msg_list);
-  select.collapseToEnd();
-}
-
-/**
  * 捕获全局鼠标按键抬起事件
  * @param {MouseEvent} event
  */
@@ -264,7 +258,10 @@ function globalMouseUp(event) {
  * @param {MouseEvent} event
  */
 function globalMouseDown(event) {
-  if (!doesParentHaveClass(event.target, "lite-tools-bar")) {
+  if (
+    !doesParentHaveClass(event.target, "lite-tools-bar") &&
+    barIcon.querySelector(".lite-tools-local-emoticons-main")
+  ) {
     showEmoticons = false;
     barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
     barIcon.querySelector(".lite-tools-q-tooltips__content").classList.remove("hidden");
@@ -315,29 +312,27 @@ function insert(event) {
     const src = decodeURIComponent(
       event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"),
     );
-    const msg = ckeditorInstance.getData();
-    // 移除命令文本
+    // 如果有匹配命令值，则先删除
     if (regOut) {
-      ckeditorInstance.setData(msg.replace(new RegExp(`${regOut[0]}<\\/p>$`), "</p>"));
-      setTimeout(() => {
-        moveCursorToEnd();
-      }, 10);
-    }
-    setTimeout(() => {
-      const selection = ckeditEditorModel.document.selection;
-      const position = selection.getFirstPosition();
-      // 编辑输入框内容
       ckeditEditorModel.change((writer) => {
-        // 插入表情
-        const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
-        writer.insert(writerEl, position);
-        if (!msg) {
-          moveCursorToEnd();
+        writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
+        for (let i = 0; i < regOut[0].length; i++) {
+          ckeditorInstance.execute("delete");
         }
       });
-      showEmoticons = false;
-      barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
-    }, 20);
+    }
+
+    const selection = ckeditEditorModel.document.selection;
+    const position = selection.getFirstPosition();
+
+    ckeditEditorModel.change((writer) => {
+      writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
+      // 插入表情
+      const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
+      writer.insert(writerEl, position);
+    });
+    showEmoticons = false;
+    barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
   }
 }
 
