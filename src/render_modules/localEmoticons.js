@@ -180,6 +180,13 @@ function loadEditorModel() {
  * 处理快捷输入表情命令
  */
 function quickInsertion() {
+  if (!options.localEmoticons.enabled || !options.localEmoticons.switchQuickEmoticons) {
+    if (quickPreviewEl.classList.contains("show")) {
+      quickPreviewEl.classList.remove("show");
+    }
+    return;
+  }
+
   const msg = ckeditorInstance.getData();
   const msgArr = msg.split("<p>");
   const lastStr = msgArr[msgArr.length - 1];

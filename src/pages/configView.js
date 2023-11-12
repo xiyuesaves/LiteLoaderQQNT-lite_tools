@@ -85,7 +85,7 @@ async function onConfigView(view) {
         debounce(() => {
           options.wordSearch.searchUrl = searchEl.value;
           lite_tools.setOptions(options);
-        }, 100)
+        }, 100),
       );
     }
   });
@@ -105,7 +105,7 @@ async function onConfigView(view) {
         debounce(() => {
           options.imageSearch.searchUrl = searchEl.value;
           lite_tools.setOptions(options);
-        }, 100)
+        }, 100),
       );
     }
   });
@@ -165,8 +165,10 @@ async function onConfigView(view) {
   addSwitchEventlistener("localEmoticons.enabled", ".switchLocalEmoticons", (_, enabled) => {
     if (enabled) {
       view.querySelector(".select-folder-input").classList.remove("disabled-input");
+      view.querySelector(".switchQuickEmoticons").parentElement.classList.remove("disabled-switch");
     } else {
       view.querySelector(".select-folder-input").classList.add("disabled-input");
+      view.querySelector(".switchQuickEmoticons").parentElement.classList.add("disabled-switch");
     }
     if (first("switchLocalEmoticons")) {
       const selectFolderEl = view.querySelector(".select-folder-input input");
@@ -178,6 +180,9 @@ async function onConfigView(view) {
       });
     }
   });
+
+  // 快捷输入表情功能
+  addSwitchEventlistener("localEmoticons.switchQuickEmoticons", ".switchQuickEmoticons");
 
   // 添加消息后缀
   addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {
@@ -194,7 +199,7 @@ async function onConfigView(view) {
         debounce(() => {
           options.tail.content = tailEl.value;
           lite_tools.setOptions(options);
-        }, 100)
+        }, 100),
       );
     }
   });

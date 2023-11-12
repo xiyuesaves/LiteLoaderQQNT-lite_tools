@@ -10,6 +10,7 @@
   },
   "localEmoticons": {
     "enabled": false,
+    "switchQuickEmoticons": false,
     "localPath": ""
   },
   "sidebar": {
