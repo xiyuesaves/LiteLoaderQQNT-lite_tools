@@ -537,10 +537,10 @@
 
 .lite-tools-local-emoticons-main {
   position: absolute;
-  width: 330px;
+  width: 332px;
   height: 450px;
   max-height: calc(100vh - var(--inputAreaHeight) - 66px - 20px);
-  backdrop-filter: var(--emoticons-main-bf);
+  background-color: var(--background-color-cb);
   z-index: 2000;
   bottom: 42px;
   right: -80%;
@@ -551,6 +551,7 @@
   transform-origin: right bottom;
   opacity: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 .lite-tools-local-emoticons-main.show {
   transform: translateY(0px) scale(1);
@@ -561,29 +562,36 @@
   width: 100%;
   height: auto;
   max-height: 100%;
-  overflow: hidden;
   overflow-y: auto;
-  padding: 8px 0;
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item {
   width: 100%;
   height: auto;
   box-sizing: border-box;
-  padding: 2px 5px;
+  position: relative;
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-name {
+  width: 100%;
+  padding: 0 6px;
+  line-height: 28px;
   font-size: 14px;
   color: var(--emoticons-folder-name-color);
+  backdrop-filter: var(--emoticons-main-bf);
   font-weight: bold;
-  margin-bottom: 4px;
+  position: sticky;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list {
   width: 100%;
+  padding: 0 6px;
   height: auto;
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
   justify-content: flex-start;
+  margin-bottom: 6px;
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item {
   width: 64px;
