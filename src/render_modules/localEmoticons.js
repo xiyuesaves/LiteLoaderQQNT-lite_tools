@@ -23,6 +23,7 @@ let openFullPreview = false;
 let openFullPreviewTO = null;
 let showEmoticons = false;
 let insertImg = true;
+let folderInfos = [];
 let emoticonsListArr = [];
 let forList = [];
 let regOut;
@@ -359,6 +360,26 @@ async function loadDom() {
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(emoticonsList);
 
+  // 监听列表滚动
+  emoticonsMain.querySelector(".folder-list").addEventListener("scroll", (event) => {
+    let top = 0;
+    for (let i = 0; i < folderInfos.length; i++) {
+      const el = folderInfos[i];
+      top += el.height;
+      if (top >= event.target.scrollTop) {
+        document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
+        const activeEl = document.querySelector(`.folder-icon-item .icon-box[index="${el.index}"]`).parentElement;
+        const folderScroll = document.querySelector(".folder-scroll");
+        activeEl.classList.add("active");
+        folderScroll.scrollTo({
+          top: activeEl.offsetTop - folderScroll.offsetHeight / 2,
+          behavior: "smooth",
+        });
+        break;
+      }
+    }
+  });
+
   // 处理鼠标相关事件
   emoticonsMain.addEventListener("mousedown", (event) => {
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
@@ -371,10 +392,6 @@ async function loadDom() {
     }
   });
   emoticonsMain.addEventListener("click", (event) => {
-    log(
-      event.target.className,
-      doesParentHaveClass(event.target, "folder-icon-item", "lite-tools-local-emoticons-main"),
-    );
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
       insert(event);
     } else if (doesParentHaveClass(event.target, "folder-icon-item", "lite-tools-local-emoticons-main")) {
@@ -392,12 +409,12 @@ function jumpFolder(event) {
   if (!index) {
     return;
   }
-  document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
-  event.target.parentElement.classList.add("active");
+  // document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
+  // event.target.parentElement.classList.add("active");
   const targetItem = document.querySelector(`.folder-item[index="${index}"]`);
   document.querySelector(".lite-tools-local-emoticons-main .folder-list").scrollTo({
     top: targetItem.offsetTop,
-    behavior: "smooth",
+    // behavior: "smooth",
   });
 }
 
@@ -431,6 +448,8 @@ function appendEmoticons(emoticonsList) {
   emoticonsListArr = emoticonsList.flatMap((emoticons) => {
     return emoticons.list;
   });
+  // 初始化表情文件夹信息
+  folderInfos = [];
   // 清理dom结构
   document
     .querySelectorAll(
@@ -478,6 +497,11 @@ function appendEmoticons(emoticonsList) {
     });
     folderEl.append(categoryName, categoryList);
     folderList.appendChild(folderEl);
+    folderInfos.push({
+      height: folderEl.offsetHeight,
+      index: index,
+      name: folder.name,
+    });
   });
 }
 
