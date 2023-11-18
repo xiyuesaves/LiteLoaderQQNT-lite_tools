@@ -1,4 +1,5 @@
 import { options, updateOptions } from "./options.js";
+import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
 const log = new logs("本地表情包模块").log;
 
@@ -361,24 +362,27 @@ async function loadDom() {
   appendEmoticons(emoticonsList);
 
   // 监听列表滚动
-  emoticonsMain.querySelector(".folder-list").addEventListener("scroll", (event) => {
-    let top = 0;
-    for (let i = 0; i < folderInfos.length; i++) {
-      const el = folderInfos[i];
-      top += el.height;
-      if (top >= event.target.scrollTop) {
-        document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
-        const activeEl = document.querySelector(`.folder-icon-item .icon-box[index="${el.index}"]`).parentElement;
-        const folderScroll = document.querySelector(".folder-scroll");
-        activeEl.classList.add("active");
-        folderScroll.scrollTo({
-          top: activeEl.offsetTop - folderScroll.offsetHeight / 2,
-          behavior: "smooth",
-        });
-        break;
+  emoticonsMain.querySelector(".folder-list").addEventListener(
+    "scroll",
+    debounce((event) => {
+      let top = 0;
+      for (let i = 0; i < folderInfos.length; i++) {
+        const el = folderInfos[i];
+        top += el.height;
+        if (top >= event.target.scrollTop) {
+          document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
+          const activeEl = document.querySelector(`.folder-icon-item .icon-box[index="${el.index}"]`).parentElement;
+          const folderScroll = document.querySelector(".folder-scroll");
+          activeEl.classList.add("active");
+          folderScroll.scrollTo({
+            top: activeEl.offsetTop - folderScroll.offsetHeight / 2,
+            behavior: "smooth",
+          });
+          break;
+        }
       }
-    }
-  });
+    }, 10),
+  );
 
   // 处理鼠标相关事件
   emoticonsMain.addEventListener("mousedown", (event) => {
