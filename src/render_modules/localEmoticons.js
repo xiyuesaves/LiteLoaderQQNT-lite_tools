@@ -500,7 +500,4 @@ function openLocalEmoticons() {
   }
 }
 
-window.localEmoticons = localEmoticons;
-window.loadDom = loadDom;
-
 export { localEmoticons };
