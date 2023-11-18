@@ -40,7 +40,7 @@ LiteLoaderQQNT本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQ
 
 ## 声明
 
-### 一切开发旨在学习，请勿用于非法用途
+### 一切开发旨在学习，请勿用于非法和商业用途
 
 - lite_tools 是完全免费且开放源代码的软件，仅供学习和娱乐用途使用。
 - lite_tools 不会通过任何方式强制收取费用，或对使用者提出物质条件。
