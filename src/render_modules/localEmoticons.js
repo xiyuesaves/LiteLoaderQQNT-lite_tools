@@ -358,6 +358,7 @@ async function loadDom() {
 
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(emoticonsList);
+
   // 处理鼠标相关事件
   emoticonsMain.addEventListener("mousedown", (event) => {
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
@@ -370,9 +371,33 @@ async function loadDom() {
     }
   });
   emoticonsMain.addEventListener("click", (event) => {
+    log(
+      event.target.className,
+      doesParentHaveClass(event.target, "folder-icon-item", "lite-tools-local-emoticons-main"),
+    );
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
       insert(event);
+    } else if (doesParentHaveClass(event.target, "folder-icon-item", "lite-tools-local-emoticons-main")) {
+      jumpFolder(event);
     }
+  });
+}
+
+/**
+ * 跳转到图标对应表情文件夹
+ * @param {MouseEvent} event
+ */
+function jumpFolder(event) {
+  const index = event.target.getAttribute("index");
+  if (!index) {
+    return;
+  }
+  document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
+  event.target.parentElement.classList.add("active");
+  const targetItem = document.querySelector(`.folder-item[index="${index}"]`);
+  document.querySelector(".lite-tools-local-emoticons-main .folder-list").scrollTo({
+    top: targetItem.offsetTop,
+    behavior: "smooth",
   });
 }
 
@@ -406,18 +431,39 @@ function appendEmoticons(emoticonsList) {
   emoticonsListArr = emoticonsList.flatMap((emoticons) => {
     return emoticons.list;
   });
-
-  document.querySelectorAll(".folder-item").forEach((item) => {
-    item.remove();
-  });
-  emoticonsList.forEach((folder) => {
+  // 清理dom结构
+  document
+    .querySelectorAll(
+      ".lite-tools-local-emoticons-main .folder-item,.lite-tools-local-emoticons-main .folder-icon-list .folder-icon-item",
+    )
+    .forEach((item) => {
+      item.remove();
+    });
+  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
+  const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
+  // 插入新的表情数据
+  emoticonsList.forEach((folder, index) => {
+    // 创建表情分类
     const folderEl = document.createElement("div");
     folderEl.classList.add("folder-item");
+    folderEl.setAttribute("index", index);
     const categoryName = document.createElement("div");
     categoryName.classList.add("category-name");
     categoryName.innerText = folder.name;
     const categoryList = document.createElement("div");
     categoryList.classList.add("category-list");
+    // 创建小图标
+    const folderIcon = document.createElement("div");
+    folderIcon.classList.add("folder-icon-item");
+    const iconEl = document.createElement("img");
+    iconEl.src = "llqqnt://local-file/" + folder.list[0].path;
+    const iconBox = document.createElement("div");
+    iconBox.classList.add("icon-box");
+    iconBox.setAttribute("index", index);
+    iconBox.appendChild(iconEl);
+    folderIcon.appendChild(iconBox);
+    folderScroll.appendChild(folderIcon);
+    // 插入表情文件
     folder.list.forEach((item) => {
       const categoryItem = document.createElement("div");
       categoryItem.classList.add("category-item");
@@ -431,7 +477,7 @@ function appendEmoticons(emoticonsList) {
       categoryList.appendChild(categoryItem);
     });
     folderEl.append(categoryName, categoryList);
-    document.querySelector(".lite-tools-local-emoticons-main .folder-list").appendChild(folderEl);
+    folderList.appendChild(folderEl);
   });
 }
 
