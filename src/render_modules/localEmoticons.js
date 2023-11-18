@@ -282,7 +282,7 @@ function mouseDown(event) {
       log("执行延迟逻辑");
       openFullPreview = true;
       insertImg = false;
-      document.querySelector(".full-screen-preview img").src = event.target.querySelector("img").src;
+      document.querySelector(".full-screen-preview img").src = event.target.querySelector("img").getAttribute("src");
       document.querySelector(".full-screen-preview").classList.add("show");
     }, 500);
   }
@@ -295,8 +295,10 @@ function mouseDown(event) {
 function mouseEnter(event) {
   if (openFullPreview) {
     const showImg = document.querySelector(".full-screen-preview img");
-    if (showImg.src !== event.target.querySelector("img").src) {
-      showImg.src = event.target.querySelector("img").src;
+    const showImgSrc = showImg.getAttribute("src");
+    const targetSrc = event.target.querySelector("img").getAttribute("src");
+    if (showImgSrc !== targetSrc) {
+      showImg.src = targetSrc;
     }
   }
 }
@@ -312,7 +314,7 @@ function insert(event) {
   }
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   if (ckeditEditorModel) {
-    const src = decodeURIComponent(
+    const src = decodeURI(
       event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"),
     );
     // 如果有匹配命令值，则先删除
