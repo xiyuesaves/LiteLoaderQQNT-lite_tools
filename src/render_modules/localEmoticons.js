@@ -478,6 +478,7 @@ function appendEmoticons(emoticonsList) {
     // 创建小图标
     const folderIcon = document.createElement("div");
     folderIcon.classList.add("folder-icon-item");
+    folderIcon.setAttribute("title", folder.name);
     const iconEl = document.createElement("img");
     iconEl.src = "llqqnt://local-file/" + folder.list[0].path;
     const iconBox = document.createElement("div");
