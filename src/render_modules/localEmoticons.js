@@ -1,22 +1,8 @@
 import { options, updateOptions } from "./options.js";
 import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
+import { localEmoticonsIcon } from "./svg.js";
 const log = new logs("本地表情包模块").log;
-
-const svg = `<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
-<path fill="currentColor" d="M185,190H15c-8.3,0-15-6.7-15-14.9V24.9C0,16.7,6.7,10,15,10h87.7c8.3,0,15,6.7,15,14.9v13.3c0,2.8,2.2,5,5,5H185
-	c8.3,0,15,6.7,15,14.9v116.9C200,183.3,193.3,190,185,190z M20,24.6c-2.6,0-4.7,2.1-4.7,4.7v141.5c0,2.6,2.1,4.7,4.7,4.7H180
-	c2.6,0,4.7-2.1,4.7-4.7V60.6c0-2.6-2.1-4.7-4.7-4.7h-59.6c-7.8,0-15.1-6.3-15.1-14.1V29.3c0-2.6-2.1-4.7-4.7-4.7L20,24.6L20,24.6z"
-	/>
-<path fill="currentColor" d="M51.3,134.5c26.9,26.9,70.6,26.9,97.5,0c0,0,0,0,0,0c2.9-2.9,2.9-7.6,0-10.4c-2.9-2.9-7.6-2.9-10.4,0
-	c-21.2,21.1-55.4,21.1-76.6,0c-2.9-2.9-7.6-2.9-10.4,0C48.4,126.9,48.4,131.6,51.3,134.5C51.3,134.5,51.3,134.5,51.3,134.5z"/>
-<path fill="currentColor" d="M53.8,84.3c0,6.4,5.2,11.5,11.5,11.5s11.5-5.2,11.5-11.5c0-6.4-5.2-11.5-11.5-11.5C59,72.7,53.8,77.9,53.8,84.3L53.8,84.3z"
-	/>
-<path fill="currentColor" d="M123.1,84.3c0,6.4,5.2,11.5,11.5,11.5c6.4,0,11.5-5.2,11.5-11.5c0,0,0,0,0,0c0-6.4-5.2-11.5-11.5-11.5
-	C128.3,72.7,123.1,77.9,123.1,84.3C123.1,84.2,123.1,84.2,123.1,84.3z"/>
-</svg>`;
 
 let barIcon;
 let htmoDom;
@@ -88,7 +74,7 @@ function localEmoticons() {
     qTooltipsContent.classList.add("lite-tools-q-tooltips__content");
     const icon = document.createElement("i");
     icon.classList.add("lite-tools-q-icon");
-    icon.innerHTML = svg;
+    icon.innerHTML = localEmoticonsIcon;
     qTooltipsContent.innerText = "本地表情";
     qTooltips.appendChild(icon);
     qTooltips.appendChild(qTooltipsContent);
