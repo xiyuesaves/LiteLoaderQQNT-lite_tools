@@ -339,7 +339,10 @@ function insert(event) {
       writer.insert(writerEl, position);
     });
     showEmoticons = false;
-    barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
+    // 如果按下了ctrl键，则不关闭窗口面板
+    if (!event.ctrlKey) {
+      barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
+    }
   }
 }
 
@@ -355,6 +358,9 @@ async function loadDom() {
   htmoDom.querySelectorAll("section").forEach((el) => {
     barIcon.appendChild(el);
   });
+  /**
+   * 表情选择面板
+   */
   const emoticonsMain = barIcon.querySelector(".lite-tools-local-emoticons-main");
   // 这里加载本地表情包
 
