@@ -440,35 +440,6 @@
   }
 }
 
-.merge-display {
-  .merge {
-    .message__timestamp {
-      display: none;
-    }
-    .message {
-      padding-bottom: 0 !important;
-    }
-    &.merge-main {
-      .message-container {
-        transition: unset !important;
-      }
-    }
-    &.merge-child {
-      .avatar-span {
-        visibility: hidden !important;
-      }
-      .user-name.no-copy.text-ellipsis {
-        display: none !important;
-      }
-      .message-container {
-        transition: unset !important;
-        padding-top: 0 !important;
-        margin-top: -2px;
-      }
-    }
-  }
-}
-
 // 头像黏贴消息框效果
 .avatar-sticky {
   &.avatar-end {
