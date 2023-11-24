@@ -701,7 +701,7 @@ function onBrowserWindowCreated(window, plugin) {
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
       const msgItem = args[1][0]?.payload?.msgList[0];
-      if (msgItem.elements[0]?.grayTipElement?.revokeElement) {
+      if (options.message.preventMessageRecall && msgItem.elements[0]?.grayTipElement?.revokeElement) {
         if (!msgItem.elements[0].grayTipElement.revokeElement.isSelfOperate) {
           log("捕获到撤回事件，已被阻止");
           const findInCatch = catchMsgList.get(msgItem.msgId);
