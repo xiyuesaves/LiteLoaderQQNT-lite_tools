@@ -4,9 +4,16 @@ import { first } from "./first.js";
 import { logs } from "./logs.js";
 const log = new logs("消息列表处理").log;
 
+const observeConfig = {
+  attributes: true,
+  attributeFilter: ["style"],
+  childList: true,
+  subtree: false,
+};
+
 let lastMessageNodeList = [];
 let childElHeight = new Map();
-let observe, msgItemEl, isForward;
+let observe, msgItemEl, isForward, observerElement;
 /**
  * 通用监听消息列表方法
  * @param {String} msgListEl 消息列表元素类名
@@ -16,18 +23,14 @@ let observe, msgItemEl, isForward;
 async function observerMessageList(msgListEl, msgItemEl_, isForward_ = false) {
   msgItemEl = msgItemEl_;
   isForward = isForward_;
+  observerElement = document.querySelector(msgListEl);
   if (!observe) {
     observe = new MutationObserver(processMessageElement);
   }
-  if (document.querySelector(msgListEl) && first(`chatMessage${msgListEl}`)) {
+  if (observerElement && first(`chatMessage${msgListEl}`)) {
     log("已捕获目标元素", msgListEl);
     processMessageElement();
-    observe.observe(document.querySelector(msgListEl), {
-      attributes: true,
-      attributeFilter: ["style"],
-      childList: true,
-      subtree: false,
-    });
+    observe.observe(observerElement, observeConfig);
   }
 }
 
@@ -35,6 +38,8 @@ async function observerMessageList(msgListEl, msgItemEl_, isForward_ = false) {
  * 消息列表元素处理函数
  */
 function processMessageElement() {
+  // 在执行回调函数时停止监听变动
+  observe.disconnect();
   // 循环元素列表
   const currentItemList = Array.from(document.querySelectorAll(msgItemEl));
   const validItemList = currentItemList;
@@ -55,7 +60,11 @@ function processMessageElement() {
       const mixPicEl = el.querySelector(".mix-message__container--pic");
       if (mixPicEl) {
         const picEl = mixPicEl.querySelector(".pic-element");
-        if (picEl && !picEl.classList.contains("hidden-background") && !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)) {
+        if (
+          picEl &&
+          !picEl.classList.contains("hidden-background") &&
+          !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)
+        ) {
           mixPicEl.classList.add("hidden-background");
         }
       }
@@ -67,10 +76,12 @@ function processMessageElement() {
       if (!timeEl) {
         // 气泡-嵌入（必须含有文本内容的消息,文件消息）
         const bubbleEmbed = el.querySelector(
-          ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
+          ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner",
         );
         // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-        const bubbleInside = el.querySelector(".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview");
+        const bubbleInside = el.querySelector(
+          ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview",
+        );
         // 气泡-外部消息（兜底样式）
         const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
         const newTimeEl = document.createElement("div");
@@ -123,7 +134,13 @@ function processMessageElement() {
       const msgEl = el.querySelector(".message-content__wrapper");
       // +1插入元素
       const replaceEl = el.querySelector(".message-content-replace");
-      if (msgEl && el.querySelector(":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container,.msg-content-container") && !replaceEl) {
+      if (
+        msgEl &&
+        el.querySelector(
+          ":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container,.msg-content-container",
+        ) &&
+        !replaceEl
+      ) {
         const newReplaceEl = document.createElement("div");
         const msgId = el.id;
         newReplaceEl.classList.add("message-content-replace");
@@ -150,7 +167,8 @@ function processMessageElement() {
         const mapTag = senderUid + sendNickName;
         const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
         const prevElUid = prevProps?.msgRecord?.senderUid;
-        const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
+        const prevNickName =
+          prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
         const prevTag = prevElUid + prevNickName;
         if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
           el.classList.remove("merge-main");
@@ -166,6 +184,8 @@ function processMessageElement() {
       }
     }
   }
+  // 恢复监听
+  observe.observe(observerElement, observeConfig);
 }
 
 export { observerMessageList };
