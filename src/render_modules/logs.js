@@ -2,7 +2,7 @@ import { options } from "./options.js";
 
 const logList = [];
 
-window.logs = () => {
+window.LT_logs = () => {
   if (options.debug) {
     logList.forEach((el) => {
       console.log(`[${el.name}]`, ...el.log);
