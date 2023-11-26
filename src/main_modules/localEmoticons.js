@@ -25,21 +25,21 @@ async function loadEmoticons(folderPath) {
       folderNum = 0;
       await loadFolder(folderPath);
       dispatchUpdateFile();
-    }, 300)
+    }, 300),
   );
 }
 
 /**
  * 递归加载文件夹
  * @param {String} folderPath 文件夹路径
- * @returns 
+ * @returns
  */
 function loadFolder(folderPath) {
   folderNum = emoticonsList.length;
   if (fs.existsSync(folderPath)) {
-    fs.readdirSync(folderPath);
     return new Promise((res, rej) => {
       fs.readdir(folderPath, async (err, files) => {
+        const deepFolder = []; // 下一层文件夹
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           const filePath = path.join(folderPath, file);
@@ -51,7 +51,7 @@ function loadFolder(folderPath) {
               if (![".gif", ".jpg", ".png", ".webp"].includes(path.extname(filePath))) {
                 continue;
               }
-              // 初始化对象
+              // 初始化表情文件夹
               if (!emoticonsList[folderNum]) {
                 emoticonsList[folderNum] = {
                   name: path.basename(folderPath),
@@ -63,9 +63,14 @@ function loadFolder(folderPath) {
                 name: path.basename(filePath),
               });
             } else if (fileStat.isDirectory()) {
-              await loadFolder(filePath);
+              deepFolder.push(filePath);
             }
           }
+        }
+        // 单独处理递归文件夹
+        for (let i = 0; i < deepFolder.length; i++) {
+          const filePath = deepFolder[i];
+          await loadFolder(filePath);
         }
         res();
       });
