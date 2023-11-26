@@ -49,7 +49,11 @@ class LimitedMap {
 // 撤回消息切片管理
 class MessageRecallList {
   constructor(messageRecallJson, messageRecallPath = false, limit = 0) {
-    log(`新的历史记录实例，目标文件 ${path.basename(messageRecallJson)} 实例状态 ${messageRecallPath ? "读写" : "只读"} 切片大小 ${limit}`);
+    log(
+      `新的历史记录实例，目标文件 ${path.basename(messageRecallJson)} 实例状态 ${
+        messageRecallPath ? "读写" : "只读"
+      } 切片大小 ${limit}`,
+    );
     this.limit = limit;
     this.messageRecallPath = messageRecallPath;
     this.latestPath = messageRecallJson;
@@ -241,7 +245,7 @@ function onLoad(plugin) {
           const cssText = sass.compile(styleSassPath).css;
           fs.writeFileSync(stylePath, cssText);
           globalBroadcast("LiteLoader.lite_tools.updateStyle", cssText);
-        }, 100)
+        }, 100),
       );
       // 监听并编译global.scss
       fs.watch(
@@ -251,7 +255,7 @@ function onLoad(plugin) {
           const cssText = sass.compile(globalScssPath).css;
           fs.writeFileSync(globalPath, cssText);
           globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle", cssText);
-        }, 100)
+        }, 100),
       );
       // 监听并编译view.scss
       fs.watch(
@@ -261,7 +265,7 @@ function onLoad(plugin) {
           const cssText = sass.compile(settingScssPath).css;
           fs.writeFileSync(settingPath, cssText);
           globalBroadcast("LiteLoader.lite_tools.updateSettingStyle");
-        }, 100)
+        }, 100),
       );
     } catch {
       log("%c当前环境未安装sass，动态更新样式未启用", "background:#fe0000;color:#fff;");
@@ -271,7 +275,11 @@ function onLoad(plugin) {
   }
 
   // 控制台输出项目logo
-  log("%c轻量工具箱已加载", "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;", plugin);
+  log(
+    "%c轻量工具箱已加载",
+    "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
+    plugin,
+  );
 
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
@@ -553,11 +561,18 @@ function onBrowserWindowCreated(window, plugin) {
               }
               // 替换被撤回的消息内容
               if (options.message.preventMessageRecall) {
-                if (msgElements?.grayTipElement?.revokeElement && !msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
+                if (
+                  msgElements?.grayTipElement?.revokeElement &&
+                  !msgElements?.grayTipElement?.revokeElement?.isSelfOperate
+                ) {
                   // 尝试从内存中查找对应消息并替换元素
                   const findInCatch = catchMsgList.get(msgItem.msgId);
                   if (findInCatch) {
-                    log(`%c ${msgItem.msgId} 从消息列表中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInCatch);
+                    log(
+                      `%c ${msgItem.msgId} 从消息列表中找到消息记录`,
+                      "background-color:#7eb047;color:#ffffff;",
+                      findInCatch,
+                    );
                     // 如果是从最新的缓存中获取到的原内容，则需要存入常驻历史撤回记录
                     recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
                     // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
@@ -570,7 +585,11 @@ function onBrowserWindowCreated(window, plugin) {
                     // 从常驻撤回消息中查找消息id
                     const findInRecord = recordMessageRecallIdList.get(msgItem.msgId);
                     if (findInRecord) {
-                      log(`%c ${msgItem.msgId} 从常驻缓存中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInRecord);
+                      log(
+                        `%c ${msgItem.msgId} 从常驻缓存中找到消息记录`,
+                        "background-color:#7eb047;color:#ffffff;",
+                        findInRecord,
+                      );
                       // 下载消息内的图片并修复数据结构
                       processPic(findInRecord);
                       // 替换撤回标记
@@ -582,15 +601,28 @@ function onBrowserWindowCreated(window, plugin) {
                       const msgRecallTime = parseInt(msgItem.recallTime) * 1000;
                       // 根据时间找到可能含有数据的历史记录切片
                       const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime);
-                      log("判断历史切片是否可能含有撤回内容", messageRecallFileList, msgItem.msgId, msgRecallTime, historyFile);
+                      log(
+                        "判断历史切片是否可能含有撤回内容",
+                        messageRecallFileList,
+                        msgItem.msgId,
+                        msgRecallTime,
+                        historyFile,
+                      );
                       if (historyFile) {
                         // 创建只读实例用于匹配消息id，创建的实例将在遍历完所有消息后统一销毁
                         if (!historyMessageRecallList.has(historyFile)) {
-                          historyMessageRecallList.set(historyFile, new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`)));
+                          historyMessageRecallList.set(
+                            historyFile,
+                            new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`)),
+                          );
                         }
                         const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
                         if (findInHistory) {
-                          log(`%c ${msgItem.msgId} 从历史缓存中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInHistory);
+                          log(
+                            `%c ${msgItem.msgId} 从历史缓存中找到消息记录`,
+                            "background-color:#7eb047;color:#ffffff;",
+                            findInHistory,
+                          );
                           // 下载消息内的图片并修复数据结构
                           processPic(findInHistory);
                           // 替换撤回标记
@@ -625,7 +657,11 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 捕获接收到消息事件-替换新消息中的小程序卡片
-    const onAddSendMsg = args[1] ? (Array.isArray(args[1]) ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onAddSendMsg") : -1) : -1;
+    const onAddSendMsg = args[1]
+      ? Array.isArray(args[1])
+        ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onAddSendMsg")
+        : -1
+      : -1;
     if (onAddSendMsg !== -1) {
       log("这是我发送的新消息", args[1]);
       // 阻止撤回
@@ -655,7 +691,11 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 捕获自身发送消息事件-替换新消息中的小程序卡片
-    const onRecvMsg = args[1] ? (Array.isArray(args[1]) ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onRecvMsg") : -1) : -1;
+    const onRecvMsg = args[1]
+      ? Array.isArray(args[1])
+        ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onRecvMsg")
+        : -1
+      : -1;
     if (onRecvMsg !== -1) {
       log("这是新接收到的消息", args[1]);
       args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
@@ -697,7 +737,11 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 捕获重排消息事件-拦截撤回指令
-    const onMsgInfoListUpdate = args[1] ? (Array.isArray(args[1]) ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onMsgInfoListUpdate") : -1) : -1;
+    const onMsgInfoListUpdate = args[1]
+      ? Array.isArray(args[1])
+        ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onMsgInfoListUpdate")
+        : -1
+      : -1;
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
       const msgItem = args[1][0]?.payload?.msgList[0];
