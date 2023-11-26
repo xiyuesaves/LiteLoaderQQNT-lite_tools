@@ -44,7 +44,7 @@ function processMessageElement() {
   try {
     realFunc();
   } catch (err) {
-    log("监听消息列表出错", err.message);
+    log("监听消息列表出错", err);
   }
 
   // 恢复监听
