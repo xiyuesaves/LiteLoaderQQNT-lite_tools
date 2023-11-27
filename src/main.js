@@ -118,10 +118,7 @@ function onLoad(plugin) {
     } catch {
       log("%c当前环境未安装sass，动态更新样式未启用", "background:#fe0000;color:#fff;");
     }
-  } else {
-    log = () => {};
   }
-
   // 控制台输出项目logo
   log(
     "%c轻量工具箱已加载",
