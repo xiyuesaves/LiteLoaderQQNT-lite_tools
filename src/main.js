@@ -1,7 +1,5 @@
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell } = require("electron");
-const http = require("http");
-const https = require("https");
 const path = require("path");
 const fs = require("fs");
 
@@ -10,95 +8,15 @@ const defaultConfig = require("./defaultConfig/defaultConfig.json"); // 默认�
 const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json"); // 默认本地表情配置文件
 let loadOptions = require("./main_modules/loadOptions");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
+const { LimitedMap } = require("./main_modules/LimitedMap");
+const { MessageRecallList } = require("./main_modules/MessageRecallList");
+const { globalBroadcast } = require("./main_modules/globalBroadcast");
+const { processPic } = require("./main_modules/processPic");
+const { replaceArk } = require("./main_modules/replaceArk");
+const { debounce } = require("./main_modules/debounce");
+const { log } = require("./main_modules/log");
 
 let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson;
-
-let log = function (...args) {
-  console.log(...args);
-};
-
-// 自定义limitMap，在达到指定数量后清空最后一条记录
-class LimitedMap {
-  constructor(limit) {
-    this.limit = limit;
-    this.map = new Map();
-    this.keys = [];
-  }
-  set(key, value) {
-    // 如果当前map存储消息超过指定大小，则删除最后一条数据
-    if (this.map.size >= this.limit) {
-      const oldestKey = this.keys.shift();
-      this.map.delete(oldestKey);
-    }
-    this.map.set(key, value);
-    this.keys.push(key);
-  }
-  get(key) {
-    return this.map.get(key);
-  }
-  has(key) {
-    return this.map.has(key);
-  }
-  delete(key) {
-    const index = this.keys.indexOf(key);
-    if (index !== -1) {
-      this.keys.splice(index, 1);
-    }
-    this.map.delete(key);
-  }
-}
-
-// 撤回消息切片管理
-class MessageRecallList {
-  constructor(messageRecallJson, messageRecallPath = false, limit = 0) {
-    log(
-      `新的历史记录实例，目标文件 ${path.basename(messageRecallJson)} 实例状态 ${
-        messageRecallPath ? "读写" : "只读"
-      } 切片大小 ${limit}`,
-    );
-    this.limit = limit;
-    this.messageRecallPath = messageRecallPath;
-    this.latestPath = messageRecallJson;
-    this.newFileEvent = [];
-    this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
-  }
-  set(key, value) {
-    if (this.messageRecallPath) {
-      this.map.set(key, value);
-      if (this.map.size >= this.limit) {
-        log("缓存撤回消息超过阈值，开始切片");
-        const newFileName = `${new Date().getTime()}.json`;
-        fs.writeFileSync(path.join(this.messageRecallPath, newFileName), JSON.stringify(Array.from(this.map)));
-        this.newFileEvent.forEach((callback) => callback(newFileName));
-        this.map = new Map();
-      }
-      fs.writeFileSync(this.latestPath, JSON.stringify(Array.from(this.map)));
-    } else {
-      console.error("该实例工作在只读模式");
-    }
-  }
-  // 如果产生新的切片文件，将会调用该方法传入的回调
-  onNewFile(callback) {
-    if (this.messageRecallPath) {
-      this.newFileEvent.push(callback);
-    } else {
-      console.error("该实例工作在只读模式");
-    }
-  }
-  get(key) {
-    return this.map.get(key);
-  }
-  has(key) {
-    return this.map.has(key);
-  }
-  delete(key) {
-    if (this.messageRecallPath) {
-      this.map.delete(key);
-    } else {
-      console.error("该实例工作在只读模式");
-    }
-  }
-}
 
 const listenList = []; // 所有打开过的窗口对象
 const catchMsgList = new LimitedMap(2000); // 内存缓存消息记录-用于根据消息id获取撤回原始内容
@@ -106,83 +24,7 @@ const messageRecallFileList = []; // 所有撤回消息本地切片列表
 let peer = null; // 激活聊天界面信息
 let historyMessageRecallList = new Map(); // 只读历史消息实例暂存数组
 let localEmoticonsList = []; // 本地表情包数据
-
 let options, localEmoticonsConfig; // 配置数据
-
-// 向所有未销毁页面发送广播
-function globalBroadcast(channel, data) {
-  listenList.forEach((window) => {
-    if (!window.isDestroyed()) {
-      window.webContents.send(channel, data);
-    }
-  });
-}
-
-// 下载被撤回的图片
-function processPic(msgItem) {
-  msgItem?.elements?.forEach(async (el) => {
-    if (el?.picElement) {
-      log("该消息含有图片", el);
-      const pic = el.picElement;
-      const picName = pic.md5HexStr.toUpperCase();
-      const picUrl = `https://gchat.qpic.cn/gchatpic_new/0/0-0-${picName}/`;
-      if (!fs.existsSync(pic.sourcePath)) {
-        log("下载原图", `${picUrl}0`);
-        const body = await downloadPic(`${picUrl}0`);
-        fs.mkdirSync(path.dirname(pic.sourcePath), { recursive: true });
-        fs.writeFileSync(pic.sourcePath, body);
-      }
-      // 修复本地数据中的错误
-      if (pic?.thumbPath && (pic.thumbPath instanceof Array || pic.thumbPath instanceof Object)) {
-        pic.thumbPath = new Map([
-          [0, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_0")],
-          [198, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_198")],
-          [720, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_720")],
-        ]);
-      }
-      if (pic?.thumbPath && (pic.thumbPath instanceof Array || pic.thumbPath instanceof Map)) {
-        pic.thumbPath.forEach(async (el, key) => {
-          if (!fs.existsSync(el)) {
-            log("下载缩略图", `${picUrl}${key}`);
-            const body = await downloadPic(`${picUrl}${key}`);
-            fs.mkdirSync(path.dirname(el), { recursive: true });
-            fs.writeFileSync(el, body);
-          }
-        });
-      }
-    }
-  });
-}
-
-// 下载方法
-function downloadPic(url) {
-  const protocolModule = url.startsWith("https") ? https : http;
-  return new Promise((resolve, reject) => {
-    function doRequest(url) {
-      log("下载撤回消息中的图片", url);
-      protocolModule.get(url, (response) => {
-        if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
-          doRequest(response.headers.location);
-        } else {
-          const chunks = [];
-          response.on("data", (chunk) => {
-            chunks.push(chunk);
-          });
-          response.on("end", () => {
-            const responseData = Buffer.concat(chunks);
-            resolve(responseData); // 解析 Promise 并传递数据
-            log("下载图片完成");
-          });
-          response.on("error", (err) => {
-            log("下载图片失败", err);
-            reject(err); // 解析 Promise 并传递错误
-          });
-        }
-      });
-    }
-    doRequest(url);
-  });
-}
 
 // 加载插件时触发
 function onLoad(plugin) {
@@ -250,7 +92,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(styleSassPath).css;
           fs.writeFileSync(stylePath, cssText);
-          globalBroadcast("LiteLoader.lite_tools.updateStyle", cssText);
+          globalBroadcast(listenList, "LiteLoader.lite_tools.updateStyle", cssText);
         }, 100),
       );
       // 监听并编译global.scss
@@ -260,7 +102,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(globalScssPath).css;
           fs.writeFileSync(globalPath, cssText);
-          globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle", cssText);
+          globalBroadcast(listenList, "LiteLoader.lite_tools.updateGlobalStyle", cssText);
         }, 100),
       );
       // 监听并编译view.scss
@@ -270,7 +112,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(settingScssPath).css;
           fs.writeFileSync(settingPath, cssText);
-          globalBroadcast("LiteLoader.lite_tools.updateSettingStyle");
+          globalBroadcast(listenList, "LiteLoader.lite_tools.updateSettingStyle");
         }, 100),
       );
     } catch {
@@ -290,7 +132,13 @@ function onLoad(plugin) {
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
     console.log("本地表情包更新", emoticonsList.length);
-    globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    if (options.localEmoticons.commonlyEmoticons) {
+      emoticonsList.unshift({
+        name: "常用表情",
+        list: localEmoticonsConfig.commonlyEmoticons,
+      });
+    }
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
     localEmoticonsList = emoticonsList;
   });
 
@@ -348,7 +196,7 @@ function onLoad(plugin) {
       concat = options.textAreaFuncList.concat(list);
     options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
   });
 
   // 更新聊天框上方功能列表
@@ -357,21 +205,22 @@ function onLoad(plugin) {
       concat = options.chatAreaFuncList.concat(list);
     options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
   });
 
   // 修改配置信息
   ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
     log("%c更新配置信息", "background:#1a5d1a;color:#fff;", opt);
-    options = opt;
-    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
     // 判断是否启用了本地表情包功能
-    if (options.localEmoticons.enabled) {
-      if (options.localEmoticons.localPath) {
-        loadEmoticons(options.localEmoticons.localPath);
+    if (opt.localEmoticons.enabled) {
+      if (opt.localEmoticons.localPath && options.localEmoticons.localPath !== opt.localEmoticons.localPath) {
+        resetCommonlyEmoticons(); // 重置常用表情
+        loadEmoticons(opt.localEmoticons.localPath);
       }
     }
-    globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
+    options = opt;
+    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
   });
 
   // 获取配置信息
@@ -436,7 +285,7 @@ function onLoad(plugin) {
         if (!result.canceled) {
           options.background.url = path.join(result.filePaths[0]).replace(/\\/g, "/");
           fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-          globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
+          globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
         }
       })
       .catch((err) => {
@@ -455,15 +304,17 @@ function onLoad(plugin) {
       .then((result) => {
         console.log("选择了文件夹", result);
         if (!result.canceled) {
-          options.localEmoticons.localPath = path.join(result.filePaths[0]).replace(/\\/g, "/");
-          fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+          const newPath = path.join(result.filePaths[0]).replace(/\\/g, "/");
           // 判断是否启用了本地表情包功能
           if (options.localEmoticons.enabled) {
-            if (options.localEmoticons.localPath) {
-              loadEmoticons(options.localEmoticons.localPath);
+            if (newPath && options.localEmoticons.localPath !== newPath) {
+              resetCommonlyEmoticons();
+              loadEmoticons(newPath);
             }
           }
-          globalBroadcast("LiteLoader.lite_tools.updateOptions", options);
+          options.localEmoticons.localPath = newPath;
+          fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+          globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
         }
       })
       .catch((err) => {
@@ -761,7 +612,7 @@ function onBrowserWindowCreated(window, plugin) {
             origMsgSenderNick: msgItem.elements[0].grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
             recallTime: msgItem.recallTime, // 撤回时间
           };
-          globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
+          globalBroadcast(listenList, "LiteLoader.lite_tools.onMessageRecall", {
             msgId: findInCatch.msgId,
             recallData,
           });
@@ -793,57 +644,10 @@ function onBrowserWindowCreated(window, plugin) {
   window.webContents.send = patched_send;
 }
 
-// 卡片替换函数
-function replaceArk(json, msg_seq) {
-  log("%c替换小程序卡片", "background:#fba1b7;color:#fff;", json);
-  return JSON.stringify({
-    app: "com.tencent.structmsg",
-    config: json.config,
-    desc: "新闻",
-    extra: { app_type: 1, appid: json.meta.detail_1.appid, msg_seq, uin: json.meta.detail_1.host.uin },
-    meta: {
-      news: {
-        action: "",
-        android_pkg_name: "",
-        app_type: 1,
-        appid: json.meta.detail_1.appid,
-        ctime: json.config.ctime,
-        desc: json.meta.detail_1.desc,
-        jumpUrl: json.meta.detail_1.qqdocurl.replace(/\\/g, ""),
-        preview: json.meta.detail_1.preview,
-        source_icon: json.meta.detail_1.icon,
-        source_url: "",
-        tag: getArkData(json),
-        title: getArkData(json),
-        uin: json.meta.detail_1.host.uin,
-      },
-    },
-    prompt: `[分享]${getArkData(json)}`,
-    ver: "0.0.0.1",
-    view: "news",
-  });
-}
-
-// appid对应小程序名称
-const appidName = new Map([
-  ["1109224783", "微博"],
-  ["1109937557", "哔哩哔哩"],
-]);
-
-// 获取ark卡片对应内容
-function getArkData(json) {
-  return json.meta.detail_1.title || appidName.get(json.meta.detail_1.appid) || json.meta.detail_1.desc;
-}
-
-// 防抖函数
-function debounce(fn, time) {
-  let timer = null;
-  return function (...args) {
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, time);
-  };
+// 重置常用表情列表
+function resetCommonlyEmoticons() {
+  localEmoticonsConfig.commonlyEmoticons = [];
+  fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
 // 这两个函数都是可选的
