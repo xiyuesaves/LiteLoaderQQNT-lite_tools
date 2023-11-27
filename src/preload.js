@@ -18,9 +18,12 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 监听本地表情更新
   updateEmoticons: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEmoticons", callback),
   // 监听常用表情列表更新
-  updateLocalEmoticonsConfig: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateLocalEmoticonsConfig", callback),
+  updateLocalEmoticonsConfig: (callback) =>
+    ipcRenderer.on("LiteLoader.lite_tools.updateLocalEmoticonsConfig", callback),
   // 主动获取本地表情列表
   getLocalEmoticonsList: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsList"),
+  // 主动获取常用表情列表
+  getCommonlyEmoticons: () => ipcRenderer.invoke("LiteLoader.lite_tools.getCommonlyEmoticons"),
   // 打开选择本地表情文件夹窗口
   openSelectFolder: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectFolder"),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息

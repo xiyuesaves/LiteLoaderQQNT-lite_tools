@@ -157,8 +157,13 @@ function onLoad(plugin) {
   // 返回本地表情包数据
   ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", (event) => {
     log("返回本地表情包数据");
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     return localEmoticonsList;
+  });
+
+  // 返回常用表情包数据
+  ipcMain.handle("LiteLoader.lite_tools.getCommonlyEmoticons", (event) => {
+    log("返回本地表情包数据");
+    return localEmoticonsConfig;
   });
 
   // 返回当前激活的peer数据

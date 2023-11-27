@@ -396,6 +396,10 @@ async function loadDom() {
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(emoticonsList);
 
+  // 加载常用表情包
+  const CommonlyEmoticons = await lite_tools.getCommonlyEmoticons();
+  updateCommonlyEmoticons(CommonlyEmoticons);
+  
   // 监听列表滚动
   emoticonsMain.querySelector(".folder-list").addEventListener(
     "scroll",
