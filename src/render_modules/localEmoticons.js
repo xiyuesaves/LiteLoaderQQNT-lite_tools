@@ -49,7 +49,7 @@ function localEmoticons() {
       updateCommonlyEmoticons(list);
     });
     lite_tools.updateEmoticons((_, list) => {
-      log("渲染端更新列表");
+      log("渲染端更新列表", list.length);
       appendEmoticons(list);
     });
   }
@@ -399,7 +399,7 @@ async function loadDom() {
   // 加载常用表情包
   const CommonlyEmoticons = await lite_tools.getCommonlyEmoticons();
   updateCommonlyEmoticons(CommonlyEmoticons);
-  
+
   // 监听列表滚动
   emoticonsMain.querySelector(".folder-list").addEventListener(
     "scroll",
@@ -496,7 +496,7 @@ function appendEmoticons(emoticonsList) {
   // 清理dom结构
   document
     .querySelectorAll(
-      ".lite-tools-local-emoticons-main .folder-item,.lite-tools-local-emoticons-main .folder-icon-list .folder-icon-item",
+      `.lite-tools-local-emoticons-main .folder-item:not([data-id="commonlyEmoticons"]),.lite-tools-local-emoticons-main .folder-icon-list .folder-icon-item:not([data-id="commonlyEmoticons"])`,
     )
     .forEach((item) => {
       item.remove();
@@ -535,6 +535,7 @@ function createEmoticonsFolder(folder, iconSrc, id) {
   const folderIcon = document.createElement("div");
   folderIcon.classList.add("folder-icon-item");
   folderIcon.setAttribute("title", folder.name);
+  folderIcon.setAttribute("data-id", id);
   const iconEl = document.createElement("img");
   iconEl.src = "llqqnt://local-file/" + iconSrc;
   const iconBox = document.createElement("div");
