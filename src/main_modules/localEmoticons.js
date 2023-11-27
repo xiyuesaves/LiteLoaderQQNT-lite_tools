@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { debounce } = require("./debounce");
 
 let callbackFunc = [];
 let emoticonsList = [];
@@ -8,7 +9,6 @@ let watcher;
 
 /**
  * 加载本地表情文件夹
- * @param {JSON} config 本地表情独立配置
  * @param {String} folderPath 表情文件夹路径
  */
 async function loadEmoticons(folderPath) {
@@ -23,10 +23,13 @@ async function loadEmoticons(folderPath) {
     folderPath,
     { recursive: true },
     debounce(async () => {
+      const beforeEmoticonsList = emoticonsList;
       emoticonsList = [];
       folderNum = 0;
       await loadFolder(folderPath);
-      dispatchUpdateFile();
+      if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
+        dispatchUpdateFile();
+      }
     }, 300),
   );
 }
@@ -80,20 +83,16 @@ function loadFolder(folderPath) {
   }
 }
 
-/**
- * 防抖函数
- * @param {Function} fn 需要防抖函数
- * @param {Number} time 需要等待时间
- * @returns 延迟函数
- */
-function debounce(fn, time) {
-  let timer = null;
-  return function (...args) {
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, time);
-  };
+function arraysAreEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i].name !== arr2[i].name || JSON.stringify(arr1[i].list) !== JSON.stringify(arr2[i].list)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**

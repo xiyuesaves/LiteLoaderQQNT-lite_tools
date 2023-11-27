@@ -450,7 +450,8 @@ function onBrowserWindowCreated(window, plugin) {
                       log(
                         `%c ${msgItem.msgId} 从常驻缓存中找到消息记录`,
                         "background-color:#7eb047;color:#ffffff;",
-                        findInRecord,
+                        findInRecord.peerName,
+                        findInRecord.sendNickName,
                       );
                       // 下载消息内的图片并修复数据结构
                       processPic(findInRecord);
