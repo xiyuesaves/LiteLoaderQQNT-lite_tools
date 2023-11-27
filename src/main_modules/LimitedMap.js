@@ -20,6 +20,9 @@ class LimitedMap {
   has(key) {
     return this.map.has(key);
   }
+  toArray() {
+    return Array.from(this.map);
+  }
   delete(key) {
     const index = this.keys.indexOf(key);
     if (index !== -1) {

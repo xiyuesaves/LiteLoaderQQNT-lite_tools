@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   onMessageRecall: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onMessageRecall", callback),
   // 监听本地表情更新
   updateEmoticons: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEmoticons", callback),
+  // 监听常用表情列表更新
+  updateLocalEmoticonsConfig: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateLocalEmoticonsConfig", callback),
   // 主动获取本地表情列表
   getLocalEmoticonsList: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsList"),
   // 打开选择本地表情文件夹窗口
@@ -63,7 +65,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
           commentElements: [],
         },
         undefined,
-      ]
+      ],
     );
   },
   // 消息窗口向主进程发送输入框上方功能列表
@@ -78,4 +80,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
   // 在主进程的终端打印渲染进程日志
   log: (...msg) => ipcRenderer.send("LiteLoader.lite_tools.log", ...msg),
+  // 更新常用表情列表
+  addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
 });

@@ -16,7 +16,7 @@ const { replaceArk } = require("./main_modules/replaceArk");
 const { debounce } = require("./main_modules/debounce");
 const { log } = require("./main_modules/log");
 
-let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson;
+let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson, localEmoticonsPath;
 
 const listenList = []; // 所有打开过的窗口对象
 const catchMsgList = new LimitedMap(2000); // 内存缓存消息记录-用于根据消息id获取撤回原始内容
@@ -30,7 +30,6 @@ let options, localEmoticonsConfig; // 配置数据
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
-  const localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
   const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
   const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
@@ -39,6 +38,7 @@ function onLoad(plugin) {
   const settingPath = path.join(plugin.path.plugin, "src/config/view.css");
   messageRecallPath = path.join(pluginDataPath, "/messageRecall");
   messageRecallJson = path.join(pluginDataPath, "/messageRecall/latestRecallMessage.json");
+  localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
@@ -126,18 +126,11 @@ function onLoad(plugin) {
   log(
     "%c轻量工具箱已加载",
     "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
-    plugin,
   );
 
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
     console.log("本地表情包更新", emoticonsList.length);
-    if (options.localEmoticons.commonlyEmoticons) {
-      emoticonsList.unshift({
-        name: "常用表情",
-        list: localEmoticonsConfig.commonlyEmoticons,
-      });
-    }
     globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
     localEmoticonsList = emoticonsList;
   });
@@ -164,6 +157,7 @@ function onLoad(plugin) {
   // 返回本地表情包数据
   ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", (event) => {
     log("返回本地表情包数据");
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     return localEmoticonsList;
   });
 
@@ -217,6 +211,12 @@ function onLoad(plugin) {
         resetCommonlyEmoticons(); // 重置常用表情
         loadEmoticons(opt.localEmoticons.localPath);
       }
+      // 判断是否开启了常用表情
+      if (opt.localEmoticons.commonlyEmoticons) {
+        globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+      } else {
+        globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", { commonlyEmoticons: [] });
+      }
     }
     options = opt;
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
@@ -233,6 +233,9 @@ function onLoad(plugin) {
   ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
     log("%c轻量工具箱 [渲染进程]: ", "background:#272829;color:#fff;", ...message);
   });
+
+  // 更新常用表情列表
+  ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", addCommonlyEmoticons);
 
   // 获取全局样式
   ipcMain.handle("LiteLoader.lite_tools.getGlobalStyle", (event) => {
@@ -331,7 +334,7 @@ function onBrowserWindowCreated(window, plugin) {
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
-      log("捕获到主窗口", window);
+      log("捕获到主窗口");
       mainMessage = window;
     }
   });
@@ -401,7 +404,7 @@ function onBrowserWindowCreated(window, plugin) {
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
-      log("解析到消息数据", msgList);
+      log("解析到消息数据");
       // 遍历消息列表中的所有消息
       if (options.message.showMsgTime || options.message.convertMiniPrgmArk || options.message.preventMessageRecall) {
         msgList.forEach((msgItem, index) => {
@@ -630,7 +633,7 @@ function onBrowserWindowCreated(window, plugin) {
         }
       }
     }
-    // 记录下可能会用到的时间名称
+    // 记录下可能会用到的事件名称
 
     // 视频加载完成事件
     // cmdName: "nodeIKernelMsgListener/onRichMediaDownloadComplete";
@@ -646,7 +649,28 @@ function onBrowserWindowCreated(window, plugin) {
 
 // 重置常用表情列表
 function resetCommonlyEmoticons() {
+  log("重置常用表情");
   localEmoticonsConfig.commonlyEmoticons = [];
+  globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
+}
+// 增加常用表情
+function addCommonlyEmoticons(event, src) {
+  if (!options.localEmoticons.commonlyEmoticons) {
+    return;
+  }
+  log("更新常用表情", localEmoticonsPath);
+  const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
+  // 如果已经有这个表情了，则更新位置
+  newSet.delete(src);
+  localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
+  localEmoticonsConfig.commonlyEmoticons.unshift(src);
+  // 删除多余的值
+  if (localEmoticonsConfig.commonlyEmoticons.length > 20) {
+    localEmoticonsConfig.commonlyEmoticons.pop();
+  }
+  log("send2", localEmoticonsConfig);
+  globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 

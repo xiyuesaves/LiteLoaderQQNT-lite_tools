@@ -45,6 +45,9 @@ function localEmoticons() {
   }
   if (!ckeditEditorModel) {
     loadEditorModel();
+    lite_tools.updateLocalEmoticonsConfig((_, list) => {
+      updateCommonlyEmoticons(list);
+    });
     lite_tools.updateEmoticons((_, list) => {
       log("渲染端更新列表");
       appendEmoticons(list);
@@ -228,6 +231,43 @@ function quickInsertion() {
 }
 
 /**
+ * 更新常用表情列表
+ * @param {Array} list 常用表情列表
+ */
+function updateCommonlyEmoticons(options) {
+  log("更新常用表情列表", options);
+  // 移除旧数据
+  document.querySelector(`.folder-item[data-id="commonlyEmoticons"]`)?.remove();
+  document.querySelector(`.folder-icon-item [data-id="commonlyEmoticons"]`)?.parentElement?.remove();
+  if (folderInfos[0].id === "commonlyEmoticons") {
+    folderInfos.shift();
+  }
+  // 如果历史数组为空则直接返回
+  if (!options.commonlyEmoticons.length) {
+    return;
+  }
+  // 开始生成新数据
+  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
+  const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
+  // 插入新的表情数据
+  const folder = {
+    name: "常用表情",
+    list: options.commonlyEmoticons.map((path) => {
+      return { path };
+    }),
+  };
+  // 创建表情文件夹元素
+  const { folderEl, folderIcon } = createEmoticonsFolder(folder, folder.list[0].path, "commonlyEmoticons");
+  folderList.insertBefore(folderEl, folderList.querySelector(":first-child"));
+  folderScroll.insertBefore(folderIcon, folderScroll.querySelector(":first-child"));
+  folderInfos.unshift({
+    el: folderEl,
+    id: "commonlyEmoticons",
+    name: folder.name,
+  });
+}
+
+/**
  * 捕获全局鼠标按键抬起事件
  * @param {MouseEvent} event
  */
@@ -305,6 +345,10 @@ function insert(event) {
     const src = decodeURI(
       event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"),
     );
+    // 更新常用表情
+    if (options.localEmoticons.commonlyEmoticons) {
+      lite_tools.addCommonlyEmoticons(src);
+    }
     // 如果有匹配命令值，则先删除
     if (regOut) {
       ckeditEditorModel.change((writer) => {
@@ -344,12 +388,11 @@ async function loadDom() {
   htmoDom.querySelectorAll("section").forEach((el) => {
     barIcon.appendChild(el);
   });
-  /**
-   * 表情选择面板
-   */
-  const emoticonsMain = barIcon.querySelector(".lite-tools-local-emoticons-main");
-  // 这里加载本地表情包
 
+  // 表情选择面板
+  const emoticonsMain = barIcon.querySelector(".lite-tools-local-emoticons-main");
+
+  // 加载本地表情包
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(emoticonsList);
 
@@ -359,11 +402,11 @@ async function loadDom() {
     debounce((event) => {
       let top = 0;
       for (let i = 0; i < folderInfos.length; i++) {
-        const el = folderInfos[i];
-        top += el.height;
+        const folder = folderInfos[i];
+        top += folder.el.offsetHeight;
         if (top >= event.target.scrollTop) {
           document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
-          const activeEl = document.querySelector(`.folder-icon-item .icon-box[index="${el.index}"]`).parentElement;
+          const activeEl = document.querySelector(`.folder-icon-item .icon-box[data-id="${folder.id}"]`).parentElement;
           const folderScroll = document.querySelector(".folder-scroll");
           activeEl.classList.add("active");
           folderScroll.scrollTo({
@@ -401,13 +444,13 @@ async function loadDom() {
  * @param {MouseEvent} event
  */
 function jumpFolder(event) {
-  const index = event.target.getAttribute("index");
-  if (!index) {
+  const id = event.target.getAttribute("data-id");
+  if (!id) {
     return;
   }
   // document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
   // event.target.parentElement.classList.add("active");
-  const targetItem = document.querySelector(`.folder-item[index="${index}"]`);
+  const targetItem = document.querySelector(`.folder-item[data-id="${id}"]`);
   document.querySelector(".lite-tools-local-emoticons-main .folder-list").scrollTo({
     top: targetItem.offsetTop,
     // behavior: "smooth",
@@ -458,48 +501,58 @@ function appendEmoticons(emoticonsList) {
   const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
   // 插入新的表情数据
   emoticonsList.forEach((folder, index) => {
-    // 创建表情分类
-    const folderEl = document.createElement("div");
-    folderEl.classList.add("folder-item");
-    folderEl.setAttribute("index", index);
-    const categoryName = document.createElement("div");
-    categoryName.classList.add("category-name");
-    categoryName.innerText = folder.name;
-    const categoryList = document.createElement("div");
-    categoryList.classList.add("category-list");
-    // 创建小图标
-    const folderIcon = document.createElement("div");
-    folderIcon.classList.add("folder-icon-item");
-    folderIcon.setAttribute("title", folder.name);
-    const iconEl = document.createElement("img");
-    iconEl.src = "llqqnt://local-file/" + folder.list[0].path;
-    const iconBox = document.createElement("div");
-    iconBox.classList.add("icon-box");
-    iconBox.setAttribute("index", index);
-    iconBox.appendChild(iconEl);
-    folderIcon.appendChild(iconBox);
-    folderScroll.appendChild(folderIcon);
-    // 插入表情文件
-    folder.list.forEach((item) => {
-      const categoryItem = document.createElement("div");
-      categoryItem.classList.add("category-item");
-      const skiterPreview = document.createElement("div");
-      skiterPreview.classList.add("skiter-preview");
-      const img = document.createElement("img");
-      img.setAttribute("lazy", "");
-      img.src = "llqqnt://local-file/" + item.path;
-      skiterPreview.appendChild(img);
-      categoryItem.append(skiterPreview);
-      categoryList.appendChild(categoryItem);
-    });
-    folderEl.append(categoryName, categoryList);
+    // 创建表情文件夹元素
+    const { folderEl, folderIcon } = createEmoticonsFolder(folder, folder.list[0].path, index);
     folderList.appendChild(folderEl);
+    folderScroll.appendChild(folderIcon);
     folderInfos.push({
-      height: folderEl.offsetHeight,
-      index: index,
+      el: folderEl,
+      id: index,
       name: folder.name,
     });
   });
+}
+
+// 创建表情文件夹元素
+function createEmoticonsFolder(folder, iconSrc, id) {
+  if (!iconSrc) {
+    iconSrc = folder.list[0].path;
+  }
+  // 创建表情分类
+  const folderEl = document.createElement("div");
+  folderEl.classList.add("folder-item");
+  folderEl.setAttribute("data-id", id);
+  const categoryName = document.createElement("div");
+  categoryName.classList.add("category-name");
+  categoryName.innerText = folder.name;
+  const categoryList = document.createElement("div");
+  categoryList.classList.add("category-list");
+  // 创建小图标
+  const folderIcon = document.createElement("div");
+  folderIcon.classList.add("folder-icon-item");
+  folderIcon.setAttribute("title", folder.name);
+  const iconEl = document.createElement("img");
+  iconEl.src = "llqqnt://local-file/" + iconSrc;
+  const iconBox = document.createElement("div");
+  iconBox.classList.add("icon-box");
+  iconBox.setAttribute("data-id", id);
+  iconBox.appendChild(iconEl);
+  folderIcon.appendChild(iconBox);
+  // 插入表情文件
+  folder.list.forEach((item) => {
+    const categoryItem = document.createElement("div");
+    categoryItem.classList.add("category-item");
+    const skiterPreview = document.createElement("div");
+    skiterPreview.classList.add("skiter-preview");
+    const img = document.createElement("img");
+    img.setAttribute("lazy", "");
+    img.src = "llqqnt://local-file/" + item.path;
+    skiterPreview.appendChild(img);
+    categoryItem.append(skiterPreview);
+    categoryList.appendChild(categoryItem);
+  });
+  folderEl.append(categoryName, categoryList);
+  return { folderEl, folderIcon };
 }
 
 /**
@@ -513,6 +566,7 @@ function openLocalEmoticons() {
       barIcon.querySelector(".lite-tools-q-tooltips__content").classList.remove("hidden");
     } else {
       showEmoticons = true;
+      document.querySelector(".folder-list").scrollTop = 0;
       barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show");
       barIcon.querySelector(".lite-tools-q-tooltips__content").classList.add("hidden");
     }
