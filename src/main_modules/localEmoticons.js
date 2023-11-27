@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+
 let callbackFunc = [];
 let emoticonsList = [];
 let folderNum = 0;
@@ -7,9 +8,10 @@ let watcher;
 
 /**
  * 加载本地表情文件夹
+ * @param {JSON} config 本地表情独立配置
  * @param {String} folderPath 表情文件夹路径
  */
-async function loadEmoticons(folderPath) {
+async function loadEmoticons(config, folderPath) {
   emoticonsList = [];
   folderNum = 0;
   await loadFolder(folderPath);

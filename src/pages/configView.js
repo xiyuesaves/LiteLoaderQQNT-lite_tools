@@ -182,7 +182,10 @@ async function onConfigView(view) {
   });
 
   // 快捷输入表情功能
-  addSwitchEventlistener("localEmoticons.switchQuickEmoticons", ".switchQuickEmoticons");
+  addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons");
+
+  // 常用表情分类
+  addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons");
 
   // 添加消息后缀
   addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {

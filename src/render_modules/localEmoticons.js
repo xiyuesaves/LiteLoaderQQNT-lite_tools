@@ -168,7 +168,7 @@ function loadEditorModel() {
  * 处理快捷输入表情命令
  */
 function quickInsertion() {
-  if (!options.localEmoticons.enabled || !options.localEmoticons.switchQuickEmoticons) {
+  if (!options.localEmoticons.enabled || !options.localEmoticons.quickEmoticons) {
     if (quickPreviewEl.classList.contains("show")) {
       quickPreviewEl.classList.remove("show");
     }

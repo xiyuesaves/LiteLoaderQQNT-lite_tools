@@ -6,6 +6,8 @@ const path = require("path");
 const fs = require("fs");
 
 // 本地模块
+const defaultConfig = require("./defaultConfig/defaultConfig.json"); // 默认插件配置文件
+const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json"); // 默认本地表情配置文件
 let loadOptions = require("./main_modules/loadOptions");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 
@@ -105,6 +107,8 @@ let peer = null; // 激活聊天界面信息
 let historyMessageRecallList = new Map(); // 只读历史消息实例暂存数组
 let localEmoticonsList = []; // 本地表情包数据
 
+let options, localEmoticonsConfig; // 配置数据
+
 // 向所有未销毁页面发送广播
 function globalBroadcast(channel, data) {
   listenList.forEach((window) => {
@@ -184,6 +188,7 @@ function downloadPic(url) {
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
+  const localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
   const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
   const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
@@ -223,7 +228,8 @@ function onLoad(plugin) {
   });
 
   // 使用配置加载模块解决插件不同版本配置文件差异
-  options = loadOptions(settingsPath);
+  options = loadOptions(defaultConfig, settingsPath);
+  localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
   if (options.debug) {
     try {
@@ -370,7 +376,7 @@ function onLoad(plugin) {
 
   // 获取配置信息
   ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
-    log("%c获取配置信息", "background:#1a5d1a;color:#fff;", options);
+    log("%c获取配置信息", "background:#1a5d1a;color:#fff;");
     event.returnValue = options;
   });
 
