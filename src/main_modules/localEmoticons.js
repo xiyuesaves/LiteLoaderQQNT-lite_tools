@@ -11,7 +11,7 @@ let watcher;
  * @param {JSON} config 本地表情独立配置
  * @param {String} folderPath 表情文件夹路径
  */
-async function loadEmoticons(config, folderPath) {
+async function loadEmoticons(folderPath) {
   emoticonsList = [];
   folderNum = 0;
   await loadFolder(folderPath);
