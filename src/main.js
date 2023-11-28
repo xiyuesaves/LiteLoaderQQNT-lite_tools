@@ -79,6 +79,7 @@ function onLoad(plugin) {
       const inspector = require("node:inspector");
       inspector.open(8899, "localhost", true);
     } catch (err) {
+      // 当前版本inspector模块已被移除
       log("%c当前版本无法开启远程调试", "background:#fe0000;color:#fff;");
     }
 
