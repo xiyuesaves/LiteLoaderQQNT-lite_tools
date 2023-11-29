@@ -10,8 +10,14 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 ## 使用方法
 
-- 下载 [最新版本](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest) 中的 Source code (zip)
-- 将 LiteLoaderQQNT-lite_tools-x.x.xx.zip 内的 LiteLoaderQQNT-lite_tools-x.x.xx 文件夹解压到 LiteLoaderQQNT 数据目录的 plugins 文件夹下
+### 从插件市场安装（推荐）
+
+在 `LiteLoader插件市场` 中找到 `轻量工具箱` 点击安装，之后根据提示操作即可
+
+### 从 Releases 中下载稳定版的方式进行安装
+
+- 下载 [最新发布版本](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest) 中的 `lite_tools.zip`
+- 将压缩包中的内容解压到 [LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT) 数据目录的 plugins 文件夹下
 - 重启 QQNT 安装完成
 
 **如果更新之后插件设置界面无响应，请删除 `plugins_data` 目录下的 `lite_tools` 文件夹以重置配置信息**
