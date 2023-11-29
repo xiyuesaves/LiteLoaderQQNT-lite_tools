@@ -1,10 +1,11 @@
 const projectLatestUrl = "https://api.github.com/repos/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest";
-
+import { log } from "./logs.js";
+const log = new logs("检查更新模块").log;
 /**
  * 对比版本号
  * @param {String} currentVersion 当前版本
  * @param {String} latestVersion 最新版本
- * @returns 
+ * @returns
  */
 function compareVersions(currentVersion, latestVersion) {
   const currentParts = currentVersion.split(".");
@@ -49,7 +50,7 @@ async function checkUpdate(view) {
       }
     })
     .catch((err) => {
-      console.log("检查更新失败", err);
+      log("检查更新失败", err);
     });
 }
 

@@ -289,10 +289,7 @@ function globalMouseUp(event) {
  * @param {MouseEvent} event
  */
 function globalMouseDown(event) {
-  if (
-    !doesParentHaveClass(event.target, "lite-tools-bar") &&
-    barIcon.querySelector(".lite-tools-local-emoticons-main")
-  ) {
+  if (!doesParentHaveClass(event.target, "lite-tools-bar") && barIcon.querySelector(".lite-tools-local-emoticons-main")) {
     showEmoticons = false;
     barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
     barIcon.querySelector(".lite-tools-q-tooltips__content").classList.remove("hidden");
@@ -342,9 +339,7 @@ function insert(event) {
   }
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   if (ckeditEditorModel) {
-    const src = decodeURI(
-      event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"),
-    );
+    const src = decodeURI(event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"));
     // 更新常用表情
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);
@@ -359,15 +354,20 @@ function insert(event) {
       });
     }
 
-    const selection = ckeditEditorModel.document.selection;
-    const position = selection.getFirstPosition();
+    if (event.altKey) {
+      log("直接发送图片");
+    } else {
+      const selection = ckeditEditorModel.document.selection;
+      const position = selection.getFirstPosition();
 
-    ckeditEditorModel.change((writer) => {
-      writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
-      // 插入表情
-      const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
-      writer.insert(writerEl, position);
-    });
+      ckeditEditorModel.change((writer) => {
+        writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
+        // 插入表情
+        const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
+        writer.insert(writerEl, position);
+      });
+    }
+
     showEmoticons = false;
     // 如果按下了ctrl键，则不关闭窗口面板
     if (!event.ctrlKey) {

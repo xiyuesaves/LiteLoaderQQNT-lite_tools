@@ -14,7 +14,9 @@ const { globalBroadcast } = require("./main_modules/globalBroadcast");
 const { processPic } = require("./main_modules/processPic");
 const { replaceArk } = require("./main_modules/replaceArk");
 const { debounce } = require("./main_modules/debounce");
-const { log } = require("./main_modules/log");
+const { logs } = require("./main_modules/logs");
+const log = new logs("主进程").log;
+const renderLog = new logs("渲染进程").log;
 
 let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson, localEmoticonsPath;
 
@@ -80,7 +82,7 @@ function onLoad(plugin) {
       inspector.open(8899, "localhost", true);
     } catch (err) {
       // 当前版本inspector模块已被移除
-      log("%c当前版本无法开启远程调试", "background:#fe0000;color:#fff;");
+      log("当前版本无法开启远程调试");
     }
 
     try {
@@ -117,18 +119,15 @@ function onLoad(plugin) {
         }, 100),
       );
     } catch {
-      log("%c当前环境未安装sass，动态更新样式未启用", "background:#fe0000;color:#fff;");
+      log("当前环境未安装sass，动态更新样式未启用");
     }
   }
   // 控制台输出项目logo
-  log(
-    "%c轻量工具箱已加载",
-    "border-radius: 8px;padding:10px 20px;font-size:18px;background:linear-gradient(to right, #3f7fe8, #03ddf2);color:#fff;",
-  );
+  log("轻量工具箱已加载");
 
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
-    console.log("本地表情包更新", emoticonsList.length);
+    log("本地表情包更新", emoticonsList.length);
     globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
     localEmoticonsList = emoticonsList;
   });
@@ -136,7 +135,7 @@ function onLoad(plugin) {
   // 判断是否启用了本地表情包功能
   if (options.localEmoticons.enabled) {
     if (options.localEmoticons.localPath) {
-      console.log("尝试加载本地表情包文件夹");
+      log("尝试加载本地表情包文件夹");
       loadEmoticons(options.localEmoticons.localPath);
     }
   }
@@ -207,7 +206,7 @@ function onLoad(plugin) {
 
   // 修改配置信息
   ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
-    log("%c更新配置信息", "background:#1a5d1a;color:#fff;", opt);
+    log("更新配置信息", opt);
     // 判断是否启用了本地表情包功能
     if (opt.localEmoticons.enabled) {
       if (opt.localEmoticons.localPath && options.localEmoticons.localPath !== opt.localEmoticons.localPath) {
@@ -228,13 +227,13 @@ function onLoad(plugin) {
 
   // 获取配置信息
   ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
-    log("%c获取配置信息", "background:#1a5d1a;color:#fff;");
+    log("获取配置信息");
     event.returnValue = options;
   });
 
   // 控制台日志打印
   ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
-    log("%c轻量工具箱 [渲染进程]: ", "background:#272829;color:#fff;", ...message);
+    renderLog(...message);
   });
 
   // 更新常用表情列表
@@ -308,7 +307,7 @@ function onLoad(plugin) {
         buttonLabel: "选择文件夹",
       })
       .then((result) => {
-        console.log("选择了文件夹", result);
+        log("选择了文件夹", result);
         if (!result.canceled) {
           const newPath = path.join(result.filePaths[0]).replace(/\\/g, "/");
           // 判断是否启用了本地表情包功能
@@ -324,7 +323,7 @@ function onLoad(plugin) {
         }
       })
       .catch((err) => {
-        console.log("无效操作", err);
+        log("无效操作", err);
       });
   });
 }
@@ -342,23 +341,10 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
-  // ipcMain 监听事件patch 仅9.9.0有效
-  // window.webContents.on("ipc-message", (_, channel, ...args) => {
-  //   log(
-  //     "%cipc-message被拦截",
-  //     "background:#4477ce;color:#fff;",
-  //     channel,
-  //     args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel,
-  //     args[1]?.[0],
-  //     args
-  //   );
-  // });
-
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
-      // log("%c-ipc-message被拦截", "background:#f6ca00;color:#fff;", args[2], args[3]?.[0]?.eventName ? args[3]?.[0]?.eventName : args[3]?.[0], args[3], args);
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
-        log("%c消息发送事件", "background:#5b9a8b;color:#fff;", args);
+        log("消息发送事件", args);
         if (args[3][1][1] && args[3][1][1].msgElements) {
           if (options.tail.enabled) {
             args[3][1][1].msgElements.forEach((el) => {
@@ -367,7 +353,7 @@ function onBrowserWindowCreated(window, plugin) {
                   el.textElement.content += "\n";
                 }
                 el.textElement.content += options.tail.content;
-                log("%c消息增加后缀", "background:#5b9a8b;color:#fff;", el.textElement.content);
+                log("消息增加后缀", el.textElement.content);
               }
             });
           }
@@ -377,17 +363,17 @@ function onBrowserWindowCreated(window, plugin) {
         peer = {
           chatType: args[3]?.[1]?.[1].peerUid[0] === "u" ? "friend" : "group",
           uid: args[3]?.[1]?.[1].peerUid,
-          guildId: "",
+          guildId: args[3]?.[1]?.[1].peer.guildId,
         };
-        log("%c切换聊天窗口", "background:#b3642d;color:#fff;", peer);
+        log("切换聊天窗口", peer);
       }
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
         peer = {
           chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
           uid: args[3]?.[1]?.[1].peer.peerUid,
-          guildId: "",
+          guildId: args[3]?.[1]?.[1].peer.guildId,
         };
-        log("%c切换聚焦窗口", "background:#b3642d;color:#fff;", peer);
+        log("切换聚焦窗口", peer);
       }
       return target.apply(thisArg, args);
     },
@@ -397,15 +383,6 @@ function onBrowserWindowCreated(window, plugin) {
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
   const patched_send = function (channel, ...args) {
-    // log("%cipc-send被拦截", "background:#74a488;color:#fff;", channel, args[1]?.[0]?.cmdName ? args[1]?.[0]?.cmdName : channel, args[1]?.[0], args);
-
-    // 拦截侧边栏数据
-    // if(args[1] && args[1]?.configData?.group && args[1]?.configData?.content){
-    //   const temp =  JSON.parse(args[1].configData.content);
-    //   args[1].configData.content = temp.map(el => {el.status = 2; return el})
-    // }
-
-    // if (options.message.convertMiniPrgmArk || options.message.showMsgTime) {
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
@@ -430,7 +407,7 @@ function onBrowserWindowCreated(window, plugin) {
                   // 尝试从内存中查找对应消息并替换元素
                   const findInCatch = catchMsgList.get(msgItem.msgId);
                   if (findInCatch) {
-                    log(`%c ${msgItem.msgId} 从消息列表中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInCatch);
+                    log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
                     // 如果是从最新的缓存中获取到的原内容，则需要存入常驻历史撤回记录
                     recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
                     // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
@@ -443,19 +420,13 @@ function onBrowserWindowCreated(window, plugin) {
                     // 从常驻撤回消息中查找消息id
                     const findInRecord = recordMessageRecallIdList.get(msgItem.msgId);
                     if (findInRecord) {
-                      log(
-                        `%c ${msgItem.msgId} 从常驻缓存中找到消息记录`,
-                        "background-color:#7eb047;color:#ffffff;",
-                        findInRecord.peerName,
-                        findInRecord.sendNickName,
-                      );
+                      log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
                       // 下载消息内的图片并修复数据结构
                       processPic(findInRecord);
                       // 替换撤回标记
                       msgList[index] = findInRecord;
                     } else {
                       // 没有记录的消息暂时不进行操作
-                      // log(`%c ${msgItem.msgId} 没有记录消息内容`, "background-color:#e64a19;color:#ffffff;");
                       // 获取消息发送时间-在实际时间后面加1秒的原因是如果刚好处于文件切片位置，切片文件因为精度问题会大于该时间1秒以内
                       const msgRecallTime = parseInt(msgItem.recallTime) * 1000;
                       // 根据时间找到可能含有数据的历史记录切片
@@ -471,17 +442,17 @@ function onBrowserWindowCreated(window, plugin) {
                         }
                         const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
                         if (findInHistory) {
-                          log(`%c ${msgItem.msgId} 从历史缓存中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInHistory);
+                          log(` ${msgItem.msgId} 从历史缓存中找到消息记录`, findInHistory);
                           // 下载消息内的图片并修复数据结构
                           processPic(findInHistory);
                           // 替换撤回标记
                           msgList[index] = findInHistory;
                         } else {
                           // 没有记录的消息暂时不进行操作
-                          log(`%c ${msgItem.msgId} 没有记录消息内容`, "background-color:#e64a19;color:#ffffff;");
+                          log(` ${msgItem.msgId} 没有记录消息内容`);
                         }
                       } else {
-                        log(`%c ${msgItem.msgId} 没有对应时间的历史切片`, "background-color:#e64a19;color:#ffffff;");
+                        log(` ${msgItem.msgId} 没有对应时间的历史切片`);
                       }
                     }
                   }
@@ -546,7 +517,7 @@ function onBrowserWindowCreated(window, plugin) {
         : -1
       : -1;
     if (onRecvMsg !== -1) {
-      log("这是新接收到的消息", args[1]);
+      log("收到新消息", args[1]);
       args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
         // 阻止撤回
         if (options.message.preventMessageRecall) {
@@ -560,7 +531,7 @@ function onBrowserWindowCreated(window, plugin) {
         // 打开发给自己的链接
         if (options.message.autoOpenURL) {
           if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
-            log("这是我的手机的消息", arrs);
+            log("来自我的手机的消息", arrs);
             arrs.elements.forEach((msgElements) => {
               if (msgElements.textElement) {
                 if (/^http(s)?:\/\//.test(msgElements.textElement.content)) {

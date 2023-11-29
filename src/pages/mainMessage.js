@@ -28,7 +28,6 @@ newMessageRecall();
 
 // 设置页面获取侧边栏项目
 lite_tools.optionsOpen((event, message) => {
-  console.log("获取侧边栏");
   let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
     if (el.getAttribute("aria-label")) {
       if (el.getAttribute("aria-label").includes("消息")) {
@@ -77,7 +76,6 @@ lite_tools.optionsOpen((event, message) => {
     top,
     bottom,
   });
-  console.log("获取侧边栏-发送");
 });
 
 const observe = new MutationObserver(chatMessage);

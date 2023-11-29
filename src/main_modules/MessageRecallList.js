@@ -1,13 +1,12 @@
 const path = require("path");
 const fs = require("fs");
-const { log } = require("./log");
+const { logs } = require("./logs");
+const log = new logs("撤回管理").log;
 
 // 撤回消息切片管理
 class MessageRecallList {
   constructor(messageRecallJson, messageRecallPath = false, limit = 0) {
-    log(
-      `新的历史记录实例，目标文件 ${path.basename(messageRecallJson)} 实例状态 ${messageRecallPath ? "读写" : "只读"} 切片大小 ${limit}`
-    );
+    log(`新的历史记录实例，目标文件 ${path.basename(messageRecallJson)} 实例状态 ${messageRecallPath ? "读写" : "只读"} 切片大小 ${limit}`);
     this.limit = limit;
     this.messageRecallPath = messageRecallPath;
     this.latestPath = messageRecallJson;

@@ -49,7 +49,6 @@ async function onConfigView(view) {
   });
 
   // 获取侧边栏按钮列表
-  console.log("发送获取");
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
   const sidebar = view.querySelector(".sidebar ul");
   addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
