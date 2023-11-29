@@ -377,6 +377,7 @@ function onBrowserWindowCreated(window, plugin) {
         peer = {
           chatType: args[3]?.[1]?.[1].peerUid[0] === "u" ? "friend" : "group",
           uid: args[3]?.[1]?.[1].peerUid,
+          guildId: "",
         };
         log("%c切换聊天窗口", "background:#b3642d;color:#fff;", peer);
       }
@@ -384,6 +385,7 @@ function onBrowserWindowCreated(window, plugin) {
         peer = {
           chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
           uid: args[3]?.[1]?.[1].peer.peerUid,
+          guildId: "",
         };
         log("%c切换聚焦窗口", "background:#b3642d;color:#fff;", peer);
       }
@@ -424,18 +426,11 @@ function onBrowserWindowCreated(window, plugin) {
               }
               // 替换被撤回的消息内容
               if (options.message.preventMessageRecall) {
-                if (
-                  msgElements?.grayTipElement?.revokeElement &&
-                  !msgElements?.grayTipElement?.revokeElement?.isSelfOperate
-                ) {
+                if (msgElements?.grayTipElement?.revokeElement && !msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
                   // 尝试从内存中查找对应消息并替换元素
                   const findInCatch = catchMsgList.get(msgItem.msgId);
                   if (findInCatch) {
-                    log(
-                      `%c ${msgItem.msgId} 从消息列表中找到消息记录`,
-                      "background-color:#7eb047;color:#ffffff;",
-                      findInCatch,
-                    );
+                    log(`%c ${msgItem.msgId} 从消息列表中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInCatch);
                     // 如果是从最新的缓存中获取到的原内容，则需要存入常驻历史撤回记录
                     recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
                     // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
@@ -465,13 +460,7 @@ function onBrowserWindowCreated(window, plugin) {
                       const msgRecallTime = parseInt(msgItem.recallTime) * 1000;
                       // 根据时间找到可能含有数据的历史记录切片
                       const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime);
-                      log(
-                        "判断历史切片是否可能含有撤回内容",
-                        messageRecallFileList,
-                        msgItem.msgId,
-                        msgRecallTime,
-                        historyFile,
-                      );
+                      log("判断历史切片是否可能含有撤回内容", messageRecallFileList, msgItem.msgId, msgRecallTime, historyFile);
                       if (historyFile) {
                         // 创建只读实例用于匹配消息id，创建的实例将在遍历完所有消息后统一销毁
                         if (!historyMessageRecallList.has(historyFile)) {
@@ -482,11 +471,7 @@ function onBrowserWindowCreated(window, plugin) {
                         }
                         const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
                         if (findInHistory) {
-                          log(
-                            `%c ${msgItem.msgId} 从历史缓存中找到消息记录`,
-                            "background-color:#7eb047;color:#ffffff;",
-                            findInHistory,
-                          );
+                          log(`%c ${msgItem.msgId} 从历史缓存中找到消息记录`, "background-color:#7eb047;color:#ffffff;", findInHistory);
                           // 下载消息内的图片并修复数据结构
                           processPic(findInHistory);
                           // 替换撤回标记
