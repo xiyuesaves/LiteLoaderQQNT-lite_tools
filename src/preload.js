@@ -18,8 +18,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 监听本地表情更新
   updateEmoticons: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEmoticons", callback),
   // 监听常用表情列表更新
-  updateLocalEmoticonsConfig: (callback) =>
-    ipcRenderer.on("LiteLoader.lite_tools.updateLocalEmoticonsConfig", callback),
+  updateLocalEmoticonsConfig: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateLocalEmoticonsConfig", callback),
   // 主动获取本地表情列表
   getLocalEmoticonsList: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsList"),
   // 主动获取常用表情列表
@@ -40,6 +39,25 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getPeer: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPeer"),
   // 获取撤回信息数据
   getMessageRecallId: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMessageRecallId"),
+  // 消息窗口向主进程发送输入框上方功能列表
+  sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
+  // 打开选择背景图片窗口
+  openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
+  // 消息窗口向主进程发送侧边栏按钮信息
+  sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
+  // 聊天窗口顶部功能列表
+  sendChatTopList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendChatTopList", list),
+  // 在浏览器打开页面
+  openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
+  // 在主进程的终端打印渲染进程日志
+  log: (...msg) => ipcRenderer.send("LiteLoader.lite_tools.log", ...msg),
+  // 更新常用表情列表
+  addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
+
+  // 腾讯官方接口
+  ntCall: () => {
+
+  },
   // 转发消息
   forwardMessage: (srcpeer, dstpeer, msgIds) => {
     ipcRenderer.send(
@@ -71,18 +89,4 @@ contextBridge.exposeInMainWorld("lite_tools", {
       ],
     );
   },
-  // 消息窗口向主进程发送输入框上方功能列表
-  sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
-  // 打开选择背景图片窗口
-  openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
-  // 消息窗口向主进程发送侧边栏按钮信息
-  sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
-  // 聊天窗口顶部功能列表
-  sendChatTopList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendChatTopList", list),
-  // 在浏览器打开页面
-  openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
-  // 在主进程的终端打印渲染进程日志
-  log: (...msg) => ipcRenderer.send("LiteLoader.lite_tools.log", ...msg),
-  // 更新常用表情列表
-  addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
 });
