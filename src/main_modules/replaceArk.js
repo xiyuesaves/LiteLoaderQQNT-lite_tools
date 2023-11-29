@@ -1,6 +1,3 @@
-const { logs } = require("./logs");
-const log = new logs("卡片替换小程序").log;
-
 // appid对应小程序名称
 const appidName = new Map([
   ["1109224783", "微博"],
@@ -14,7 +11,6 @@ function getArkData(json) {
 
 // 卡片替换函数
 function replaceArk(json, msg_seq) {
-  log(json);
   return JSON.stringify({
     app: "com.tencent.structmsg",
     config: json.config,
