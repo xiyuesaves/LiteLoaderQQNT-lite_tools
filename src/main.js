@@ -231,6 +231,12 @@ function onLoad(plugin) {
     event.returnValue = options;
   });
 
+  // 返回窗口id
+  ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
+    log("获取窗口id", event.sender.id.toString());
+    event.returnValue = event.sender.id.toString();
+  });
+
   // 控制台日志打印
   ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
     renderLog(...message);
@@ -506,7 +512,7 @@ function onBrowserWindowCreated(window, plugin) {
     // 捕获自身发送消息事件-替换新消息中的小程序卡片
     const onRecvMsg = findEventIndex(args, "nodeIKernelMsgListener/onRecvMsg");
     if (onRecvMsg !== -1) {
-      log("收到新消息", args[1]);
+      // log("收到新消息", args[1]);
       args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
         // 阻止撤回
         if (options.message.preventMessageRecall) {

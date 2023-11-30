@@ -53,7 +53,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   log: (...msg) => ipcRenderer.send("LiteLoader.lite_tools.log", ...msg),
   // 更新常用表情列表
   addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
-
+  // 获取窗口Id
+  getWebContentId: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getWebContentId"),
   /**
    *
    * @param {String} sendEventName 发送事件名称
@@ -63,8 +64,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
    * @param {Boolean} register 注册（未知）
    * @returns
    */
-  nativeCall: (sendEventName, cmdName, args, awaitCallback = false, register = false) => {
-    const webContentId = 2;
+  nativeCall: (sendEventName, cmdName, args, webContentId = 2, awaitCallback = false, register = false) => {
     const callbackId = crypto.randomUUID();
     const eventName = `${sendEventName}-${webContentId}${register ? "-register" : ""}`;
     // 发送事件

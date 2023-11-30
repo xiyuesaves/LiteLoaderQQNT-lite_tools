@@ -1,5 +1,12 @@
 import { logs } from "./logs.js";
 const log = new logs("QQ通信模块").log;
+let webContentId = lite_tools.getWebContentId();
+
+if (!webContentId) {
+  webContentId = 2;
+}
+
+log("获取到当前窗口Id", webContentId);
 
 /**
  *
@@ -35,8 +42,8 @@ async function convertMessage(message) {
       };
     case "image":
       const path = message.path;
-      const type = await lite_tools.nativeCall("ns-fsApi", "getFileType", [path], true, false);
-      const md5 = await lite_tools.nativeCall("ns-fsApi", "getFileMd5", [path], true, false);
+      const type = await lite_tools.nativeCall("ns-fsApi", "getFileType", [path], webContentId, true, false);
+      const md5 = await lite_tools.nativeCall("ns-fsApi", "getFileMd5", [path], webContentId, true, false);
       const fileName = `${md5}.${type.ext}`;
       const filePath = await lite_tools.nativeCall(
         "ns-ntApi",
@@ -52,12 +59,13 @@ async function convertMessage(message) {
             fileType: 1,
           },
         ],
+        webContentId,
         true,
         false,
       );
-      await lite_tools.nativeCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }]);
-      const imageSize = await lite_tools.nativeCall("ns-fsApi", "getImageSizeFromPath", [path], true, false);
-      const fileSize = await lite_tools.nativeCall("ns-fsApi", "getFileSize", [path], true, false);
+      await lite_tools.nativeCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, false, false);
+      const imageSize = await lite_tools.nativeCall("ns-fsApi", "getImageSizeFromPath", [path], webContentId, true, false);
+      const fileSize = await lite_tools.nativeCall("ns-fsApi", "getFileSize", [path], webContentId, true, false);
       const picElement = {
         md5HexStr: md5,
         fileSize: fileSize,
@@ -90,13 +98,20 @@ async function convertMessage(message) {
  */
 async function sendMessage(peer, messages) {
   log("发送消息", peer, messages);
-  lite_tools.nativeCall("ns-ntApi", "nodeIKernelMsgService/sendMsg", [
-    {
-      msgId: "0",
-      peer: convertPeer(peer),
-      msgElements: await Promise.all(messages.map((message) => convertMessage(message))),
-    },
-  ]);
+  lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelMsgService/sendMsg",
+    [
+      {
+        msgId: "0",
+        peer: convertPeer(peer),
+        msgElements: await Promise.all(messages.map((message) => convertMessage(message))),
+      },
+    ],
+    webContentId,
+    false,
+    false,
+  );
 }
 
 /**
@@ -118,6 +133,7 @@ function forwardMessage(srcpeer, dstpeer, msgIds) {
         commentElements: [],
       },
     ],
+    webContentId,
     false,
     false,
   );
