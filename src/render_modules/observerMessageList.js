@@ -146,7 +146,7 @@ function realFunc() {
       if (
         msgEl &&
         el.querySelector(
-          ":not(.ptt-message,.file-message--content,wallet-message__container,ark-msg-content-container).mix-message__container,.msg-content-container",
+          ":not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container).mix-message__container,.msg-content-container",
         ) &&
         !replaceEl
       ) {
