@@ -10,6 +10,9 @@ import { addOptionLi } from "../render_modules/addOptionLi.js";
 import { SwitchEventlistener } from "../render_modules/addSwitchEventlistener.js";
 // 加载配置信息
 import { options, updateOptions } from "../render_modules/options.js";
+// 配置界面日志
+import { logs } from "../render_modules/logs.js";
+const log = new logs("配置界面").log;
 
 // 打开设置界面时触发
 async function onConfigView(view) {

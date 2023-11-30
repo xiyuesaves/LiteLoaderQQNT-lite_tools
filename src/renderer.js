@@ -55,6 +55,7 @@ function onLoad() {
 
 // 设置界面函数
 function onConfigView(view) {
+  log("进入配置界面");
   import("./pages/configView.js").then((module) => {
     module.onConfigView(view);
   });

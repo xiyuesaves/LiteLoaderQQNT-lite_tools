@@ -20,7 +20,10 @@ function SwitchEventlistener(viewEl) {
     }
     view.querySelector(switchClass).addEventListener("click", function (event) {
       this.classList.toggle("is-active");
-      let newOptions = Object.assign(options, Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options));
+      let newOptions = Object.assign(
+        options,
+        Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options),
+      );
       lite_tools.setOptions(newOptions);
       if (callback) {
         callback(event, this.classList.contains("is-active"));
