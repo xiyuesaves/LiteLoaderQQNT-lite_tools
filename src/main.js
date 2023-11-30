@@ -341,7 +341,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
-  // 主进程接收到消息事件
+  // 代理官方监听器
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
@@ -383,8 +383,10 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
+
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
+
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
@@ -580,6 +582,7 @@ function onBrowserWindowCreated(window, plugin) {
     // 打开图片预览窗口事件
     // windowName: "ImageViewerWindow";
 
+    // 继续原有逻辑
     return original_send.call(window.webContents, channel, ...args);
   };
 
