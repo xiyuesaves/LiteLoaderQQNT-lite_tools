@@ -2,6 +2,7 @@ import { options, updateOptions } from "./options.js";
 import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
+import { sendMessage } from "./QQCall.js";
 const log = new logs("本地表情包模块").log;
 
 let barIcon;
@@ -333,7 +334,7 @@ function mouseEnter(event) {
  * @param {MouseEvent} event
  * @returns
  */
-function insert(event) {
+async function insert(event) {
   if (!insertImg) {
     return;
   }
@@ -356,6 +357,8 @@ function insert(event) {
 
     if (event.altKey) {
       log("直接发送图片");
+      const peer = await lite_tools.getPeer();
+      sendMessage(peer, [{ type: "image", path: src }]);
     } else {
       const selection = ckeditEditorModel.document.selection;
       const position = selection.getFirstPosition();
