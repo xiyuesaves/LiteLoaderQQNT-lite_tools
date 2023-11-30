@@ -341,6 +341,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
+  // 主进程接收到消息事件
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
@@ -382,6 +383,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
+  // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
     // 捕获消息列表
     const msgList = args[1]?.msgList;
@@ -477,11 +479,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 捕获接收到消息事件-替换新消息中的小程序卡片
-    const onAddSendMsg = args[1]
-      ? Array.isArray(args[1])
-        ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onAddSendMsg")
-        : -1
-      : -1;
+    const onAddSendMsg = findEventIndex(args, "nodeIKernelMsgListener/onAddSendMsg");
     if (onAddSendMsg !== -1) {
       log("这是我发送的新消息", args[1]);
       // 阻止撤回
@@ -489,13 +487,6 @@ function onBrowserWindowCreated(window, plugin) {
         // 不是撤回标记则记录进内存缓存中
         catchMsgList.set(args[1][onAddSendMsg].payload.msgRecord.msgId, args[1][onAddSendMsg].payload.msgRecord);
       }
-      // 获取消息id和发送时间存入map
-      // if (options.message.showMsgTime) {
-      //   msgIdList.set(args[1][onAddSendMsg].payload.msgRecord.msgId, {
-      //     msgTime: args[1][onAddSendMsg].payload.msgRecord.msgTime * 1000,
-      //     senderUid: args[1][onAddSendMsg].payload.msgRecord.senderUid,
-      //   });
-      // }
       // 处理小程序卡片
       if (options.message.convertMiniPrgmArk) {
         const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
@@ -511,11 +502,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 捕获自身发送消息事件-替换新消息中的小程序卡片
-    const onRecvMsg = args[1]
-      ? Array.isArray(args[1])
-        ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onRecvMsg")
-        : -1
-      : -1;
+    const onRecvMsg = findEventIndex(args, "nodeIKernelMsgListener/onRecvMsg");
     if (onRecvMsg !== -1) {
       log("收到新消息", args[1]);
       args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
@@ -524,10 +511,6 @@ function onBrowserWindowCreated(window, plugin) {
           // 不是撤回标记则记录进内存缓存中
           catchMsgList.set(arrs.msgId, arrs);
         }
-        // 获取消息id和发送时间存入数组
-        // if (options.message.showMsgTime) {
-        //   msgIdList.set(arrs.msgId, { msgTime: arrs.msgTime * 1000, senderUid: arrs.senderUid });
-        // }
         // 打开发给自己的链接
         if (options.message.autoOpenURL) {
           if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
@@ -557,11 +540,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 捕获重排消息事件-拦截撤回指令
-    const onMsgInfoListUpdate = args[1]
-      ? Array.isArray(args[1])
-        ? args[1].findIndex((item) => item.cmdName === "nodeIKernelMsgListener/onMsgInfoListUpdate")
-        : -1
-      : -1;
+    const onMsgInfoListUpdate = findEventIndex(args, "nodeIKernelMsgListener/onMsgInfoListUpdate");
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
       const msgItem = args[1][0]?.payload?.msgList[0];
@@ -607,6 +586,11 @@ function onBrowserWindowCreated(window, plugin) {
   window.webContents.send = patched_send;
 }
 
+// 判断事件名称
+function findEventIndex(args, eventName) {
+  return args[1] ? (Array.isArray(args[1]) ? args[1].findIndex((item) => item.cmdName === eventName) : -1) : -1;
+}
+
 // 重置常用表情列表
 function resetCommonlyEmoticons() {
   log("重置常用表情");
@@ -614,6 +598,7 @@ function resetCommonlyEmoticons() {
   globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
+
 // 增加常用表情
 function addCommonlyEmoticons(event, src) {
   if (!options.localEmoticons.commonlyEmoticons) {
