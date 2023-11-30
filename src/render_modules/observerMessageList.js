@@ -2,6 +2,7 @@ import { options } from "./options.js";
 import { messageRecall } from "./messageRecall.js";
 import { first } from "./first.js";
 import { logs } from "./logs.js";
+import { forwardMessage } from "./QQCall.js";
 const log = new logs("消息列表处理").log;
 
 const observeConfig = {
@@ -72,11 +73,7 @@ function realFunc() {
       const mixPicEl = el.querySelector(".mix-message__container--pic");
       if (mixPicEl) {
         const picEl = mixPicEl.querySelector(".pic-element");
-        if (
-          picEl &&
-          !picEl.classList.contains("hidden-background") &&
-          !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)
-        ) {
+        if (picEl && !picEl.classList.contains("hidden-background") && !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)) {
           mixPicEl.classList.add("hidden-background");
         }
       }
@@ -159,7 +156,7 @@ function realFunc() {
         newReplaceEl.innerText = "+1";
         newReplaceEl.addEventListener("click", async () => {
           const peer = await lite_tools.getPeer();
-          lite_tools.forwardMessage(peer, peer, [msgId]);
+          forwardMessage(peer, peer, [msgId]);
         });
         const showTimeEl = el.querySelector(".bubble-outside");
         // 如果已经启用显示消息时间，且这条消息的显示方法是外部气泡时，添加合并样式
@@ -179,8 +176,7 @@ function realFunc() {
         const mapTag = senderUid + sendNickName;
         const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
         const prevElUid = prevProps?.msgRecord?.senderUid;
-        const prevNickName =
-          prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
+        const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
         const prevTag = prevElUid + prevNickName;
         if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
           el.classList.remove("merge-main");
