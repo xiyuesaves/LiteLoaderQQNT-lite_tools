@@ -54,39 +54,40 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 更新常用表情列表
   addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
 
-  // 腾讯官方接口
-  ntCall: () => {
-
-  },
-  // 转发消息
-  forwardMessage: (srcpeer, dstpeer, msgIds) => {
+  /**
+   *
+   * @param {String} sendEventName 发送事件名称
+   * @param {String} cmdName 命令名称
+   * @param {Array} args 参数数组
+   * @param {Boolean} awaitCallback 是否需要等待回调
+   * @param {Boolean} register 注册（未知）
+   * @returns
+   */
+  QQCall: (sendEventName, cmdName, args, awaitCallback = false, register = false) => {
+    const webContentId = 2;
+    const callbackId = crypto.randomUUID();
+    const eventName = `${sendEventName}-${webContentId}${register ? "-register" : ""}`;
+    // 发送事件
     ipcRenderer.send(
-      "IPC_UP_2",
+      `IPC_UP_${webContentId}`,
       {
         type: "request",
-        callbackId: self.crypto.randomUUID(),
-        eventName: "ns-ntApi-2",
+        callbackId,
+        eventName,
       },
-      [
-        "nodeIKernelMsgService/forwardMsgWithComment",
-        {
-          msgIds: msgIds,
-          srcContact: {
-            chatType: srcpeer.chatType == "friend" ? 1 : srcpeer.chatType == "group" ? 2 : 1,
-            peerUid: srcpeer.uid,
-            guildId: "",
-          },
-          dstContacts: [
-            {
-              chatType: dstpeer.chatType == "friend" ? 1 : dstpeer.chatType == "group" ? 2 : 1,
-              peerUid: dstpeer.uid,
-              guildId: "",
-            },
-          ],
-          commentElements: [],
-        },
-        undefined,
-      ],
+      [cmdName, ...args],
     );
+    if (awaitCallback) {
+      return new Promise((res) => {
+        ipcRenderer.on(`IPC_DOWN_${webContentId}`, function (event, ...args) {
+          if (args[0]?.callbackId === callbackId) {
+            res(args[1]);
+            ipcRenderer.removeListener(`IPC_DOWN_${webContentId}`, this);
+          }
+        });
+      });
+    } else {
+      return true;
+    }
   },
 });
