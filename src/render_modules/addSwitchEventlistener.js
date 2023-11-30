@@ -7,6 +7,13 @@ import { options } from "./options.js";
  */
 function SwitchEventlistener(viewEl) {
   const view = viewEl;
+
+  /**
+   *
+   * @param {String} optionKey 设置对象key路径
+   * @param {String} switchClass 设置界面class选择器
+   * @param {Function} callback 回调函数 Event,Boolend
+   */
   function addSwitchEventlistener(optionKey, switchClass, callback) {
     const option = Function("options", `return options.${optionKey}`)(options);
     if (option) {
