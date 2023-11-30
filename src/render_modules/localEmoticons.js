@@ -334,7 +334,7 @@ function mouseEnter(event) {
  * @param {MouseEvent} event
  * @returns
  */
-async function insert(event) {
+function insert(event) {
   if (!insertImg) {
     return;
   }
@@ -357,7 +357,7 @@ async function insert(event) {
 
     if (event.altKey) {
       log("直接发送图片");
-      const peer = await lite_tools.getPeer();
+      const peer = lite_tools.getPeer();
       sendMessage(peer, [{ type: "image", path: src }]);
     } else {
       const selection = ckeditEditorModel.document.selection;

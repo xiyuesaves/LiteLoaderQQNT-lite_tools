@@ -36,7 +36,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 获取全局样式
   getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
   // 获取当前窗口peer
-  getPeer: () => ipcRenderer.invoke("LiteLoader.lite_tools.getPeer"),
+  getPeer: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getPeer"),
   // 获取撤回信息数据
   getMessageRecallId: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMessageRecallId"),
   // 消息窗口向主进程发送输入框上方功能列表

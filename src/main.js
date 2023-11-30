@@ -163,12 +163,6 @@ function onLoad(plugin) {
     return localEmoticonsConfig;
   });
 
-  // 返回当前激活的peer数据
-  ipcMain.handle("LiteLoader.lite_tools.getPeer", (event) => {
-    log("返回peer", peer);
-    return peer;
-  });
-
   // 打开网址
   ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
     shell.openExternal(url);
@@ -235,6 +229,12 @@ function onLoad(plugin) {
   ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
     log("获取窗口id", event.sender.id.toString());
     event.returnValue = event.sender.id.toString();
+  });
+
+  // 返回当前激活的peer数据
+  ipcMain.on("LiteLoader.lite_tools.getPeer", (event) => {
+    log("获取peer", peer);
+    event.returnValue = peer;
   });
 
   // 控制台日志打印
@@ -392,7 +392,6 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
-
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {

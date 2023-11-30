@@ -154,8 +154,8 @@ function realFunc() {
         const msgId = el.id;
         newReplaceEl.classList.add("message-content-replace");
         newReplaceEl.innerText = "+1";
-        newReplaceEl.addEventListener("click", async () => {
-          const peer = await lite_tools.getPeer();
+        newReplaceEl.addEventListener("click", () => {
+          const peer = lite_tools.getPeer();
           forwardMessage(peer, peer, [msgId]);
         });
         const showTimeEl = el.querySelector(".bubble-outside");
