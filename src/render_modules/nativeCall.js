@@ -35,10 +35,10 @@ async function convertMessage(message) {
       };
     case "image":
       const path = message.path;
-      const type = await lite_tools.QQCall("ns-fsApi", "getFileType", [path], true, false);
-      const md5 = await lite_tools.QQCall("ns-fsApi", "getFileMd5", [path], true, false);
+      const type = await lite_tools.nativeCall("ns-fsApi", "getFileType", [path], true, false);
+      const md5 = await lite_tools.nativeCall("ns-fsApi", "getFileMd5", [path], true, false);
       const fileName = `${md5}.${type.ext}`;
-      const filePath = await lite_tools.QQCall(
+      const filePath = await lite_tools.nativeCall(
         "ns-ntApi",
         "nodeIKernelMsgService/getRichMediaFilePath",
         [
@@ -55,9 +55,9 @@ async function convertMessage(message) {
         true,
         false,
       );
-      await lite_tools.QQCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }]);
-      const imageSize = await lite_tools.QQCall("ns-fsApi", "getImageSizeFromPath", [path], true, false);
-      const fileSize = await lite_tools.QQCall("ns-fsApi", "getFileSize", [path], true, false);
+      await lite_tools.nativeCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }]);
+      const imageSize = await lite_tools.nativeCall("ns-fsApi", "getImageSizeFromPath", [path], true, false);
+      const fileSize = await lite_tools.nativeCall("ns-fsApi", "getFileSize", [path], true, false);
       const picElement = {
         md5HexStr: md5,
         fileSize: fileSize,
@@ -90,7 +90,7 @@ async function convertMessage(message) {
  */
 async function sendMessage(peer, messages) {
   log("发送消息", peer, messages);
-  lite_tools.QQCall("ns-ntApi", "nodeIKernelMsgService/sendMsg", [
+  lite_tools.nativeCall("ns-ntApi", "nodeIKernelMsgService/sendMsg", [
     {
       msgId: "0",
       peer: convertPeer(peer),
@@ -107,7 +107,7 @@ async function sendMessage(peer, messages) {
  */
 function forwardMessage(srcpeer, dstpeer, msgIds) {
   log("转发消息", srcpeer, dstpeer, msgIds);
-  lite_tools.QQCall(
+  lite_tools.nativeCall(
     "ns-ntApi",
     "nodeIKernelMsgService/forwardMsgWithComment",
     [

@@ -2,7 +2,7 @@ import { options, updateOptions } from "./options.js";
 import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
-import { sendMessage } from "./QQCall.js";
+import { sendMessage } from "./nativeCall.js";
 const log = new logs("本地表情包模块").log;
 
 let barIcon;

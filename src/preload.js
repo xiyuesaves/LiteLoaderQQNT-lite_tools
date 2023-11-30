@@ -63,7 +63,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
    * @param {Boolean} register 注册（未知）
    * @returns
    */
-  QQCall: (sendEventName, cmdName, args, awaitCallback = false, register = false) => {
+  nativeCall: (sendEventName, cmdName, args, awaitCallback = false, register = false) => {
     const webContentId = 2;
     const callbackId = crypto.randomUUID();
     const eventName = `${sendEventName}-${webContentId}${register ? "-register" : ""}`;

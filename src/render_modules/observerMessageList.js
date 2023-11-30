@@ -2,7 +2,7 @@ import { options } from "./options.js";
 import { messageRecall } from "./messageRecall.js";
 import { first } from "./first.js";
 import { logs } from "./logs.js";
-import { forwardMessage } from "./QQCall.js";
+import { forwardMessage } from "./nativeCall.js";
 const log = new logs("消息列表处理").log;
 
 const observeConfig = {
