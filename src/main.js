@@ -160,7 +160,13 @@ function onLoad(plugin) {
   // 返回常用表情包数据
   ipcMain.handle("LiteLoader.lite_tools.getCommonlyEmoticons", (event) => {
     log("返回本地表情包数据");
-    return localEmoticonsConfig;
+    if (options.localEmoticons.commonlyEmoticons) {
+      return localEmoticonsConfig;
+    } else {
+      return {
+        commonlyEmoticons: [],
+      };
+    }
   });
 
   // 打开网址
