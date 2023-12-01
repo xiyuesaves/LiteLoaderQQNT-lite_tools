@@ -39,20 +39,6 @@ async function observerMessageList(msgListEl, msgItemEl_, isForward_ = false) {
  * 消息列表元素处理函数
  */
 function processMessageElement() {
-  // 在执行回调函数时停止监听变动
-  observe.disconnect();
-  // 将代码嵌套try捕获报错，避免监听失效
-  try {
-    realFunc();
-  } catch (err) {
-    log("监听消息列表出错", err);
-  }
-
-  // 恢复监听
-  observe.observe(observerElement, observeConfig);
-}
-
-function realFunc() {
   // 循环元素列表
   const currentItemList = Array.from(document.querySelectorAll(msgItemEl));
   const validItemList = currentItemList;
