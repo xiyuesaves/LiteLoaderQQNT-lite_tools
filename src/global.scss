@@ -112,6 +112,10 @@
       url('data:image/svg+xml,\ <svg xmlns="http://www.w3.org/2000/svg">\ <filter id="acrylic">\ <feColorMatrix values="0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.850  0.000" result="lumi" />\ <feBlend in="lumi" in2="SourceGraphic" mode="luminosity" result="f1" />\ <feColorMatrix in="SourceGraphic" values="0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.988\ 0.000  0.000  0.000  0.000  0.000" result="tint" />\ <feBlend in="tint" in2="f1" mode="color" />\ </filter>\ </svg>#acrylic') !important;
     --emoticons-category-hover-bg: rgb(150, 150, 150, 0.15);
     --emoticons-category-full-bg: rgba(255, 255, 255, 0.6);
+
+    --context-menu-bg: #ffffff;
+    --context-menu-hover: #f5f5f5;
+    --context-menu-active: #e0e0e0;
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -125,6 +129,10 @@
       url('data:image/svg+xml,\ <svg xmlns="http://www.w3.org/2000/svg">\ <filter id="acrylic">\ <feColorMatrix values="0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.960  0.000" result="lumi" />\ <feBlend in="lumi" in2="SourceGraphic" mode="luminosity" result="f1" />\ <feColorMatrix in="SourceGraphic" values="0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.000  0.172\ 0.000  0.000  0.000  0.150  0.000" result="tint" />\ <feBlend in="tint" in2="f1" mode="color" />\ </filter>\ </svg>#acrylic') !important;
     --emoticons-category-hover-bg: rgb(255, 255, 255, 0.15);
     --emoticons-category-full-bg: rgba(0, 0, 0, 0.6);
+
+    --context-menu-bg: #303030;
+    --context-menu-hover: #404040;
+    --context-menu-active: #282828;
   }
 }
 
@@ -465,6 +473,7 @@
   }
 }
 
+// 消息合并样式
 .merge-message {
   .ml-root.q-scroll-view {
     .ml-item {
@@ -591,6 +600,7 @@
   }
 }
 
+// 本地表情预览样式
 .lite-tools-local-emoticons-main {
   position: absolute;
   width: calc((64px * 5) + 12px);
@@ -609,16 +619,72 @@
   pointer-events: none;
   overflow: hidden;
   padding-bottom: 36px;
+  z-index: 1000;
   &.show {
     transform: translateY(0px) scale(1);
     opacity: 1;
     pointer-events: auto;
+  }
+  &.show-menu {
+    .folder-list,
+    .folder-icon-list {
+      pointer-events: none;
+    }
+    .context-menu {
+      display: block;
+    }
+  }
+  .context-menu {
+    position: absolute;
+    z-index: 4000;
+    top: 120px;
+    left: 20px;
+    border-radius: 3px;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 12px 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border: 1.5px solid rgba(0, 0, 0, 0.06);
+    background-color: var(--context-menu-bg);
+    box-shadow: var(--shadow_bg_middle_secondary);
+    border: var(--border_secondary);
+    display: none;
+    .context-menu-item {
+      transition-duration: 0.2s;
+      transition-timing-function: cubic-bezier(0.2, 0.2, 0, 1);
+      transition-delay: 0s;
+      transition-property: background-color;
+      padding: 4px 0;
+      margin: 4px 7px;
+      display: block;
+      border-radius: 4px;
+      cursor: pointer;
+      &.hide {
+        display: none;
+      }
+      &:hover {
+        background-color: var(--context-menu-hover);
+      }
+      &:active {
+        background-color: var(--context-menu-active);
+      }
+      .context-menu-item__text {
+        font-size: 14px;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0%;
+        margin-left: 8px;
+        margin-right: 8px;
+        display: inline-block;
+        line-height: 20px;
+      }
+    }
   }
   .folder-list {
     width: 100%;
     height: auto;
     max-height: 100%;
     overflow-y: auto;
+
     .folder-item {
       width: 100%;
       height: auto;
@@ -630,7 +696,7 @@
         line-height: 28px;
         font-size: 14px;
         color: var(--emoticons-folder-name-color);
-        backdrop-filter: var(--emoticons-main-bf);
+        background-color: var(--background-color-cb);
         font-weight: bold;
         position: sticky;
         top: 0;

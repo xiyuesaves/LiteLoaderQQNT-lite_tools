@@ -3,6 +3,7 @@ import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
+import { doesParentHaveClass } from "./doesParentHaveClass.js";
 const log = new logs("本地表情包模块").log;
 
 let barIcon;
@@ -19,6 +20,9 @@ let ckeditorInstance;
 let ckeditEditorModel;
 let quickPreviewEl;
 let previewListEl;
+let showContextMenu = false;
+
+let targetElement;
 
 if (options.localEmoticons.enabled) {
   document.body.classList.add("lite-tools-showLocalEmoticons");
@@ -258,7 +262,7 @@ function updateCommonlyEmoticons(options) {
     }),
   };
   // 创建表情文件夹元素
-  const { folderEl, folderIcon } = createEmoticonsFolder(folder, folder.list[0].path, "commonlyEmoticons");
+  const { folderEl, folderIcon } = createEmoticonsFolder(folder, folder.list[0].path, "commonlyEmoticons", "commonly");
   folderList.insertBefore(folderEl, folderList.querySelector(":first-child"));
   folderScroll.insertBefore(folderIcon, folderScroll.querySelector(":first-child"));
   folderInfos.unshift({
@@ -290,6 +294,10 @@ function globalMouseUp(event) {
  * @param {MouseEvent} event
  */
 function globalMouseDown(event) {
+  if (showContextMenu && !doesParentHaveClass(event.target, "context-menu")) {
+    showContextMenu = false;
+    barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
+  }
   if (!doesParentHaveClass(event.target, "lite-tools-bar") && barIcon.querySelector(".lite-tools-local-emoticons-main")) {
     showEmoticons = false;
     barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
@@ -429,7 +437,11 @@ async function loadDom() {
   // 处理鼠标相关事件
   emoticonsMain.addEventListener("mousedown", (event) => {
     if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
-      mouseDown(event);
+      if (event.button === 0) {
+        mouseDown(event);
+      } else if (event.button === 2) {
+        contextMenu(event);
+      }
     }
   });
   emoticonsMain.addEventListener("mousemove", (event) => {
@@ -444,6 +456,72 @@ async function loadDom() {
       jumpFolder(event);
     }
   });
+
+  // 处理右键菜单监听事件
+  const contextMenuEl = barIcon.querySelector(".context-menu");
+  contextMenuEl.querySelector(".open-folder").addEventListener("click", (event) => {
+    log("打开文件路径", targetElement.path);
+    lite_tools.openFolder(targetElement.path);
+    closeContextMenu();
+  });
+  contextMenuEl.querySelector(".open-file").addEventListener("click", (event) => {
+    log("打开文件", targetElement.path);
+    lite_tools.openFile(targetElement.path);
+    closeContextMenu();
+  });
+  contextMenuEl.querySelector(".delete-from-commonly").addEventListener("click", (event) => {
+    log("从历史记录中移除", targetElement.path);
+    lite_tools.deleteCommonlyEmoticons(targetElement.path);
+    closeContextMenu();
+  });
+}
+
+/**
+ * 关闭右键菜单
+ */
+function closeContextMenu() {
+  showContextMenu = false;
+  barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
+}
+
+/**
+ * 打开表情右键菜单
+ * @param {MouseEvent} event
+ */
+function contextMenu(event) {
+  event.stopPropagation();
+  showContextMenu = true;
+  barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show-menu");
+  targetElement = {
+    path: event.target.querySelector("img").getAttribute("path"),
+    type: event.target.querySelector("img").getAttribute("type"),
+  };
+  log("目标元素数据", targetElement);
+
+  const contextMenuEl = barIcon.querySelector(".context-menu");
+  const folderList = barIcon.querySelector(".lite-tools-local-emoticons-main .folder-list");
+  const padding = 6;
+
+  if (targetElement.type === "commonly") {
+    contextMenuEl.querySelector(".delete-from-commonly").classList.remove("hide");
+  } else {
+    contextMenuEl.querySelector(".delete-from-commonly").classList.add("hide");
+  }
+
+  let offsetTop =
+    event.target.parentElement.parentElement.offsetParent.offsetTop +
+    event.target.offsetParent.offsetTop +
+    event.offsetY -
+    folderList.scrollTop;
+  if (offsetTop + contextMenuEl.offsetHeight > folderList.offsetHeight + 36 - padding) {
+    offsetTop -= contextMenuEl.offsetHeight;
+  }
+  contextMenuEl.style.top = offsetTop + "px";
+  let offsetLeft = event.target.parentElement.parentElement.offsetParent.offsetLeft + event.target.offsetParent.offsetLeft + event.offsetX;
+  if (offsetLeft + contextMenuEl.offsetWidth > folderList.offsetWidth - padding) {
+    offsetLeft -= contextMenuEl.offsetWidth;
+  }
+  contextMenuEl.style.left = offsetLeft + "px";
 }
 
 /**
@@ -462,27 +540,6 @@ function jumpFolder(event) {
     top: targetItem.offsetTop,
     // behavior: "smooth",
   });
-}
-
-/**
- * 判断父元素是否包含指定类名
- * @param {Element} element 需要判断的元素
- * @param {className} className 目标样式
- * @param {className} stopClassName 停止递归样式
- * @returns
- */
-function doesParentHaveClass(element, className, stopClassName) {
-  let parentElement = element.parentElement;
-  while (parentElement !== null) {
-    if (parentElement.classList.contains(className)) {
-      return true;
-    }
-    if (parentElement.classList.contains(stopClassName)) {
-      return false;
-    }
-    parentElement = parentElement.parentElement;
-  }
-  return false;
 }
 
 /**
@@ -521,7 +578,7 @@ function appendEmoticons(emoticonsList) {
 }
 
 // 创建表情文件夹元素
-function createEmoticonsFolder(folder, iconSrc, id) {
+function createEmoticonsFolder(folder, iconSrc, id, type = "folder") {
   if (!iconSrc) {
     iconSrc = folder.list[0].path;
   }
@@ -554,6 +611,8 @@ function createEmoticonsFolder(folder, iconSrc, id) {
     skiterPreview.classList.add("skiter-preview");
     const img = document.createElement("img");
     img.setAttribute("lazy", "");
+    img.setAttribute("type", type);
+    img.setAttribute("path", item.path);
     img.src = "llqqnt://local-file/" + item.path;
     skiterPreview.appendChild(img);
     categoryItem.append(skiterPreview);

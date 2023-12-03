@@ -251,6 +251,26 @@ function onLoad(plugin) {
   // 更新常用表情列表
   ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", addCommonlyEmoticons);
 
+  // 打开文件夹
+  ipcMain.on("LiteLoader.lite_tools.openFolder", (event, localPath) => {
+    const openPath = path.normalize(localPath);
+    shell.showItemInFolder(openPath);
+  });
+  // 打开文件
+  ipcMain.on("LiteLoader.lite_tools.openFile", (event, localPath) => {
+    const openPath = path.normalize(localPath);
+    shell.openPath(openPath);
+  });
+  // 从历史记录中移除指定文件
+  ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (event, localPath) => {
+    const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
+    // 如果已经有这个表情了，则更新位置
+    newSet.delete(localPath);
+    localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
+  });
+
   // 获取全局样式
   ipcMain.handle("LiteLoader.lite_tools.getGlobalStyle", (event) => {
     try {

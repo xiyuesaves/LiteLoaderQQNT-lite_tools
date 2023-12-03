@@ -55,6 +55,12 @@ contextBridge.exposeInMainWorld("lite_tools", {
   addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
   // 获取窗口Id
   getWebContentId: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getWebContentId"),
+  // 打开文件路径
+  openFolder: (path) => ipcRenderer.send("LiteLoader.lite_tools.openFolder", path),
+  // 打开文件
+  openFile: (path) => ipcRenderer.send("LiteLoader.lite_tools.openFile", path),
+  // 从历史记录中移除指定文件
+  deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   /**
    *
    * @param {String} sendEventName 发送事件名称
