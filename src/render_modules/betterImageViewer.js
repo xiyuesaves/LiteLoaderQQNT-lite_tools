@@ -20,7 +20,7 @@ function betterImageViewer() {
   document.addEventListener("mouseup", (event) => {
     const rightMenu = document.querySelector("#qContextMenu");
     const video = document.querySelector("embed");
-    if (!isMove && event.button === 0 && !rightMenu && !video) {
+    if (!isMove && event.button === 0 && !rightMenu && !video && options.imageViewer.quickClose) {
       console.log("关闭");
       document.querySelector(`div[aria-label="关闭"]`).click();
     }
