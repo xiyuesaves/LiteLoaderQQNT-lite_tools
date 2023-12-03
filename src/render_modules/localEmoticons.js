@@ -252,7 +252,7 @@ function updateCommonlyEmoticons(options) {
   const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
   // 插入新的表情数据
   const folder = {
-    name: "常用表情",
+    name: "历史表情",
     list: options.commonlyEmoticons.map((path) => {
       return { path };
     }),
