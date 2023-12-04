@@ -22,7 +22,13 @@ function betterImageViewer() {
     const rightMenu = document.querySelector("#qContextMenu");
     const video = document.querySelector("embed");
     if (!isMove && event.button === 0 && !rightMenu && !video && options.imageViewer.quickClose) {
-      if (doesParentHaveClass(event.target, "main-area__footer", "main-container-warp") || doesParentHaveClass(event.target, "main-area__left", "main-container-warp") || doesParentHaveClass(event.target, "main-area__right", "main-container-warp")) {
+      if (
+        doesParentHaveClass(event.target, "main-area__footer", "main-container-warp") ||
+        doesParentHaveClass(event.target, "main-area__left", "main-container-warp") ||
+        doesParentHaveClass(event.target, "main-area__right", "main-container-warp") ||
+        doesParentHaveClass(event.target, "main-area__left", "main-container-warp") ||
+        doesParentHaveClass(event.target, "window-control-area")
+      ) {
         return;
       }
       console.log("关闭");
