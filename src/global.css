@@ -655,6 +655,9 @@
   padding: 4px;
   cursor: pointer;
 }
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .skiter-preview.active {
+  background-color: var(--emoticons-category-hover-bg);
+}
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .skiter-preview img {
   pointer-events: none;
   user-select: none;

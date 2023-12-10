@@ -294,8 +294,7 @@ function globalMouseUp(event) {
  */
 function globalMouseDown(event) {
   if (showContextMenu && !event.target.closest(".context-menu")) {
-    showContextMenu = false;
-    barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
+    closeContextMenu();
   }
   if (!event.target.closest(".lite-tools-bar") && barIcon.querySelector(".lite-tools-local-emoticons-main")) {
     showEmoticons = false;
@@ -480,6 +479,7 @@ async function loadDom() {
  */
 function closeContextMenu() {
   showContextMenu = false;
+  barIcon.querySelector(".skiter-preview.active").classList.remove("active");
   barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
 }
 
@@ -490,6 +490,7 @@ function closeContextMenu() {
 function contextMenu(event) {
   event.stopPropagation();
   showContextMenu = true;
+  event.target.classList.add("active");
   barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show-menu");
   targetElement = {
     path: event.target.querySelector("img").getAttribute("path"),

@@ -731,6 +731,9 @@
             box-sizing: border-box;
             padding: 4px;
             cursor: pointer;
+            &.active {
+              background-color: var(--emoticons-category-hover-bg);
+            }
             img {
               pointer-events: none;
               user-select: none;
