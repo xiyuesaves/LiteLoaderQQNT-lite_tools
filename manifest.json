@@ -4,7 +4,7 @@
     "name": "轻量工具箱",
     "slug": "lite_tools",
     "description": "优化QQNT使用体验。功能列表：本地表情包，消息显示发送时间，自定义消息后缀，划词搜索，图片搜索，防撤回，自定义背景图片，小程序分享转链接，自定义大部分界面功能，模拟tg消息样式",
-    "version": "1.1.50",
+    "version": "1.1.51",
     "thumbnail": "./icon.png",
     "author": {
         "name": "曦月",
