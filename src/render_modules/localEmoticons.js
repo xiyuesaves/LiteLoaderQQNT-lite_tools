@@ -3,7 +3,6 @@ import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
-import { doesParentHaveClass } from "./doesParentHaveClass.js";
 const log = new logs("本地表情包模块").log;
 
 let barIcon;
@@ -126,17 +125,17 @@ function localEmoticons() {
 
     // 处理鼠标相关事件
     quickPreviewEl.addEventListener("mousedown", (event) => {
-      if (doesParentHaveClass(event.target, "preview-item", "lite-tools-sticker-bar")) {
+      if (event.target.closest(".preview-item")) {
         mouseDown(event);
       }
     });
     quickPreviewEl.addEventListener("mousemove", (event) => {
-      if (doesParentHaveClass(event.target, "preview-item", "lite-tools-sticker-bar")) {
+      if (event.target.closest(".preview-item")) {
         mouseEnter(event);
       }
     });
     quickPreviewEl.addEventListener("click", (event) => {
-      if (doesParentHaveClass(event.target, "preview-item", "lite-tools-sticker-bar")) {
+      if (event.target.closest(".preview-item")) {
         insert(event);
       }
     });
@@ -294,11 +293,11 @@ function globalMouseUp(event) {
  * @param {MouseEvent} event
  */
 function globalMouseDown(event) {
-  if (showContextMenu && !doesParentHaveClass(event.target, "context-menu")) {
+  if (showContextMenu && !event.target.closest(".context-menu")) {
     showContextMenu = false;
     barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
   }
-  if (!doesParentHaveClass(event.target, "lite-tools-bar") && barIcon.querySelector(".lite-tools-local-emoticons-main")) {
+  if (!event.target.closest(".lite-tools-bar") && barIcon.querySelector(".lite-tools-local-emoticons-main")) {
     showEmoticons = false;
     barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");
     barIcon.querySelector(".lite-tools-q-tooltips__content").classList.remove("hidden");
@@ -436,7 +435,7 @@ async function loadDom() {
 
   // 处理鼠标相关事件
   emoticonsMain.addEventListener("mousedown", (event) => {
-    if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
+    if (event.target.closest(".category-item")) {
       if (event.button === 0) {
         mouseDown(event);
       } else if (event.button === 2) {
@@ -445,14 +444,14 @@ async function loadDom() {
     }
   });
   emoticonsMain.addEventListener("mousemove", (event) => {
-    if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
+    if (event.target.closest(".category-item")) {
       mouseEnter(event);
     }
   });
   emoticonsMain.addEventListener("click", (event) => {
-    if (doesParentHaveClass(event.target, "category-item", "lite-tools-local-emoticons-main")) {
+    if (event.target.closest(".category-item")) {
       insert(event);
-    } else if (doesParentHaveClass(event.target, "folder-icon-item", "lite-tools-local-emoticons-main")) {
+    } else if (event.target.closest(".folder-icon-item")) {
       jumpFolder(event);
     }
   });

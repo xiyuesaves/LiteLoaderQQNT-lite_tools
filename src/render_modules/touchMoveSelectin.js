@@ -11,9 +11,7 @@ function touchMoveSelectin(className) {
   let interception;
   document.querySelector("#app").addEventListener("mousedown", (event) => {
     if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
-      interception = interception =
-        !(event.target.classList.contains("message-content__wrapper") || doesParentHaveClass(event.target, "message-content__wrapper")) &&
-        (event.target.classList.contains(className) || doesParentHaveClass(event.target, className));
+      interception = !event.target.closest(".message-content__wrapper") && event.target.closest(`.${className}`);
     }
   });
 
@@ -36,23 +34,6 @@ function touchMoveSelectin(className) {
       }
     }
   });
-}
-
-/**
- * 判断父元素是否包含指定类名
- * @param {Element} element 目标元素
- * @param {className} className 目标类名
- * @returns
- */
-function doesParentHaveClass(element, className) {
-  let parentElement = element.parentElement;
-  while (parentElement !== null) {
-    if (parentElement.classList.contains(className)) {
-      return true;
-    }
-    parentElement = parentElement.parentElement;
-  }
-  return false;
 }
 
 export { touchMoveSelectin };

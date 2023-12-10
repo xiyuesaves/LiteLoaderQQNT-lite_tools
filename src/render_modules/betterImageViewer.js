@@ -1,5 +1,4 @@
 import { options } from "./options.js";
-import { doesParentHaveClass } from "./doesParentHaveClass.js";
 
 /**
  * 媒体预览增强
@@ -23,11 +22,10 @@ function betterImageViewer() {
     const video = document.querySelector("embed");
     if (!isMove && event.button === 0 && !rightMenu && !video && options.imageViewer.quickClose) {
       if (
-        doesParentHaveClass(event.target, "main-area__footer", "main-container-warp") ||
-        doesParentHaveClass(event.target, "main-area__left", "main-container-warp") ||
-        doesParentHaveClass(event.target, "main-area__right", "main-container-warp") ||
-        doesParentHaveClass(event.target, "main-area__left", "main-container-warp") ||
-        doesParentHaveClass(event.target, "window-control-area")
+        event.target.closest(".main-area__footer") ||
+        event.target.closest(".main-area__left") ||
+        event.target.closest(".main-area__right") ||
+        event.target.closest(".window-control-area")
       ) {
         return;
       }
