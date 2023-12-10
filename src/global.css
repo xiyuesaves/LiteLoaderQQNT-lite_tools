@@ -749,6 +749,7 @@
   border-radius: 8px;
   font-size: 12px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 .lite-tools-sticker-bar .preview-list .preview-item img {
   pointer-events: none;
