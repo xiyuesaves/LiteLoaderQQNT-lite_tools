@@ -129,7 +129,23 @@ function onLoad(plugin) {
   onUpdateEmoticons((emoticonsList) => {
     log("本地表情包更新", emoticonsList.length);
     globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+
+    // 将所有的图片路径放入Set
+    const newPaths = new Set(
+      emoticonsList.flatMap((emoticons) => {
+        return emoticons.list.map((item) => path.normalize(item.path));
+      }),
+    );
+    log("所有图片路径", newPaths);
+    log("历史图片", localEmoticonsConfig.commonlyEmoticons);
     localEmoticonsList = emoticonsList;
+
+    // 如果没有启用历史表情，则不推送，但是仍旧要更新配置文件
+    localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
+    if (options.localEmoticons.commonlyEmoticons) {
+      globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    }
+    fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
   // 判断是否启用了本地表情包功能
