@@ -133,7 +133,7 @@ function onLoad(plugin) {
     // 将所有的图片路径放入Set
     const newPaths = new Set(
       emoticonsList.flatMap((emoticons) => {
-        return emoticons.list.map((item) => path.normalize(item.path));
+        return emoticons.list.map((item) => item.path);
       }),
     );
     log("所有图片路径", newPaths);

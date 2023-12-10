@@ -47,7 +47,7 @@ function loadFolder(folderPath) {
         const deepFolder = []; // 下一层文件夹
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
-          const filePath = path.join(folderPath, file);
+          const filePath = path.normalize(path.join(folderPath, file));
           const fileStat = fs.statSync(filePath, {
             throwIfNoEntry: false,
           });
@@ -63,11 +63,13 @@ function loadFolder(folderPath) {
                   list: [],
                 };
               }
+              // 向文件夹内添加表情图片
               emoticonsList[folderNum].list.push({
-                path: filePath.replace(/\\/g, "/"),
+                path: filePath,
                 name: path.basename(filePath),
               });
             } else if (fileStat.isDirectory()) {
+              // 如果目标是文件夹，则加入文件夹路径数组中等待读取文件结束后统一读取下一级目录
               deepFolder.push(filePath);
             }
           }
