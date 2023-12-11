@@ -631,6 +631,10 @@ class emoticonFolder {
     const deleteEmoticonList = this.emoticonList.filter((emoticon) => !newListSet.has(emoticon.path));
     this.emoticonList = newEmoticonList;
 
+    if (newEmoticonList[0]) {
+      this.iconEl.src = this.protocolPrefix + newEmoticonList[0].path;
+    }
+
     deleteEmoticonList.forEach((item) => {
       const deleteIndex = this.categoryItemsEl.findIndex((El) => El.path === item.path);
       const deleteEl = this.categoryItemsEl.splice(deleteIndex, 1)[0];
