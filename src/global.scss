@@ -705,13 +705,12 @@
       }
       .category-list {
         width: 100%;
-        padding: 0 6px;
+        padding: 0 6px 6px;
         height: auto;
         display: flex;
         align-items: flex-start;
         flex-wrap: wrap;
         justify-content: flex-start;
-        margin-bottom: 6px;
         .category-item {
           width: 64px;
           height: 64px;

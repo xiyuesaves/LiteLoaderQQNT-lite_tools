@@ -6,13 +6,14 @@ import { sendMessage } from "./nativeCall.js";
 const log = new logs("本地表情包模块").log;
 
 let barIcon;
-let htmoDom;
+let htmlDom;
 let openFullPreview = false;
 let openFullPreviewTO = null;
 let showEmoticons = false;
 let insertImg = true;
 let folderInfos = [];
 let emoticonsListArr = [];
+let emoticonsList = [];
 let forList = [];
 let regOut;
 let ckeditorInstance;
@@ -20,8 +21,8 @@ let ckeditEditorModel;
 let quickPreviewEl;
 let previewListEl;
 let showContextMenu = false;
-
-let targetElement;
+let targetElement; // 右键点击的图片元素
+const commonlyId = "commonlyEmoticons";
 
 if (options.localEmoticons.enabled) {
   document.body.classList.add("lite-tools-showLocalEmoticons");
@@ -63,7 +64,7 @@ function localEmoticons() {
   document.body.addEventListener("mouseup", globalMouseUp);
   document.body.addEventListener("mouseleave", globalMouseUp);
   document.body.addEventListener("mousedown", globalMouseDown);
-  if (!htmoDom) {
+  if (!htmlDom) {
     loadDom();
   }
 
@@ -240,35 +241,30 @@ function quickInsertion() {
  */
 function updateCommonlyEmoticons(options) {
   log("更新常用表情列表", options);
-  // 移除旧数据
-  document.querySelector(`.folder-item[data-id="commonlyEmoticons"]`)?.remove();
-  document.querySelector(`.folder-icon-item [data-id="commonlyEmoticons"]`)?.parentElement?.remove();
-  if (folderInfos[0].id === "commonlyEmoticons") {
-    folderInfos.shift();
-  }
-  // 如果历史数组为空则直接返回
-  if (!options.commonlyEmoticons.length) {
-    return;
-  }
-  // 开始生成新数据
   const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
   const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
-  // 插入新的表情数据
-  const folder = {
-    name: "历史表情",
-    list: options.commonlyEmoticons.map((path) => {
-      return { path };
-    }),
-  };
-  // 创建表情文件夹元素
-  const { folderEl, folderIcon } = createEmoticonsFolder(folder, folder.list[0].path, "commonlyEmoticons", "commonly");
-  folderList.insertBefore(folderEl, folderList.querySelector(":first-child"));
-  folderScroll.insertBefore(folderIcon, folderScroll.querySelector(":first-child"));
-  folderInfos.unshift({
-    el: folderEl,
-    id: "commonlyEmoticons",
-    name: folder.name,
-  });
+
+  if (!options.commonlyEmoticons.length) {
+    if (emoticonsList[0].id === commonlyId) {
+      const emoticon = emoticonsList.shift();
+      emoticon.destroy();
+    }
+  } else {
+    const list = options.commonlyEmoticons.map((path, index) => {
+      return { path, index };
+    });
+    if (folderInfos[0].id === commonlyId) {
+      const findEmoticons = folderInfos[0];
+      findEmoticons.updateEmoticonList(list);
+      folderList.insertBefore(findEmoticons.folderEl, folderList.querySelector(":first-child"));
+      folderScroll.insertBefore(findEmoticons.folderIconEl, folderScroll.querySelector(":first-child"));
+    } else {
+      const newEmoticonFolder = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+      folderInfos.unshift(newEmoticonFolder);
+      folderList.insertBefore(newEmoticonFolder.folderEl, folderList.querySelector(":first-child"));
+      folderScroll.insertBefore(newEmoticonFolder.folderIconEl, folderScroll.querySelector(":first-child"));
+    }
+  }
 }
 
 /**
@@ -393,8 +389,8 @@ async function loadDom() {
   const domUrl = `llqqnt://local-file/${plugin_path}/src/config/localEmoticons.html`;
   const html_text = await (await fetch(domUrl)).text();
   const parser = new DOMParser();
-  htmoDom = parser.parseFromString(html_text, "text/html");
-  htmoDom.querySelectorAll("section").forEach((el) => {
+  htmlDom = parser.parseFromString(html_text, "text/html");
+  htmlDom.querySelectorAll("section").forEach((el) => {
     barIcon.appendChild(el);
   });
 
@@ -416,10 +412,10 @@ async function loadDom() {
       let top = 0;
       for (let i = 0; i < folderInfos.length; i++) {
         const folder = folderInfos[i];
-        top += folder.el.offsetHeight;
-        if (top >= event.target.scrollTop) {
+        top += folder.folderEl.offsetHeight;
+        if (top >= event.target.scrollTop + 1) {
           document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
-          const activeEl = document.querySelector(`.folder-icon-item .icon-box[data-id="${folder.id}"]`).parentElement;
+          const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
           const folderScroll = document.querySelector(".folder-scroll");
           activeEl.classList.add("active");
           folderScroll.scrollTo({
@@ -493,8 +489,8 @@ function contextMenu(event) {
   event.target.classList.add("active");
   barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show-menu");
   targetElement = {
-    path: event.target.querySelector("img").getAttribute("path"),
-    type: event.target.querySelector("img").getAttribute("type"),
+    path: event.target.closest(".category-item").path,
+    type: event.target.closest(".folder-item").getAttribute("data-type"),
   };
   log("目标元素数据", targetElement);
 
@@ -529,16 +525,13 @@ function contextMenu(event) {
  * @param {MouseEvent} event
  */
 function jumpFolder(event) {
-  const id = event.target.getAttribute("data-id");
+  const id = event.target.closest(".folder-icon-item").getAttribute("data-id");
   if (!id) {
     return;
   }
-  // document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
-  // event.target.parentElement.classList.add("active");
   const targetItem = document.querySelector(`.folder-item[data-id="${id}"]`);
   document.querySelector(".lite-tools-local-emoticons-main .folder-list").scrollTo({
     top: targetItem.offsetTop,
-    // behavior: "smooth",
   });
 }
 
@@ -546,87 +539,159 @@ function jumpFolder(event) {
  * 加载表情包列表
  * @param {Array} emoticonsList 表情包列表
  */
-function appendEmoticons(emoticonsList) {
+function appendEmoticons(newEmoticonsList) {
+  log("获取到表情对象", newEmoticonsList);
   // 平铺表情对象数组
-  emoticonsListArr = emoticonsList.flatMap((emoticons) => {
+  emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
     return emoticons.list;
   });
-  // 初始化表情文件夹信息
-  folderInfos = [];
-  // 清理dom结构
-  document
-    .querySelectorAll(
-      `.lite-tools-local-emoticons-main .folder-item:not([data-id="commonlyEmoticons"]),.lite-tools-local-emoticons-main .folder-icon-list .folder-icon-item:not([data-id="commonlyEmoticons"])`,
-    )
-    .forEach((item) => {
-      item.remove();
-    });
+
   const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
   const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
   // 插入新的表情数据
-  emoticonsList.forEach((folder, index) => {
-    // 创建表情文件夹元素
-    const { folderEl, folderIcon } = createEmoticonsFolder(folder, folder.list[0].path, index);
-    folderList.appendChild(folderEl);
-    folderScroll.appendChild(folderIcon);
-    folderInfos.push({
-      el: folderEl,
-      id: index,
-      name: folder.name,
-    });
+  newEmoticonsList.forEach((folder, index) => {
+    const findEmoticons = folderInfos.find((item) => item.id === folder.id);
+    if (findEmoticons) {
+      findEmoticons.index = folder.index;
+      findEmoticons.updateEmoticonList(folder.list);
+      folderList.appendChild(findEmoticons.folderEl);
+      folderScroll.appendChild(findEmoticons.folderIconEl);
+    } else {
+      const newEmoticonFolder = new emoticonFolder(folder.name, folder.list, folder.id, folder.list[0].path, folder.index, "folder");
+      folderInfos.push(newEmoticonFolder);
+      folderList.appendChild(newEmoticonFolder.folderEl);
+      folderScroll.appendChild(newEmoticonFolder.folderIconEl);
+    }
   });
+  // 销毁无用实例
+  const deleteEmoticon = emoticonsList.filter((item) => !newEmoticonsList.find((newItem) => newItem.id === item.id));
+  deleteEmoticon.forEach((item) => {
+    const deleteIndex = folderInfos.findIndex((emoticon) => emoticon.id === item.id);
+    const emoticon = folderInfos.splice(deleteIndex, 1)[0];
+    emoticon.destroy();
+  });
+  // 更新数据
+  emoticonsList = newEmoticonsList;
+  // 对数组进行排序
+  folderInfos.sort((a, b) => a.index - b.index);
 }
 
-// 创建表情文件夹元素
-function createEmoticonsFolder(folder, iconSrc, id, type = "folder") {
-  if (!iconSrc) {
-    iconSrc = folder.list[0].path;
+class emoticonFolder {
+  constructor(name, list, id, iconPath, index, type) {
+    // 实例属性
+    this.name = name;
+    this.id = id;
+    this.emoticonList = [];
+    this.iconPath = iconPath;
+    this.index = index;
+    this.type = type;
+
+    // 实例节点
+    this.folderEl;
+    this.categoryNameEl;
+    this.categoryListEl;
+    this.categoryItemsEl = [];
+    this.folderIconEl;
+    this.iconEl;
+    this.iconBoxEl;
+
+    // 初始化方法
+    this.createFolderEl();
+    this.createIconEl();
+    this.updateEmoticonList(list);
   }
-  // 创建表情分类
-  const folderEl = document.createElement("div");
-  folderEl.classList.add("folder-item");
-  folderEl.setAttribute("data-id", id);
-  const categoryName = document.createElement("div");
-  categoryName.classList.add("category-name");
-  categoryName.innerText = folder.name;
-  const categoryList = document.createElement("div");
-  categoryList.classList.add("category-list");
-  // 创建小图标
-  const folderIcon = document.createElement("div");
-  folderIcon.classList.add("folder-icon-item");
-  folderIcon.setAttribute("title", folder.name);
-  folderIcon.setAttribute("data-id", id);
-  const iconEl = document.createElement("img");
-  iconEl.src = "llqqnt://local-file/" + iconSrc;
-  const iconBox = document.createElement("div");
-  iconBox.classList.add("icon-box");
-  iconBox.setAttribute("data-id", id);
-  iconBox.appendChild(iconEl);
-  folderIcon.appendChild(iconBox);
-  // 插入表情文件
-  folder.list.forEach((item) => {
-    const categoryItem = document.createElement("div");
-    categoryItem.classList.add("category-item");
-    const skiterPreview = document.createElement("div");
-    skiterPreview.classList.add("skiter-preview");
-    const img = document.createElement("img");
-    img.setAttribute("lazy", "");
-    img.setAttribute("type", type);
-    img.setAttribute("path", item.path);
-    img.src = "llqqnt://local-file/" + item.path;
-    skiterPreview.appendChild(img);
-    categoryItem.append(skiterPreview);
-    categoryList.appendChild(categoryItem);
-  });
-  folderEl.append(categoryName, categoryList);
-  return { folderEl, folderIcon };
+  createFolderEl() {
+    this.folderEl = document.createElement("div");
+    this.folderEl.classList.add("folder-item");
+    this.folderEl.setAttribute("data-id", this.id);
+    this.folderEl.setAttribute("data-type", this.type);
+    this.categoryNameEl = document.createElement("div");
+    this.categoryNameEl.classList.add("category-name");
+    this.categoryNameEl.innerText = this.name;
+    this.categoryListEl = document.createElement("div");
+    this.categoryListEl.classList.add("category-list");
+    this.folderEl.append(this.categoryNameEl, this.categoryListEl);
+  }
+  createIconEl() {
+    this.folderIconEl = document.createElement("div");
+    this.folderIconEl.classList.add("folder-icon-item");
+    this.folderIconEl.setAttribute("title", this.name);
+    this.folderIconEl.setAttribute("data-id", this.id);
+    this.iconEl = document.createElement("img");
+    this.iconEl.src = this.protocolPrefix + this.iconPath;
+    this.iconBoxEl = document.createElement("div");
+    this.iconBoxEl.classList.add("icon-box");
+    this.iconBoxEl.appendChild(this.iconEl);
+    this.folderIconEl.appendChild(this.iconBoxEl);
+  }
+  updateEmoticonList(newEmoticonList) {
+    const newListSet = new Set(newEmoticonList.map((emoticon) => emoticon.path));
+    const oldListSet = new Set(this.emoticonList.map((emoticon) => emoticon.path));
+    const addEmoticonList = newEmoticonList.filter((emoticon) => !oldListSet.has(emoticon.path));
+    const deleteEmoticonList = this.emoticonList.filter((emoticon) => !newListSet.has(emoticon.path));
+    this.emoticonList = newEmoticonList;
+
+    deleteEmoticonList.forEach((item) => {
+      const deleteIndex = this.categoryItemsEl.findIndex((El) => El.path === item.path);
+      const deleteEl = this.categoryItemsEl.splice(deleteIndex, 1)[0];
+      deleteEl.remove();
+    });
+
+    addEmoticonList.forEach((item) => {
+      const categoryItemEl = document.createElement("div");
+      categoryItemEl.classList.add("category-item");
+      categoryItemEl.path = item.path;
+      categoryItemEl.index = item.index;
+      const skiterPreviewEl = document.createElement("div");
+      skiterPreviewEl.classList.add("skiter-preview");
+      const imgEl = document.createElement("img");
+      imgEl.setAttribute("lazy", "");
+      imgEl.src = "llqqnt://local-file/" + item.path;
+      skiterPreviewEl.appendChild(imgEl);
+      categoryItemEl.append(skiterPreviewEl);
+      this.categoryItemsEl.splice(item.index, 0, categoryItemEl);
+    });
+
+    this.emoticonList.forEach((item) => {
+      this.categoryItemsEl.find((el) => el.path === item.path).index = item.index;
+    });
+
+    this.categoryItemsEl.sort((a, b) => a.index - b.index);
+
+    this.categoryListEl.append(...this.categoryItemsEl);
+  }
+  destroy() {
+    log("销毁实例", this.name);
+    this.folderEl.remove();
+    this.categoryNameEl.remove();
+    this.categoryListEl.remove();
+    this.folderIconEl.remove();
+    this.iconEl.remove();
+    this.iconBoxEl.remove();
+    this.categoryItemsEl = null;
+    this.folderEl = null;
+    this.categoryNameEl = null;
+    this.categoryListEl = null;
+    this.folderIconEl = null;
+    this.iconEl = null;
+    this.iconBoxEl = null;
+    this.name = null;
+    this.id = null;
+    this.emoticonList = null;
+    this.iconPath = null;
+    this.type = null;
+  }
+  static getPath(src) {
+    return src.replace(emoticonFolder.prototype.protocolPrefix, "");
+  }
 }
+emoticonFolder.prototype.protocolPrefix = "llqqnt://local-file/";
 
 /**
  * 打开表情包管理菜单
  */
 function openLocalEmoticons() {
-  if (htmoDom) {
+  if (htmlDom) {
     if (showEmoticons) {
       showEmoticons = false;
       barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show");

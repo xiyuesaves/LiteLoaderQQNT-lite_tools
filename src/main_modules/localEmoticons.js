@@ -43,6 +43,7 @@ function loadFolder(folderPath) {
   folderNum = emoticonsList.length;
   if (fs.existsSync(folderPath)) {
     return new Promise((res, rej) => {
+      let index = 0;
       fs.readdir(folderPath, async (err, files) => {
         const deepFolder = []; // 下一层文件夹
         for (let i = 0; i < files.length; i++) {
@@ -60,6 +61,8 @@ function loadFolder(folderPath) {
               if (!emoticonsList[folderNum]) {
                 emoticonsList[folderNum] = {
                   name: path.basename(folderPath),
+                  index: folderNum,
+                  id: Buffer.from(folderPath).toString("base64"),
                   list: [],
                 };
               }
@@ -67,7 +70,9 @@ function loadFolder(folderPath) {
               emoticonsList[folderNum].list.push({
                 path: filePath,
                 name: path.basename(filePath),
+                index,
               });
+              index++;
             } else if (fileStat.isDirectory()) {
               // 如果目标是文件夹，则加入文件夹路径数组中等待读取文件结束后统一读取下一级目录
               deepFolder.push(filePath);

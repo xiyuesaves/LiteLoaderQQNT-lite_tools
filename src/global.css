@@ -626,13 +626,12 @@
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list {
   width: 100%;
-  padding: 0 6px;
+  padding: 0 6px 6px;
   height: auto;
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
   justify-content: flex-start;
-  margin-bottom: 6px;
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item {
   width: 64px;
