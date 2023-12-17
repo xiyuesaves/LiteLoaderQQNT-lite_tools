@@ -128,7 +128,6 @@ function onLoad(plugin) {
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
     log("本地表情包更新", emoticonsList.length);
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
 
     // 将所有的图片路径放入Set
     const newPaths = new Set(
@@ -142,9 +141,8 @@ function onLoad(plugin) {
 
     // 如果没有启用历史表情，则不推送，但是仍旧要更新配置文件
     localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
-    if (options.localEmoticons.commonlyEmoticons) {
-      globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
-    }
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
@@ -174,15 +172,9 @@ function onLoad(plugin) {
   });
 
   // 返回常用表情包数据
-  ipcMain.handle("LiteLoader.lite_tools.getCommonlyEmoticons", (event) => {
-    log("返回本地表情包数据");
-    if (options.localEmoticons.commonlyEmoticons) {
-      return localEmoticonsConfig;
-    } else {
-      return {
-        commonlyEmoticons: [],
-      };
-    }
+  ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsConfig", (event) => {
+    log("返回本地表情包配置");
+    return localEmoticonsConfig;
   });
 
   // 打开网址
@@ -223,22 +215,20 @@ function onLoad(plugin) {
   // 修改配置信息
   ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
     log("更新配置信息", opt);
-    // 判断是否启用了本地表情包功能
-    if (opt.localEmoticons.enabled) {
-      if (opt.localEmoticons.localPath && options.localEmoticons.localPath !== opt.localEmoticons.localPath) {
-        resetCommonlyEmoticons(); // 重置常用表情
-        loadEmoticons(opt.localEmoticons.localPath);
-      }
-      // 判断是否开启了常用表情
-      if (opt.localEmoticons.commonlyEmoticons) {
-        globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
-      } else {
-        globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", { commonlyEmoticons: [] });
-      }
-    }
+
     options = opt;
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
     globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
+
+    // 判断是否启用了本地表情包功能
+    if (opt.localEmoticons.enabled) {
+      // 如果新的配置文件中打开了本地表情功能，且当前文件夹路径和新路径不一致则刷新表情包列表
+      if (opt.localEmoticons.localPath && options.localEmoticons.localPath !== opt.localEmoticons.localPath) {
+        resetCommonlyEmoticons(); // 重置常用表情
+        loadEmoticons(opt.localEmoticons.localPath); // 读取本地表情文件夹
+      }
+      globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    }
   });
 
   // 获取配置信息
@@ -664,7 +654,7 @@ function addCommonlyEmoticons(event, src) {
   if (localEmoticonsConfig.commonlyEmoticons.length > 20) {
     localEmoticonsConfig.commonlyEmoticons.pop();
   }
-  log("send2", localEmoticonsConfig);
+  log("历史表情列表", localEmoticonsConfig);
   globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }

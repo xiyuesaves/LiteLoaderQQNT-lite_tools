@@ -229,6 +229,70 @@ async function onConfigView(view) {
     }
   });
 
+  initSider();
+
+  // 不可复用的拖拽选择方法
+  function initSider() {
+    updateSider();
+    let hasDown = false;
+    let downX = 0;
+    let btnX = 0;
+    let siderBar;
+    let siderWidth;
+    const step = [0, 25, 50, 75, 100];
+
+    window.addEventListener("mousedown", (event) => {
+      log("mousedown", event.target.classList);
+      if (event.target.classList.contains("sider-button")) {
+        siderBar = view.querySelector(".sider");
+        siderWidth = siderBar.offsetWidth;
+        hasDown = true;
+        downX = event.clientX;
+        btnX = event.target.offsetLeft;
+      }
+    });
+    window.addEventListener("mousemove", (event) => {
+      if (hasDown) {
+        // 很怪的判定方法
+        const moveX = downX - event.clientX;
+        const process = parseInt(((btnX - moveX) / siderWidth) * 100);
+        const newVal = step.findIndex((num) => {
+          const offset = Math.abs(num - process);
+          if (offset < 12) {
+            return true;
+          }
+        });
+        if (newVal !== -1) {
+          log("当前值", process, newVal);
+          options.localEmoticons.rowsSize = newVal + 3;
+          lite_tools.setOptions(options);
+          updateSider();
+        }
+      }
+    });
+    window.addEventListener("mouseup", (event) => {
+      log("mouseup");
+      hasDown = false;
+    });
+  }
+
+  function updateSider() {
+    const button = view.querySelector(".sider-button");
+    const mask = view.querySelector(".sider-mask");
+    const siderStepItems = view.querySelectorAll(".sider-step-item");
+    siderStepItems.forEach((item, index) => {
+      const value = parseInt(item.getAttribute("data-value"));
+      if (value <= options.localEmoticons.rowsSize) {
+        item.classList.add("active-bg");
+        const offset = `${100 * (index / (siderStepItems.length - 1))}%`;
+        button.style.left = offset;
+        mask.style.width = offset;
+      } else {
+        item.classList.remove("active-bg");
+      }
+    });
+  }
+
   // 监听设置文件变动
   updateOptions((opt) => {
     view.querySelector(".select-path input").value = opt.background.url;

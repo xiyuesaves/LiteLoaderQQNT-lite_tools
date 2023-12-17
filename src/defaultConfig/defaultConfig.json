@@ -12,6 +12,7 @@
     "enabled": false,
     "quickEmoticons": false,
     "commonlyEmoticons": false,
+    "rowsSize": 5,
     "localPath": ""
   },
   "sidebar": {

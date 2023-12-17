@@ -712,8 +712,8 @@
         flex-wrap: wrap;
         justify-content: flex-start;
         .category-item {
-          width: 64px;
-          height: 64px;
+          width: var(--category-item-size);
+          height: var(--category-item-size);
           border-radius: 4px;
           overflow: hidden;
           position: relative;

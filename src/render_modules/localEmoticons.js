@@ -50,8 +50,8 @@ function localEmoticons() {
   }
   if (!ckeditEditorModel) {
     loadEditorModel();
-    lite_tools.updateLocalEmoticonsConfig((_, list) => {
-      updateCommonlyEmoticons(list);
+    lite_tools.updateLocalEmoticonsConfig((_, config) => {
+      updateLocalEmoticonsConfig(config);
     });
     lite_tools.updateEmoticons((_, list) => {
       log("渲染端更新列表", list.length);
@@ -239,18 +239,26 @@ function quickInsertion() {
  * 更新常用表情列表
  * @param {Array} list 常用表情列表
  */
-function updateCommonlyEmoticons(options) {
-  log("更新常用表情列表", options);
+function updateLocalEmoticonsConfig(config) {
+  log("更新表情尺寸", options.localEmoticons.rowsSize);
   const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
   const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
+  folderList.setAttribute("style", `--category-item-size: ${(folderList.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
 
-  if (!options.commonlyEmoticons.length) {
-    if (emoticonsList[0].id === commonlyId) {
-      const emoticon = emoticonsList.shift();
+  if (!options.localEmoticons.enabled) {
+    return;
+  }
+
+  log("更新常用表情列表", config);
+
+  if (!options.localEmoticons.commonlyEmoticons) {
+    log("销毁历史表情实例", folderInfos[0].id);
+    if (folderInfos[0].id === commonlyId) {
+      const emoticon = folderInfos.shift();
       emoticon.destroy();
     }
   } else {
-    const list = options.commonlyEmoticons.map((path, index) => {
+    const list = config.commonlyEmoticons.map((path, index) => {
       return { path, index };
     });
     if (folderInfos[0].id === commonlyId) {
@@ -401,9 +409,9 @@ async function loadDom() {
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(emoticonsList);
 
-  // 加载常用表情包
-  const CommonlyEmoticons = await lite_tools.getCommonlyEmoticons();
-  updateCommonlyEmoticons(CommonlyEmoticons);
+  // 获取表情包配置文件
+  const config = await lite_tools.getLocalEmoticonsConfig();
+  updateLocalEmoticonsConfig(config);
 
   // 监听列表滚动
   emoticonsMain.querySelector(".folder-list").addEventListener(

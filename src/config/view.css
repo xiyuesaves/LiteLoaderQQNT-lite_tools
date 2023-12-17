@@ -3,6 +3,10 @@
   /* 模态框 */
   /* 版本号 */
 }
+.lite-tools-settings .vertical-list-item.fl-d {
+  flex-direction: column;
+  align-items: flex-start;
+}
 .lite-tools-settings .config_view .modal-window {
   display: flex;
   justify-content: center;
@@ -98,4 +102,88 @@
 .lite-tools-settings .disabled-input {
   pointer-events: none;
   opacity: 0.5;
+}
+.lite-tools-settings .panel-main {
+  width: 100%;
+  height: 48px;
+}
+.lite-tools-settings .panel-main .sider {
+  width: calc(100% - 16px);
+  margin-left: 8px;
+  height: 4px;
+  background: var(--fill_standard_primary);
+  overflow: visible;
+  position: relative;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.lite-tools-settings .panel-main .sider .active-bg {
+  background-color: var(--brand_standard) !important;
+}
+.lite-tools-settings .panel-main .sider .sider-button {
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px var(--blend_black_010);
+  height: 20px;
+  width: 8px;
+  border: 1px solid var(--blend_black_008);
+  background-color: var(--el-color-white);
+  box-shadow: 0 4px 12px var(--blend_black_010);
+  transition: transform 300ms;
+  transform: translateY(-8px) translateX(-50%);
+  position: absolute;
+  z-index: 20;
+  cursor: grab;
+}
+.lite-tools-settings .panel-main .sider .sider-button:active {
+  cursor: grabbing;
+}
+.lite-tools-settings .panel-main .sider .sider-mask {
+  width: 0%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: var(--brand_standard);
+}
+.lite-tools-settings .panel-main .sider .sider-step {
+  width: 100%;
+  height: 28px;
+  position: absolute;
+  z-index: 10;
+  top: -12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lite-tools-settings .panel-main .sider .sider-step .sider-step-item {
+  border-radius: 2px 2px 0 0;
+  width: 4px;
+  height: 4px;
+  background: var(--fill_standard_primary);
+  transform: translateY(-4px);
+}
+.lite-tools-settings .panel-main .sider .sider-step .sider-step-item:first-child {
+  border-radius: 2px;
+  margin-left: -4px;
+  height: 12px;
+  transform: unset;
+}
+.lite-tools-settings .panel-main .sider .sider-step .sider-step-item:last-child {
+  border-radius: 2px;
+  margin-right: -4px;
+  height: 12px;
+  transform: unset;
+}
+.lite-tools-settings .panel-main .sider-text-wrap {
+  width: calc(100% - 4px);
+  margin-left: 2px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lite-tools-settings .panel-main .sider-text-wrap .sider-text {
+  width: auto;
 }

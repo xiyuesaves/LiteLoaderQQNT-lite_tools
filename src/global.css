@@ -634,8 +634,8 @@
   justify-content: flex-start;
 }
 .lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item {
-  width: 64px;
-  height: 64px;
+  width: var(--category-item-size);
+  height: var(--category-item-size);
   border-radius: 4px;
   overflow: hidden;
   position: relative;

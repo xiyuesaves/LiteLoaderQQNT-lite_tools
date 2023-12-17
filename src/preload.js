@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 主动获取本地表情列表
   getLocalEmoticonsList: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsList"),
   // 主动获取常用表情列表
-  getCommonlyEmoticons: () => ipcRenderer.invoke("LiteLoader.lite_tools.getCommonlyEmoticons"),
+  getLocalEmoticonsConfig: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsConfig"),
   // 打开选择本地表情文件夹窗口
   openSelectFolder: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectFolder"),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
