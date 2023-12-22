@@ -229,6 +229,22 @@ async function onConfigView(view) {
     }
   });
 
+  // 自定义历史表情数量
+  if (first(".commonly-emoticons-num")) {
+    view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
+      options.localEmoticons.rowsSize * 2
+    }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
+    const inputEl = view.querySelector(".commonly-emoticons-num");
+    inputEl.value = options.localEmoticons.commonlyNum;
+    inputEl.addEventListener(
+      "blur",
+      debounce(() => {
+        options.localEmoticons.commonlyNum = parseInt(inputEl.value) || 20;
+        lite_tools.setOptions(options);
+      }, 100),
+    );
+  }
+
   initSider();
 
   // 不可复用的拖拽选择方法
@@ -242,7 +258,6 @@ async function onConfigView(view) {
     const step = [0, 25, 50, 75, 100];
 
     window.addEventListener("mousedown", (event) => {
-      log("mousedown", event.target.classList);
       if (event.target.classList.contains("sider-button")) {
         siderBar = view.querySelector(".sider");
         siderWidth = siderBar.offsetWidth;
@@ -263,15 +278,16 @@ async function onConfigView(view) {
           }
         });
         if (newVal !== -1) {
-          log("当前值", process, newVal);
           options.localEmoticons.rowsSize = newVal + 3;
+          view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量 推荐：${options.localEmoticons.rowsSize}，${
+            options.localEmoticons.rowsSize * 2
+          }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
           lite_tools.setOptions(options);
           updateSider();
         }
       }
     });
     window.addEventListener("mouseup", (event) => {
-      log("mouseup");
       hasDown = false;
     });
   }
