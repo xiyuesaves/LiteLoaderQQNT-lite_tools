@@ -2,11 +2,15 @@
 const { ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const EventEmitter = require("events");
+
+// 自定义事件
+const optionsEvent = new EventEmitter();
 
 // 本地模块
 const defaultConfig = require("./defaultConfig/defaultConfig.json"); // 默认插件配置文件
 const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json"); // 默认本地表情配置文件
-let loadOptions = require("./main_modules/loadOptions");
+const loadOptions = require("./main_modules/loadOptions");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 const { LimitedMap } = require("./main_modules/LimitedMap");
 const { MessageRecallList } = require("./main_modules/MessageRecallList");
@@ -194,8 +198,6 @@ function onLoad(plugin) {
         return emoticons.list.map((item) => item.path);
       }),
     );
-    log("所有图片路径", newPaths);
-    log("历史图片", localEmoticonsConfig.commonlyEmoticons);
     localEmoticonsList = emoticonsList;
 
     // 如果没有启用历史表情，则不推送，但是仍旧要更新配置文件
@@ -274,20 +276,11 @@ function onLoad(plugin) {
   // 修改配置信息
   ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
     log("更新配置信息", opt);
-
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", opt);
+    optionsEvent.emit("beforeUpdate", opt);
     options = opt;
     fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
-
-    // 判断是否启用了本地表情包功能
-    if (opt.localEmoticons.enabled) {
-      // 如果新的配置文件中打开了本地表情功能，且当前文件夹路径和新路径不一致则刷新表情包列表
-      if (opt.localEmoticons.localPath && options.localEmoticons.localPath !== opt.localEmoticons.localPath) {
-        resetCommonlyEmoticons(); // 重置常用表情
-        loadEmoticons(opt.localEmoticons.localPath); // 读取本地表情文件夹
-      }
-      globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
-    }
+    optionsEvent.emit("update", opt);
   });
 
   // 获取配置信息
@@ -703,14 +696,14 @@ function addCommonlyEmoticons(event, src) {
   if (!options.localEmoticons.commonlyEmoticons) {
     return;
   }
-  log("更新常用表情", localEmoticonsPath);
+  log("更新常用表情", localEmoticonsPath, options.localEmoticons.commonlyNum);
   const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
   // 如果已经有这个表情了，则更新位置
   newSet.delete(src);
   localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
   localEmoticonsConfig.commonlyEmoticons.unshift(src);
   // 删除多余的值
-  if (localEmoticonsConfig.commonlyEmoticons.length > 20) {
+  if (localEmoticonsConfig.commonlyEmoticons.length > options.localEmoticons.commonlyNum) {
     localEmoticonsConfig.commonlyEmoticons.pop();
   }
   log("历史表情列表", localEmoticonsConfig);
@@ -718,7 +711,6 @@ function addCommonlyEmoticons(event, src) {
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
-// 这两个函数都是可选的
 module.exports = {
   onLoad,
   onBrowserWindowCreated,
