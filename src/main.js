@@ -18,15 +18,74 @@ const { logs } = require("./main_modules/logs");
 const log = new logs("主进程").log;
 const renderLog = new logs("渲染进程").log;
 
-let mainMessage, recordMessageRecallIdList, messageRecallPath, messageRecallJson, localEmoticonsPath;
+/**
+ * 主窗口对象
+ */
+let mainMessage;
+/**
+ * 常驻撤回历史消息
+ */
+let recordMessageRecallIdList;
+/**
+ * 撤回消息本地保存路径
+ */
+let messageRecallPath;
+/**
+ * 最新的撤回消息本地json文件路径
+ */
+let messageRecallJson;
+/**
+ * 本地表情配置路径
+ */
+let localEmoticonsPath;
 
-const listenList = []; // 所有打开过的窗口对象
-const catchMsgList = new LimitedMap(2000); // 内存缓存消息记录-用于根据消息id获取撤回原始内容
-const messageRecallFileList = []; // 所有撤回消息本地切片列表
-let peer = null; // 激活聊天界面信息
-let historyMessageRecallList = new Map(); // 只读历史消息实例暂存数组
-let localEmoticonsList = []; // 本地表情包数据
-let options, localEmoticonsConfig; // 配置数据
+/**
+ * 所有打开过的窗口对象
+ */
+const listenList = [];
+/**
+ * 内存缓存消息记录-用于根据消息id获取撤回原始内容
+ */
+const catchMsgList = new LimitedMap(2000);
+/**
+ * 所有撤回消息本地切片列表
+ */
+const messageRecallFileList = [];
+/**
+ * 当前激活的聊天窗口数据
+ */
+let peer = null;
+/**
+ * 只读历史消息实例暂存数组
+ */
+let historyMessageRecallList = new Map();
+/**
+ * 本地表情包数据
+ */
+let localEmoticonsList = [];
+/**
+ * 配置数据
+ */
+let options, localEmoticonsConfig;
+
+optionsEvent.on("beforeUpdate", (newOptions) => {
+  // 判断是否启用了本地表情包功能
+  if (newOptions.localEmoticons.enabled) {
+    // 如果新的配置文件中打开了本地表情功能，且当前文件夹路径和新路径不一致则刷新表情包列表
+    if (newOptions.localEmoticons.localPath && options.localEmoticons.localPath !== newOptions.localEmoticons.localPath) {
+      resetCommonlyEmoticons(); // 重置常用表情
+      loadEmoticons(newOptions.localEmoticons.localPath); // 读取本地表情文件夹
+    }
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  }
+  if (newOptions.localEmoticons.commonlyNum !== options.localEmoticons.commonlyNum) {
+    if (newOptions.localEmoticons.commonlyNum < options.localEmoticons.commonlyNum) {
+      localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.splice(0, newOptions.localEmoticons.commonlyNum);
+      globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+      fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
+    }
+  }
+});
 
 // 加载插件时触发
 function onLoad(plugin) {
