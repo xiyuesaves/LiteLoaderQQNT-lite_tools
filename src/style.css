@@ -223,6 +223,9 @@
 .msg-content-container:focus .image:after,
 .msg-content-container:focus:before,
 .msg-content-container .image:focus:after,
+.ark-view-message_not-support:focus .image:after,
+.ark-view-message_not-support:focus:before,
+.ark-view-message_not-support .image:focus:after,
 .mix-message__container:focus .image:after,
 .mix-message__container:focus:before,
 .mix-message__container .image:focus:after {
@@ -230,6 +233,7 @@
 }
 .forward-msg:not(.wallet-message__container, .hidden-background),
 .msg-content-container:not(.wallet-message__container, .hidden-background),
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background),
 .mix-message__container:not(.wallet-message__container, .hidden-background) {
   background: unset !important;
   color: var(--text-color) !important;
@@ -243,11 +247,13 @@
 }
 .forward-msg:not(.wallet-message__container, .hidden-background) *::selection,
 .msg-content-container:not(.wallet-message__container, .hidden-background) *::selection,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) *::selection,
 .mix-message__container:not(.wallet-message__container, .hidden-background) *::selection {
   background-color: rgba(0, 153, 255, 0.5) !important;
 }
 .forward-msg:not(.wallet-message__container, .hidden-background)::after,
 .msg-content-container:not(.wallet-message__container, .hidden-background)::after,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background)::after,
 .mix-message__container:not(.wallet-message__container, .hidden-background)::after {
   content: "";
   display: block;
@@ -262,11 +268,13 @@
 }
 .forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
 .msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .text-link,
 .mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
   color: var(--link-url-color) !important;
 }
 .forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
 .msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .reply-element,
 .mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
   color: var(--text-color) !important;
 }
