@@ -63,7 +63,7 @@ async function convertMessage(message) {
         true,
         false,
       );
-      await lite_tools.nativeCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, false, false);
+      await lite_tools.nativeCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, true, false);
       const imageSize = await lite_tools.nativeCall("ns-fsApi", "getImageSizeFromPath", [path], webContentId, true, false);
       const fileSize = await lite_tools.nativeCall("ns-fsApi", "getFileSize", [path], webContentId, true, false);
       const picElement = {
