@@ -266,7 +266,7 @@ function updateLocalEmoticonsConfig(config) {
       findEmoticons.updateEmoticonList(list);
       folderList.insertBefore(findEmoticons.folderEl, folderList.querySelector(":first-child"));
       folderScroll.insertBefore(findEmoticons.folderIconEl, folderScroll.querySelector(":first-child"));
-    } else {
+    } else if (list.length) {
       const newEmoticonFolder = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
       folderInfos.unshift(newEmoticonFolder);
       folderList.insertBefore(newEmoticonFolder.folderEl, folderList.querySelector(":first-child"));
