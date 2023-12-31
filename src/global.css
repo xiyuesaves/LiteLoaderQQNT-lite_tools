@@ -188,9 +188,6 @@
   overflow: unset !important;
   position: relative;
 }
-.message-container .message-content__wrapper .wallet-message__container {
-  bottom: -26px;
-}
 .message-container .message-content__wrapper .count {
   position: relative;
 }
