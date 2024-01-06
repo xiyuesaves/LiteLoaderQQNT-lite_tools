@@ -279,7 +279,7 @@ async function onConfigView(view) {
         });
         if (newVal !== -1) {
           options.localEmoticons.rowsSize = newVal + 3;
-          view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量 推荐：${options.localEmoticons.rowsSize}，${
+          view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
             options.localEmoticons.rowsSize * 2
           }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
           lite_tools.setOptions(options);
