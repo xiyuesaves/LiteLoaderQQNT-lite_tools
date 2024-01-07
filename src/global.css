@@ -451,6 +451,10 @@
   display: flex !important;
 }
 
+.chat-func-bar .func-bar:last-child {
+  display: flex !important;
+}
+
 .lite-tools-bar {
   align-items: center;
   display: none;
