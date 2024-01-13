@@ -66,13 +66,34 @@ contextBridge.exposeInMainWorld("lite_tools", {
    * @param {String} sendEventName 发送事件名称
    * @param {String} cmdName 命令名称
    * @param {Array} args 参数数组
-   * @param {Boolean} awaitCallback 是否需要等待回调
+   * @param {Boolean} awaitCallback 是否需要等待回调，如果传入为字符串，则将回调监听事件改为该字符串
    * @param {Boolean} register 注册（未知）
    * @returns
    */
   nativeCall: (sendEventName, cmdName, args, webContentId = 2, awaitCallback = false, register = false) => {
     const callbackId = crypto.randomUUID();
     const eventName = `${sendEventName}-${webContentId}${register ? "-register" : ""}`;
+    let resolve;
+    if (awaitCallback) {
+      resolve = new Promise((res) => {
+        function onEvent(event, ...args) {
+          if (typeof awaitCallback === "boolean") {
+            if (args[0]?.callbackId === callbackId) {
+              ipcRenderer.off(`IPC_DOWN_${webContentId}`, onEvent);
+              res(args[1]);
+            }
+          } else {
+            if (args?.[1]?.[0]?.cmdName === awaitCallback) {
+              ipcRenderer.off(`IPC_DOWN_${webContentId}`, onEvent);
+              res(args[1]);
+            }
+          }
+        }
+        ipcRenderer.on(`IPC_DOWN_${webContentId}`, onEvent);
+      });
+    } else {
+      resolve = Promise.resolve(true);
+    }
     // 发送事件
     ipcRenderer.send(
       `IPC_UP_${webContentId}`,
@@ -83,17 +104,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
       },
       [cmdName, ...args],
     );
-    if (awaitCallback) {
-      return new Promise((res) => {
-        ipcRenderer.on(`IPC_DOWN_${webContentId}`, function (event, ...args) {
-          if (args[0]?.callbackId === callbackId) {
-            res(args[1]);
-            ipcRenderer.removeListener(`IPC_DOWN_${webContentId}`, this);
-          }
-        });
-      });
-    } else {
-      return true;
-    }
+    return resolve;
   },
 });
