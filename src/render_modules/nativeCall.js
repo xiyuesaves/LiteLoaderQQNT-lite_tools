@@ -139,4 +139,51 @@ function forwardMessage(srcpeer, dstpeer, msgIds) {
   );
 }
 
+/**
+ * 获取用户信息
+ * @param {String} uid 用户Uid
+ * @returns Object
+ */
+function getUserInfo(uid) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelProfileService/getUserDetailInfo",
+    [{ uid: uid }, undefined],
+    webContentId,
+    "nodeIKernelProfileListener/onProfileSimpleChanged",
+    false,
+  );
+}
+
+/**
+ *
+ * @param {String} uid 获取群组信息
+ * @returns Object
+ */
+function getGroupInfo(uid) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelGroupService/getGroupDetailInfo",
+    [{ groupCode: uid, source: 4 }, undefined],
+    webContentId,
+    "nodeIKernelGroupListener/onGroupDetailInfoChange",
+    false,
+  );
+}
+
+/**
+ * 获取群组列表
+ * @param {Boolean} forced 是否强制刷新列表
+ */
+function getGroupsList(forced = false) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelGroupService/getGroupList",
+    [{ forceFetch: forced }],
+    webContentId,
+    "nodeIKernelGroupListener/onGroupListUpdate",
+    false,
+  );
+}
+
 export { sendMessage, forwardMessage };
