@@ -2,6 +2,20 @@
 .lite-tools-settings {
   /* 模态框 */
   /* 版本号 */
+  /* 外边距 */
+  /* 每节的标题 */
+  /* 纵向列表条目 */
+  /* 水平分割线 */
+  /* 纵向分割线 */
+  /* 按钮布局 */
+  /* 副文本 */
+  /* 隐藏 */
+  /* 禁用 */
+  /* 选择框按钮-文本 */
+  /* 选择框按钮-图标 */
+  /* 选择框选项菜单 */
+  /* 选择框选项菜单-图标 */
+  /* 选择框选项菜单-选择后图标 */
 }
 .lite-tools-settings .vertical-list-item.fl-d {
   flex-direction: column;
@@ -203,4 +217,96 @@
 .lite-tools-settings .max-commonly-emoticons-num .commonly-emoticons-num::-webkit-inner-spin-button, .lite-tools-settings .max-commonly-emoticons-num .commonly-emoticons-num::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+.lite-tools-settings .plugin-config-view {
+  margin: 20px;
+}
+.lite-tools-settings h1 {
+  color: var(--text_primary);
+  font-weight: var(--font-bold);
+  font-size: min(var(--font_size_3), 18px);
+  line-height: min(var(--line_height_3), 24px);
+  padding: 0px 16px;
+  margin-bottom: 8px;
+}
+.lite-tools-settings .wrap {
+  /* Linux样式兼容：--fg_white */
+  background-color: var(--fill_light_primary, var(--fg_white));
+  border-radius: 8px;
+  font-size: min(var(--font_size_3), 18px);
+  line-height: min(var(--line_height_3), 24px);
+  margin-bottom: 20px;
+  overflow: hidden;
+  padding: 0px 16px;
+}
+.lite-tools-settings .wrap .title {
+  cursor: pointer;
+  font-size: min(var(--font_size_3), 18px);
+  line-height: min(var(--line_height_3), 24px);
+}
+.lite-tools-settings .wrap .title .icon {
+  width: 1em;
+  height: 1em;
+  transform: rotate(-180deg);
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+  transition-property: transform;
+}
+.lite-tools-settings .wrap .title .icon.is-fold {
+  transform: rotate(0deg);
+}
+.lite-tools-settings .vertical-list-item {
+  margin: 12px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.lite-tools-settings .horizontal-dividing-line {
+  border: unset;
+  margin: unset;
+  height: 1px;
+  background-color: rgba(127, 127, 127, 0.15);
+}
+.lite-tools-settings .vertical-dividing-line {
+  border: unset;
+  margin: unset;
+  width: 1px;
+  background-color: rgba(127, 127, 127, 0.15);
+}
+.lite-tools-settings .ops-btns {
+  display: flex;
+}
+.lite-tools-settings .secondary-text {
+  color: var(--text_secondary);
+  font-size: min(var(--font_size_2), 16px);
+  line-height: min(var(--line_height_2), 22px);
+  margin-top: 4px;
+}
+.lite-tools-settings .hidden {
+  display: none !important;
+}
+.lite-tools-settings .disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.lite-tools-settings .q-pulldown-menu-button .content {
+  width: 80px;
+}
+.lite-tools-settings .q-pulldown-menu-button .icon {
+  width: 16px;
+  height: 16px;
+}
+.lite-tools-settings .q-context-menu {
+  z-index: 4000;
+  margin-top: 5px;
+  width: 122px;
+}
+.lite-tools-settings .q-context-menu .icon {
+  display: none;
+  width: 1em;
+  height: 1em;
+}
+.lite-tools-settings .q-context-menu .selected .icon {
+  display: block !important;
 }

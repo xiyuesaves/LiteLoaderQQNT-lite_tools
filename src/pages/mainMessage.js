@@ -1,4 +1,4 @@
-import { options } from "../render_modules/options.js";
+import { options, updateOptions } from "../render_modules/options.js";
 // 右键菜单相关操作
 import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
 // 撤回事件监听
@@ -19,6 +19,9 @@ import { touchMoveSelectin } from "../render_modules/touchMoveSelectin.js";
 import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
 import { localEmoticons } from "../render_modules/localEmoticons.js";
+// log
+import { logs } from "../render_modules/logs.js";
+const log = new logs("主窗口").log;
 
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
@@ -87,6 +90,7 @@ updateOptions(chatMessage);
 chatMessage();
 
 function chatMessage(mutationList) {
+  log("更新内容");
   // 初始化推荐表情
   if (options.message.disabledSticker) {
     document.querySelector(".sticker-bar")?.classList?.add("disabled");
@@ -96,6 +100,7 @@ function chatMessage(mutationList) {
   // 初始化顶部侧边栏
   document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
     const find = options.sidebar.top.find((opt) => opt.index == index);
+    log(find);
     if (find) {
       if (find.disabled) {
         el.classList.add("disabled");

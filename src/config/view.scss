@@ -203,9 +203,9 @@
     }
   }
 
-  .max-commonly-emoticons-num{
-    width: 62px!important;
-    .commonly-emoticons-num{
+  .max-commonly-emoticons-num {
+    width: 62px !important;
+    .commonly-emoticons-num {
       text-align: center;
       width: 100%;
       height: 24px;
@@ -216,9 +216,133 @@
       background-color: var(--overlay_active);
       &::-webkit-inner-spin-button,
       &::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
+        -webkit-appearance: none;
+        margin: 0;
       }
     }
+  }
+
+  /* 外边距 */
+  .plugin-config-view {
+    margin: 20px;
+  }
+
+  /* 每节的标题 */
+  h1 {
+    color: var(--text_primary);
+    font-weight: var(--font-bold);
+    font-size: min(var(--font_size_3), 18px);
+    line-height: min(var(--line_height_3), 24px);
+    padding: 0px 16px;
+    margin-bottom: 8px;
+  }
+
+  .wrap {
+    /* Linux样式兼容：--fg_white */
+    background-color: var(--fill_light_primary, var(--fg_white));
+    border-radius: 8px;
+    font-size: min(var(--font_size_3), 18px);
+    line-height: min(var(--line_height_3), 24px);
+    margin-bottom: 20px;
+    overflow: hidden;
+    padding: 0px 16px;
+  }
+
+  .wrap .title {
+    cursor: pointer;
+    font-size: min(var(--font_size_3), 18px);
+    line-height: min(var(--line_height_3), 24px);
+  }
+
+  .wrap .title .icon {
+    width: 1em;
+    height: 1em;
+    transform: rotate(-180deg);
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+    transition-delay: 0s;
+    transition-property: transform;
+  }
+
+  .wrap .title .icon.is-fold {
+    transform: rotate(0deg);
+  }
+
+  /* 纵向列表条目 */
+  .vertical-list-item {
+    margin: 12px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* 水平分割线 */
+  .horizontal-dividing-line {
+    border: unset;
+    margin: unset;
+    height: 1px;
+    background-color: rgba(127, 127, 127, 0.15);
+  }
+
+  /* 纵向分割线 */
+  .vertical-dividing-line {
+    border: unset;
+    margin: unset;
+    width: 1px;
+    background-color: rgba(127, 127, 127, 0.15);
+  }
+
+  /* 按钮布局 */
+  .ops-btns {
+    display: flex;
+  }
+
+  /* 副文本 */
+  .secondary-text {
+    color: var(--text_secondary);
+    font-size: min(var(--font_size_2), 16px);
+    line-height: min(var(--line_height_2), 22px);
+    margin-top: 4px;
+  }
+
+  /* 隐藏 */
+  .hidden {
+    display: none !important;
+  }
+
+  /* 禁用 */
+  .disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* 选择框按钮-文本 */
+  .q-pulldown-menu-button .content {
+    width: 80px;
+  }
+
+  /* 选择框按钮-图标 */
+  .q-pulldown-menu-button .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* 选择框选项菜单 */
+  .q-context-menu {
+    z-index: 4000;
+    margin-top: 5px;
+    width: 122px;
+  }
+
+  /* 选择框选项菜单-图标 */
+  .q-context-menu .icon {
+    display: none;
+    width: 1em;
+    height: 1em;
+  }
+
+  /* 选择框选项菜单-选择后图标 */
+  .q-context-menu .selected .icon {
+    display: block !important;
   }
 }

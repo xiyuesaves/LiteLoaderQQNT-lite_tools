@@ -21,23 +21,34 @@ async function onConfigView(view) {
 
   // 返回通用监听方法
   const addSwitchEventlistener = SwitchEventlistener(view);
-
+  log("开始初始化");
   // 初始化常量
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const css_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.css`;
-  const html_file_path = `llqqnt://local-file/${plugin_path}/src/config/view.html`;
+  const css_file_path = `local:///${plugin_path}/src/config/view.css`.replace(/\\/g, "/");
+  const html_file_path = `local:///${plugin_path}/src/config/view.html`.replace(/\\/g, "/");
+  log("css_file_path", css_file_path);
+  log("html_file_path", html_file_path);
 
   // CSS
   const link_element = document.createElement("link");
   link_element.rel = "stylesheet";
   link_element.href = css_file_path;
   document.head.appendChild(link_element);
+  log("插入css");
+
+  try {
+   await fetch(html_file_path)
+  } catch (err) {
+    log(err);
+  }
 
   // HTMl
   const html_text = await (await fetch(html_file_path)).text();
+  log("html_text", html_text);
   const parser = new DOMParser();
   const doc = parser.parseFromString(html_text, "text/html");
   doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
+  log("dom加载完成");
 
   // 从仓库检查更新
   checkUpdate(view);
@@ -54,6 +65,9 @@ async function onConfigView(view) {
   // 获取侧边栏按钮列表
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
   const sidebar = view.querySelector(".sidebar ul");
+
+  log("开始添加功能");
+
   addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
   addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
 

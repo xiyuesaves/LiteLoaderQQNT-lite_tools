@@ -417,6 +417,7 @@ function onLoad(plugin) {
       });
   });
 }
+onLoad(LiteLoader.plugins["lite_tools"]);
 
 // 创建窗口时触发
 function onBrowserWindowCreated(window, plugin) {
@@ -712,6 +713,5 @@ function addCommonlyEmoticons(event, src) {
 }
 
 module.exports = {
-  onLoad,
   onBrowserWindowCreated,
 };

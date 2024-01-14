@@ -46,15 +46,16 @@ function onLoad() {
     } else if (hash.includes("#/main/message")) {
       import("./pages/mainMessage.js");
       log("进入主窗口");
-    } else if (hash.includes("#/imageViewer")) {
+    } else if (hash.includes("#/image-viewer")) {
       import("./pages/imageViewer.js");
       log("进入媒体预览窗口");
     }
   }
 }
+onLoad();
 
 // 设置界面函数
-function onConfigView(view) {
+function onSettingWindowCreated(view) {
   log("进入配置界面");
   import("./pages/configView.js").then((module) => {
     module.onConfigView(view);
@@ -62,4 +63,4 @@ function onConfigView(view) {
 }
 
 // 这两个函数都是可选的
-export { onLoad, onConfigView };
+export { onSettingWindowCreated };
