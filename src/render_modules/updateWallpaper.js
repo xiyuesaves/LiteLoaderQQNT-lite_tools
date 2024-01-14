@@ -13,7 +13,7 @@ updateOptions(updateWallpaper);
 async function updateWallpaper() {
   const backgroundStyle = document.querySelector(".background-style");
   if (options.background.enabled) {
-    const backgroundUrl = `llqqnt://local-file/${options.background.url}`;
+    const backgroundUrl = `local:///${options.background.url}`;
     if (!styleText) {
       styleText = await lite_tools.getStyle();
     }
@@ -49,7 +49,7 @@ async function updateWallpaper() {
     } else {
       document.querySelector(".background-wallpaper-video")?.remove();
     }
-    backgroundStyle.textContent = backgroundImage + styleText;
+    backgroundStyle.textContent = styleText + "\n" + backgroundImage;
   } else {
     backgroundStyle.textContent = "";
     document.querySelector(".background-wallpaper-video")?.remove();

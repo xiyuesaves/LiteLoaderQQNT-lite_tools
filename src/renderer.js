@@ -37,7 +37,7 @@ function onLoad() {
     /**
      * 局部匹配
      */
-    if (hash.includes("#/chat/")) {
+    if (hash.includes("#/chat")) {
       import("./pages/chatMessage.js");
       log("进入独立聊天窗口");
     } else if (hash.includes("#/forward")) {

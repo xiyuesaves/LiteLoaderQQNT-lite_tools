@@ -23,9 +23,9 @@ async function initStyle() {
     if (element) {
       let backgroundImage = "";
       if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-        backgroundImage = `:root{--background-wallpaper:url("llqqnt://local-file/${options.background.url}")}`;
+        backgroundImage = `:root{--background-wallpaper:url("local:///${options.background.url}")}`;
       }
-      element.textContent = backgroundImage + message;
+      element.textContent = message + "\n" + backgroundImage;
     }
   });
 
