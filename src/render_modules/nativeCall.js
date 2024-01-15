@@ -42,30 +42,33 @@ async function convertMessage(message) {
       };
     case "image":
       const path = message.path;
-      const type = await lite_tools.nativeCall("ns-fsApi", "getFileType", [path], webContentId, true, false);
-      const md5 = await lite_tools.nativeCall("ns-fsApi", "getFileMd5", [path], webContentId, true, false);
+      const type = await lite_tools.nativeCall("ns-FsApi", "getFileType", [path], webContentId, true, false);
+      const md5 = await lite_tools.nativeCall("ns-FsApi", "getFileMd5", [path], webContentId, true, false);
       const fileName = `${md5}.${type.ext}`;
       const filePath = await lite_tools.nativeCall(
         "ns-ntApi",
-        "nodeIKernelMsgService/getRichMediaFilePath",
+        "nodeIKernelMsgService/getRichMediaFilePathForGuild",
         [
           {
-            md5HexStr: md5,
-            fileName: fileName,
-            elementType: 2,
-            elementSubType: 0,
-            thumbSize: 0,
-            needCreate: true,
-            fileType: 1,
+            path_info: {
+              md5HexStr: md5,
+              fileName: fileName,
+              elementType: 2,
+              elementSubType: 0,
+              thumbSize: 0,
+              needCreate: true,
+              downloadType: 1,
+              file_uuid: "",
+            },
           },
         ],
         webContentId,
         true,
         false,
       );
-      await lite_tools.nativeCall("ns-fsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, true, false);
-      const imageSize = await lite_tools.nativeCall("ns-fsApi", "getImageSizeFromPath", [path], webContentId, true, false);
-      const fileSize = await lite_tools.nativeCall("ns-fsApi", "getFileSize", [path], webContentId, true, false);
+      await lite_tools.nativeCall("ns-FsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, true, false);
+      const imageSize = await lite_tools.nativeCall("ns-FsApi", "getImageSizeFromPath", [path], webContentId, true, false);
+      const fileSize = await lite_tools.nativeCall("ns-FsApi", "getFileSize", [path], webContentId, true, false);
       const picElement = {
         md5HexStr: md5,
         fileSize: fileSize,
@@ -106,7 +109,9 @@ async function sendMessage(peer, messages) {
         msgId: "0",
         peer: convertPeer(peer),
         msgElements: await Promise.all(messages.map((message) => convertMessage(message))),
+        msgAttributeInfos: new Map(),
       },
+      null,
     ],
     webContentId,
     false,
@@ -128,10 +133,12 @@ function forwardMessage(srcpeer, dstpeer, msgIds) {
     [
       {
         msgIds,
+        msgAttributeInfos: new Map(),
         srcContact: convertPeer(srcpeer),
         dstContacts: [convertPeer(dstpeer)],
         commentElements: [],
       },
+      null,
     ],
     webContentId,
     false,

@@ -17,6 +17,7 @@ class logs {
     this.moduleName = moduleName;
     this.log = (...args) => {
       console.log(`[${this.moduleName}]`, ...args);
+      // lite_tools.log(`[${this.moduleName}]`, ...args);
       // 没有开启debug开关的情况下，阻止保存log数据
       if (options.debug) {
         logList.push({

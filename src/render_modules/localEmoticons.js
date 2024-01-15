@@ -365,7 +365,7 @@ function insert(event) {
       });
     }
 
-    if (event.altKey && false) {
+    if (event.altKey ) {
       log("直接发送图片");
       const peer = lite_tools.getPeer();
       sendMessage(peer, [{ type: "image", path: src }]);

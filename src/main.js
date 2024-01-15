@@ -19,8 +19,9 @@ const { processPic } = require("./main_modules/processPic");
 const { replaceArk } = require("./main_modules/replaceArk");
 const { debounce } = require("./main_modules/debounce");
 const { logs } = require("./main_modules/logs");
-const log = new logs("主进程").log;
-const renderLog = new logs("渲染进程").log;
+
+let log = () => {};
+let renderLog = () => {};
 
 /**
  * 主窗口对象
@@ -130,7 +131,6 @@ function onLoad(plugin) {
       });
       // 排序文件名称
       messageRecallFileList.sort((a, b) => a - b);
-      log("读取到历史切片文件", messageRecallFileList);
     }
   });
 
@@ -139,6 +139,12 @@ function onLoad(plugin) {
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
   if (options.debug) {
+    let mainLogs = new logs("主进程");
+    mainLogs.startLogServer();
+    log = mainLogs.log;
+    // let renderLogs = new logs("渲染进程");
+    // renderLog = renderLogs.log;
+
     try {
       // 调试工具
       const inspector = require("node:inspector");
@@ -303,7 +309,7 @@ function onLoad(plugin) {
 
   // 控制台日志打印
   ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
-    renderLog(...message);
+    // log("渲染进程>", ...message);
   });
 
   // 更新常用表情列表
@@ -435,6 +441,11 @@ function onBrowserWindowCreated(window, plugin) {
   // 代理官方监听器
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
+      log("get", args);
+      if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/forwardMsgWithComment") {
+        log("==================");
+        log(args[3]?.[1]?.[1]?.msgAttributeInfos);
+      }
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
         log("消息发送事件", args);
         if (args[3][1][1] && args[3][1][1].msgElements) {
@@ -477,6 +488,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
+    log("send", channel, args);
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
