@@ -90,7 +90,7 @@ updateOptions(chatMessage);
 chatMessage();
 
 function chatMessage(mutationList) {
-  log("更新内容");
+  // log("更新内容");
   // 初始化推荐表情
   if (options.message.disabledSticker) {
     document.querySelector(".sticker-bar")?.classList?.add("disabled");
@@ -100,7 +100,6 @@ function chatMessage(mutationList) {
   // 初始化顶部侧边栏
   document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
     const find = options.sidebar.top.find((opt) => opt.index == index);
-    log(find);
     if (find) {
       if (find.disabled) {
         el.classList.add("disabled");

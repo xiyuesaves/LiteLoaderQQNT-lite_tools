@@ -24,8 +24,8 @@ async function onConfigView(view) {
   log("开始初始化");
   // 初始化常量
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const css_file_path = `local:///${plugin_path}/src/config/view.css`.replace(/\\/g, "/");
-  const html_file_path = `local:///${plugin_path}/src/config/view.html`.replace(/\\/g, "/");
+  const css_file_path = `local:///${plugin_path}/src/config/view.css`;
+  const html_file_path = `local:///${plugin_path}/src/config/view.html`;
   log("css_file_path", css_file_path);
   log("html_file_path", html_file_path);
 

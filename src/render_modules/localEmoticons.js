@@ -223,7 +223,7 @@ function quickInsertion() {
       skiterPreview.classList.add("skiter-preview");
       const img = document.createElement("img");
       img.setAttribute("lazy", "");
-      img.src = "llqqnt://local-file/" + forList[i].path;
+      img.src = "local:///" + forList[i].path;
       skiterPreview.appendChild(img);
       previewItem.appendChild(skiterPreview);
       previewListEl.appendChild(previewItem);
@@ -350,7 +350,7 @@ function insert(event) {
   }
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   if (ckeditEditorModel) {
-    const src = decodeURI(event.target.querySelector("img").src.replace("llqqnt://local-file/", "").replace(/\//g, "\\"));
+    const src = decodeURI(event.target.querySelector("img").src.replace("local:///", "").replace(/\//g, "\\"));
     // 更新常用表情
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);
@@ -365,7 +365,7 @@ function insert(event) {
       });
     }
 
-    if (event.altKey) {
+    if (event.altKey && false) {
       log("直接发送图片");
       const peer = lite_tools.getPeer();
       sendMessage(peer, [{ type: "image", path: src }]);
@@ -393,11 +393,21 @@ function insert(event) {
  * 加载dom结构
  */
 async function loadDom() {
+  log("开始加载dom")
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const domUrl = `llqqnt://local-file/${plugin_path}/src/config/localEmoticons.html`;
+  const domUrl = `local:///${plugin_path}/src/config/localEmoticons.html`;
+  log("申明常量")
+  try {
+    await (await fetch(domUrl)).text();
+    log("加载html成功");
+  } catch (err) {
+    log("加载html失败",err);
+  }
   const html_text = await (await fetch(domUrl)).text();
   const parser = new DOMParser();
+  log("创建实例");
   htmlDom = parser.parseFromString(html_text, "text/html");
+  log("创建引用");
   htmlDom.querySelectorAll("section").forEach((el) => {
     barIcon.appendChild(el);
   });
@@ -658,7 +668,7 @@ class emoticonFolder {
       skiterPreviewEl.classList.add("skiter-preview");
       const imgEl = document.createElement("img");
       imgEl.setAttribute("lazy", "");
-      imgEl.src = "llqqnt://local-file/" + item.path;
+      imgEl.src = this.protocolPrefix + item.path;
       skiterPreviewEl.appendChild(imgEl);
       categoryItemEl.append(skiterPreviewEl);
       this.categoryItemsEl.splice(item.index, 0, categoryItemEl);
@@ -697,7 +707,7 @@ class emoticonFolder {
     return src.replace(emoticonFolder.prototype.protocolPrefix, "");
   }
 }
-emoticonFolder.prototype.protocolPrefix = "llqqnt://local-file/";
+emoticonFolder.prototype.protocolPrefix = "local:///";
 
 /**
  * 打开表情包管理菜单

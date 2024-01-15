@@ -378,7 +378,7 @@ function onLoad(plugin) {
       .then((result) => {
         log("选择了文件", result);
         if (!result.canceled) {
-          options.background.url = path.join(result.filePaths[0]).replace(/\\/g, "/");
+          options.background.url = path.join(result.filePaths[0]);
           fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
           globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
         }
@@ -399,7 +399,7 @@ function onLoad(plugin) {
       .then((result) => {
         log("选择了文件夹", result);
         if (!result.canceled) {
-          const newPath = path.join(result.filePaths[0]).replace(/\\/g, "/");
+          const newPath = path.join(result.filePaths[0]);
           // 判断是否启用了本地表情包功能
           if (options.localEmoticons.enabled) {
             if (newPath && options.localEmoticons.localPath !== newPath) {
