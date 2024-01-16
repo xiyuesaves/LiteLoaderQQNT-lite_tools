@@ -449,14 +449,14 @@
         div {
           width: 60px;
           height: 29px;
-          margin: 4px 0;
-          padding: 0 6px;
           cursor: pointer;
           display: flex;
-          align-items: flex-end;
+          align-items: flex-start;
           justify-content: center;
-          padding-bottom: 12px;
           transition: 150ms;
+          svg {
+            transform: translateY(3px);
+          }
           &:first-child {
             transform: rotate(180deg);
           }
@@ -464,9 +464,9 @@
             color: var(--text_secondary_2);
             background-color: var(--emoticons-category-hover-bg);
             opacity: 0.8;
-            svg {
-              transform: translateY(4px);
-            }
+            // svg {
+            //   transform: translateY(4px);
+            // }
           }
           &:active {
             opacity: 1;

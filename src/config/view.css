@@ -408,14 +408,14 @@
 .lite-tools-settings .ruls-list .ruls-item .ruls-control div {
   width: 60px;
   height: 29px;
-  margin: 4px 0;
-  padding: 0 6px;
   cursor: pointer;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
-  padding-bottom: 12px;
   transition: 150ms;
+}
+.lite-tools-settings .ruls-list .ruls-item .ruls-control div svg {
+  transform: translateY(3px);
 }
 .lite-tools-settings .ruls-list .ruls-item .ruls-control div:first-child {
   transform: rotate(180deg);
@@ -424,9 +424,6 @@
   color: var(--text_secondary_2);
   background-color: var(--emoticons-category-hover-bg);
   opacity: 0.8;
-}
-.lite-tools-settings .ruls-list .ruls-item .ruls-control div:hover svg {
-  transform: translateY(4px);
 }
 .lite-tools-settings .ruls-list .ruls-item .ruls-control div:active {
   opacity: 1;
