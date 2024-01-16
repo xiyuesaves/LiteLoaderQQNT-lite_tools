@@ -2,13 +2,17 @@
   <img src="./icon.png" />
 </p>
 
+# v4 版本正在适配中
+
 # LiteLoaderQQNT-lite_tools
 
 LiteLoaderQQNT 插件 - 轻量工具箱，优化 QQNT 使用体验。
 
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
-# v4版本正在适配中
+## 注意事项
+
+> **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
 
 ## 使用方法
 
