@@ -348,7 +348,7 @@
   padding: 0 0 0 16px;
 }
 .lite-tools-settings .ruls-list .ruls-item:last-child {
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 .lite-tools-settings .ruls-list .ruls-item:hover .ruls-control {
   opacity: 1;
