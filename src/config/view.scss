@@ -459,26 +459,20 @@
         align-items: center;
         justify-content: space-between;
         flex-direction: column;
-        
+
         svg {
           width: 1.5em;
           height: 1.5em;
           transition: 150ms;
         }
-        div {
-          width: 60px;
-          height: 29px;
+
+        & > div {
+          width: 100%;
           cursor: pointer;
           display: flex;
           align-items: flex-start;
           justify-content: center;
           transition: 150ms;
-          svg {
-            transform: translateY(3px);
-          }
-          &:first-child {
-            transform: rotate(180deg);
-          }
           &:hover {
             color: var(--text_secondary_2);
             background-color: var(--emoticons-category-hover-bg);
@@ -486,8 +480,37 @@
           }
           &:active {
             opacity: 1;
-            svg {
+            &:not(.delete) svg {
               transform: translateY(6px);
+            }
+            &.delete svg {
+              transform: translateY(2px);
+            }
+          }
+        }
+
+        .to-up,
+        .to-down {
+          height: 30px;
+          svg {
+            transform: translateY(3px);
+          }
+          &:first-child {
+            transform: rotate(180deg);
+          }
+        }
+        .delete {
+          height: calc(100% - 60px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          svg {
+            color: var(--btn-active-danger-border);
+          }
+          &:hover {
+            background-color: var(--btn-danger-border);
+            svg {
+              color: var(--btn-danger-textcolor);
             }
           }
         }
@@ -502,7 +525,7 @@
     --btn-danger-textcolor: rgba(245, 108, 108, 1) !important;
 
     --btn-hover-danger-bg: rgba(245, 108, 108, 1) !important;
-    --btn-hover-danger-border: rgba(245, 108, 108, 1) !important;
+    --btn-hover-danger-border: rgba(255, 108, 108, 1) !important;
     --btn-hover-danger-textcolor: rgba(255, 255, 255, 0.9) !important;
 
     --btn-active-danger-bg: rgb(221, 99, 99) !important;
