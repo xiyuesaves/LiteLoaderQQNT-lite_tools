@@ -37,7 +37,7 @@ async function onConfigView(view) {
   log("插入css");
 
   try {
-   await fetch(html_file_path)
+    await fetch(html_file_path);
   } catch (err) {
     log(err);
   }
@@ -205,22 +205,7 @@ async function onConfigView(view) {
 
   // 添加消息后缀
   addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {
-    if (enabled) {
-      view.querySelector(".message-tail").classList.remove("hidden");
-    } else {
-      view.querySelector(".message-tail").classList.add("hidden");
-    }
-    if (first("init-tail-option")) {
-      const tailEl = view.querySelector(".tail-content");
-      tailEl.value = options.tail.content;
-      tailEl.addEventListener(
-        "input",
-        debounce(() => {
-          options.tail.content = tailEl.value;
-          lite_tools.setOptions(options);
-        }, 100),
-      );
-    }
+    
   });
 
   // 后缀是否换行

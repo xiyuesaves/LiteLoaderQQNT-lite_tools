@@ -86,6 +86,19 @@
 .lite-tools-settings .input-text:last-child {
   margin-right: 0;
 }
+.lite-tools-settings .input-text-active-show {
+  align-self: normal;
+  height: 24px;
+  flex: 1;
+  border-radius: 4px;
+  transition: 200ms;
+  font-family: inherit !important;
+  color: var(--text_secondary_2) !important;
+}
+.lite-tools-settings .input-text-active-show:focus {
+  text-indent: 8px;
+  background-color: var(--overlay_active);
+}
 .lite-tools-settings .q-switch__disabled {
   opacity: 0.5;
   pointer-events: none;
@@ -337,7 +350,7 @@
 }
 .lite-tools-settings .ruls-list .ruls-item {
   width: 100%;
-  height: 60px;
+  min-height: 60px;
   margin-bottom: 8px;
   border: solid 1px rgba(127, 127, 127, 0.3);
   border-radius: 8px;
@@ -345,7 +358,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0 0 16px;
+  padding: 0 0 0 12px;
+  position: relative;
 }
 .lite-tools-settings .ruls-list .ruls-item:last-child {
   margin-bottom: 4px;
@@ -362,7 +376,7 @@
   opacity: 0.5;
 }
 .lite-tools-settings .ruls-list .ruls-item .left-box {
-  width: calc(100% - 64px);
+  width: 320px;
   height: 100%;
   padding: 8px 0;
   display: flex;
@@ -370,35 +384,36 @@
   justify-content: space-between;
   align-items: flex-start;
 }
-.lite-tools-settings .ruls-list .ruls-item .left-box .ruls-name {
-  font-size: 12px;
-}
-.lite-tools-settings .ruls-list .ruls-item .left-box .ruls-name .rule-context {
-  color: var(--text_secondary);
-}
-.lite-tools-settings .ruls-list .ruls-item .left-box .ruls-active-goroup-list {
-  font-size: 12px;
+.lite-tools-settings .ruls-list .ruls-item .left-box .tail-opt {
   display: flex;
-}
-.lite-tools-settings .ruls-list .ruls-item .left-box .ruls-active-goroup-list .rule-group-list {
-  display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
-}
-.lite-tools-settings .ruls-list .ruls-item .left-box .ruls-active-goroup-list .rule-group-list span {
-  display: block;
-  line-height: 20px;
-  padding: 0 6px;
+  margin-bottom: 4px;
+  line-height: 24px;
   font-size: 12px;
-  border-radius: 8px;
-  color: var(--text_secondary_2);
-  background-color: var(--emoticons-category-hover-bg);
+  width: 100%;
+}
+.lite-tools-settings .ruls-list .ruls-item .left-box .tail-opt input {
+  font-size: 12px;
+  font-family: inherit;
+}
+.lite-tools-settings .ruls-list .ruls-item .left-box .tail-opt:last-child {
+  margin-bottom: 0;
 }
 .lite-tools-settings .ruls-list .ruls-item .ruls-control {
+  position: absolute;
+  right: 0;
+  top: 0;
   opacity: 0;
+  width: 60px;
   color: var(--text_secondary);
   font-size: 12px;
   transition: 150ms;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
 }
 .lite-tools-settings .ruls-list .ruls-item .ruls-control svg {
   width: 1.5em;
@@ -444,6 +459,7 @@
     --btn-active-danger-border: rgb(221, 99, 99) !important;
     --btn-active-danger-textcolor: rgba(255, 255, 255, 0.9) !important;
     --text_secondary_2: rgba(0, 0, 0, 0.85);
+    --placeholder-color: rgba(0, 0, 0, 0.75);
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -458,5 +474,6 @@
     --btn-active-danger-border: rgba(245, 108, 108, 0.6) !important;
     --btn-active-danger-textcolor: rgba(255, 255, 255, 0.9) !important;
     --text_secondary_2: rgba(255, 255, 255, 0.85);
+    --placeholder-color: rgba(255, 255, 255, 0.75);
   }
 }
