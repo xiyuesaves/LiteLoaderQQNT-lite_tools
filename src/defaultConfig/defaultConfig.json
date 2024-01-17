@@ -32,13 +32,16 @@
     "showMsgTime": false,
     "autoOpenURL": false,
     "switchReplace": false,
-    "preventMessageRecall": false,
     "removeReplyAt": false,
     "mergeMessage": false,
     "avatarSticky": {
       "enabled": false,
       "toBottom": false
     }
+  },
+  "preventMessageRecall": {
+    "enabled": false,
+    "localStorage": false
   },
   "tail": {
     "enabled": false,
