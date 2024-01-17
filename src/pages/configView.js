@@ -10,6 +10,8 @@ import { addOptionLi } from "../render_modules/addOptionLi.js";
 import { SwitchEventlistener } from "../render_modules/addSwitchEventlistener.js";
 // 加载配置信息
 import { options, updateOptions } from "../render_modules/options.js";
+// 后缀类
+import { TailList } from "../render_modules/tailList.js";
 // 配置界面日志
 import { logs } from "../render_modules/logs.js";
 const log = new logs("配置界面").log;
@@ -36,15 +38,8 @@ async function onConfigView(view) {
   document.head.appendChild(link_element);
   log("插入css");
 
-  try {
-    await fetch(html_file_path);
-  } catch (err) {
-    log(err);
-  }
-
   // HTMl
   const html_text = await (await fetch(html_file_path)).text();
-  log("html_text", html_text);
   const parser = new DOMParser();
   const doc = parser.parseFromString(html_text, "text/html");
   doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
@@ -203,14 +198,6 @@ async function onConfigView(view) {
   // 常用表情分类
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons");
 
-  // 添加消息后缀
-  addSwitchEventlistener("tail.enabled", ".msg-tail", (_, enabled) => {
-    
-  });
-
-  // 后缀是否换行
-  addSwitchEventlistener("tail.newLine", ".msg-tail-newline");
-
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
     if (enabled) {
@@ -244,9 +231,8 @@ async function onConfigView(view) {
     );
   }
 
-  initSider();
-
   // 不可复用的拖拽选择方法
+  initSider();
   function initSider() {
     updateSider();
     let hasDown = false;
@@ -290,7 +276,6 @@ async function onConfigView(view) {
       hasDown = false;
     });
   }
-
   function updateSider() {
     const button = view.querySelector(".sider-button");
     const mask = view.querySelector(".sider-mask");
@@ -307,6 +292,14 @@ async function onConfigView(view) {
       }
     });
   }
+
+  // 消息后缀
+  addSwitchEventlistener("tail.enabled", ".msg-tail");
+  const listView = view.querySelector(".vertical-list-item .tail-ruls-list");
+  const tailList = new TailList(listView, options.tail.list);
+  view.querySelector(".create-new-tail-item").addEventListener("click", () => {
+    tailList.createNewTail();
+  });
 
   // 监听设置文件变动
   updateOptions((opt) => {
