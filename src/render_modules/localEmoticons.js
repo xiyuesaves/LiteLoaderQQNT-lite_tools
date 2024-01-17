@@ -437,7 +437,7 @@ async function loadDom() {
       for (let i = 0; i < folderInfos.length; i++) {
         const folder = folderInfos[i];
         top += folder.folderEl.offsetHeight;
-        if (top >= event.target.scrollTop + 1) {
+        if (top >= event.target.scrollTop + 4) {
           document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
           const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
           const folderScroll = document.querySelector(".folder-scroll");
