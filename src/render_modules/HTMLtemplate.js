@@ -2,7 +2,7 @@ const tailElement = `<div class="ruls-item">
 <div class="left-box">
   <div class="tail-opt">
     后缀内容：
-    <input placeholder="后缀附加文本" spellcheck="false" class="input-text-active-show tail-context" />
+    <input placeholder="后缀附加文本，留空可实现黑名单效果" spellcheck="false" class="input-text-active-show tail-context" />
   </div>
   <div class="tail-opt">
     是否换行：

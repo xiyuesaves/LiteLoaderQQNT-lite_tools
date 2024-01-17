@@ -21,7 +21,6 @@ const { debounce } = require("./main_modules/debounce");
 const { logs } = require("./main_modules/logs");
 
 let log = () => {};
-let renderLog = () => {};
 
 /**
  * 主窗口对象
@@ -442,23 +441,35 @@ function onBrowserWindowCreated(window, plugin) {
   const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
     apply(target, thisArg, args) {
       log("get", args);
-      if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/forwardMsgWithComment") {
-        log("==================");
-        log(args[3]?.[1]?.[1]?.msgAttributeInfos);
-      }
       if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
         log("消息发送事件", args);
         if (args[3][1][1] && args[3][1][1].msgElements) {
           if (options.tail.enabled) {
-            args[3][1][1].msgElements.forEach((el) => {
-              if (el.textElement && el.textElement?.content?.length !== 0) {
-                if (options.tail.newLine) {
-                  el.textElement.content += "\n";
-                }
-                el.textElement.content += options.tail.content;
-                log("消息增加后缀", el.textElement.content);
+            const peerUid = args[3][1][1]?.peer?.peerUid;
+            const chatType = args[3][1][1]?.peer?.chatType;
+            const tail = options.tail.list.find((tail) => {
+              if (tail.filter.length === 1 && tail.filter[0] === "") {
+                return true;
+              }
+              if (tail.filter.includes(peerUid)) {
+                return true;
               }
             });
+            log(options.tail.list, tail);
+            // 必须含有peerUid且匹配到后缀数据且聊天类型为群组才会执行
+            if (peerUid && tail && chatType === 2) {
+              const tailContext = tail.content;
+              const newLine = tail.newLine;
+              args[3][1][1].msgElements.forEach((el) => {
+                if (el.textElement && el.textElement?.content?.length !== 0) {
+                  if (newLine) {
+                    el.textElement.content += "\n";
+                  }
+                  el.textElement.content += tailContext;
+                  log("消息增加后缀", el.textElement.content);
+                }
+              });
+            }
           }
         }
       }
