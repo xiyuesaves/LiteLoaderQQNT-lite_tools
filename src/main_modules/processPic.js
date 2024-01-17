@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { downloadPic } = require("./downloadPic");
-const { logs } = require("./logs");
+const logs = require("./logs");
 const log = new logs("下载被撤回图片").log;
 
 // 下载被撤回的图片

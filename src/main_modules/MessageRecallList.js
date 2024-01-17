@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const { logs } = require("./logs");
+const logs = require("./logs");
 const log = new logs("撤回管理").log;
 
 // 撤回消息切片管理

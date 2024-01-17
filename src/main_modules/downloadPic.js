@@ -1,6 +1,6 @@
 const http = require("http");
 const https = require("https");
-const { logs } = require("./logs");
+const logs = require("./logs");
 const log = new logs("图片下载").log;
 
 // 下载方法
