@@ -13,17 +13,23 @@ updateOptions(updateWallpaper);
 async function updateWallpaper() {
   const backgroundStyle = document.querySelector(".background-style");
   if (options.background.enabled) {
-    const backgroundUrl = `local:///${options.background.url}`;
+    const backgroundUrl = `local:///${options.background.url.replace(/\\/g, "//")}`;
     if (!styleText) {
       styleText = await lite_tools.getStyle();
     }
     // 如果url指向图片类型则直接插入css中
     let backgroundImage = "";
+    // 链接被判断为图片类型
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
       document.querySelector(".background-wallpaper-video")?.remove();
       backgroundImage = `:root{--background-wallpaper:url("${backgroundUrl}")}`;
+      backgroundStyle.textContent = styleText + "\n" + backgroundImage;
+      // 链接被判断为视频类型
     } else if (/\.(mp4|MP4)$/.test(options.background.url)) {
+      // 视频背景需要先清除之前的图片背景
+      backgroundStyle.textContent = styleText;
       let videoEl = document.querySelector(".background-wallpaper-video");
+      // 如果已经有video元素了，那么直接替换资源路径
       if (!videoEl) {
         videoEl = document.createElement("video");
         videoEl.setAttribute("muted", "");
@@ -46,10 +52,11 @@ async function updateWallpaper() {
           videoEl.setAttribute("src", backgroundUrl);
         }
       }
+      // 链接被判断为无效
     } else {
+      backgroundStyle.textContent = styleText;
       document.querySelector(".background-wallpaper-video")?.remove();
     }
-    backgroundStyle.textContent = styleText + "\n" + backgroundImage;
   } else {
     backgroundStyle.textContent = "";
     document.querySelector(".background-wallpaper-video")?.remove();
