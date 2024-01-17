@@ -435,6 +435,8 @@
 }
 .lite-tools-settings .tail-ruls-list .ruls-item .ruls-control > div:active {
   opacity: 1;
+  color: var(--text_secondary_2);
+  background-color: var(--emoticons-category-hover-bg);
 }
 .lite-tools-settings .tail-ruls-list .ruls-item .ruls-control > div:active:not(.delete) svg {
   transform: translateY(6px);
@@ -463,10 +465,10 @@
 .lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete svg {
   color: var(--btn-active-danger-border);
 }
-.lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete:hover {
+.lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete:hover, .lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete:active {
   background-color: var(--btn-danger-border);
 }
-.lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete:hover svg {
+.lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete:hover svg, .lite-tools-settings .tail-ruls-list .ruls-item .ruls-control .delete:active svg {
   color: var(--btn-danger-textcolor);
 }
 

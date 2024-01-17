@@ -480,6 +480,8 @@
           }
           &:active {
             opacity: 1;
+            color: var(--text_secondary_2);
+            background-color: var(--emoticons-category-hover-bg);
             &:not(.delete) svg {
               transform: translateY(6px);
             }
@@ -507,7 +509,8 @@
           svg {
             color: var(--btn-active-danger-border);
           }
-          &:hover {
+          &:hover,
+          &:active {
             background-color: var(--btn-danger-border);
             svg {
               color: var(--btn-danger-textcolor);
