@@ -39,6 +39,10 @@ let mainMessage;
  */
 let recordMessageRecallIdList;
 /**
+ * 易失常驻撤回历史消息
+ */
+let tempRecordMessageRecallIdList;
+/**
  * 撤回消息本地保存路径
  */
 let messageRecallPath;
@@ -240,6 +244,7 @@ function onLoad(plugin) {
 
   // 初始化常驻撤回消息历史记录-每100条记录切片为一个json文件
   recordMessageRecallIdList = new MessageRecallList(messageRecallJson, messageRecallPath, 100);
+  tempRecordMessageRecallIdList = new Map();
 
   // 监听常驻历史撤回记录实例创建新的文件切片
   recordMessageRecallIdList.onNewFile((newFileName) => {
@@ -536,12 +541,18 @@ function onBrowserWindowCreated(window, plugin) {
                   const findInCatch = catchMsgList.get(msgItem.msgId); // 尝试从内存中查找对应消息并替换元素
                   if (findInCatch) {
                     log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
-                    recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                    if (options.preventMessageRecall.localStorage) {
+                      recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                    } else {
+                      tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 重启QQ后丢失
+                    }
                     catchMsgList.delete(msgItem.msgId); // 从消息记录中移除已经被使用过的数据
                     processPic(findInCatch);
                     msgList[index] = findInCatch; // 替换撤回标记
                   } else {
-                    const findInRecord = recordMessageRecallIdList.get(msgItem.msgId); // 从常驻历史撤回记录中查找消息id
+                    const findInRecord = (
+                      options.preventMessageRecall.localStorage ? recordMessageRecallIdList : tempRecordMessageRecallIdList
+                    ).get(msgItem.msgId); // 从常驻历史撤回记录中查找消息id
                     if (findInRecord) {
                       log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
                       processPic(findInRecord);
@@ -655,7 +666,11 @@ function onBrowserWindowCreated(window, plugin) {
             recallData,
           });
           // 写入常驻内存缓存
-          recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+          if (options.preventMessageRecall.localStorage) {
+            recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+          } else {
+            tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+          }
           // 从消息列表缓存移除
           catchMsgList.delete(msgItem.msgId);
           processPic(findInCatch);
