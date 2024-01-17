@@ -29,13 +29,19 @@ if (options.localEmoticons.enabled) {
 } else {
   document.body.classList.remove("lite-tools-showLocalEmoticons");
 }
+
 updateOptions((opt) => {
   if (opt.localEmoticons.enabled) {
     document.body.classList.add("lite-tools-showLocalEmoticons");
   } else {
     document.body.classList.remove("lite-tools-showLocalEmoticons");
   }
+
+  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
+  log("更新表情尺寸", options.localEmoticons.rowsSize);
+  folderList.setAttribute("style", `--category-item-size: ${(folderList.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
 });
+
 log("模块已加载");
 
 /**
@@ -240,9 +246,9 @@ function quickInsertion() {
  * @param {Array} list 常用表情列表
  */
 function updateLocalEmoticonsConfig(config) {
-  log("更新表情尺寸", options.localEmoticons.rowsSize);
-  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
   const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
+  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
+  log("更新表情尺寸", options.localEmoticons.rowsSize);
   folderList.setAttribute("style", `--category-item-size: ${(folderList.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
 
   if (!options.localEmoticons.enabled) {
@@ -365,7 +371,7 @@ function insert(event) {
       });
     }
 
-    if (event.altKey ) {
+    if (event.altKey) {
       log("直接发送图片");
       const peer = lite_tools.getPeer();
       sendMessage(peer, [{ type: "image", path: src }]);
@@ -393,15 +399,15 @@ function insert(event) {
  * 加载dom结构
  */
 async function loadDom() {
-  log("开始加载dom")
+  log("开始加载dom");
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const domUrl = `local:///${plugin_path}/src/config/localEmoticons.html`;
-  log("申明常量")
+  log("申明常量");
   try {
     await (await fetch(domUrl)).text();
     log("加载html成功");
   } catch (err) {
-    log("加载html失败",err);
+    log("加载html失败", err);
   }
   const html_text = await (await fetch(domUrl)).text();
   const parser = new DOMParser();
