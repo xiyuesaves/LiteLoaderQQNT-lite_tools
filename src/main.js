@@ -557,7 +557,8 @@ function onBrowserWindowCreated(window, plugin) {
                       log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
                       processPic(findInRecord);
                       msgList[index] = findInRecord; // 替换撤回标记
-                    } else {
+                      // 只有在开启持久化保存选项时，才读取本地已保存的撤回数据
+                    } else if (options.preventMessageRecall.localStorage) {
                       const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
                       const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
                       if (historyFile) {
