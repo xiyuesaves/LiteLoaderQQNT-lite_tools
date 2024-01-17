@@ -4,7 +4,10 @@ const { downloadPic } = require("./downloadPic");
 const logs = require("./logs");
 const log = new logs("下载被撤回图片").log;
 
-// 下载被撤回的图片
+/**
+ * 下载消息内含有的图片
+ * @param {Object} msgItem 消息数据
+ */
 function processPic(msgItem) {
   msgItem?.elements?.forEach(async (el) => {
     if (el?.picElement) {

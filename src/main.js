@@ -81,7 +81,7 @@ let localEmoticonsList = [];
 let options, localEmoticonsConfig;
 
 onBeforeUpdateOptions((newOptions) => {
-  log("更新配置前被调用")
+  log("更新配置前被调用");
   // 判断是否启用了本地表情包功能
   if (newOptions.localEmoticons.enabled) {
     // 如果新的配置文件中打开了本地表情功能，且当前文件夹路径和新路径不一致则刷新表情包列表
@@ -103,7 +103,7 @@ onBeforeUpdateOptions((newOptions) => {
 // 配置文件更新后保存到本地并广播更新事件
 const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
 onUpdateOptions((opt) => {
-  log("更新配置调用")
+  log("更新配置调用");
   fs.writeFileSync(settingsPath, JSON.stringify(opt, null, 4));
   globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", opt);
 });
@@ -533,58 +533,41 @@ function onBrowserWindowCreated(window, plugin) {
               if (options.preventMessageRecall.enabled) {
                 // 检测到消息里有撤回标记，且不是自己发送的消息
                 if (msgElements?.grayTipElement?.revokeElement && !msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
-                  // 尝试从内存中查找对应消息并替换元素
-                  const findInCatch = catchMsgList.get(msgItem.msgId);
+                  const findInCatch = catchMsgList.get(msgItem.msgId); // 尝试从内存中查找对应消息并替换元素
                   if (findInCatch) {
                     log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
-                    // 如果是从最新的缓存中获取到的原内容，则需要存入常驻历史撤回记录
-                    recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
-                    // 为避免重复写入常驻历史撤回记录，从消息记录中移除已经被使用过的数据
-                    catchMsgList.delete(msgItem.msgId);
-                    // 下载消息内的图片并修复数据结构
+                    recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                    catchMsgList.delete(msgItem.msgId); // 从消息记录中移除已经被使用过的数据
                     processPic(findInCatch);
-                    // 替换撤回标记
-                    msgList[index] = findInCatch;
+                    msgList[index] = findInCatch; // 替换撤回标记
                   } else {
-                    // 从常驻撤回消息中查找消息id
-                    const findInRecord = recordMessageRecallIdList.get(msgItem.msgId);
+                    const findInRecord = recordMessageRecallIdList.get(msgItem.msgId); // 从常驻历史撤回记录中查找消息id
                     if (findInRecord) {
                       log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
-                      // 下载消息内的图片并修复数据结构
                       processPic(findInRecord);
-                      // 替换撤回标记
-                      msgList[index] = findInRecord;
+                      msgList[index] = findInRecord; // 替换撤回标记
                     } else {
-                      // 没有记录的消息暂时不进行操作
-                      // 获取消息发送时间-在实际时间后面加1秒的原因是如果刚好处于文件切片位置，切片文件因为精度问题会大于该时间1秒以内
-                      const msgRecallTime = parseInt(msgItem.recallTime) * 1000;
-                      // 根据时间找到可能含有数据的历史记录切片
-                      const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime);
-                      log("判断历史切片是否可能含有撤回内容", messageRecallFileList, msgItem.msgId, msgRecallTime, historyFile);
+                      const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
+                      const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
                       if (historyFile) {
-                        // 创建只读实例用于匹配消息id，创建的实例将在遍历完所有消息后统一销毁
                         if (!historyMessageRecallList.has(historyFile)) {
-                          historyMessageRecallList.set(
-                            historyFile,
-                            new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`)),
-                          );
+                          const messageRecallList = new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`));
+                          historyMessageRecallList.set(historyFile, messageRecallList);
                         }
                         const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
                         if (findInHistory) {
-                          log(` ${msgItem.msgId} 从历史缓存中找到消息记录`, findInHistory);
-                          // 下载消息内的图片并修复数据结构
+                          log(`${msgItem.msgId} 从历史缓存中找到消息记录`, findInHistory);
                           processPic(findInHistory);
-                          // 替换撤回标记
-                          msgList[index] = findInHistory;
+                          msgList[index] = findInHistory; // 替换撤回标记
                         } else {
-                          // 没有记录的消息暂时不进行操作
-                          log(` ${msgItem.msgId} 没有记录消息内容`);
+                          log(`${msgItem.msgId} 没有撤回记录`);
                         }
                       } else {
-                        log(` ${msgItem.msgId} 没有对应时间的历史切片`);
+                        log(`${msgItem.msgId} 没有对应时间的历史切片`);
                       }
                     }
                   }
+                  // 针对撤回消息添加特殊字段用于展示数据
                   msgList[index].lite_tools_recall = {
                     operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
                     origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
@@ -593,8 +576,7 @@ function onBrowserWindowCreated(window, plugin) {
                 } else if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
                   log("自己的撤回操作，放行");
                 } else {
-                  // 不是撤回标记则记录进内存缓存中
-                  catchMsgList.set(msgItem.msgId, msgItem);
+                  catchMsgList.set(msgItem.msgId, msgItem); // 消息数据存入缓存
                 }
               }
             });
@@ -605,7 +587,7 @@ function onBrowserWindowCreated(window, plugin) {
       historyMessageRecallList = new Map();
     }
 
-    // 捕获接收到消息事件-替换新消息中的小程序卡片
+    // 本人发送的消息
     const onAddSendMsg = findEventIndex(args, "nodeIKernelMsgListener/onAddSendMsg");
     if (onAddSendMsg !== -1) {
       log("这是我发送的新消息", args[1]);
@@ -628,7 +610,7 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
 
-    // 捕获自身发送消息事件-替换新消息中的小程序卡片
+    // 接收到的新消息
     const onRecvMsg = findEventIndex(args, "nodeIKernelMsgListener/onRecvMsg");
     if (onRecvMsg !== -1) {
       // log("收到新消息", args[1]);
@@ -637,19 +619,6 @@ function onBrowserWindowCreated(window, plugin) {
         if (options.preventMessageRecall.enabled) {
           // 不是撤回标记则记录进内存缓存中
           catchMsgList.set(arrs.msgId, arrs);
-        }
-        // 打开发给自己的链接
-        if (options.message.autoOpenURL) {
-          if (arrs.msgSeq === "0" && arrs.senderUid === arrs.peerUid && arrs.chatType === 8) {
-            log("来自我的手机的消息", arrs);
-            arrs.elements.forEach((msgElements) => {
-              if (msgElements.textElement) {
-                if (/^http(s)?:\/\//.test(msgElements.textElement.content)) {
-                  shell.openExternal(msgElements.textElement.content.split(" ")[0]);
-                }
-              }
-            });
-          }
         }
         // 处理小程序卡片
         if (options.message.convertMiniPrgmArk) {
@@ -666,16 +635,16 @@ function onBrowserWindowCreated(window, plugin) {
       });
     }
 
-    // 捕获重排消息事件-拦截撤回指令
+    // 更新消息信息列表
     const onMsgInfoListUpdate = findEventIndex(args, "nodeIKernelMsgListener/onMsgInfoListUpdate");
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
       const msgItem = args[1][0]?.payload?.msgList[0];
       if (options.preventMessageRecall.enabled && msgItem.elements[0]?.grayTipElement?.revokeElement) {
         if (!msgItem.elements[0].grayTipElement.revokeElement.isSelfOperate) {
-          log("捕获到撤回事件，已被阻止");
+          log("捕获到实时撤回事件，已被阻止");
           const findInCatch = catchMsgList.get(msgItem.msgId);
-          // 广播撤回事件
+          // 广播实时撤回消息参数
           const recallData = {
             operatorNick: msgItem.elements[0].grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
             origMsgSenderNick: msgItem.elements[0].grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
@@ -689,11 +658,9 @@ function onBrowserWindowCreated(window, plugin) {
           recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
           // 从消息列表缓存移除
           catchMsgList.delete(msgItem.msgId);
-          // 下载消息内的图片并修复数据结构
           processPic(findInCatch);
-          findInCatch.lite_tools_recall = recallData;
-          // 替换撤回内容
-          msgItem = findInCatch;
+          findInCatch.lite_tools_recall = recallData; // 向消息内插入撤回信息
+          msgItem = findInCatch; // 替换撤回标记
         } else {
           log("本人发起的撤回，放行");
         }
@@ -721,7 +688,6 @@ function findEventIndex(args, eventName) {
 
 // 重置常用表情列表
 function resetCommonlyEmoticons() {
-  log("重置常用表情");
   localEmoticonsConfig.commonlyEmoticons = [];
   globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
