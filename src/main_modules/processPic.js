@@ -39,4 +39,4 @@ function processPic(msgItem) {
     }
   });
 }
-exports.processPic = processPic;
+module.exports = processPic;

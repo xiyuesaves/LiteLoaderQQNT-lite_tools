@@ -51,4 +51,4 @@ class logs {
   }
 }
 
-exports.logs = logs;
+module.exports = logs;

@@ -8,4 +8,4 @@ function debounce(fn, time) {
     }, time);
   };
 }
-exports.debounce = debounce;
+module.exports = debounce;

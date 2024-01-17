@@ -50,4 +50,4 @@ class MessageRecallList {
     }
   }
 }
-exports.MessageRecallList = MessageRecallList;
+module.exports = MessageRecallList;

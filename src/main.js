@@ -11,14 +11,14 @@ const optionsEvent = new EventEmitter();
 const defaultConfig = require("./defaultConfig/defaultConfig.json"); // 默认插件配置文件
 const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json"); // 默认本地表情配置文件
 const loadOptions = require("./main_modules/loadOptions");
+const LimitedMap = require("./main_modules/LimitedMap");
+const MessageRecallList = require("./main_modules/MessageRecallList");
+const globalBroadcast = require("./main_modules/globalBroadcast");
+const processPic = require("./main_modules/processPic");
+const replaceArk = require("./main_modules/replaceArk");
+const debounce = require("./main_modules/debounce");
+const logs = require("./main_modules/logs");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
-const { LimitedMap } = require("./main_modules/LimitedMap");
-const { MessageRecallList } = require("./main_modules/MessageRecallList");
-const { globalBroadcast } = require("./main_modules/globalBroadcast");
-const { processPic } = require("./main_modules/processPic");
-const { replaceArk } = require("./main_modules/replaceArk");
-const { debounce } = require("./main_modules/debounce");
-const { logs } = require("./main_modules/logs");
 
 let log = () => {};
 

@@ -6,4 +6,4 @@ function globalBroadcast(listenList, channel, data) {
     }
   });
 }
-exports.globalBroadcast = globalBroadcast;
+module.exports = globalBroadcast;

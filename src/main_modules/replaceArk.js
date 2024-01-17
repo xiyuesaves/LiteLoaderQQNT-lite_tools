@@ -43,4 +43,4 @@ function replaceArk(json, msg_seq) {
     return JSON.stringify(json);
   }
 }
-exports.replaceArk = replaceArk;
+module.exports = replaceArk;
