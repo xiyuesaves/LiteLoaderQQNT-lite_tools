@@ -50,7 +50,7 @@ const listenList = [];
 /**
  * 内存缓存消息记录-用于根据消息id获取撤回原始内容
  */
-const catchMsgList = new LimitedMap(2000);
+const catchMsgList = new LimitedMap(10000);
 /**
  * 所有撤回消息本地切片列表
  */
@@ -503,13 +503,13 @@ function onBrowserWindowCreated(window, plugin) {
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
-      log("解析到消息数据");
+      log("捕获到消息数据");
       // 遍历消息列表中的所有消息
-      if (options.message.showMsgTime || options.message.convertMiniPrgmArk || options.message.preventMessageRecall) {
+      if (options.message.showMsgTime || options.message.convertMiniPrgmArk || options.preventMessageRecall.enabled) {
         msgList.forEach((msgItem, index) => {
           let msg_seq = msgItem.msgSeq;
           // 遍历消息内容数组
-          if (options.message.convertMiniPrgmArk || options.message.preventMessageRecall) {
+          if (options.message.convertMiniPrgmArk || options.preventMessageRecall.enabled) {
             msgItem.elements.forEach((msgElements) => {
               // 替换历史消息中的小程序卡片
               if (msgElements?.arkElement?.bytesData && options.message.convertMiniPrgmArk) {
@@ -519,7 +519,8 @@ function onBrowserWindowCreated(window, plugin) {
                 }
               }
               // 替换被撤回的消息内容
-              if (options.message.preventMessageRecall) {
+              if (options.preventMessageRecall.enabled) {
+                // 检测到消息里有撤回标记，且不是自己发送的消息
                 if (msgElements?.grayTipElement?.revokeElement && !msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
                   // 尝试从内存中查找对应消息并替换元素
                   const findInCatch = catchMsgList.get(msgItem.msgId);
@@ -598,7 +599,7 @@ function onBrowserWindowCreated(window, plugin) {
     if (onAddSendMsg !== -1) {
       log("这是我发送的新消息", args[1]);
       // 阻止撤回
-      if (options.message.preventMessageRecall) {
+      if (options.preventMessageRecall.enabled) {
         // 不是撤回标记则记录进内存缓存中
         catchMsgList.set(args[1][onAddSendMsg].payload.msgRecord.msgId, args[1][onAddSendMsg].payload.msgRecord);
       }
@@ -622,7 +623,7 @@ function onBrowserWindowCreated(window, plugin) {
       // log("收到新消息", args[1]);
       args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
         // 阻止撤回
-        if (options.message.preventMessageRecall) {
+        if (options.preventMessageRecall.enabled) {
           // 不是撤回标记则记录进内存缓存中
           catchMsgList.set(arrs.msgId, arrs);
         }
@@ -659,7 +660,7 @@ function onBrowserWindowCreated(window, plugin) {
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
       const msgItem = args[1][0]?.payload?.msgList[0];
-      if (options.message.preventMessageRecall && msgItem.elements[0]?.grayTipElement?.revokeElement) {
+      if (options.preventMessageRecall.enabled && msgItem.elements[0]?.grayTipElement?.revokeElement) {
         if (!msgItem.elements[0].grayTipElement.revokeElement.isSelfOperate) {
           log("捕获到撤回事件，已被阻止");
           const findInCatch = catchMsgList.get(msgItem.msgId);
