@@ -13,6 +13,8 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 ## 注意事项
 
 > **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
+>
+> 该插件在 Windows 环境下测试开发，理论全平台兼容，但没有条件对另外两个平台进行测试
 
 ## 使用方法
 
