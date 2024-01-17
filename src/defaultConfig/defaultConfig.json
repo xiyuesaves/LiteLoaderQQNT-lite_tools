@@ -42,8 +42,7 @@
   },
   "tail": {
     "enabled": false,
-    "newLine": false,
-    "content": ""
+    "list": []
   },
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
