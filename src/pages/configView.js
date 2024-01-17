@@ -140,7 +140,14 @@ async function onConfigView(view) {
   addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
 
   // 阻止撤回
-  addSwitchEventlistener("message.preventMessageRecall", ".preventMessageRecall");
+  addSwitchEventlistener("preventMessageRecall.enabled", ".preventMessageRecall");
+  addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");
+  view.querySelector(".clear-localStorage-recall-msg").addEventListener("click", () => {
+
+  });
+  view.querySelector(".open-recall-msg-list").addEventListener("click", () => {
+    
+  });
 
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
