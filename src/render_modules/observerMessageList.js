@@ -113,7 +113,7 @@ function processMessageElement() {
       }
     }
     // 后处理被撤回的消息
-    if (options.message.preventMessageRecall && !isForward) {
+    if (options.preventMessageRecall.enabled && !isForward) {
       // 撤回插入元素
       const recallEl = el.querySelector(".lite-tools-recall");
       if (!recallEl) {
