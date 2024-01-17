@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { debounce } = require("./debounce");
 
-let callbackFunc = [];
+let callbackFunc = new Set();
 let emoticonsList = [];
 let folderNum = 0;
 let watcher;
@@ -106,9 +106,7 @@ function arraysAreEqual(arr1, arr2) {
  * 触发更新回调
  */
 function dispatchUpdateFile() {
-  callbackFunc.forEach((func) => {
-    func(emoticonsList);
-  });
+  callbackFunc.forEach((func) => func(emoticonsList));
 }
 
 /**
@@ -116,7 +114,7 @@ function dispatchUpdateFile() {
  * @param {Function} callback 回调函数
  */
 function onUpdateEmoticons(callback) {
-  callbackFunc.push(callback);
+  callbackFunc.add(callback);
 }
 
 module.exports = { loadEmoticons, onUpdateEmoticons };
