@@ -18,6 +18,14 @@ const processPic = require("./main_modules/processPic");
 const replaceArk = require("./main_modules/replaceArk");
 const debounce = require("./main_modules/debounce");
 const logs = require("./main_modules/logs");
+const {
+  setOptions,
+  getOptions,
+  onBeforeUpdateOptions,
+  onUpdateOptions,
+  offBeforeUpdateOptions,
+  offUpdateOptions,
+} = require("./main_modules/options");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 
 let log = () => {};
@@ -72,7 +80,8 @@ let localEmoticonsList = [];
  */
 let options, localEmoticonsConfig;
 
-optionsEvent.on("beforeUpdate", (newOptions) => {
+onBeforeUpdateOptions((newOptions) => {
+  log("更新配置前被调用")
   // 判断是否启用了本地表情包功能
   if (newOptions.localEmoticons.enabled) {
     // 如果新的配置文件中打开了本地表情功能，且当前文件夹路径和新路径不一致则刷新表情包列表
@@ -89,6 +98,14 @@ optionsEvent.on("beforeUpdate", (newOptions) => {
       fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
   }
+});
+
+// 配置文件更新后保存到本地并广播更新事件
+const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
+onUpdateOptions((opt) => {
+  log("更新配置调用")
+  fs.writeFileSync(settingsPath, JSON.stringify(opt, null, 4));
+  globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", opt);
 });
 
 // 加载插件时触发
@@ -135,6 +152,7 @@ function onLoad(plugin) {
 
   // 使用配置加载模块解决插件不同版本配置文件差异
   options = loadOptions(defaultConfig, settingsPath);
+  setOptions(options);
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
   if (options.debug) {
@@ -254,6 +272,7 @@ function onLoad(plugin) {
     const list = await new Promise((res) => {
       ipcMain.once("LiteLoader.lite_tools.sendSidebar", (event, list) => {
         options.sidebar = list;
+        setOptions(options);
         res(list);
       });
     });
@@ -262,30 +281,25 @@ function onLoad(plugin) {
 
   // 更新输入框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
-    let res = new Map(),
-      concat = options.textAreaFuncList.concat(list);
+    let res = new Map();
+    let concat = options.textAreaFuncList.concat(list);
     options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
-    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
+    setOptions(options);
   });
 
   // 更新聊天框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (event, list) => {
-    let res = new Map(),
-      concat = options.chatAreaFuncList.concat(list);
+    let res = new Map();
+    let concat = options.chatAreaFuncList.concat(list);
     options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
-    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
+    setOptions(options);
   });
 
   // 修改配置信息
   ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
     log("更新配置信息", opt);
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", opt);
-    optionsEvent.emit("beforeUpdate", opt);
     options = opt;
-    fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-    optionsEvent.emit("update", opt);
+    setOptions(options);
   });
 
   // 获取配置信息
@@ -384,8 +398,7 @@ function onLoad(plugin) {
         log("选择了文件", result);
         if (!result.canceled) {
           options.background.url = path.join(result.filePaths[0]);
-          fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-          globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
+          setOptions(options);
         }
       })
       .catch((err) => {
@@ -413,8 +426,7 @@ function onLoad(plugin) {
             }
           }
           options.localEmoticons.localPath = newPath;
-          fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
-          globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", options);
+          setOptions(options);
         }
       })
       .catch((err) => {
@@ -455,7 +467,6 @@ function onBrowserWindowCreated(window, plugin) {
                 return true;
               }
             });
-            log(options.tail.list, tail);
             // 必须含有peerUid且匹配到后缀数据且聊天类型为群组才会执行
             if (peerUid && tail && chatType === 2) {
               const tailContext = tail.content;
