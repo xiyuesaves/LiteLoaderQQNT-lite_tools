@@ -15,12 +15,14 @@ lite_tools.onReacllMsgData((_, map) => {
       groupList.set(peerUid, [msgData]);
     }
   });
+  groupList.forEach((msgArr) => msgArr.sort((a, b) => a.msgTime - b.msgTime));
+
   document.querySelector(".logs").innerText += `整理结束，共有 ${groupList.size} 个独立群组或私聊，输出到dom\n`;
   const filterListEl = document.querySelector(".qq-number-filter");
   try {
     groupList.forEach((msgArr) => {
       const chatType = msgArr[0].chatType === 1 ? "私聊" : "群组";
-      const peerName = msgArr[0].peerName || "没有找到名称";
+      const peerName = getPeerName(msgArr);
       const peerUid = msgArr[0].peerUid;
       // document.querySelector(".logs").innerText += `显示id${peerUid} 类型${chatType}\n`;
       const groupItemEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
@@ -103,6 +105,16 @@ function getPicList(elements) {
     }
   });
   return picList;
+}
+
+function getPeerName(elements) {
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    if (element.peerName) {
+      return element.peerName;
+    }
+  }
+  return "没有找到名称";
 }
 
 lite_tools.getReacllMsgData();
