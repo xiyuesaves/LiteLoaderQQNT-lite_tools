@@ -11,7 +11,12 @@ class MessageRecallList {
     this.messageRecallPath = messageRecallPath;
     this.latestPath = messageRecallJson;
     this.newFileEvent = [];
-    this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
+    try {
+      this.map = new Map(JSON.parse(Buffer.from(fs.readFileSync(this.latestPath, { encoding: "utf-8" }), "base64").toString("utf-8"))); // 从文件中初始化撤回信息
+    } catch (_) {
+      this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
+      fs.writeFileSync(this.latestPath, Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"));
+    }
   }
   set(key, value) {
     if (this.messageRecallPath) {
@@ -19,11 +24,14 @@ class MessageRecallList {
       if (this.map.size >= this.limit) {
         log("缓存撤回消息超过阈值，开始切片");
         const newFileName = `${new Date().getTime()}.json`;
-        fs.writeFileSync(path.join(this.messageRecallPath, newFileName), JSON.stringify(Array.from(this.map)));
+        fs.writeFileSync(
+          path.join(this.messageRecallPath, newFileName),
+          Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"),
+        );
         this.newFileEvent.forEach((callback) => callback(newFileName));
         this.map = new Map();
       }
-      fs.writeFileSync(this.latestPath, JSON.stringify(Array.from(this.map)));
+      fs.writeFileSync(this.latestPath, Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"));
     } else {
       console.error("该实例工作在只读模式");
     }
