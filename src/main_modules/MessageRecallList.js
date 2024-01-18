@@ -10,12 +10,13 @@ class MessageRecallList {
     this.limit = limit;
     this.messageRecallPath = messageRecallPath;
     this.latestPath = messageRecallJson;
-    this.newFileEvent = [];
+    this.newFileEvent = new Set();
+    this.newRecallMsgEvent = new Set();
     try {
       this.map = new Map(JSON.parse(Buffer.from(fs.readFileSync(this.latestPath, { encoding: "utf-8" }), "base64").toString("utf-8"))); // 从文件中初始化撤回信息
     } catch (_) {
       this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
-      fs.writeFileSync(this.latestPath, Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"));
+      this.saveFile();
     }
   }
   set(key, value) {
@@ -31,7 +32,23 @@ class MessageRecallList {
         this.newFileEvent.forEach((callback) => callback(newFileName));
         this.map = new Map();
       }
+      this.saveFile();
+      this.newRecallMsgEvent.forEach((callback) => callback(value));
+    } else {
+      console.error("该实例工作在只读模式");
+    }
+  }
+  saveFile() {
+    console.log("保存到本地");
+    try {
       fs.writeFileSync(this.latestPath, Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"));
+    } catch (err) {
+      console.log("保存出错", err);
+    }
+  }
+  onNewRecallMsg(callback) {
+    if (this.messageRecallPath) {
+      this.newRecallMsgEvent.add(callback);
     } else {
       console.error("该实例工作在只读模式");
     }
@@ -39,7 +56,7 @@ class MessageRecallList {
   // 如果产生新的切片文件，将会调用该方法传入的回调
   onNewFile(callback) {
     if (this.messageRecallPath) {
-      this.newFileEvent.push(callback);
+      this.newFileEvent.add(callback);
     } else {
       console.error("该实例工作在只读模式");
     }

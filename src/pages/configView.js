@@ -143,10 +143,16 @@ async function onConfigView(view) {
   addSwitchEventlistener("preventMessageRecall.enabled", ".preventMessageRecall");
   addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");
   view.querySelector(".clear-localStorage-recall-msg").addEventListener("click", () => {
-
+    log("清除本地数据");
+    lite_tools.clearLocalStorageRecallMsg();
   });
+  lite_tools.onUpdateRecallListNum((_, num) => {
+    view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存有 ${num} 条消息`;
+  });
+  lite_tools.getRecallListNum();
   view.querySelector(".open-recall-msg-list").addEventListener("click", () => {
-    
+    log("查看撤回数据");
+    lite_tools.openRecallMsgList();
   });
 
   // 快速关闭图片

@@ -35,9 +35,17 @@ let log = () => {};
  */
 let mainMessage;
 /**
+ * 设置窗口
+ */
+let settingWindow;
+/**
  * 常驻撤回历史消息
  */
 let recordMessageRecallIdList;
+/**
+ * 本地保存的消息数量
+ */
+let localRecallMsgNum = 0;
 /**
  * 易失常驻撤回历史消息
  */
@@ -151,6 +159,7 @@ function onLoad(plugin) {
       });
       // 排序文件名称
       messageRecallFileList.sort((a, b) => a - b);
+      localRecallMsgNum = messageRecallFileList.length * 100;
     }
   });
 
@@ -252,6 +261,12 @@ function onLoad(plugin) {
     messageRecallFileList.push(newFileName.replace(".json", ""));
     // 排序文件名称
     messageRecallFileList.sort((a, b) => a - b);
+  });
+
+  localRecallMsgNum += recordMessageRecallIdList.map.size;
+  recordMessageRecallIdList.onNewRecallMsg(() => {
+    localRecallMsgNum++;
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
   });
 
   // 返回本地表情包数据
@@ -438,8 +453,63 @@ function onLoad(plugin) {
         log("无效操作", err);
       });
   });
+
+  // 删除所有本地保存撤回记录
+  ipcMain.on("LiteLoader.lite_tools.clearLocalStorageRecallMsg", () => {
+    log("尝试清除本地数据");
+    // 弹出对话框询问用户是否继续
+    const result = dialog.showMessageBoxSync(settingWindow, {
+      type: "warning",
+      title: "警告",
+      message: "您即将清空所有撤回消息数据，是否继续？",
+      buttons: ["是", "否"],
+      defaultId: 0, // 默认选中 "是" 按钮
+      cancelId: 1, // 按下 ESC 或点击窗口关闭按钮的行为相当于点击 "否" 按钮
+    });
+
+    if (result === 0) {
+      recordMessageRecallIdList.map = new Map();
+      recordMessageRecallIdList.saveFile();
+      deleteFilesInDirectory(messageRecallPath, "latestRecallMessage.json");
+      localRecallMsgNum = 0;
+      globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+      log("清空本地消息记录");
+    }
+  });
+  ipcMain.on("LiteLoader.lite_tools.getRecallListNum", () => {
+    globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+  });
+  // 查看本地撤回数据
+  ipcMain.on("LiteLoader.lite_tools.openRecallMsgList", () => {
+    log("尝试查看本地数据");
+  });
 }
 onLoad(LiteLoader.plugins["lite_tools"]);
+
+// 删除文件夹内的所有文件
+function deleteFilesInDirectory(directoryPath, fileToPreserve) {
+  // 读取目录中的所有文件
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      console.error("无法读取该文件夹:", err);
+      return;
+    }
+    // 遍历文件数组，删除每个文件
+    files.forEach((file) => {
+      const filePath = path.join(directoryPath, file);
+      if (file !== fileToPreserve) {
+        // 删除文件
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error("删除文件失败:", err);
+          } else {
+            log("删除成功:", filePath);
+          }
+        });
+      }
+    });
+  });
+}
 
 // 创建窗口时触发
 function onBrowserWindowCreated(window, plugin) {
@@ -451,6 +521,10 @@ function onBrowserWindowCreated(window, plugin) {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
       log("捕获到主窗口");
       mainMessage = window;
+    }
+    if (window.webContents.getURL().indexOf("#/setting/settings/common") !== -1) {
+      log("捕获到设置口");
+      settingWindow = window;
     }
   });
 

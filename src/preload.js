@@ -59,6 +59,13 @@ contextBridge.exposeInMainWorld("lite_tools", {
   openFolder: (path) => ipcRenderer.send("LiteLoader.lite_tools.openFolder", path),
   // 打开文件
   openFile: (path) => ipcRenderer.send("LiteLoader.lite_tools.openFile", path),
+  // 清理本地保存撤回记录
+  clearLocalStorageRecallMsg: () => ipcRenderer.send("LiteLoader.lite_tools.clearLocalStorageRecallMsg"),
+  // 打开本地撤回数据
+  openRecallMsgList: () => ipcRenderer.send("LiteLoader.lite_tools.openRecallMsgList"),
+  // 获取所有的撤回消息数量
+  getRecallListNum: () => ipcRenderer.send("LiteLoader.lite_tools.getRecallListNum"),
+  onUpdateRecallListNum: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateRecallListNum", callback),
   // 从历史记录中移除指定文件
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   /**
