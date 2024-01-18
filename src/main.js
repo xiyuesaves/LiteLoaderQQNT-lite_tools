@@ -374,12 +374,12 @@ function onLoad(plugin) {
   // 发送所有的本地撤回数据
   ipcMain.on("LiteLoader.lite_tools.getReacllMsgData", () => {
     let msgList = new Map();
+    msgList = new Map([...msgList, ...recordMessageRecallIdList.map]);
     for (let i = 0; i < messageRecallFileList.length; i++) {
       const fileName = messageRecallFileList[i];
       const recall = new MessageRecallList(path.join(messageRecallPath, `${fileName}.json`));
       msgList = new Map([...msgList, ...recall.map]);
     }
-    msgList = new Map([...msgList, ...recordMessageRecallIdList.map]);
     log("发送消息数据", msgList.size);
     recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", msgList);
   });
@@ -661,6 +661,12 @@ function onBrowserWindowCreated(window, plugin) {
                   if (findInCatch) {
                     log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
                     if (options.preventMessageRecall.localStorage) {
+                      // 在消息对象上补充撤回信息
+                      findInCatch.lite_tools_recall = {
+                        operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
+                        origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+                        recallTime: msgItem.recallTime, // 撤回时间
+                      };
                       recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
                     } else {
                       tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 重启QQ后丢失
@@ -781,6 +787,7 @@ function onBrowserWindowCreated(window, plugin) {
             origMsgSenderNick: msgItem.elements[0].grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
             recallTime: msgItem.recallTime, // 撤回时间
           };
+          findInCatch.lite_tools_recall = recallData;
           globalBroadcast(listenList, "LiteLoader.lite_tools.onMessageRecall", {
             msgId: findInCatch.msgId,
             recallData,
@@ -794,7 +801,6 @@ function onBrowserWindowCreated(window, plugin) {
           // 从消息列表缓存移除
           catchMsgList.delete(msgItem.msgId);
           processPic(findInCatch);
-          findInCatch.lite_tools_recall = recallData; // 向消息内插入撤回信息
           msgItem = findInCatch; // 替换撤回标记
         } else {
           log("本人发起的撤回，放行");
