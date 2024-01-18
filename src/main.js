@@ -1,5 +1,5 @@
 // 运行在 Electron 主进程 下的插件入口
-const { ipcMain, dialog, shell } = require("electron");
+const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const EventEmitter = require("events");
@@ -79,6 +79,10 @@ const messageRecallFileList = [];
  * 当前激活的聊天窗口数据
  */
 let peer = null;
+/**
+ * 撤回消息查看窗口
+ */
+let recallViewWindow;
 /**
  * 只读历史消息实例暂存数组
  */
@@ -262,7 +266,6 @@ function onLoad(plugin) {
     // 排序文件名称
     messageRecallFileList.sort((a, b) => a - b);
   });
-
   localRecallMsgNum += recordMessageRecallIdList.map.size;
   recordMessageRecallIdList.onNewRecallMsg(() => {
     localRecallMsgNum++;
@@ -366,6 +369,19 @@ function onLoad(plugin) {
     localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
     globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
+  });
+
+  // 发送所有的本地撤回数据
+  ipcMain.on("LiteLoader.lite_tools.getReacllMsgData", () => {
+    let msgList = new Map();
+    for (let i = 0; i < messageRecallFileList.length; i++) {
+      const fileName = messageRecallFileList[i];
+      const recall = new MessageRecallList(path.join(messageRecallPath, `${fileName}.json`));
+      msgList = new Map([...msgList, ...recall.map]);
+    }
+    msgList = new Map([...msgList, ...recordMessageRecallIdList.map]);
+    log("发送消息数据", msgList.size);
+    recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", msgList);
   });
 
   // 获取全局样式
@@ -481,10 +497,39 @@ function onLoad(plugin) {
   });
   // 查看本地撤回数据
   ipcMain.on("LiteLoader.lite_tools.openRecallMsgList", () => {
-    log("尝试查看本地数据");
+    try {
+      openRecallView();
+    } catch (err) {
+      log("出现错误", err.message);
+    }
   });
 }
 onLoad(LiteLoader.plugins["lite_tools"]);
+
+function openRecallView() {
+  if (recallViewWindow) {
+    recallViewWindow.webContents.focus();
+  } else {
+    recallViewWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      autoHideMenuBar: true,
+      webPreferences: {
+        preload: path.join(LiteLoader.plugins["lite_tools"].path.plugin, "/src/preload.js"),
+      },
+    });
+    recallViewWindow.loadFile(path.join(LiteLoader.plugins["lite_tools"].path.plugin, `/src/config/showRecallList.html`));
+    recallViewWindow.webContents.on("before-input-event", (event, input) => {
+      if (input.key == "F5" && input.type == "keyUp") {
+        recallViewWindow.loadFile(path.join(LiteLoader.plugins["lite_tools"].path.plugin, `/src/config/showRecallList.html`));
+      }
+    });
+
+    recallViewWindow.on("closed", () => {
+      recallViewWindow = null;
+    });
+  }
+}
 
 // 删除文件夹内的所有文件
 function deleteFilesInDirectory(directoryPath, fileToPreserve) {

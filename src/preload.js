@@ -63,6 +63,9 @@ contextBridge.exposeInMainWorld("lite_tools", {
   clearLocalStorageRecallMsg: () => ipcRenderer.send("LiteLoader.lite_tools.clearLocalStorageRecallMsg"),
   // 打开本地撤回数据
   openRecallMsgList: () => ipcRenderer.send("LiteLoader.lite_tools.openRecallMsgList"),
+  // 获取所有的撤回消息
+  getReacllMsgData: () => ipcRenderer.send("LiteLoader.lite_tools.getReacllMsgData"),
+  onReacllMsgData: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onReacllMsgData", callback),
   // 获取所有的撤回消息数量
   getRecallListNum: () => ipcRenderer.send("LiteLoader.lite_tools.getRecallListNum"),
   onUpdateRecallListNum: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateRecallListNum", callback),

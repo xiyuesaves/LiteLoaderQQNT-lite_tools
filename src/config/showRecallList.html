@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>撤回消息查看</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      .data {
+        width: 100%;
+        height: 100vh;
+        box-sizing: border-box;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+      .qq-number-filter {
+        width: 200px;
+        max-height: 100%;
+        overflow: auto;
+        margin-right: 5px;
+      }
+      .filter-item {
+        cursor: pointer;
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 4px 6px;
+        justify-content: flex-start;
+        margin-bottom: 4px;
+        font-size: 14px;
+        border-radius: 0 6px 6px 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .filter-item span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .filter-item span:first-child,
+      .filter-item span:last-child {
+        flex-shrink: 0;
+      }
+      .filter-item.active {
+        background-color: #0099ff;
+        color: #ffffff;
+      }
+      .msg-list {
+        width: calc(100% - 205px);
+        padding: 10px;
+        height: 100vh;
+        overflow: auto;
+        overflow: auto;
+        box-sizing: border-box;
+        background-color: #f2f2f2;
+      }
+      .msg-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        margin-bottom: 12px;
+      }
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: antiquewhite;
+        text-align: center;
+      }
+      .msg-box {
+        width: auto;
+        max-width: calc(100% - 32px);
+        margin-left: 10px;
+      }
+      .user-name {
+        margin: 0;
+        font-size: 12px;
+        padding-left: 8px;
+      }
+      .msg-content {
+        width: 100%;
+        margin-top: 4px;
+        height: auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+        padding: 12px;
+      }
+      .msg-text-box {
+        width: 100%;
+        height: auto;
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        font-size: 14px;
+        line-height: 21px;
+        min-height: 18px;
+      }
+      .msg-img-list {
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .msg-img-item {
+        width: 132px;
+        height: 132px;
+        margin-right: 4px;
+        margin-bottom: 4px;
+        border-radius: 6px;
+        background-color: #f2f2f2;
+      }
+      .msg-img-item img {
+        width: 132px;
+        height: 132px;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+      .msg-text {
+        margin: 0;
+        word-break: break-all;
+      }
+      .tail {
+        right: 0px;
+        float: right;
+        font-size: 12px;
+        line-height: 13px;
+        width: auto;
+        text-align: right;
+        margin-left: 6px;
+        white-space: nowrap;
+        visibility: hidden;
+        user-select: none;
+      }
+      .tail::after {
+        content: attr(time);
+        visibility: visible;
+        position: absolute;
+        display: block;
+        width: auto;
+        text-align: right;
+        font-size: 12px;
+        line-height: 11px;
+        bottom: 0;
+        right: 0;
+        opacity: 0.6;
+      }
+      .logs {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        background-color: black;
+        color: #ffffff;
+        height: 50%;
+        width: 100%;
+        overflow: auto;
+        opacity: 0.8;
+        pointer-events: none;
+        opacity: 0;
+      }
+      blue {
+        color: #0099ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logs"></div>
+    <div class="data">
+      <div class="qq-number-filter"></div>
+      <div class="msg-list"></div>
+    </div>
+  </body>
+  <script src="../pages/showRecallList.js" type="module"></script>
+</html>

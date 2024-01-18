@@ -147,7 +147,7 @@ async function onConfigView(view) {
     lite_tools.clearLocalStorageRecallMsg();
   });
   lite_tools.onUpdateRecallListNum((_, num) => {
-    view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存有 ${num} 条消息`;
+    view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${num} 条消息`;
   });
   lite_tools.getRecallListNum();
   view.querySelector(".open-recall-msg-list").addEventListener("click", () => {

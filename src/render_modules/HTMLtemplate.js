@@ -22,4 +22,21 @@ const tailElement = `<div class="ruls-item">
 </div>
 </div>`;
 
-export { tailElement };
+const recallGroupItem = `<div class="filter-item"><span class="chat-type"></span><span class="peer-name"></span><span class="peer-uid"></span></div>`;
+const recallTail = `<span class="tail" time=""></span>`;
+const recallImgItem = `<div class="msg-img-item"><img /></div>`;
+const recallMsgItem = `<div class="msg-item">
+<div class="msg-box">
+  <p class="user-name"></p>
+  <div class="msg-content">
+    <div class="msg-img-list">
+    </div>
+    <div class="msg-text-box">
+      <p class="msg-text">
+      </p>
+    </div>
+  </div>
+</div>
+</div>`;
+
+export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem };
