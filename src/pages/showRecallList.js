@@ -65,7 +65,7 @@ function updateUid(uid) {
         picList.forEach((pic) => {
           const picEl = parser.parseFromString(recallImgItem, "text/html").querySelector(".msg-img-item");
           const imgEl = picEl.querySelector("img");
-          imgEl.src = `local:///${pic}`;
+          imgEl.src = `appimg://${pic}`;
           imgEl.setAttribute("alt", "图片加载失败");
           imgListEl.appendChild(picEl);
         });
