@@ -1,11 +1,23 @@
 import { recallGroupItem, recallTail, recallImgItem, recallMsgItem } from "../render_modules/HTMLtemplate.js";
+
 document.querySelector(".logs").innerText += "脚本正在工作\n";
 const groupList = new Map();
 const parser = new DOMParser();
 
 lite_tools.onReacllMsgData((_, map) => {
+  const filterListEl = document.querySelector(".qq-number-filter");
   document.querySelector(".logs").innerText += `获取到消息map 共有${map.size}\n`;
   document.querySelector(".logs").innerText += `开始整理数据\n`;
+
+  const tipsEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
+  if (map.size) {
+    tipsEl.querySelector(".chat-type").innerText = `正在整理消息...`;
+  } else {
+    tipsEl.querySelector(".chat-type").innerText = `本地没有数据`;
+  }
+  filterListEl.appendChild(tipsEl);
+
+  filterListEl.innerHTML = "";
   map.forEach((msgData) => {
     const peerUid = msgData.peerUid;
     const find = groupList.get(peerUid);
@@ -18,14 +30,26 @@ lite_tools.onReacllMsgData((_, map) => {
   groupList.forEach((msgArr) => msgArr.sort((a, b) => a.msgTime - b.msgTime));
 
   document.querySelector(".logs").innerText += `整理结束，共有 ${groupList.size} 个独立群组或私聊，输出到dom\n`;
-  const filterListEl = document.querySelector(".qq-number-filter");
   try {
     groupList.forEach((msgArr) => {
       const chatType = msgArr[0].chatType === 1 ? "私聊" : "群组";
       const peerName = getPeerName(msgArr);
       const peerUid = msgArr[0].peerUid;
-      // document.querySelector(".logs").innerText += `显示id${peerUid} 类型${chatType}\n`;
       const groupItemEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
+
+      if (msgArr[0].chatType === 1) {
+        new Promise(async (res) => {
+          document.querySelector(".logs").innerText += `尝试获取 ${msgArr[0].peerUid}\n`;
+          const userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
+          document.querySelector(".logs").innerText += `${JSON.stringify(userInfo[0].payload)}\n`;
+          const peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
+          groupItemEl.querySelector(".peer-name").innerText = peerName;
+          groupItemEl.querySelector(".peer-name").title = peerName;
+          groupItemEl.querySelector(".peer-uid").innerText = `(${userInfo[0].payload.info.uin})`;
+          res();
+        });
+      }
+
       groupItemEl.querySelector(".chat-type").innerText = `[${chatType}]`;
       groupItemEl.querySelector(".peer-name").innerText = peerName;
       groupItemEl.querySelector(".peer-name").title = peerName;
