@@ -69,6 +69,12 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 获取所有的撤回消息数量
   getRecallListNum: () => ipcRenderer.send("LiteLoader.lite_tools.getRecallListNum"),
   onUpdateRecallListNum: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateRecallListNum", callback),
+
+  // 通过Uid获取用户信息
+  getUserInfo: (uid) => ipcRenderer.invoke("LiteLoader.lite_tools.getUserInfo", uid),
+  sendUserInfo: (userInfo) => ipcRenderer.send("LiteLoader.lite_tools.sendUserInfo", userInfo),
+  onRequireUserInfo: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onRequireUserInfo", callback),
+
   // 从历史记录中移除指定文件
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   /**
@@ -89,6 +95,11 @@ contextBridge.exposeInMainWorld("lite_tools", {
         function onEvent(event, ...args) {
           if (typeof awaitCallback === "boolean") {
             if (args[0]?.callbackId === callbackId) {
+              ipcRenderer.off(`IPC_DOWN_${webContentId}`, onEvent);
+              res(args[1]);
+            }
+          } else if (Array.isArray(awaitCallback)) {
+            if (awaitCallback.includes(args?.[1]?.[0]?.cmdName)) {
               ipcRenderer.off(`IPC_DOWN_${webContentId}`, onEvent);
               res(args[1]);
             }
