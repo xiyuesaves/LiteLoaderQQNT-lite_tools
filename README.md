@@ -2,7 +2,6 @@
   <img src="./icon.png" />
 </p>
 
-
 # LiteLoaderQQNT-lite_tools
 
 LiteLoaderQQNT 插件 - 轻量工具箱，优化 QQNT 使用体验。
@@ -35,6 +34,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | ------------------------- |
 | 本地表情                  |
 | 阻止撤回                  |
+| 查看撤回消息              |
 | 消息后缀                  |
 | 划词搜索                  |
 | 图片搜索                  |
