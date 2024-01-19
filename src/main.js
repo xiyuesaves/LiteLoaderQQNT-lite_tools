@@ -74,7 +74,7 @@ const catchMsgList = new LimitedMap(10000);
 /**
  * 所有撤回消息本地切片列表
  */
-const messageRecallFileList = [];
+let messageRecallFileList = [];
 /**
  * 当前激活的聊天窗口数据
  */
@@ -266,10 +266,16 @@ function onLoad(plugin) {
     // 排序文件名称
     messageRecallFileList.sort((a, b) => a - b);
   });
-  localRecallMsgNum += recordMessageRecallIdList.map.size;
+
   recordMessageRecallIdList.onNewRecallMsg(() => {
-    localRecallMsgNum++;
+    localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
     globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+  });
+
+  // 获取本地保存的撤回消息数量
+  ipcMain.on("LiteLoader.lite_tools.getRecallListNum", (event) => {
+    localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
+    event.returnValue = localRecallMsgNum;
   });
 
   // 返回本地表情包数据
@@ -496,14 +502,13 @@ function onLoad(plugin) {
       recordMessageRecallIdList.map = new Map();
       recordMessageRecallIdList.saveFile();
       deleteFilesInDirectory(messageRecallPath, "latestRecallMessage.json");
+      messageRecallFileList = [];
       localRecallMsgNum = 0;
       globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
       log("清空本地消息记录");
     }
   });
-  ipcMain.on("LiteLoader.lite_tools.getRecallListNum", () => {
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
-  });
+
   // 查看本地撤回数据
   ipcMain.on("LiteLoader.lite_tools.openRecallMsgList", () => {
     try {

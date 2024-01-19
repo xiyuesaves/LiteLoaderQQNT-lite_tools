@@ -67,7 +67,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getReacllMsgData: () => ipcRenderer.send("LiteLoader.lite_tools.getReacllMsgData"),
   onReacllMsgData: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onReacllMsgData", callback),
   // 获取所有的撤回消息数量
-  getRecallListNum: () => ipcRenderer.send("LiteLoader.lite_tools.getRecallListNum"),
+  getRecallListNum: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getRecallListNum"),
   onUpdateRecallListNum: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateRecallListNum", callback),
 
   // 通过Uid获取用户信息
