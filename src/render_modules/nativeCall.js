@@ -193,4 +193,4 @@ function getGroupsList(forced = false) {
   );
 }
 
-export { sendMessage, forwardMessage };
+export { sendMessage, forwardMessage, getUserInfo };
