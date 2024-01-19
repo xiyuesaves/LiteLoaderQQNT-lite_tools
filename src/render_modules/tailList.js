@@ -19,7 +19,7 @@ class TailList {
     this.list.unshift({
       id: crypto.randomUUID(),
       newLine: false,
-      filter: [],
+      filter: [""],
       content: "",
     });
     const tailEl = this.newTail(this.list[0]);
