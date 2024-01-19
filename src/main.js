@@ -589,60 +589,71 @@ function onBrowserWindowCreated(window, plugin) {
   });
 
   // 代理官方监听器
-  const proxyIpcMsg = new Proxy(window.webContents._events["-ipc-message"], {
+  const ipc_message_proxy = window.webContents._events["-ipc-message"]?.[0] || window.webContents._events["-ipc-message"];
+
+  const proxyIpcMsg = new Proxy(ipc_message_proxy, {
     apply(target, thisArg, args) {
       log("get", args);
-      if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
-        log("消息发送事件", args);
-        if (args[3][1][1] && args[3][1][1].msgElements) {
-          if (options.tail.enabled) {
-            const peerUid = args[3][1][1]?.peer?.peerUid;
-            const chatType = args[3][1][1]?.peer?.chatType;
-            const tail = options.tail.list.find((tail) => {
-              if (tail.filter.length === 1 && tail.filter[0] === "") {
-                return true;
-              }
-              if (tail.filter.includes(peerUid)) {
-                return true;
-              }
-            });
-            // 必须含有peerUid且匹配到后缀数据且聊天类型为群组才会执行
-            if (peerUid && tail && chatType === 2) {
-              const tailContext = tail.content;
-              const newLine = tail.newLine;
-              args[3][1][1].msgElements.forEach((el) => {
-                if (el.textElement && el.textElement?.content?.length !== 0) {
-                  if (newLine) {
-                    el.textElement.content += "\n";
-                  }
-                  el.textElement.content += tailContext;
-                  log("消息增加后缀", el.textElement.content);
-                }
-              });
-            }
-          }
-        }
-      }
-      if (args[3]?.[1]?.[0] === "changeRecentContacPeerUid") {
-        peer = {
-          chatType: args[3]?.[1]?.[1].peerUid[0] === "u" ? "friend" : "group",
-          uid: args[3]?.[1]?.[1].peerUid,
-          guildId: args[3]?.[1]?.[1].peer.guildId,
-        };
-        log("切换聊天窗口", peer);
-      }
-      if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
-        peer = {
-          chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
-          uid: args[3]?.[1]?.[1].peer.peerUid,
-          guildId: args[3]?.[1]?.[1].peer.guildId,
-        };
-        log("切换聚焦窗口", peer);
-      }
+      ipc_message(args);
       return target.apply(thisArg, args);
     },
   });
-  window.webContents._events["-ipc-message"] = proxyIpcMsg;
+
+  function ipc_message(args) {
+    if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
+      log("消息发送事件", args);
+      if (args[3][1][1] && args[3][1][1].msgElements) {
+        if (options.tail.enabled) {
+          const peerUid = args[3][1][1]?.peer?.peerUid;
+          const chatType = args[3][1][1]?.peer?.chatType;
+          const tail = options.tail.list.find((tail) => {
+            if (tail.filter.length === 1 && tail.filter[0] === "") {
+              return true;
+            }
+            if (tail.filter.includes(peerUid)) {
+              return true;
+            }
+          });
+          // 必须含有peerUid且匹配到后缀数据且聊天类型为群组才会执行
+          if (peerUid && tail && chatType === 2) {
+            const tailContext = tail.content;
+            const newLine = tail.newLine;
+            args[3][1][1].msgElements.forEach((el) => {
+              if (el.textElement && el.textElement?.content?.length !== 0) {
+                if (newLine) {
+                  el.textElement.content += "\n";
+                }
+                el.textElement.content += tailContext;
+                log("消息增加后缀", el.textElement.content);
+              }
+            });
+          }
+        }
+      }
+    }
+    if (args[3]?.[1]?.[0] === "changeRecentContacPeerUid") {
+      log("切换聊天窗口", args[3]?.[1]?.[1]);
+      peer = {
+        chatType: args[3]?.[1]?.[1]?.peerUid[0] === "u" ? "friend" : "group",
+        uid: args[3]?.[1]?.[1]?.peerUid,
+        guildId: args[3]?.[1]?.[1]?.peer?.guildId,
+      };
+    }
+    if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
+      log("切换聚焦窗口", args[3]?.[1]?.[1]);
+      peer = {
+        chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
+        uid: args[3]?.[1]?.[1].peer.peerUid,
+        guildId: args[3]?.[1]?.[1]?.peer.guildId,
+      };
+    }
+  }
+
+  if (window.webContents._events["-ipc-message"]?.[0]) {
+    window.webContents._events["-ipc-message"][0] = proxyIpcMsg;
+  } else {
+    window.webContents._events["-ipc-message"] = proxyIpcMsg;
+  }
 
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
