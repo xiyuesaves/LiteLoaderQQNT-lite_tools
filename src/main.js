@@ -517,6 +517,10 @@ function onLoad(plugin) {
       log("出现错误", err.message);
     }
   });
+
+  ipcMain.on("LiteLoader.lite_tools.sendToMsg", (event, sceneData) => {
+    settingWindow.webContents.send("LiteLoader.lite_tools.goToMsg", sceneData);
+  });
 }
 onLoad(LiteLoader.plugins["lite_tools"]);
 
@@ -593,7 +597,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   const proxyIpcMsg = new Proxy(ipc_message_proxy, {
     apply(target, thisArg, args) {
-      log("get", args);
+      log("get", args[2], args[3]?.[1]?.[0], args);
       ipc_message(args);
       return target.apply(thisArg, args);
     },
@@ -646,6 +650,45 @@ function onBrowserWindowCreated(window, plugin) {
         uid: args[3]?.[1]?.[1].peer.peerUid,
         guildId: args[3]?.[1]?.[1]?.peer.guildId,
       };
+    }
+
+    if (args[3]?.[1]?.[0] === "goMainWindowScene") {
+      // printObjectProperties(args[3]?.[1]?.[1]);
+    }
+  }
+
+  function printObjectProperties(obj, indent = 0, yourCustomIndent = 2) {
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        let valueType;
+
+        // 特殊处理 Map 类型
+        if (value instanceof Map) {
+          valueType = "[object Map]";
+        }
+        // 特殊处理 Set 类型
+        else if (value instanceof Set) {
+          valueType = "[object Set]";
+        }
+        // 通用情况
+        else {
+          valueType = Object.prototype.toString.call(value);
+        }
+
+        // 打印属性名、缩进和类型
+        log(`${" ".repeat(indent)}${key}: ${valueType}`, value);
+
+        // 如果属性值是对象、Map 或 Set，则递归调用该函数
+        if (
+          valueType === "[object Object]" ||
+          valueType === "[object Array]" ||
+          valueType === "[object Map]" ||
+          valueType === "[object Set]"
+        ) {
+          printObjectProperties(value, indent + yourCustomIndent, yourCustomIndent);
+        }
+      }
     }
   }
 

@@ -161,6 +161,35 @@ function getUserInfo(uid) {
     false,
   );
 }
+
+/**
+ * 跳转到指定群组的指定消息id处
+ * @param {Object} sceneData 场景数据
+ * @returns
+ */
+function goMainWindowScene(sceneData) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "goMainWindowScene",
+    [
+      {
+        scene: sceneData.scene,
+        sceneParams: {
+          peerUid: sceneData.peerUid,
+          chatType: sceneData.chatType,
+          type: sceneData.type,
+          params: {
+            msgId: sceneData.msgId,
+          },
+        },
+      },
+    ],
+    webContentId,
+    false,
+    false,
+  );
+}
+
 /**
  *
  * @param {String} uid 获取群组信息
@@ -192,4 +221,4 @@ function getGroupsList(forced = false) {
   );
 }
 
-export { sendMessage, forwardMessage, getUserInfo };
+export { sendMessage, forwardMessage, getUserInfo, goMainWindowScene };

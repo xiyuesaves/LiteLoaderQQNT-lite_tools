@@ -13,7 +13,7 @@ import { options, updateOptions } from "../render_modules/options.js";
 // 后缀类
 import { TailList } from "../render_modules/tailList.js";
 // 原生事件模块
-import { getUserInfo } from "../render_modules/nativeCall.js";
+import { getUserInfo, goMainWindowScene } from "../render_modules/nativeCall.js";
 
 // 配置界面日志
 import { logs } from "../render_modules/logs.js";
@@ -151,6 +151,14 @@ async function onConfigView(view) {
   });
   lite_tools.onUpdateRecallListNum((_, num) => {
     view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${num} 条消息`;
+  });
+  lite_tools.goToMsg((_, msgData) => {
+    log("调用原生事件", msgData);
+    try {
+      goMainWindowScene(msgData);
+    } catch (err) {
+      log("执行出错", err);
+    }
   });
   const recallNum = lite_tools.getRecallListNum();
   view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${recallNum} 条消息`;

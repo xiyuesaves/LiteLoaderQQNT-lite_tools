@@ -104,6 +104,15 @@ function updateUid(uid) {
         recallMsgItemEl.querySelector(".msg-text").innerHTML = `<blue>[不支持的消息类型]</blue>`;
       }
       recallMsgItemEl.querySelector(".msg-text").appendChild(recallTailEl);
+      recallMsgItemEl.addEventListener("click", () => {
+        lite_tools.sendToMsg({
+          scene: "aio",
+          msgId: msg.msgId,
+          chatType: msg.chatType,
+          peerUid: msg.peerUid,
+          type: 1,
+        });
+      });
       const prevEl = msgListEl.querySelector(".msg-item");
       if (prevEl) {
         msgListEl.insertBefore(recallMsgItemEl, prevEl);
