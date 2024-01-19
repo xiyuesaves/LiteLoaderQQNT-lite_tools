@@ -23,9 +23,9 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 在 `LiteLoader插件市场` 中找到 `轻量工具箱` 点击安装，之后根据提示操作即可
 
-### 从 Releases 中下载稳定版的方式进行安装
+### ~~从 Releases 中下载稳定版的方式进行安装~~ 暂未发布
 
-- 下载 [最新发布版本](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest) 中的 `lite_tools.zip`
+- 下载 [最新发布版本](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest) 中的 `lite_tools_v4.zip`
 - 将压缩包中的内容解压到 [LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT) 数据目录的 plugins 文件夹下
 - 重启 QQNT 安装完成
 
