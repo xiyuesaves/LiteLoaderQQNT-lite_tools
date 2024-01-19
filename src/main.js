@@ -371,6 +371,15 @@ function onLoad(plugin) {
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
+  ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (event, uid) => {
+    settingWindow.webContents.send("LiteLoader.lite_tools.onRequireUserInfo", uid);
+    return await new Promise((res) => {
+      ipcMain.once("LiteLoader.lite_tools.sendUserInfo", (event, userInfo) => {
+        res(userInfo);
+      });
+    });
+  });
+
   // 发送所有的本地撤回数据
   ipcMain.on("LiteLoader.lite_tools.getReacllMsgData", () => {
     let msgList = new Map();
@@ -511,6 +520,7 @@ function openRecallView() {
     recallViewWindow.webContents.focus();
   } else {
     recallViewWindow = new BrowserWindow({
+      parent: settingWindow,
       width: 800,
       height: 600,
       autoHideMenuBar: true,
