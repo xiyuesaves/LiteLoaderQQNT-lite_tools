@@ -57,7 +57,7 @@ async function onConfigView(view) {
   // 显示插件版本信息
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
   view.querySelector(".version .link").addEventListener("click", () => {
-    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools");
+    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/v4");
   });
 
   // 获取侧边栏按钮列表
