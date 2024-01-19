@@ -17,7 +17,7 @@
     "branch": "v4",
     "use_release": {
       "tag": "latest",
-      "name": "lite_tools_v4.zip"
+      "file": "lite_tools_v4.zip"
     }
   },
   "platform": ["win32", "linux", "darwin"],
