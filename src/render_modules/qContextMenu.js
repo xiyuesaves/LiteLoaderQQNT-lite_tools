@@ -1,6 +1,7 @@
 import { options } from "./options.js";
 import { searchIcon } from "./svg.js";
-
+import { logs } from "./logs.js";
+const log = new logs("右键菜单").log;
 /**
  * 右键菜单插入功能方法
  * @param {Element} qContextMenu 右键菜单元素
@@ -10,7 +11,7 @@ import { searchIcon } from "./svg.js";
  */
 function addQContextMenu(qContextMenu, icon, title, callback) {
   const tempEl = document.createElement("div");
-  tempEl.innerHTML = document.querySelector("#qContextMenu [aria-disabled='false']").outerHTML.replace(/<!---->/g, "");
+  tempEl.innerHTML = document.querySelector(`.q-context-menu :not([disabled="true"])`).outerHTML.replace(/<!---->/g, "");
   const item = tempEl.firstChild;
   item.id = "web-search";
   if (item.querySelector(".q-icon")) {
@@ -52,7 +53,9 @@ function addEventqContextMenu() {
     }
   });
   new MutationObserver(() => {
-    const qContextMenu = document.querySelector("#qContextMenu");
+    // log(document.querySelector(".q-context-menu").innerHTML);
+
+    const qContextMenu = document.querySelector(".q-context-menu");
     // 在网页搜索
     if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
       const searchText = selectText;
