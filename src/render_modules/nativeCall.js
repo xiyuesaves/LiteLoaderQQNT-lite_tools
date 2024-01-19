@@ -169,7 +169,7 @@ function getUserInfo(uid) {
  */
 function goMainWindowScene(sceneData) {
   return lite_tools.nativeCall(
-    "ns-ntApi",
+    "ns-WindowApi",
     "goMainWindowScene",
     [
       {
