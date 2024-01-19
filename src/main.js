@@ -673,8 +673,13 @@ function onBrowserWindowCreated(window, plugin) {
                     if (options.preventMessageRecall.localStorage) {
                       // 在消息对象上补充撤回信息
                       findInCatch.lite_tools_recall = {
-                        operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
+                        operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回昵称
+                        operatorRemark: msgElements.grayTipElement.revokeElement.operatorRemark, // 执行撤回备注昵称
+                        operatorMemRemark: msgElements.grayTipElement.revokeElement.operatorMemRemark, // 执行撤回群昵称
+
                         origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+                        origMsgSenderRemark: msgElements.grayTipElement.revokeElement.origMsgSenderRemark, // 发送消息角色
+                        origMsgSenderMemRemark: msgElements.grayTipElement.revokeElement.origMsgSenderMemRemark, // 发送消息角色
                         recallTime: msgItem.recallTime, // 撤回时间
                       };
                       recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
@@ -716,8 +721,13 @@ function onBrowserWindowCreated(window, plugin) {
                   }
                   // 针对撤回消息添加特殊字段用于展示数据
                   msgList[index].lite_tools_recall = {
-                    operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
+                    operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回昵称
+                    operatorRemark: msgElements.grayTipElement.revokeElement.operatorRemark, // 执行撤回备注昵称
+                    operatorMemRemark: msgElements.grayTipElement.revokeElement.operatorMemRemark, // 执行撤回群昵称
+
                     origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+                    origMsgSenderRemark: msgElements.grayTipElement.revokeElement.origMsgSenderRemark, // 发送消息角色
+                    origMsgSenderMemRemark: msgElements.grayTipElement.revokeElement.origMsgSenderMemRemark, // 发送消息角色
                     recallTime: msgItem.recallTime, // 撤回时间
                   };
                 } else if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
@@ -788,13 +798,19 @@ function onBrowserWindowCreated(window, plugin) {
       log("更新消息信息列表", args[1]);
       const msgItem = args[1][0]?.payload?.msgList[0];
       if (options.preventMessageRecall.enabled && msgItem.elements[0]?.grayTipElement?.revokeElement) {
-        if (!msgItem.elements[0].grayTipElement.revokeElement.isSelfOperate) {
-          log("捕获到实时撤回事件，已被阻止");
+        const revokeElement = msgItem.elements[0].grayTipElement.revokeElement;
+        if (!revokeElement.isSelfOperate) {
+          log("捕获到实时撤回事件，已被阻止", msgItem);
           const findInCatch = catchMsgList.get(msgItem.msgId);
           // 广播实时撤回消息参数
           const recallData = {
-            operatorNick: msgItem.elements[0].grayTipElement.revokeElement.operatorNick, // 执行撤回的角色
-            origMsgSenderNick: msgItem.elements[0].grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+            operatorNick: revokeElement.operatorNick, // 执行撤回昵称
+            operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
+            operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
+
+            origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
+            origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
+            origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
             recallTime: msgItem.recallTime, // 撤回时间
           };
           findInCatch.lite_tools_recall = recallData;

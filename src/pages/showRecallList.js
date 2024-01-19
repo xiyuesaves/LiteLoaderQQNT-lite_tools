@@ -63,6 +63,10 @@ lite_tools.onReacllMsgData((_, map) => {
   }
 });
 
+// operatorNick - 用户昵称
+// operatorRemark - 备注名称
+// operatorMemRemark - 群昵称
+
 function updateUid(uid) {
   const msgList = groupList.get(uid);
   document.title = `撤回消息查看 ${document.querySelector(".filter-item.active").innerText} 共计 ${msgList.length} 条数据`;
@@ -75,12 +79,15 @@ function updateUid(uid) {
       const recallTailEl = parser.parseFromString(recallTail, "text/html").querySelector(".tail");
       recallTailEl.innerText = msg?.lite_tools_recall?.recallTime
         ? `${new Date(msg.lite_tools_recall.recallTime * 1000).toLocaleString("zh-CN")} 被 ${
-            msg.lite_tools_recall.operatorNick || msg.lite_tools_recall.origMsgSenderNick
+            msg.lite_tools_recall.operatorMemRemark || msg.lite_tools_recall.operatorRemark || msg.lite_tools_recall.operatorNick
           } 撤回`
         : "没有撤回信息";
       recallTailEl.setAttribute("time", recallTailEl.innerText);
       const textContent = getTextContent(msg.elements);
-      recallMsgItemEl.querySelector(".user-name").innerText = msg.sendNickName || msg.sendMemberName;
+      recallMsgItemEl.querySelector(".user-name").innerText =
+        msg.lite_tools_recall.origMsgSenderMemRemark || // 群备注
+        msg.lite_tools_recall.origMsgSenderRemark || // 用户备注
+        msg.lite_tools_recall.origMsgSenderNick; // 账号昵称
       recallMsgItemEl.querySelector(".msg-text").innerText = textContent;
       const picList = getPicList(msg.elements);
       if (picList.length) {

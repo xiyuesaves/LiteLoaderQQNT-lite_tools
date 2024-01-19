@@ -1,16 +1,18 @@
 // 通用消息撤回方法
 /**
- * 
+ *
  * @param {Element} el 消息列表元素
  * @param {Object} find 被撤回消息数据
  */
 function messageRecall(el, find) {
   // 气泡-嵌入（必须含有文本内容的消息,文件消息）
   const bubbleEmbed = el.querySelector(
-    ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner"
+    ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner",
   );
   // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-  const bubbleInside = el.querySelector(".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview");
+  const bubbleInside = el.querySelector(
+    ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview",
+  );
   // 气泡-外部消息（兜底样式）
   const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
 
@@ -22,7 +24,9 @@ function messageRecall(el, find) {
   const showTimeEl = el.querySelector(".lite-tools-time");
   messageRecallEl.innerText = "已撤回";
   messageRecallEl.setAttribute("data-recall", "已撤回");
-  messageRecallEl.title = `消息于 ${new Date(find.recallTime * 1000).toLocaleString()} 被 ${find.operatorNick} 撤回`;
+  messageRecallEl.title = `消息于 ${new Date(find.recallTime * 1000).toLocaleString()} 被 ${
+    find.operatorMemRemark || find.operatorRemark || find.operatorNick
+  } 撤回`;
   messageRecallEl.classList.add("lite-tools-recall");
   // 如果同时开启了时间显示，则插入兼容样式
   if (showTimeEl) {
