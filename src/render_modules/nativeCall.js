@@ -157,11 +157,10 @@ function getUserInfo(uid) {
     "nodeIKernelProfileService/getUserDetailInfo",
     [{ uid: uid }, undefined],
     webContentId,
-    "nodeIKernelProfileListener/onProfileSimpleChanged",
+    ["nodeIKernelProfileListener/onProfileDetailInfoChanged", "nodeIKernelProfileListener/onProfileSimpleChanged"],
     false,
   );
 }
-
 /**
  *
  * @param {String} uid 获取群组信息
