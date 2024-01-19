@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { debounce } = require("./debounce");
+const debounce = require("./debounce");
 
 let callbackFunc = new Set();
 let emoticonsList = [];
