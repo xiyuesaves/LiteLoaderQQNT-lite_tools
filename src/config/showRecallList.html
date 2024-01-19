@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>撤回消息查看</title>
     <style>
+      :root {
+        --sider-bar-minwidth: 250px;
+        --sider-bar-widhth: 30%;
+        --sider-bar-maxwidth: 350px;
+      }
       body {
         margin: 0;
       }
@@ -17,10 +22,11 @@
         justify-content: flex-start;
       }
       .qq-number-filter {
-        width: 200px;
+        width: var(--sider-bar-widhth);
+        min-width: var(--sider-bar-minwidth);
+        max-width: var(--sider-bar-maxwidth);
         max-height: 100%;
         overflow: auto;
-        margin-right: 5px;
       }
       .filter-item {
         cursor: pointer;
@@ -46,6 +52,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        margin-right: 4px;
       }
       .filter-item span:first-child,
       .filter-item span:last-child {
@@ -56,8 +63,10 @@
         color: #ffffff;
       }
       .msg-list {
-        width: calc(100% - 205px);
-        padding: 10px;
+        width: calc(100% - min(var(--sider-bar-widhth), var(--sider-bar-maxwidth)));
+        max-width: calc(100% - var(--sider-bar-minwidth));
+        min-width: 400px;
+        padding: 20px 10px;
         height: 100vh;
         overflow: auto;
         overflow: auto;
@@ -80,7 +89,7 @@
       .msg-box {
         width: auto;
         max-width: calc(100% - 32px);
-        margin-left: 10px;
+        /* margin-left: 10px; */
       }
       .user-name {
         margin: 0;
