@@ -9,15 +9,12 @@ lite_tools.onReacllMsgData((_, map) => {
   document.querySelector(".logs").innerText += `获取到消息map 共有${map.size}\n`;
   document.querySelector(".logs").innerText += `开始整理数据\n`;
 
-  const tipsEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
-  if (map.size) {
-    tipsEl.querySelector(".chat-type").innerText = `正在整理消息...`;
-  } else {
+  if (!map.size) {
+    const tipsEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
     tipsEl.querySelector(".chat-type").innerText = `本地没有数据`;
+    filterListEl.appendChild(tipsEl);
   }
-  filterListEl.appendChild(tipsEl);
 
-  filterListEl.innerHTML = "";
   map.forEach((msgData) => {
     const peerUid = msgData.peerUid;
     const find = groupList.get(peerUid);
