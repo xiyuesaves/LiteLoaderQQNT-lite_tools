@@ -81,8 +81,8 @@
  */
 const options = lite_tools.getOptions();
 const updateFunctions = [];
-import { logs } from "./logs.js";
-const log = new logs("配置模块").log;
+// import { logs } from "./logs.js";
+// const log = new logs("配置模块").log;
 
 lite_tools.updateOptions((event, newOpt) => {
   Object.keys(newOpt).forEach((key) => {
@@ -95,7 +95,7 @@ lite_tools.updateOptions((event, newOpt) => {
  * 触发配置更新
  */
 function dispatchUpdateOptions() {
-  log("更新配置文件");
+  // log("更新配置文件");
   updateFunctions.forEach((fun) => {
     fun(options);
   });
