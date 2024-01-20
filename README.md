@@ -1,5 +1,5 @@
 <p align=center>
-  <img src="./icon.png" />
+  <img width="192" height="192" src="./icon.png" />
 </p>
 
 # LiteLoaderQQNT-lite_tools
