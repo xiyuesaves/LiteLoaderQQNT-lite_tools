@@ -51,6 +51,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 | 待办事项                   | 备注 |
 | -------------------------- | ---- |
+| 适配新版设置界面           | 咕   |
 | 右键菜单添加图片到本地表情 | 咕   |
 | 生成群友怪话图片           | 咕   |
 
