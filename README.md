@@ -24,7 +24,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 在 `LiteLoader插件市场` 中找到 `轻量工具箱` 点击安装，之后根据提示操作即可
 
-### 从 Releases 中下载稳定版的方式进行安装（暂未发布）
+### 从 Releases 中下载稳定版的方式进行安装
 
 - 下载 [最新发布版本](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest) 中的 `lite_tools_v4.zip`
 - 将压缩包中的内容解压到 [LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT) 数据目录的 plugins 文件夹下
@@ -42,10 +42,11 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 ## 已知问题
 
-| 已知问题                     | 备注                                   |
-| ---------------------------- | -------------------------------------- |
-| 消息后缀无法应用到私聊       | 暂时没想好设置界面如何配置             |
-| 查看撤回消息中的私聊标题错误 | 官方事件问题，在窗口内按 f5 刷新可恢复 |
+| 已知问题                                                             | 备注                                   |
+| -------------------------------------------------------------------- | -------------------------------------- |
+| 消息后缀无法应用到私聊                                               | 暂时没想好设置界面如何配置             |
+| 查看撤回消息中的私聊标题错误                                         | 官方事件问题，在窗口内按 f5 刷新可恢复 |
+| 跳转到撤回消息对应上下文时如果目标群组处于独立聊天窗口会导致跳转失败 | 暂无解决办法                           |
 
 ## 待办事项
 
