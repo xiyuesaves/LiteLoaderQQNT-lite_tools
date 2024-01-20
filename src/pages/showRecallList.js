@@ -104,7 +104,7 @@ function updateUid(uid) {
         recallMsgItemEl.querySelector(".msg-text").innerHTML = `<blue>[不支持的消息类型]</blue>`;
       }
       recallMsgItemEl.querySelector(".msg-text").appendChild(recallTailEl);
-      recallMsgItemEl.addEventListener("click", () => {
+      recallMsgItemEl.querySelector(".msg-content").addEventListener("click", () => {
         lite_tools.sendToMsg({
           scene: "aio",
           msgId: msg.msgId,
