@@ -22,7 +22,7 @@
     "repo": "xiyuesaves/lite_tools",
     "branch": "v4",
     "release": {
-      "tag": "latest",
+      "tag": "2.0.0",
       "file": "lite_tools_v4.zip"
     }
   }
