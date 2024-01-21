@@ -62,11 +62,15 @@ lite_tools.optionsOpen((event, message) => {
   });
   let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
     if (el.querySelector(".icon-item").getAttribute("aria-label")) {
-      return {
+      const item = {
         name: el.querySelector(".icon-item").getAttribute("aria-label"),
         index,
         disabled: el.classList.contains("disabled"),
       };
+      if (item.name === "更多") {
+        item.name = "更多 （此选项内包含设置页面入口，不要关闭，除非你知道自己在做什么）";
+      }
+      return item;
     } else {
       return {
         name: "未知功能",
