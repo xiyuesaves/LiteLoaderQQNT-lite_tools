@@ -14,6 +14,8 @@ import { options, updateOptions } from "../render_modules/options.js";
 import { TailList } from "../render_modules/tailList.js";
 // 原生事件模块
 import { getUserInfo, goMainWindowScene } from "../render_modules/nativeCall.js";
+// 引入图标
+import { pluginIcon } from "../render_modules/svg.js";
 
 // 配置界面日志
 import { logs } from "../render_modules/logs.js";
@@ -24,6 +26,12 @@ async function onConfigView(view) {
   // 调试用，等待5秒后再执行
   // await new Promise((res) => setTimeout(res, 3000));
 
+  document.querySelectorAll(".nav-item.liteloader").forEach((node) => {
+    if (node.textContent === "轻量工具箱") {
+      node.querySelector(".q-icon").innerHTML = pluginIcon;
+      // console.log(node.querySelector(".q-icon"))
+    }
+  });
   // 返回通用监听方法
   const addSwitchEventlistener = SwitchEventlistener(view);
   log("开始初始化");

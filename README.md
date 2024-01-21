@@ -18,7 +18,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 ## 使用方法
 
-### 从插件市场安装（插件市场暂未适配）
+### 从插件市场安装
 
 在 `LiteLoader插件市场` 中找到 `轻量工具箱` 点击安装，之后根据提示操作即可
 
