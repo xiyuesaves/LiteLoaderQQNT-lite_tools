@@ -2,9 +2,9 @@
   <img width="192" height="192" src="./icon.png" />
 </p>
 
-# LiteLoaderQQNT-lite_tools
+<h1 align="center">轻量工具箱</h1>
 
-LiteLoaderQQNT 插件 - 轻量工具箱，优化 QQNT 使用体验。
+LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
 
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
