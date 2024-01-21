@@ -86,11 +86,7 @@ async function onConfigView(view) {
 
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
-    if (enabled) {
-      view.querySelector(".select-search-url").classList.remove("disabled-input");
-    } else {
-      view.querySelector(".select-search-url").classList.add("disabled-input");
-    }
+    view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
     if (first("init-world-search-option")) {
       const searchEl = view.querySelector(".search-url");
       searchEl.value = options.wordSearch.searchUrl;
@@ -106,11 +102,7 @@ async function onConfigView(view) {
 
   // 图片搜索
   addSwitchEventlistener("imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
-    if (enabled) {
-      view.querySelector(".image-select-search-url").classList.remove("disabled-input");
-    } else {
-      view.querySelector(".image-select-search-url").classList.add("disabled-input");
-    }
+    view.querySelector(".image-select-search-url").classList.toggle("disabled-input", !enabled);
     if (first("init-image-search-option")) {
       const searchEl = view.querySelector(".img-search-url");
       searchEl.value = options.imageSearch.searchUrl;
@@ -126,11 +118,7 @@ async function onConfigView(view) {
 
   // 头像黏贴消息框效果
   addSwitchEventlistener("message.avatarSticky.enabled", ".avatarSticky", (_, enabled) => {
-    if (enabled) {
-      view.querySelector(".avatar-bottom-li").classList.remove("disabled-switch");
-    } else {
-      view.querySelector(".avatar-bottom-li").classList.add("disabled-switch");
-    }
+    view.querySelector(".avatar-bottom-li").classList.toggle("disabled-switch", !enabled);
   });
 
   // 合并消息
@@ -153,12 +141,7 @@ async function onConfigView(view) {
     view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${num} 条消息`;
   });
   lite_tools.goToMsg((_, msgData) => {
-    log("调用原生事件", msgData);
-    try {
-      goMainWindowScene(msgData);
-    } catch (err) {
-      log("执行出错", err);
-    }
+    goMainWindowScene(msgData);
   });
   const recallNum = lite_tools.getRecallListNum();
   view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${recallNum} 条消息`;
@@ -203,13 +186,8 @@ async function onConfigView(view) {
 
   // 本地表情包功能
   addSwitchEventlistener("localEmoticons.enabled", ".switchLocalEmoticons", (_, enabled) => {
-    if (enabled) {
-      view.querySelector(".select-folder-input").classList.remove("disabled-input");
-      view.querySelector(".switchQuickEmoticons").parentElement.classList.remove("disabled-switch");
-    } else {
-      view.querySelector(".select-folder-input").classList.add("disabled-input");
-      view.querySelector(".switchQuickEmoticons").parentElement.classList.add("disabled-switch");
-    }
+    view.querySelector(".select-folder-input").classList.toggle("disabled-input", !enabled);
+
     if (first("switchLocalEmoticons")) {
       const selectFolderEl = view.querySelector(".select-folder-input input");
       selectFolderEl.value = options.localEmoticons.localPath;
@@ -229,11 +207,7 @@ async function onConfigView(view) {
 
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
-    if (enabled) {
-      view.querySelector(".select-path").classList.remove("disabled-input");
-    } else {
-      view.querySelector(".select-path").classList.add("disabled-input");
-    }
+    view.querySelector(".select-path").classList.toggle("disabled-input", !enabled);
     if (first("init-background-option")) {
       view.querySelector(".select-path input").value = options.background.url;
       view.querySelectorAll(".select-file").forEach((el) => {
