@@ -37,7 +37,14 @@ lite_tools.onReacllMsgData((_, map) => {
       if (msgArr[0].chatType === 1) {
         new Promise(async (res) => {
           document.querySelector(".logs").innerText += `尝试获取 ${msgArr[0].peerUid}\n`;
-          const userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
+          let userInfo;
+          for (let i = 0; i < 20; i++) {
+            userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
+            document.querySelector(".logs").innerText += `尝试获取 - ${userInfo[0].payload.info.uin}\n`;
+            if (!!parseInt(userInfo[0].payload.info.uin)) {
+              break;
+            }
+          }
           document.querySelector(".logs").innerText += `${JSON.stringify(userInfo[0].payload)}\n`;
           const peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
           groupItemEl.querySelector(".peer-name").innerText = peerName;
