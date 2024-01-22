@@ -1,42 +1,27 @@
 /**
  * @author xiyuesaves
- * @date 2023-11-03
+ * @date 2024-01-22
  */
 
-// hook VUE
 import { hookVue3 } from "./render_modules/hookVue3.js";
-// 初始化样式数据
 import { initStyle } from "./render_modules/initStyle.js";
-// 日志模块
 import { logs } from "./render_modules/logs.js";
 const log = new logs("主渲染进程模块").log;
 
 function onLoad() {
   hookVue3();
   initStyle();
-  /**
-   * 监听页面 hash 变动
-   */
   if (location.hash === "#/blank") {
     navigation.addEventListener("navigatesuccess", updateHash, { once: true });
   } else {
     updateHash();
   }
 
-  /**
-   * 根据页面 hash 决定执行函数
-   */
   function updateHash() {
     let hash = location.hash;
-    /**
-     * 默认 hash 直接返回
-     */
     if (hash === "#/blank") {
       return;
     }
-    /**
-     * 局部匹配
-     */
     if (hash.includes("#/chat")) {
       import("./pages/chatMessage.js");
       log("进入独立聊天窗口");
