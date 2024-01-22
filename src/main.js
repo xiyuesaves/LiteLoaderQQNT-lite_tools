@@ -2,10 +2,6 @@
 const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
 const path = require("path");
 const fs = require("fs");
-const EventEmitter = require("events");
-
-// 自定义事件
-const optionsEvent = new EventEmitter();
 
 // 本地模块
 const defaultConfig = require("./defaultConfig/defaultConfig.json"); // 默认插件配置文件
