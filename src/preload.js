@@ -81,6 +81,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
 
   // 从历史记录中移除指定文件
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
+  
   /**
    *
    * @param {String} sendEventName 发送事件名称
