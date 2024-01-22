@@ -36,11 +36,8 @@ chatMessage();
 
 function chatMessage(mutationList) {
   // 禁用贴纸
-  if (options.message.disabledSticker) {
-    document.querySelector(".sticker-bar")?.classList.add("disabled");
-  } else {
-    document.querySelector(".sticker-bar")?.classList.remove("disabled");
-  }
+  document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
+
   // 禁用GIF热图
   if (options.message.disabledHotGIF) {
     document.body.classList.add("disabled-sticker-hot-gif");

@@ -37,26 +37,26 @@ lite_tools.optionsOpen((event, message) => {
         return {
           name: "消息",
           index,
-          disabled: el.classList.contains("disabled"),
+          disabled: el.classList.contains("LT-disabled"),
         };
       } else {
         return {
           name: el.getAttribute("aria-label"),
           index,
-          disabled: el.classList.contains("disabled"),
+          disabled: el.classList.contains("LT-disabled"),
         };
       }
     } else if (el.querySelector(".game-center-item")) {
       return {
         name: "游戏中心",
         index,
-        disabled: el.classList.contains("disabled"),
+        disabled: el.classList.contains("LT-disabled"),
       };
     } else {
       return {
         name: "未知功能",
         index,
-        disabled: el.classList.contains("disabled"),
+        disabled: el.classList.contains("LT-disabled"),
       };
     }
   });
@@ -65,7 +65,7 @@ lite_tools.optionsOpen((event, message) => {
       const item = {
         name: el.querySelector(".icon-item").getAttribute("aria-label"),
         index,
-        disabled: el.classList.contains("disabled"),
+        disabled: el.classList.contains("LT-disabled"),
       };
       if (item.name === "更多") {
         item.name = "更多 （此选项内包含设置页面入口，不要关闭，除非你知道自己在做什么）";
@@ -75,7 +75,7 @@ lite_tools.optionsOpen((event, message) => {
       return {
         name: "未知功能",
         index,
-        disabled: el.classList.contains("disabled"),
+        disabled: el.classList.contains("LT-disabled"),
       };
     }
   });
@@ -96,31 +96,20 @@ chatMessage();
 function chatMessage(mutationList) {
   // log("更新内容");
   // 初始化推荐表情
-  if (options.message.disabledSticker) {
-    document.querySelector(".sticker-bar")?.classList?.add("disabled");
-  } else {
-    document.querySelector(".sticker-bar")?.classList?.remove("disabled");
-  }
+  document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
+
   // 初始化顶部侧边栏
   document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
     const find = options.sidebar.top.find((opt) => opt.index == index);
     if (find) {
-      if (find.disabled) {
-        el.classList.add("disabled");
-      } else {
-        el.classList.remove("disabled");
-      }
+      el.classList.toggle("LT-disabled", find.disabled);
     }
   });
   // 初始化底部侧边栏
   document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
     const find = options.sidebar.bottom.find((opt) => opt.index == index);
     if (find) {
-      if (find.disabled) {
-        el.classList.add("disabled");
-      } else {
-        el.classList.remove("disabled");
-      }
+      el.classList.toggle("LT-disabled", find.disabled);
     }
   });
   // 禁用GIF热图

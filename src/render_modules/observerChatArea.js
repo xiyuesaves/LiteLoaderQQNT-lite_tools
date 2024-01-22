@@ -15,11 +15,7 @@ async function observerChatArea() {
         const name = el.querySelector(".icon-item").getAttribute("aria-label");
         const find = options.textAreaFuncList.find((el) => el.name === name);
         if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
+          el.classList.toggle("LT-disabled", find.disabled);
         }
       });
       const textAreaList = Array.from(document.querySelectorAll(".chat-func-bar .bar-icon"))
@@ -56,11 +52,7 @@ function disabledFunctions() {
     const name = el.querySelector(".icon-item").getAttribute("aria-label");
     const find = options.textAreaFuncList.find((el) => el.name === name);
     if (find) {
-      if (find.disabled) {
-        el.classList.add("disabled");
-      } else {
-        el.classList.remove("disabled");
-      }
+      el.classList.toggle("LT-disabled", find.disabled);
     }
   });
 }

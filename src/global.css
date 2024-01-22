@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /* 全局禁用样式 */
-.disabled {
+.LT-disabled {
   display: none !important;
 }
 

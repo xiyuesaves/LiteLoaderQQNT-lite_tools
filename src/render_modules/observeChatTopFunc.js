@@ -14,11 +14,7 @@ function observeChatTopFunc() {
         const name = el.querySelector(".icon-item").getAttribute("aria-label");
         const find = options.chatAreaFuncList.find((el) => el.name === name);
         if (find) {
-          if (find.disabled) {
-            el.classList.add("disabled");
-          } else {
-            el.classList.remove("disabled");
-          }
+          el.classList.toggle("LT-disabled", find.disabled);
         }
       });
       // 更新聊天框上方功能列表
@@ -58,11 +54,7 @@ function disabledFunctions() {
     const name = el.querySelector(".icon-item").getAttribute("aria-label");
     const find = options.chatAreaFuncList.find((el) => el.name === name);
     if (find) {
-      if (find.disabled) {
-        el.classList.add("disabled");
-      } else {
-        el.classList.remove("disabled");
-      }
+      el.classList.toggle("LT-disabled", find.disabled);
     }
   });
 }
