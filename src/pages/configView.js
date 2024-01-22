@@ -74,14 +74,14 @@ async function onConfigView(view) {
 
   log("开始添加功能");
 
-  addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "LT-disabled");
-  addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "LT-disabled");
+  addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
+  addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
 
   // 添加输入框上方功能列表
-  addOptionLi(options.textAreaFuncList, view.querySelector(".textArea ul"), "textAreaFuncList", "LT-disabled");
+  addOptionLi(options.textAreaFuncList, view.querySelector(".textArea ul"), "textAreaFuncList", "disabled");
 
   // 添加聊天框上方功能列表
-  addOptionLi(options.chatAreaFuncList, view.querySelector(".chatArea ul"), "chatAreaFuncList", "LT-disabled");
+  addOptionLi(options.chatAreaFuncList, view.querySelector(".chatArea ul"), "chatAreaFuncList", "disabled");
 
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
