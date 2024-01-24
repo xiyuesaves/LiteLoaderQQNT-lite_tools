@@ -139,6 +139,16 @@ async function onConfigView(view) {
   // 阻止撤回
   addSwitchEventlistener("preventMessageRecall.enabled", ".preventMessageRecall");
   addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");
+  addSwitchEventlistener("preventMessageRecall.customColor", ".custom-color");
+
+  // 初始化自定义撤回样式
+  const customTextColorEl = view.querySelector(".custom-text-color");
+  customTextColorEl.value = options.preventMessageRecall.textColor;
+  customTextColorEl.addEventListener("change", (event) => {
+    options.preventMessageRecall.textColor = event.target.value;
+    lite_tools.setOptions(options);
+  });
+
   view.querySelector(".clear-localStorage-recall-msg").addEventListener("click", () => {
     log("清除本地数据");
     lite_tools.clearLocalStorageRecallMsg();
@@ -314,6 +324,7 @@ async function onConfigView(view) {
   updateOptions((opt) => {
     view.querySelector(".select-path input").value = opt.background.url;
     view.querySelector(".select-folder-input input").value = opt.localEmoticons.localPath;
+    customTextColorEl.value = options.preventMessageRecall.textColor;
   });
 }
 

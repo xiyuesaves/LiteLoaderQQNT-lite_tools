@@ -290,6 +290,9 @@
 .lite-tools-recall {
   user-select: none;
 }
+.lite-tools-recall.custom-color.embed::after {
+  opacity: 1 !important;
+}
 .lite-tools-recall.embed {
   right: 0px;
   float: right;

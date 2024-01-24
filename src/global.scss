@@ -337,6 +337,13 @@
 // 撤回样式
 .lite-tools-recall {
   user-select: none;
+  &.custom-color {
+    &.embed {
+      &::after {
+        opacity: 1 !important;
+      }
+    }
+  }
   &.embed {
     right: 0px;
     float: right;
@@ -525,8 +532,8 @@
     display: flex !important;
   }
 }
-.chat-func-bar{
-  .func-bar:last-child{
+.chat-func-bar {
+  .func-bar:last-child {
     display: flex !important;
   }
 }

@@ -1,4 +1,7 @@
 // 通用消息撤回方法
+
+import { options } from "./options.js";
+
 /**
  *
  * @param {Element} el 消息列表元素
@@ -27,6 +30,11 @@ function messageRecall(el, find) {
   messageRecallEl.title = `消息于 ${new Date(find.recallTime * 1000).toLocaleString()} 被 ${
     find.operatorMemRemark || find.operatorRemark || find.operatorNick
   } 撤回`;
+  // 添加自定义样式
+  if (options.preventMessageRecall.customColor) {
+    messageRecallEl.classList.add("custom-color");
+    messageRecallEl.style.color = options.preventMessageRecall.textColor;
+  }
   messageRecallEl.classList.add("lite-tools-recall");
   // 如果同时开启了时间显示，则插入兼容样式
   if (showTimeEl) {

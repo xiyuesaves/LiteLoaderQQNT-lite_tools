@@ -40,7 +40,9 @@
   },
   "preventMessageRecall": {
     "enabled": false,
-    "localStorage": false
+    "localStorage": false,
+    "customColor": false,
+    "textColor": "#f56c6c"
   },
   "tail": {
     "enabled": false,
