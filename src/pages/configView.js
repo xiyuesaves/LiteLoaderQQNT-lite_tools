@@ -51,9 +51,7 @@ async function onConfigView(view) {
 
   // HTMl
   const html_text = await (await fetch(html_file_path)).text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html_text, "text/html");
-  doc.querySelectorAll("section").forEach((node) => view.appendChild(node));
+  view.insertAdjacentHTML("afterbegin", html_text);
   log("dom加载完成");
 
   // 从仓库检查更新
