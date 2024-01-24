@@ -18,19 +18,12 @@ function betterImageViewer() {
     }
   });
   document.addEventListener("mouseup", (event) => {
-    const rightMenu = document.querySelector("#qContextMenu");
+    const rightMenu = document.querySelector(".q-context-menu");
     const video = document.querySelector("embed");
     if (!isMove && event.button === 0 && !rightMenu && !video && options.imageViewer.quickClose) {
-      if (
-        event.target.closest(".main-area__footer") ||
-        event.target.closest(".main-area__left") ||
-        event.target.closest(".main-area__right") ||
-        event.target.closest(".window-control-area")
-      ) {
-        return;
+      if (event.target.closest(".main-area__content")) {
+        document.querySelector(`div[aria-label="关闭"]`).click();
       }
-      console.log("关闭");
-      document.querySelector(`div[aria-label="关闭"]`).click();
     }
   });
 }
