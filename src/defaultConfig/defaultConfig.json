@@ -42,7 +42,7 @@
     "enabled": false,
     "localStorage": false,
     "customColor": false,
-    "textColor": "#f56c6c"
+    "textColor": "#ff6666"
   },
   "tail": {
     "enabled": false,
