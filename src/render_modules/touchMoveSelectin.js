@@ -10,7 +10,7 @@ function touchMoveSelectin(className) {
   log("模块已加载", options.message.disabledSlideMultipleSelection);
   let interception;
   document.querySelector("#app").addEventListener("mousedown", (event) => {
-    if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+    if (options.message.disabledSlideMultipleSelection && (event.buttons === 1 || event.buttons === 4)) {
       interception = !event.target.closest(".message-content__wrapper") && event.target.closest(`.${className}`);
     }
   });
@@ -19,7 +19,7 @@ function touchMoveSelectin(className) {
     if (!listenTarget && document.querySelector(`.${className}`)) {
       log("已捕获目标元素");
       document.querySelector(`.${className}`).addEventListener("mousedown", (event) => {
-        if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+        if (options.message.disabledSlideMultipleSelection && (event.buttons === 1 || event.buttons === 4)) {
           if (document.querySelector("#qContextMenu")) {
             document.querySelector("#qContextMenu").remove();
           }
@@ -27,7 +27,7 @@ function touchMoveSelectin(className) {
       });
       listenTarget = true;
     }
-    if (options.message.disabledSlideMultipleSelection && event.buttons === 1) {
+    if (options.message.disabledSlideMultipleSelection && (event.buttons === 1 || event.buttons === 4)) {
       if (interception) {
         event.preventDefault();
         event.stopPropagation();
