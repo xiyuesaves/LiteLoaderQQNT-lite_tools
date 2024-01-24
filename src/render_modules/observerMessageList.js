@@ -53,6 +53,12 @@ function processMessageElement() {
     if (!elProps) {
       continue;
     }
+    // 消息靠左
+    if (el && options.message.selfMsgToLeft) {
+      el.querySelector(".message-container")?.classList?.remove("message-container--self");
+      el.querySelector(".message-container")?.classList?.remove("message-container--align-right");
+      el.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
+    }
     // 开启背景时优化小图展示
     if (options.background.enabled) {
       // 过小尺寸的图片移除气泡效果

@@ -140,6 +140,7 @@
 
 // 插入元素通用调整
 .message-container {
+  transition-duration: unset !important;
   &:hover {
     .message-content-replace,
     .bubble-outside,

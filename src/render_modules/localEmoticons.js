@@ -119,6 +119,10 @@ function localEmoticons() {
    * 快速选择栏插入位置
    */
   const chatMessagePosition = document.querySelector(".expression-bar .sticker-wrapper.expression-bar-inner");
+  const expressionBar = document.querySelector(".expression-bar");
+  if (!chatMessagePosition || !expressionBar) {
+    return;
+  }
   if (!quickPreviewEl) {
     quickPreviewEl = document.createElement("div");
     quickPreviewEl.classList.add("lite-tools-sticker-bar");
@@ -146,7 +150,6 @@ function localEmoticons() {
         insert(event);
       }
     });
-
     chatMessagePosition.appendChild(quickPreviewEl);
     changeListSize();
   } else {
@@ -183,8 +186,8 @@ function loadEditorModel() {
  */
 function quickInsertion() {
   if (!options.localEmoticons.enabled || !options.localEmoticons.quickEmoticons) {
-    if (quickPreviewEl.classList.contains("show")) {
-      quickPreviewEl.classList.remove("show");
+    if (quickPreviewEl?.classList?.contains("show")) {
+      quickPreviewEl?.classList?.remove("show");
     }
     return;
   }

@@ -200,6 +200,9 @@ async function onConfigView(view) {
   // 禁用滑动多选消息
   addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
 
+  // 消息靠左显示
+  addSwitchEventlistener("message.selfMsgToLeft", ".selfMsgToLeft");
+
   // 本地表情包功能
   addSwitchEventlistener("localEmoticons.enabled", ".switchLocalEmoticons", (_, enabled) => {
     view.querySelector(".select-folder-input").classList.toggle("disabled-input", !enabled);

@@ -33,6 +33,7 @@
     "switchReplace": false,
     "removeReplyAt": false,
     "mergeMessage": false,
+    "selfMsgToLeft": false,
     "avatarSticky": {
       "enabled": false,
       "toBottom": false

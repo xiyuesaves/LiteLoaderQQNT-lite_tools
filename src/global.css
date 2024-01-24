@@ -118,6 +118,9 @@
     --context-menu-active: #282828;
   }
 }
+.message-container {
+  transition-duration: unset !important;
+}
 .message-container:hover .message-content-replace,
 .message-container:hover .bubble-outside,
 .message-container:hover .bubble-inside {
