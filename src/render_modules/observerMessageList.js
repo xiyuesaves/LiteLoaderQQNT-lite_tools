@@ -54,7 +54,7 @@ function processMessageElement() {
       continue;
     }
     // 消息靠左
-    if (el && options.message.selfMsgToLeft) {
+    if (options.message.selfMsgToLeft) {
       el.querySelector(".message-container")?.classList?.remove("message-container--self");
       el.querySelector(".message-container")?.classList?.remove("message-container--align-right");
       el.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
