@@ -1,7 +1,7 @@
-<section class="lite-tools-settings plugins">
+<lite-tools class="lite-tools-settings plugins">
   <h1>功能</h1>
   <!-- 自定义背景 -->
-  <div class="wrap background">
+  <setting-panel class="wrap background">
     <div class="vertical-list-item title">
       <h2>界面调整</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -120,9 +120,9 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <!-- 右键菜单 -->
-  <div class="wrap qContextMenu">
+  <setting-panel class="wrap qContextMenu">
     <div class="vertical-list-item title">
       <h2>右键菜单</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -171,9 +171,9 @@
         </div>
       </div>
     </ul>
-  </div>
+  </setting-panel>
   <!-- 消息相关 -->
-  <div class="wrap chatMessage">
+  <setting-panel class="wrap chatMessage">
     <div class="vertical-list-item title">
       <h2>消息相关</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -212,9 +212,9 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <!-- 本地表情包 -->
-  <div class="wrap localEmoticons">
+  <setting-panel class="wrap localEmoticons">
     <div class="vertical-list-item title">
       <h2>本地表情</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -296,10 +296,10 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
 
   <!-- 消息后缀 -->
-  <div class="wrap messageTail">
+  <setting-panel class="wrap messageTail">
     <div class="vertical-list-item title">
       <h2>消息后缀</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -331,9 +331,9 @@
         <div class="tail-ruls-list"></div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <!-- 阻止撤回 -->
-  <div class="wrap MessageRecall">
+  <setting-panel class="wrap MessageRecall">
     <div class="vertical-list-item title">
       <h2>阻止撤回</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -369,6 +369,19 @@
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
+          <h2>样式自定义</h2>
+          <span class="secondary-text">调整撤回消息样式</span>
+        </div>
+        <div class="custom-style q-switch">
+          <span class="q-switch__handle"></span>
+        </div>
+        <div class="">
+          <div class=""></div>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
           <h2>删除本地数据</h2>
           <span class="secondary-text local-recall-msg-num">清除所有本地保存的撤回数据，当前保存有 0 条消息</span>
         </div>
@@ -387,10 +400,10 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <h1>精简</h1>
   <!-- 侧边栏精简 -->
-  <div class="wrap sidebar">
+  <setting-panel class="wrap sidebar">
     <div class="vertical-list-item title">
       <h2>侧边栏</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -398,9 +411,9 @@
       </svg>
     </div>
     <ul class="hidden"></ul>
-  </div>
+  </setting-panel>
   <!-- 输入框上方功能精简 -->
-  <div class="wrap textArea">
+  <setting-panel class="wrap textArea">
     <div class="vertical-list-item title">
       <h2>输入框</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -415,9 +428,9 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <!-- 窗口上方功能精简 -->
-  <div class="wrap chatArea">
+  <setting-panel class="wrap chatArea">
     <div class="vertical-list-item title">
       <h2>消息框</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -432,10 +445,10 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <h1>其他</h1>
   <!-- 其他-debug -->
-  <div class="wrap other">
+  <setting-panel class="wrap other">
     <div class="vertical-list-item title">
       <h2>调试功能</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -454,6 +467,6 @@
         </div>
       </li>
     </ul>
-  </div>
+  </setting-panel>
   <h1 class="version">当前版本<a class="link">v0.0.0</a></h1>
-</section>
+</lite-tools>
