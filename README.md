@@ -9,7 +9,7 @@ LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
 > [!NOTE]
-> 新版仅支持 LiteLoaderQQNT 1.0.0，旧版本在[v3分支](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/tree/v3) \
+> 新版仅支持 LiteLoaderQQNT 1.0.0，旧版本在[v3 分支](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/tree/v3) \
 > 该插件在 Windows 环境下测试开发，理论全平台兼容，但没有条件对另外两个平台进行测试
 
 > [!CAUTION]
@@ -36,6 +36,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 小程序卡片转链接 | 精简输入框功能 | 精简侧边栏功能   | 精简聊天框功能   |
 | 快速关闭预览图片 | 移除回复@      | 消息合并         | 禁用 GIF 热图    |
 | 划词搜索         | 隐藏小红点     | 禁用表情推荐     | 阻止拖拽多选消息 |
+| 消息靠左显示     |                |                  |                  |
 
 ## 已知问题
 
