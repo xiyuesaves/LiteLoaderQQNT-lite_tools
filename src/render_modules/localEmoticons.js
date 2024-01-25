@@ -261,8 +261,8 @@ function updateLocalEmoticonsConfig(config) {
   log("更新常用表情列表", config);
 
   if (!options.localEmoticons.commonlyEmoticons) {
-    log("销毁历史表情实例", folderInfos[0].id);
-    if (folderInfos[0].id === commonlyId) {
+    log("销毁历史表情实例", folderInfos[0]?.id);
+    if (folderInfos[0]?.id === commonlyId) {
       const emoticon = folderInfos.shift();
       emoticon.destroy();
     }
@@ -270,7 +270,7 @@ function updateLocalEmoticonsConfig(config) {
     const list = config.commonlyEmoticons.map((path, index) => {
       return { path, index };
     });
-    if (folderInfos[0].id === commonlyId) {
+    if (folderInfos[0]?.id === commonlyId) {
       const findEmoticons = folderInfos[0];
       findEmoticons.updateEmoticonList(list);
       folderList.insertBefore(findEmoticons.folderEl, folderList.querySelector(":first-child"));
