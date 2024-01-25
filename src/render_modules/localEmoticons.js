@@ -6,7 +6,6 @@ import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
 const log = new logs("本地表情包模块").log;
-
 /**
  * 图标元素
  * @type {Element}
@@ -156,7 +155,8 @@ async function init() {
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(null, emoticonsList);
 }
-init();
+// 错开CPU高占用阶段
+setTimeout(init, 500);
 
 /**
  * 初始化本地表情包功能
@@ -864,6 +864,7 @@ function showLocalEmoticons() {
     });
   }
 }
+
 function closeLocalEmoticons() {
   showEmoticons = false;
   const localEmoticonsEl = barIcon.querySelector(".lite-tools-local-emoticons-main");
