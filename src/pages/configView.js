@@ -218,6 +218,9 @@ async function onConfigView(view) {
     }
   });
 
+  // 表情加载优化
+  addSwitchEventlistener("localEmoticons.majorization", ".majorization");
+
   // 快捷输入表情功能
   addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons");
 

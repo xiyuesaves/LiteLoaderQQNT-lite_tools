@@ -453,7 +453,7 @@ async function loadDom() {
           (folderOffsetTop >= scrollTop && folderOffsetBottom <= scrollBottom);
 
         // 判断表情包是否需要加载
-        if (shouldLoadEmoticons) {
+        if (shouldLoadEmoticons && options.localEmoticons.majorization) {
           const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
           activeEl.emoticonFolder.load();
         }
@@ -715,8 +715,6 @@ class emoticonFolder {
       skiterPreviewEl.classList.add("skiter-preview");
       const imgEl = document.createElement("img");
       categoryItemEl.imgEl = imgEl;
-      // imgEl.setAttribute("lazy", "");
-      // imgEl.src = this.protocolPrefix + item.path;
       skiterPreviewEl.appendChild(imgEl);
       categoryItemEl.append(skiterPreviewEl);
       this.categoryItemsEl.splice(item.index, 0, categoryItemEl);
@@ -729,6 +727,10 @@ class emoticonFolder {
     this.categoryItemsEl.sort((a, b) => a.index - b.index);
 
     this.categoryListEl.append(...this.categoryItemsEl);
+
+    if (!options.localEmoticons.majorization) {
+      this.load();
+    }
   }
   destroy() {
     log("销毁实例", this.name);
@@ -780,6 +782,11 @@ function showLocalEmoticons() {
   // 触发滚动事件
   document.querySelector(".folder-list").dispatchEvent(event);
   barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show");
+  if (!options.localEmoticons.majorization) {
+    folderInfos.forEach((folderInfo) => {
+      folderInfo.load();
+    });
+  }
 }
 function closeLocalEmoticons() {
   showEmoticons = false;
@@ -788,7 +795,7 @@ function closeLocalEmoticons() {
   localEmoticonsEl.addEventListener(
     "transitionend",
     () => {
-      if (!localEmoticonsEl.classList.contains("show")) {
+      if (!localEmoticonsEl.classList.contains("show") && options.localEmoticons.majorization) {
         folderInfos.forEach((folderInfo) => {
           folderInfo.unLoad();
         });

@@ -11,6 +11,7 @@
   "localEmoticons": {
     "enabled": false,
     "quickEmoticons": false,
+    "majorization": false,
     "commonlyEmoticons": false,
     "commonlyNum": 20,
     "rowsSize": 5,
