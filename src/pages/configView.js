@@ -192,7 +192,8 @@ async function onConfigView(view) {
   addSwitchEventlistener("message.convertMiniPrgmArk", ".switchDisabledMiniPrgm");
 
   // debug开关
-  addSwitchEventlistener("debug", ".switchDebug");
+  addSwitchEventlistener("debug.console", ".switchDebug");
+  addSwitchEventlistener("debug.mainConsole", ".switchMainDebug");
 
   // 显示每条消息发送时间
   addSwitchEventlistener("message.showMsgTime", ".showMsgTime");

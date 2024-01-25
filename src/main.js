@@ -182,7 +182,7 @@ function onLoad(plugin) {
   setOptions(options);
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
-  if (options.debug) {
+  if (options.debug.mainConsole) {
     let mainLogs = new logs("主进程");
     mainLogs.startLogServer();
     log = mainLogs.log;
