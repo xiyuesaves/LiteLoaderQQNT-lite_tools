@@ -39,4 +39,25 @@ const recallMsgItem = `<div class="msg-item">
 </div>
 </div>`;
 
-export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem };
+const localEmoticonsHTML = `<div class="full-screen-preview">
+<img src="" />
+</div>
+<div class="lite-tools-local-emoticons-main">
+<div class="context-menu">
+  <a class="context-menu-item delete-from-commonly">
+    <span class="context-menu-item__text">历史表情中删除</span>
+  </a>
+  <a class="context-menu-item open-folder">
+    <span class="context-menu-item__text">打开表情文件夹</span>
+  </a>
+  <a class="context-menu-item open-file">
+    <span class="context-menu-item__text">图片查看器打开</span>
+  </a>
+</div>
+<div class="folder-list"></div>
+<div class="folder-icon-list">
+  <div class="folder-scroll"></div>
+</div>
+</div>`;
+
+export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem, localEmoticonsHTML };

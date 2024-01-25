@@ -101,7 +101,6 @@ onBeforeUpdateOptions((newOptions) => {
       resetCommonlyEmoticons(); // 重置常用表情
       loadEmoticons(newOptions.localEmoticons.localPath); // 读取本地表情文件夹
     }
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   }
   if (newOptions.localEmoticons.commonlyNum !== options.localEmoticons.commonlyNum) {
     if (newOptions.localEmoticons.commonlyNum < options.localEmoticons.commonlyNum) {

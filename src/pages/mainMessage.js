@@ -93,7 +93,7 @@ observe.observe(document.body, {
 updateOptions(chatMessage);
 chatMessage();
 
-function chatMessage(mutationList) {
+function chatMessage() {
   // log("更新内容");
   // 初始化推荐表情
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);

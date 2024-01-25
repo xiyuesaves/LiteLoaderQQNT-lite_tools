@@ -1,160 +1,200 @@
 import { options, updateOptions } from "./options.js";
+import { localEmoticonsHTML } from "./HTMLtemplate.js";
 import { debounce } from "./debounce.js";
 import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
+import { first } from "./first.js";
 const log = new logs("本地表情包模块").log;
 
-let barIcon;
-let htmlDom;
+/**
+ * 图标元素
+ * @type {Element}
+ */
+const barIcon = initBarIcon();
+/**
+ * 主要元素
+ */
+const { emoticonsMainEl, folderListEl, folderIconListEl } = loadDom();
+/**
+ * 快速选择表情元素
+ */
+const { quickPreviewEl, previewListEl } = initQuickPreview();
+/**
+ * 是否处于全屏预览状态
+ * @type {Boolean}
+ */
 let openFullPreview = false;
+/**
+ * 进入全屏状态计时器编号
+ * @type {timeoutID}
+ */
 let openFullPreviewTO = null;
+/**
+ * 是否打开表情窗口
+ * @type {Boolean}
+ */
 let showEmoticons = false;
+/**
+ * 是否执行插入函数
+ * @type {Boolean}
+ */
 let insertImg = true;
+/**
+ * 表情实例数组
+ * @type {Array}
+ */
 let folderInfos = [];
+/**
+ * 表情列表数组，储存的是所有表情的平铺数据
+ * @type {Array}
+ */
 let emoticonsListArr = [];
+/**
+ * 获取到的原始表情列表数据
+ * @type {Array}
+ */
 let emoticonsList = [];
+/**
+ * 快速插入表情功能使用到的数组
+ * @type {Array}
+ */
 let forList = [];
+/**
+ * 正则匹配到的需要删除的文本内容
+ * @type {String}
+ */
 let regOut;
+/**
+ * 编辑器实例
+ * @type {Object}
+ */
 let ckeditorInstance;
+/**
+ * 编辑器实例属性 model
+ * @type {Object}
+ */
 let ckeditEditorModel;
-let quickPreviewEl;
-let previewListEl;
+/**
+ * 右键菜单状态
+ * @type {Boolean}
+ */
 let showContextMenu = false;
-let targetElement; // 右键点击的图片元素
+/**
+ * 右键点击的图片元素
+ * @type {Element}
+ */
+let targetElement;
+
 const commonlyId = "commonlyEmoticons";
 
-if (options.localEmoticons.enabled) {
-  document.body.classList.add("lite-tools-showLocalEmoticons");
-} else {
-  document.body.classList.remove("lite-tools-showLocalEmoticons");
-}
+document.body.classList.toggle("lite-tools-showLocalEmoticons", options.localEmoticons.enabled);
 
-updateOptions((opt) => {
+updateOptions(async (opt) => {
+  document.body.classList.toggle("lite-tools-showLocalEmoticons", opt.localEmoticons.enabled);
   if (opt.localEmoticons.enabled) {
-    document.body.classList.add("lite-tools-showLocalEmoticons");
-  } else {
-    document.body.classList.remove("lite-tools-showLocalEmoticons");
+    localEmoticons();
+    folderListEl.setAttribute("style", `--category-item-size: ${(folderListEl.offsetWidth - 12) / opt.localEmoticons.rowsSize}px;`);
+    if (opt.localEmoticons.commonlyEmoticons) {
+      const config = await lite_tools.getLocalEmoticonsConfig();
+      const list = config.commonlyEmoticons.map((path, index) => ({ path, index }));
+      if (folderInfos[0]?.id === commonlyId && list.length) {
+        folderInfos[0].updateEmoticonList(list);
+      } else if (list.length) {
+        const newEmoticonFolder = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+        folderInfos.unshift(newEmoticonFolder);
+        folderListEl.insertBefore(newEmoticonFolder.folderEl, folderListEl.querySelector(":first-child"));
+        folderIconListEl.insertBefore(newEmoticonFolder.folderIconEl, folderIconListEl.querySelector(":first-child"));
+        newEmoticonFolder.load();
+      }
+    } else {
+      if (folderInfos[0]?.id === commonlyId) {
+        log("销毁历史表情实例", folderInfos[0]?.id);
+        const emoticon = folderInfos.shift();
+        emoticon.destroy();
+      }
+    }
   }
-
-  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
-  log("更新表情尺寸", options.localEmoticons.rowsSize);
-  folderList.setAttribute("style", `--category-item-size: ${(folderList.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
 });
 
+/**
+ * 更新常用表情列表
+ * @param {Array} list 常用表情列表
+ */
+function updateLocalEmoticonsConfig(_, config) {
+  const list = config.commonlyEmoticons.map((path, index) => ({ path, index }));
+  if (folderInfos[0]?.id === commonlyId) {
+    if (list.length) {
+      log("更新常用表情列表", list);
+      folderInfos[0].updateEmoticonList(list);
+    } else {
+      log("销毁历史表情实例", folderInfos[0]?.id);
+      const emoticon = folderInfos.shift();
+      emoticon.destroy();
+    }
+  } else if (options.localEmoticons.commonlyEmoticons) {
+    const newEmoticonFolder = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+    folderInfos.unshift(newEmoticonFolder);
+    folderListEl.insertBefore(newEmoticonFolder.folderEl, folderListEl.querySelector(":first-child"));
+    folderIconListEl.insertBefore(newEmoticonFolder.folderIconEl, folderIconListEl.querySelector(":first-child"));
+    newEmoticonFolder.load();
+  }
+}
+
 log("模块已加载");
+
+// 自执行函数
+async function init() {
+  document.body.addEventListener("mouseup", globalMouseUp);
+  document.body.addEventListener("mouseleave", globalMouseUp);
+  document.body.addEventListener("mousedown", globalMouseDown);
+  lite_tools.updateLocalEmoticonsConfig(updateLocalEmoticonsConfig);
+  lite_tools.updateEmoticons(appendEmoticons);
+  loadEditorModel();
+
+  // 加载本地表情包
+  const emoticonsList = await lite_tools.getLocalEmoticonsList();
+  appendEmoticons(null, emoticonsList);
+}
+init();
 
 /**
  * 初始化本地表情包功能
  */
-function localEmoticons() {
-  if (document.querySelector(".lite-tools-bar")) {
-    return;
-  }
-  if (!document.querySelector(".chat-input-area .chat-func-bar .func-bar")) {
-    return;
-  }
-  if (!ckeditEditorModel) {
-    loadEditorModel();
-    lite_tools.updateLocalEmoticonsConfig((_, config) => {
-      updateLocalEmoticonsConfig(config);
-    });
-    lite_tools.updateEmoticons((_, list) => {
-      log("渲染端更新列表", list.length);
-      appendEmoticons(list);
-    });
-  }
-  document.body.removeEventListener("mouseup", globalMouseUp);
-  document.body.removeEventListener("mouseleave", globalMouseUp);
-  document.body.removeEventListener("mousedown", globalMouseDown);
-  document.body.addEventListener("mouseup", globalMouseUp);
-  document.body.addEventListener("mouseleave", globalMouseUp);
-  document.body.addEventListener("mousedown", globalMouseDown);
-  if (!htmlDom) {
-    loadDom();
+async function localEmoticons() {
+  // 初始化表情图片大小
+  folderListEl.setAttribute("style", `--category-item-size: ${(folderListEl.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
+
+  // 插入主要本地表情元素
+  if (!document.querySelector(".lite-tools-bar")) {
+    const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
+    targetPosition?.appendChild(barIcon);
   }
 
-  /**
-   * 插入图标逻辑
-   */
-  const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
-  if (!barIcon) {
-    barIcon = document.createElement("div");
-    barIcon.classList.add("lite-tools-bar");
-    const qTooltips = document.createElement("div");
-    qTooltips.classList.add("lite-tools-q-tooltips");
-    qTooltips.addEventListener("click", openLocalEmoticons);
-    const qTooltipsContent = document.createElement("div");
-    qTooltipsContent.classList.add("lite-tools-q-tooltips__content");
-    const icon = document.createElement("i");
-    icon.classList.add("lite-tools-q-icon");
-    icon.innerHTML = localEmoticonsIcon;
-    qTooltipsContent.innerText = "本地表情";
-    qTooltips.appendChild(icon);
-    qTooltips.appendChild(qTooltipsContent);
-    barIcon.appendChild(qTooltips);
-    targetPosition.appendChild(barIcon);
-    log("创建图标");
-  } else {
-    targetPosition.appendChild(barIcon);
-    log("嵌入图标");
+  // 插入快速选择表情元素
+  if (!document.querySelector(".lite-tools-sticker-bar")) {
+    const chatMessagePosition = document.querySelector(".expression-bar .sticker-wrapper.expression-bar-inner");
+    chatMessagePosition?.appendChild(quickPreviewEl);
   }
 
-  /**
-   * 监听聊天窗口尺寸变化
-   */
-  function changeListSize() {
-    if (forList.length) {
-      let fixedWidth = forList.length * 80 - 10 + 20;
-      let maxWidth = document.querySelector(".expression-bar").offsetWidth - 28;
-      if (fixedWidth > maxWidth) {
-        fixedWidth = maxWidth;
-      }
-      quickPreviewEl.style.width = fixedWidth + "px";
-      previewListEl.style.height = fixedWidth + "px";
-    }
-  }
-
-  /**
-   * 快速选择栏插入位置
-   */
-  const chatMessagePosition = document.querySelector(".expression-bar .sticker-wrapper.expression-bar-inner");
-  const expressionBar = document.querySelector(".expression-bar");
-  if (!chatMessagePosition || !expressionBar) {
-    return;
-  }
-  if (!quickPreviewEl) {
-    quickPreviewEl = document.createElement("div");
-    quickPreviewEl.classList.add("lite-tools-sticker-bar");
-    previewListEl = document.createElement("div");
-    previewListEl.classList.add("preview-list");
-    quickPreviewEl.appendChild(previewListEl);
-
+  if (document.querySelector(".expression-bar") && first("expression-bar")) {
     // 监听窗口宽度变化
     const resizeObserver = new ResizeObserver(changeListSize);
     resizeObserver.observe(document.querySelector(".expression-bar"));
+  }
 
-    // 处理鼠标相关事件
-    quickPreviewEl.addEventListener("mousedown", (event) => {
-      if (event.target.closest(".preview-item")) {
-        mouseDown(event);
+  if (first("initLocalEmoticons")) {
+    if (options.localEmoticons.commonlyEmoticons) {
+      const config = await lite_tools.getLocalEmoticonsConfig();
+      const list = config.commonlyEmoticons.map((path, index) => ({ path, index }));
+      if (list.length) {
+        const newEmoticonFolder = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+        folderInfos.unshift(newEmoticonFolder);
+        folderListEl.insertBefore(newEmoticonFolder.folderEl, folderListEl.querySelector(":first-child"));
+        folderIconListEl.insertBefore(newEmoticonFolder.folderIconEl, folderIconListEl.querySelector(":first-child"));
+        newEmoticonFolder.load();
       }
-    });
-    quickPreviewEl.addEventListener("mousemove", (event) => {
-      if (event.target.closest(".preview-item")) {
-        mouseEnter(event);
-      }
-    });
-    quickPreviewEl.addEventListener("click", (event) => {
-      if (event.target.closest(".preview-item")) {
-        insert(event);
-      }
-    });
-    chatMessagePosition.appendChild(quickPreviewEl);
-    changeListSize();
-  } else {
-    chatMessagePosition.appendChild(quickPreviewEl);
-    changeListSize();
+    }
   }
 }
 
@@ -162,14 +202,10 @@ function localEmoticons() {
  * 捕获编辑器实例
  */
 function loadEditorModel() {
-  log("尝试捕获编辑器实例");
-  if (
-    document.querySelector(".ck.ck-content.ck-editor__editable") &&
-    document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance
-  ) {
+  if (document.querySelector(".ck.ck-content.ck-editor__editable")?.ckeditorInstance) {
+    log("获取到编辑器实例");
     ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
-
     const observe = new MutationObserver(quickInsertion);
     observe.observe(document.querySelector(".ck.ck-content.ck-editor__editable"), {
       subtree: true,
@@ -186,9 +222,7 @@ function loadEditorModel() {
  */
 function quickInsertion() {
   if (!options.localEmoticons.enabled || !options.localEmoticons.quickEmoticons) {
-    if (quickPreviewEl?.classList?.contains("show")) {
-      quickPreviewEl?.classList?.remove("show");
-    }
+    quickPreviewEl?.classList?.remove("show");
     return;
   }
 
@@ -199,7 +233,6 @@ function quickInsertion() {
   regOut = lastStr.replace(/<[^>]+>/g, "<element>").match(/\/([^\/]*)(?=<element>$)/);
   let filterEmocicons = [];
   if (regOut) {
-    log(regOut);
     let emoticonsName = regOut[0].slice(1);
     filterEmocicons = emoticonsListArr.filter((emoticons) => emoticons.name.includes(emoticonsName));
   }
@@ -228,59 +261,17 @@ function quickInsertion() {
     for (let i = 0; i < forList.length; i++) {
       const previewItem = document.createElement("div");
       previewItem.classList.add("preview-item");
-      const skiterPreview = document.createElement("div");
-      skiterPreview.classList.add("skiter-preview");
+      const stickerPreview = document.createElement("div");
+      stickerPreview.classList.add("sticker-preview");
       const img = document.createElement("img");
       img.setAttribute("lazy", "");
       img.src = "local:///" + forList[i].path;
-      skiterPreview.appendChild(img);
-      previewItem.appendChild(skiterPreview);
+      stickerPreview.appendChild(img);
+      previewItem.appendChild(stickerPreview);
       previewListEl.appendChild(previewItem);
     }
   } else {
-    if (quickPreviewEl.classList.contains("show")) {
-      quickPreviewEl.classList.remove("show");
-    }
-  }
-}
-
-/**
- * 更新常用表情列表
- * @param {Array} list 常用表情列表
- */
-function updateLocalEmoticonsConfig(config) {
-  const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
-  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
-  log("更新表情尺寸", options.localEmoticons.rowsSize);
-  folderList.setAttribute("style", `--category-item-size: ${(folderList.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
-
-  if (!options.localEmoticons.enabled) {
-    return;
-  }
-
-  log("更新常用表情列表", config);
-
-  if (!options.localEmoticons.commonlyEmoticons) {
-    log("销毁历史表情实例", folderInfos[0]?.id);
-    if (folderInfos[0]?.id === commonlyId) {
-      const emoticon = folderInfos.shift();
-      emoticon.destroy();
-    }
-  } else {
-    const list = config.commonlyEmoticons.map((path, index) => {
-      return { path, index };
-    });
-    if (folderInfos[0]?.id === commonlyId) {
-      const findEmoticons = folderInfos[0];
-      findEmoticons.updateEmoticonList(list);
-      folderList.insertBefore(findEmoticons.folderEl, folderList.querySelector(":first-child"));
-      folderScroll.insertBefore(findEmoticons.folderIconEl, folderScroll.querySelector(":first-child"));
-    } else if (list.length) {
-      const newEmoticonFolder = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
-      folderInfos.unshift(newEmoticonFolder);
-      folderList.insertBefore(newEmoticonFolder.folderEl, folderList.querySelector(":first-child"));
-      folderScroll.insertBefore(newEmoticonFolder.folderIconEl, folderScroll.querySelector(":first-child"));
-    }
+    quickPreviewEl?.classList?.remove("show");
   }
 }
 
@@ -397,41 +388,84 @@ function insert(event) {
 }
 
 /**
- * 加载dom结构
+ * 监听聊天窗口尺寸变化
  */
-async function loadDom() {
-  log("开始加载dom");
-  const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
-  const domUrl = `local:///${plugin_path}/src/config/localEmoticons.html`;
-  log("申明常量");
-  try {
-    await (await fetch(domUrl)).text();
-    log("加载html成功");
-  } catch (err) {
-    log("加载html失败", err);
+function changeListSize() {
+  if (forList.length) {
+    let fixedWidth = forList.length * 80 - 10 + 20;
+    let maxWidth = document.querySelector(".expression-bar").offsetWidth - 28;
+    if (fixedWidth > maxWidth) {
+      fixedWidth = maxWidth;
+    }
+    quickPreviewEl.style.width = fixedWidth + "px";
+    previewListEl.style.height = fixedWidth + "px";
   }
-  const html_text = await (await fetch(domUrl)).text();
-  const parser = new DOMParser();
-  log("创建实例");
-  htmlDom = parser.parseFromString(html_text, "text/html");
-  log("创建引用");
-  htmlDom.querySelectorAll("section").forEach((el) => {
-    barIcon.appendChild(el);
-  });
+}
 
-  // 表情选择面板
-  const emoticonsMain = barIcon.querySelector(".lite-tools-local-emoticons-main");
+/**
+ * 初始化图标
+ * @returns {Element}
+ */
+function initBarIcon() {
+  const qTooltips = document.createElement("div");
+  const qTooltipsContent = document.createElement("div");
+  const icon = document.createElement("i");
+  const barIcon = document.createElement("div");
 
-  // 加载本地表情包
-  const emoticonsList = await lite_tools.getLocalEmoticonsList();
-  appendEmoticons(emoticonsList);
+  barIcon.classList.add("lite-tools-bar");
+  barIcon.appendChild(qTooltips);
 
-  // 获取表情包配置文件
-  const config = await lite_tools.getLocalEmoticonsConfig();
-  updateLocalEmoticonsConfig(config);
+  qTooltips.classList.add("lite-tools-q-tooltips");
+  qTooltips.addEventListener("click", openLocalEmoticons);
+  qTooltips.appendChild(icon);
+  qTooltips.appendChild(qTooltipsContent);
+
+  qTooltipsContent.classList.add("lite-tools-q-tooltips__content");
+  qTooltipsContent.innerText = "本地表情";
+
+  icon.classList.add("lite-tools-q-icon");
+  icon.innerHTML = localEmoticonsIcon;
+
+  return barIcon;
+}
+
+/**
+ * 本地表情主窗口元素
+ * @typedef {Object} EmoticonsMainElements
+ * @property {Element} emoticonsMainEl - 主窗口元素
+ * @property {Element} folderListEl - 文件夹列表元素
+ * @property {Element} folderIconListEl - 文件夹图标列表元素
+ */
+
+/**
+ * 加载DOM元素
+ * @function
+ * @returns {EmoticonsMainElements} 包含本地表情主窗口相关元素的对象
+ */
+function loadDom() {
+  log("开始加载dom");
+  barIcon.insertAdjacentHTML("beforeend", localEmoticonsHTML);
+
+  /**
+   * 本地表情面板
+   * @type {Element}
+   */
+  const emoticonsMainEl = barIcon.querySelector(".lite-tools-local-emoticons-main");
+
+  /**
+   * 表情文件夹列表
+   * @type {Element}
+   */
+  const folderListEl = barIcon.querySelector(".folder-list");
+
+  /**
+   * 表情文件夹图标列表
+   * @type {Element}
+   */
+  const folderIconListEl = barIcon.querySelector(".folder-icon-list .folder-scroll");
 
   // 监听列表滚动
-  emoticonsMain.querySelector(".folder-list").addEventListener(
+  emoticonsMainEl.querySelector(".folder-list").addEventListener(
     "scroll",
     debounce((event) => {
       // 显示区域高度
@@ -474,7 +508,7 @@ async function loadDom() {
   );
 
   // 处理鼠标相关事件
-  emoticonsMain.addEventListener("mousedown", (event) => {
+  emoticonsMainEl.addEventListener("mousedown", (event) => {
     if (event.target.closest(".category-item")) {
       if (event.button === 0) {
         mouseDown(event);
@@ -483,12 +517,12 @@ async function loadDom() {
       }
     }
   });
-  emoticonsMain.addEventListener("mousemove", (event) => {
+  emoticonsMainEl.addEventListener("mousemove", (event) => {
     if (event.target.closest(".category-item")) {
       mouseEnter(event);
     }
   });
-  emoticonsMain.addEventListener("click", (event) => {
+  emoticonsMainEl.addEventListener("click", (event) => {
     if (event.target.closest(".category-item")) {
       insert(event);
     } else if (event.target.closest(".folder-icon-item")) {
@@ -513,6 +547,50 @@ async function loadDom() {
     lite_tools.deleteCommonlyEmoticons(targetElement.path);
     closeContextMenu();
   });
+
+  // 设置默认每行显示数量
+  folderListEl.setAttribute("style", `--category-item-size: ${(folderListEl.offsetWidth - 12) / options.localEmoticons.rowsSize}px;`);
+
+  return { emoticonsMainEl, folderListEl, folderIconListEl };
+}
+
+/**
+ * 快捷选择表情元素
+ * @typedef {Object} InitQuickPreviewElements
+ * @property {Element} quickPreviewEl - 悬浮托盘元素
+ * @property {Element} previewListEl - 表情列表元素
+ */
+
+/**
+ * 初始化快捷表情元素
+ * @function
+ * @returns {InitQuickPreviewElements} 包含快捷输入表情元素的对象
+ */
+function initQuickPreview() {
+  const quickPreviewEl = document.createElement("div");
+  const previewListEl = document.createElement("div");
+  previewListEl.classList.add("preview-list");
+  quickPreviewEl.classList.add("lite-tools-sticker-bar");
+  quickPreviewEl.appendChild(previewListEl);
+
+  // 处理鼠标相关事件
+  quickPreviewEl.addEventListener("mousedown", (event) => {
+    if (event.target.closest(".preview-item")) {
+      mouseDown(event);
+    }
+  });
+  quickPreviewEl.addEventListener("mousemove", (event) => {
+    if (event.target.closest(".preview-item")) {
+      mouseEnter(event);
+    }
+  });
+  quickPreviewEl.addEventListener("click", (event) => {
+    if (event.target.closest(".preview-item")) {
+      insert(event);
+    }
+  });
+
+  return { quickPreviewEl, previewListEl };
 }
 
 /**
@@ -520,7 +598,7 @@ async function loadDom() {
  */
 function closeContextMenu() {
   showContextMenu = false;
-  barIcon.querySelector(".skiter-preview.active").classList.remove("active");
+  barIcon.querySelector(".sticker-preview.active").classList.remove("active");
   barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
 }
 
@@ -582,30 +660,29 @@ function jumpFolder(event) {
 
 /**
  * 加载表情包列表
- * @param {Array} emoticonsList 表情包列表
+ * @param {Null} _ 无用字段
+ * @param {Array} newEmoticonsList 表情包列表
  */
-function appendEmoticons(newEmoticonsList) {
+function appendEmoticons(_, newEmoticonsList) {
   log("获取到表情对象", newEmoticonsList);
   // 平铺表情对象数组
   emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
     return emoticons.list;
   });
 
-  const folderList = document.querySelector(".lite-tools-local-emoticons-main .folder-list");
-  const folderScroll = document.querySelector(".folder-icon-list .folder-scroll");
   // 插入新的表情数据
   newEmoticonsList.forEach((folder, index) => {
     const findEmoticons = folderInfos.find((item) => item.id === folder.id);
     if (findEmoticons) {
       findEmoticons.index = folder.index;
       findEmoticons.updateEmoticonList(folder.list);
-      folderList.appendChild(findEmoticons.folderEl);
-      folderScroll.appendChild(findEmoticons.folderIconEl);
+      folderListEl.appendChild(findEmoticons.folderEl);
+      folderIconListEl.appendChild(findEmoticons.folderIconEl);
     } else {
       const newEmoticonFolder = new emoticonFolder(folder.name, folder.list, folder.id, folder.list[0].path, folder.index, "folder");
       folderInfos.push(newEmoticonFolder);
-      folderList.appendChild(newEmoticonFolder.folderEl);
-      folderScroll.appendChild(newEmoticonFolder.folderIconEl);
+      folderListEl.appendChild(newEmoticonFolder.folderEl);
+      folderIconListEl.appendChild(newEmoticonFolder.folderIconEl);
     }
   });
   // 销毁无用实例
@@ -712,9 +789,12 @@ class emoticonFolder {
       categoryItemEl.path = item.path;
       categoryItemEl.index = item.index;
       const skiterPreviewEl = document.createElement("div");
-      skiterPreviewEl.classList.add("skiter-preview");
+      skiterPreviewEl.classList.add("sticker-preview");
       const imgEl = document.createElement("img");
       categoryItemEl.imgEl = imgEl;
+      if (this.isLoad) {
+        imgEl.src = this.protocolPrefix + categoryItemEl.path;
+      }
       skiterPreviewEl.appendChild(imgEl);
       categoryItemEl.append(skiterPreviewEl);
       this.categoryItemsEl.splice(item.index, 0, categoryItemEl);
@@ -763,14 +843,10 @@ emoticonFolder.prototype.protocolPrefix = "local:///";
  * 打开表情包管理菜单
  */
 function openLocalEmoticons() {
-  if (htmlDom) {
-    if (showEmoticons) {
-      closeLocalEmoticons();
-    } else {
-      showLocalEmoticons();
-    }
+  if (showEmoticons) {
+    closeLocalEmoticons();
   } else {
-    log("表情菜单还没有加载完成");
+    showLocalEmoticons();
   }
 }
 
