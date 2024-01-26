@@ -449,7 +449,7 @@ function onLoad(plugin) {
         filters: [
           {
             name: "img",
-            extensions: ["jpg", "png", "gif"],
+            extensions: ["jpg", "png", "gif", "mp4"],
           },
         ], //打开按钮
         buttonLabel: "选择", //回调结果渲染到img标签上
