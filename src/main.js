@@ -58,11 +58,6 @@ let messageRecallJson;
  * 本地表情配置路径
  */
 let localEmoticonsPath;
-
-/**
- * 所有打开过的窗口对象
- */
-const listenList = [];
 /**
  * 内存缓存消息记录-用于根据消息id获取撤回原始内容
  */
@@ -105,7 +100,7 @@ onBeforeUpdateOptions((newOptions) => {
   if (newOptions.localEmoticons.commonlyNum !== options.localEmoticons.commonlyNum) {
     if (newOptions.localEmoticons.commonlyNum < options.localEmoticons.commonlyNum) {
       localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.splice(0, newOptions.localEmoticons.commonlyNum);
-      globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+      globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
       fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
   }
@@ -116,7 +111,7 @@ const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "sett
 onUpdateOptions((opt) => {
   log("更新配置调用");
   fs.writeFileSync(settingsPath, JSON.stringify(opt, null, 4));
-  globalBroadcast(listenList, "LiteLoader.lite_tools.updateOptions", opt);
+  globalBroadcast("LiteLoader.lite_tools.updateOptions", opt);
 });
 
 // 加载插件时触发
@@ -207,7 +202,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(styleSassPath).css;
           fs.writeFileSync(stylePath, cssText);
-          globalBroadcast(listenList, "LiteLoader.lite_tools.updateStyle", cssText);
+          globalBroadcast("LiteLoader.lite_tools.updateStyle", cssText);
         }, 100),
       );
       // 监听并编译global.scss
@@ -217,7 +212,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(globalScssPath).css;
           fs.writeFileSync(globalPath, cssText);
-          globalBroadcast(listenList, "LiteLoader.lite_tools.updateGlobalStyle", cssText);
+          globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle", cssText);
         }, 100),
       );
       // 监听并编译view.scss
@@ -227,7 +222,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(settingScssPath).css;
           fs.writeFileSync(settingPath, cssText);
-          globalBroadcast(listenList, "LiteLoader.lite_tools.updateSettingStyle");
+          globalBroadcast("LiteLoader.lite_tools.updateSettingStyle");
         }, 100),
       );
     } catch {
@@ -251,8 +246,8 @@ function onLoad(plugin) {
 
     // 如果没有启用历史表情，则不推送，但是仍旧要更新配置文件
     localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateEmoticons", emoticonsList);
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
@@ -278,7 +273,7 @@ function onLoad(plugin) {
 
   recordMessageRecallIdList.onNewRecallMsg(() => {
     localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+    globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
   });
 
   // 获取本地保存的撤回消息数量
@@ -382,7 +377,7 @@ function onLoad(plugin) {
     // 如果已经有这个表情了，则更新位置
     newSet.delete(localPath);
     localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
-    globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
@@ -513,7 +508,7 @@ function onLoad(plugin) {
       deleteFilesInDirectory(messageRecallPath, "latestRecallMessage.json");
       messageRecallFileList = [];
       localRecallMsgNum = 0;
-      globalBroadcast(listenList, "LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+      globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
       log("清空本地消息记录");
     }
   });
@@ -586,9 +581,6 @@ function deleteFilesInDirectory(directoryPath, fileToPreserve) {
 
 // 创建窗口时触发
 function onBrowserWindowCreated(window, plugin) {
-  // 新窗口添加到推送列表
-  listenList.push(window);
-
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
@@ -651,6 +643,7 @@ function onBrowserWindowCreated(window, plugin) {
         uid: args[3]?.[1]?.[1]?.peerUid,
         guildId: args[3]?.[1]?.[1]?.peer?.guildId,
       };
+      globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
     }
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
       log("切换聚焦窗口", args[3]?.[1]?.[1]);
@@ -659,6 +652,7 @@ function onBrowserWindowCreated(window, plugin) {
         uid: args[3]?.[1]?.[1].peer.peerUid,
         guildId: args[3]?.[1]?.[1]?.peer.guildId,
       };
+      globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
     }
   }
 
@@ -843,7 +837,7 @@ function onBrowserWindowCreated(window, plugin) {
             recallTime: msgItem.recallTime, // 撤回时间
           };
           findInCatch.lite_tools_recall = recallData;
-          globalBroadcast(listenList, "LiteLoader.lite_tools.onMessageRecall", {
+          globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
             msgId: findInCatch.msgId,
             recallData,
           });
@@ -885,7 +879,7 @@ function findEventIndex(args, eventName) {
 // 重置常用表情列表
 function resetCommonlyEmoticons() {
   localEmoticonsConfig.commonlyEmoticons = [];
-  globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
@@ -905,7 +899,7 @@ function addCommonlyEmoticons(event, src) {
     localEmoticonsConfig.commonlyEmoticons.pop();
   }
   log("历史表情列表", localEmoticonsConfig);
-  globalBroadcast(listenList, "LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
