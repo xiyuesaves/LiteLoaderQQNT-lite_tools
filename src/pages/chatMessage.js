@@ -19,6 +19,8 @@ import { touchMoveSelectin } from "../render_modules/touchMoveSelectin.js";
 import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
 import { localEmoticons } from "../render_modules/localEmoticons.js";
+// 消息后缀提示模块
+import "../render_modules/messageTail.js";
 
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");

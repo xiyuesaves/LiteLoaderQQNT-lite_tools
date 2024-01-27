@@ -770,3 +770,9 @@
 .lite-tools-sticker-bar .preview-list .preview-item:last-child {
   margin-bottom: 0;
 }
+
+.lite-tools-tail-tips {
+  font-size: 12px;
+  margin-right: 8px;
+  opacity: 0.6;
+}

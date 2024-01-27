@@ -69,6 +69,7 @@ async function onConfigView(view) {
   // 获取侧边栏按钮列表
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
   const sidebar = view.querySelector(".sidebar ul");
+  const textArea = view.querySelector(".textArea ul");
 
   log("开始添加功能");
 
@@ -76,10 +77,10 @@ async function onConfigView(view) {
   addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
 
   // 添加输入框上方功能列表
-  addOptionLi(options.textAreaFuncList, view.querySelector(".textArea ul"), "textAreaFuncList", "disabled");
+  addOptionLi(options.textAreaFuncList, textArea, "textAreaFuncList", "disabled");
 
   // 添加聊天框上方功能列表
-  addOptionLi(options.chatAreaFuncList, view.querySelector(".chatArea ul"), "chatAreaFuncList", "disabled");
+  addOptionLi(options.chatAreaFuncList, textArea, "chatAreaFuncList", "disabled");
 
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
@@ -321,6 +322,7 @@ async function onConfigView(view) {
 
   // 消息后缀
   addSwitchEventlistener("tail.enabled", ".msg-tail");
+  addSwitchEventlistener("tail.tips", ".msg-tail-tips");
   const listView = view.querySelector(".vertical-list-item .tail-ruls-list");
   const tailList = new TailList(listView, options.tail.list);
   view.querySelector(".create-new-tail-item").addEventListener("click", () => {

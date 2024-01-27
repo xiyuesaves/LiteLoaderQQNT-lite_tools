@@ -60,4 +60,6 @@ const localEmoticonsHTML = `<div class="full-screen-preview">
 </div>
 </div>`;
 
-export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem, localEmoticonsHTML };
+const messageTailTips = `<p title="%title%" class="lite-tools-tail-tips">%s%</p>`;
+
+export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem, localEmoticonsHTML, messageTailTips };

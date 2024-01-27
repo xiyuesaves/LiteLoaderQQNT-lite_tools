@@ -51,6 +51,7 @@
   },
   "tail": {
     "enabled": false,
+    "tips": false,
     "list": []
   },
   "textAreaFuncList": [],
