@@ -36,7 +36,12 @@ function addEventqContextMenu() {
   let selectText = "";
   let isRightClick = false;
   let imagePath = "";
-  document.addEventListener("mouseup", (event) => {
+  let eventName = "mouseup";
+  const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+  if (isMac) {
+    eventName = "mousedown";
+  }
+  document.addEventListener(eventName, (event) => {
     if (event.button === 2) {
       isRightClick = true;
       selectText = window.getSelection().toString();
