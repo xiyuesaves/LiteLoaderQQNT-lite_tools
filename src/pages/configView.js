@@ -70,6 +70,7 @@ async function onConfigView(view) {
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
   const sidebar = view.querySelector(".sidebar ul");
   const textArea = view.querySelector(".textArea ul");
+  const chatArea = view.querySelector(".chatArea ul");
 
   log("开始添加功能");
 
@@ -80,7 +81,7 @@ async function onConfigView(view) {
   addOptionLi(options.textAreaFuncList, textArea, "textAreaFuncList", "disabled");
 
   // 添加聊天框上方功能列表
-  addOptionLi(options.chatAreaFuncList, textArea, "chatAreaFuncList", "disabled");
+  addOptionLi(options.chatAreaFuncList, chatArea, "chatAreaFuncList", "disabled");
 
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
