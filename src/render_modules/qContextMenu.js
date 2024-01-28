@@ -58,8 +58,6 @@ function addEventqContextMenu() {
     }
   });
   new MutationObserver(() => {
-    // log(document.querySelector(".q-context-menu").innerHTML);
-
     const qContextMenu = document.querySelector(".q-context-menu");
     // 在网页搜索
     if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
