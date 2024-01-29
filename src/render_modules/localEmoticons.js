@@ -5,6 +5,7 @@ import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
+import { isMac } from "./isMac.js";
 const log = new logs("本地表情包模块").log;
 /**
  * 图标元素
@@ -348,7 +349,10 @@ function insert(event) {
   }
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   if (ckeditEditorModel) {
-    const src = decodeURI(event.target.querySelector("img").src.replace("local:///", "").replace(/\//g, "\\"));
+    let src = decodeURI(event.target.querySelector("img").src.replace("local:///", ""));
+    if (!isMac) {
+      src = src.replace(/\//g, "\\");
+    }
     // 更新常用表情
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);

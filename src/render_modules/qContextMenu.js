@@ -1,5 +1,6 @@
 import { options } from "./options.js";
 import { searchIcon } from "./svg.js";
+import { isMac } from "./isMac.js";
 import { logs } from "./logs.js";
 const log = new logs("右键菜单").log;
 /**
@@ -37,7 +38,6 @@ function addEventqContextMenu() {
   let isRightClick = false;
   let imagePath = "";
   let eventName = "mouseup";
-  const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
   if (isMac) {
     eventName = "mousedown";
   }
