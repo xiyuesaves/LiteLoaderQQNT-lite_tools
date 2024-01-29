@@ -350,9 +350,6 @@ function insert(event) {
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   if (ckeditEditorModel) {
     let src = decodeURI(event.target.querySelector("img").src.replace("local:///", ""));
-    if (!isMac) {
-      src = src.replace(/\//g, "\\");
-    }
     // 更新常用表情
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);
