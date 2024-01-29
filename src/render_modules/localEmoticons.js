@@ -1,11 +1,11 @@
 import { options, updateOptions } from "./options.js";
 import { localEmoticonsHTML } from "./HTMLtemplate.js";
 import { debounce } from "./debounce.js";
-import { logs } from "./logs.js";
+import { Logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
-const log = new logs("本地表情包模块").log;
+const log = new Logs("本地表情包模块");
 /**
  * 图标元素
  * @type {Element}

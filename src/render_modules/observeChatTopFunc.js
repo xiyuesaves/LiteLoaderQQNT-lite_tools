@@ -1,7 +1,7 @@
 import { first } from "./first.js";
 import { options, updateOptions } from "./options.js";
-import { logs } from "./logs.js";
-const log = new logs("窗口顶部功能列表").log;
+import { Logs } from "./logs.js";
+const log = new Logs("窗口顶部功能列表");
 
 let observe;
 /**

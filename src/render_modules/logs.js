@@ -8,27 +8,33 @@ window.LT_logs = () => {
       console.log(`[${el.name}]`, ...el.log);
     });
   } else {
-    console.log("当前没有启用debug");
+    console.log("[日志模块]当前没有启用debug");
   }
 };
 
-class logs {
+class Logs {
   constructor(moduleName) {
     this.moduleName = moduleName;
     if (options.debug.console) {
-      this.log = (...args) => {
-        console.log(`[${this.moduleName}]`, ...args);
-        // lite_tools.log(`[${this.moduleName}]`, ...args);
-        // 没有开启debug开关的情况下，阻止保存log数据
-        logList.push({
-          name: this.moduleName,
-          log: [...args],
-        });
-      };
+      return this.logToConsole.bind(this);
     } else {
-      this.log = () => {};
+      return this.emptyFunction;
     }
   }
+
+  logToConsole(...args) {
+    console.log(`[${this.moduleName}]`, ...args);
+    this.saveToLogList(args);
+  }
+
+  saveToLogList(logData) {
+    logList.push({
+      name: this.moduleName,
+      log: logData,
+    });
+  }
+
+  emptyFunction() {}
 }
 
-export { logs };
+export { Logs };

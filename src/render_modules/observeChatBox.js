@@ -1,6 +1,6 @@
 import { options } from "./options.js";
-import { logs } from "./logs.js";
-const log = new logs("阻止回复自带At").log;
+import { Logs } from "./logs.js";
+const log = new Logs("阻止回复自带At");
 
 let ckeditorInstance;
 /**

@@ -1,5 +1,5 @@
-import { logs } from "./logs.js";
-const log = new logs("QQ通信模块").log;
+import { Logs } from "./logs.js";
+const log = new Logs("QQ通信模块");
 let webContentId = lite_tools.getWebContentId();
 
 if (!webContentId) {

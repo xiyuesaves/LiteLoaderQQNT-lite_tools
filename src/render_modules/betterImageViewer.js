@@ -1,6 +1,6 @@
 import { options } from "./options.js";
-import { logs } from "./logs.js";
-const log = new logs("快速关闭图片").log;
+import { Logs } from "./logs.js";
+const log = new Logs("快速关闭图片");
 /**
  * 媒体预览增强
  */

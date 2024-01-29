@@ -2,8 +2,8 @@
 let styleText = "";
 import { options, updateOptions } from "./options.js";
 import { first } from "./first.js";
-import { logs } from "./logs.js";
-const log = new logs("背景模块").log;
+import { Logs } from "./logs.js";
+const log = new Logs("背景模块");
 
 updateOptions(updateWallpaper);
 

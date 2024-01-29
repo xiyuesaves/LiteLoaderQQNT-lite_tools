@@ -3,8 +3,8 @@ import { deleteIcon, foldIcon } from "./svg.js";
 import { options } from "./options.js";
 import { debounce } from "./debounce.js";
 // 配置界面日志
-import { logs } from "./logs.js";
-const log = new logs("后缀实例").log;
+import { Logs } from "./logs.js";
+const log = new Logs("后缀实例");
 
 class TailList {
   constructor(view, tailList) {

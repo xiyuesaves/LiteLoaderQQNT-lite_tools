@@ -1,6 +1,6 @@
 import { options } from "./options.js";
-import { logs } from "./logs.js";
-const log = new logs("全局样式").log;
+import { Logs } from "./logs.js";
+const log = new Logs("全局样式");
 
 /**
  * 注入全局样式

@@ -1,6 +1,6 @@
 const projectLatestUrl = "https://api.github.com/repos/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest";
-import { logs } from "./logs.js";
-const log = new logs("检查更新模块").log;
+import { Logs } from "./logs.js";
+const log = new Logs("检查更新模块");
 /**
  * 对比版本号
  * @param {String} currentVersion 当前版本

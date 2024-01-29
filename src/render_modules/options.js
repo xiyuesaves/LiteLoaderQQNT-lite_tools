@@ -81,8 +81,8 @@
  */
 const options = lite_tools.getOptions();
 const updateFunctions = [];
-// import { logs } from "./logs.js";
-// const log = new logs("配置模块").log;
+// import { Logs } from "./logs.js";
+// const log = new Logs("配置模块");
 
 lite_tools.updateOptions((event, newOpt) => {
   Object.keys(newOpt).forEach((key) => {

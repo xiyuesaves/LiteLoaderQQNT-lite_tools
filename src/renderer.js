@@ -5,8 +5,8 @@
 
 import { hookVue3 } from "./render_modules/hookVue3.js";
 import { initStyle } from "./render_modules/initStyle.js";
-import { logs } from "./render_modules/logs.js";
-const log = new logs("主渲染进程模块").log;
+import { Logs } from "./render_modules/logs.js";
+const log = new Logs("主渲染进程模块");
 
 function onLoad() {
   hookVue3();

@@ -23,8 +23,8 @@ import { localEmoticons } from "../render_modules/localEmoticons.js";
 import "../render_modules/messageTail.js";
 
 // log
-import { logs } from "../render_modules/logs.js";
-const log = new logs("主窗口").log;
+import { Logs } from "../render_modules/logs.js";
+const log = new Logs("主窗口");
 
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");

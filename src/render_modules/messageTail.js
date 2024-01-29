@@ -1,9 +1,9 @@
 // 消息后缀模块
-import { logs } from "./logs.js";
+import { Logs } from "./logs.js";
 import { messageTailTips } from "./HTMLtemplate.js";
 import { options, updateOptions } from "./options.js";
 import { debounce } from "./debounce.js";
-const log = new logs("消息后缀").log;
+const log = new Logs("消息后缀");
 
 log("模块加载");
 let peer = lite_tools.getPeer();

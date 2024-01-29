@@ -1,8 +1,8 @@
 import { options } from "./options.js";
 import { searchIcon } from "./svg.js";
 import { isMac } from "./isMac.js";
-import { logs } from "./logs.js";
-const log = new logs("右键菜单").log;
+import { Logs } from "./logs.js";
+const log = new Logs("右键菜单");
 /**
  * 右键菜单插入功能方法
  * @param {Element} qContextMenu 右键菜单元素

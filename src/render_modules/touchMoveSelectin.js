@@ -1,6 +1,6 @@
 import { options } from "./options.js";
-import { logs } from "./logs.js";
-const log = new logs("阻止滑动选择").log;
+import { Logs } from "./logs.js";
+const log = new Logs("阻止滑动选择");
 let listenTarget = false;
 /**
  * 阻止拖拽多选消息

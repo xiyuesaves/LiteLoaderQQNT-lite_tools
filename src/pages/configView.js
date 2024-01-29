@@ -18,8 +18,8 @@ import { getUserInfo, goMainWindowScene } from "../render_modules/nativeCall.js"
 import { pluginIcon } from "../render_modules/svg.js";
 
 // 配置界面日志
-import { logs } from "../render_modules/logs.js";
-const log = new logs("配置界面").log;
+import { Logs } from "../render_modules/logs.js";
+const log = new Logs("配置界面");
 
 // 打开设置界面时触发
 async function onConfigView(view) {
