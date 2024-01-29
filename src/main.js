@@ -128,19 +128,21 @@ function onLoad(plugin) {
   messageRecallJson = path.join(pluginDataPath, "/messageRecall/latestRecallMessage.json");
   localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
 
-  // ipcMain.emit = ipcMain.emit.bind(ipcMain);
-  // ipcMain.emit(
-  //   channel,
-  //   {
-  //     sender: {
-  //       send: (...args) => {
-  //         resolve(args);
+  ipcMain.emit = ipcMain.emit.bind(ipcMain);
+  // new Promise((resolve) => {
+  //   ipcMain.emit(
+  //     "IPC_UP_2",
+  //     {
+  //       sender: {
+  //         send: (...args) => {
+  //           resolve(args);
+  //         },
   //       },
   //     },
-  //   },
-  //   { type: "request", callbackId: uuid, eventName: eventName },
-  //   [cmdName, ...args],
-  // );
+  //     { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-FsApi-2" },
+  //     ["getFileType", ...args],
+  //   );
+  // });
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
