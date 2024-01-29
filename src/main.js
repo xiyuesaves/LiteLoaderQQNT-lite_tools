@@ -128,7 +128,7 @@ function onLoad(plugin) {
   messageRecallJson = path.join(pluginDataPath, "/messageRecall/latestRecallMessage.json");
   localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
 
-  ipcMain.emit = ipcMain.emit.bind(ipcMain);
+  // ipcMain.emit = ipcMain.emit.bind(ipcMain);
   // ipcMain.emit(
   //   channel,
   //   {
@@ -231,6 +231,7 @@ function onLoad(plugin) {
   }
   // 控制台输出项目logo
   log("轻量工具箱已加载");
+  log("ipcMain对象",ipcMain.emit);
 
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
