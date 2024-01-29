@@ -5,7 +5,6 @@ import { logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
-import { isMac } from "./isMac.js";
 const log = new logs("本地表情包模块").log;
 /**
  * 图标元素
