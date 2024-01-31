@@ -622,8 +622,8 @@ function onBrowserWindowCreated(window, plugin) {
               return true;
             }
           });
-          // 必须含有peerUid且匹配到后缀数据且聊天类型为群组才会执行
-          if (peerUid && tail && chatType === 2) {
+          // 必须含有peerUid且匹配到后缀数据
+          if (peerUid && tail) {
             const tailContext = tail.content;
             const newLine = tail.newLine;
             args[3][1][1].msgElements.forEach((el) => {

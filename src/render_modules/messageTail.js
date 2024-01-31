@@ -36,7 +36,7 @@ function messageTail() {
         return true;
       }
     });
-    if (tail && options.tail.enabled && peer?.chatType === "group") {
+    if (tail && options.tail.enabled) {
       container.insertAdjacentHTML(
         "afterbegin",
         messageTailTips.replace("%s%", `${tail.content}`).replace("%title%", `下一条消息将附带 ${tail.content} 后缀`),

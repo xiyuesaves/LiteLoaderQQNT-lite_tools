@@ -12,7 +12,7 @@ const tailElement = `<div class="ruls-item">
   </div>
   <div class="tail-opt">
     匹配群组：
-    <input placeholder="留空为全局匹配，多个群用“,”隔开" spellcheck="false" class="input-text-active-show rule-group-list" />
+    <input placeholder="留空为全局匹配，多个匹配项用“,”隔开" spellcheck="false" class="input-text-active-show rule-group-list" />
   </div>
 </div>
 <div class="ruls-control">
