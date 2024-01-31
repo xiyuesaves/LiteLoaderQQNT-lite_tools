@@ -52,7 +52,6 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 待办事项                                   |
 | ------------------------------------------ |
 | 优化本地表情加载过程                       |
-| 消息发送按钮旁添加当前群组匹配到的后缀内容 |
 | 右键菜单添加图片到本地表情                 |
 | 生成群友怪话图片                           |
 
