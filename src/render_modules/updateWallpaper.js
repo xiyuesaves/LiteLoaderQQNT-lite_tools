@@ -21,6 +21,7 @@ async function updateWallpaper() {
     let backgroundImage = "";
     // 链接被判断为图片类型
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
+      document.querySelector(".background-wallpaper-video")?.removeEventListener(restartVideo);
       document.querySelector(".background-wallpaper-video")?.remove();
       backgroundImage = `:root{--background-wallpaper:url("${backgroundUrl}")}`;
       backgroundStyle.textContent = styleText + "\n" + backgroundImage;
@@ -34,8 +35,9 @@ async function updateWallpaper() {
         videoEl = document.createElement("video");
         videoEl.setAttribute("muted", "");
         videoEl.setAttribute("autoplay", "");
-        videoEl.setAttribute("loop", "");
+        videoEl.setAttribute("loop", "true");
         videoEl.setAttribute("src", backgroundUrl);
+        videoEl.addEventListener("ended", restartVideo);
         videoEl.classList.add("background-wallpaper-video");
         videoEl.volume = 0;
         if (document.querySelector(".tab-container")) {
@@ -66,6 +68,12 @@ async function updateWallpaper() {
   } else {
     log("重载背景");
   }
+}
+
+function restartVideo(event) {
+  log("从头播放");
+  event.target.currentTime = 0.1; //setting to zero breaks iOS 3.2, the value won't update, values smaller than 0.1 was causing bug as well.
+  event.target.play();
 }
 
 export { updateWallpaper };
