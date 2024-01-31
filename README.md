@@ -1,5 +1,5 @@
 <p align=center>
-  <img width="192" height="192" src="./icon.png" />
+  <img width="192" alt="icon" height="192" src="./icon.png" />
 </p>
 
 <h1 align="center">轻量工具箱</h1>
@@ -57,3 +57,24 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 - lite_tools 不会通过任何方式强制收取费用，或对使用者提出物质条件。
 - lite_tools 由整个开源社区维护，并不是属于某个个体的作品，所有贡献者都享有其作品的著作权。
 - lite_tools 禁止用于任何非法用途，插件开发属学习与研究目的，仅自用，未提供给任何第三方使用。任何不当使用导致的任何侵权问题责任自负。
+
+## Star History
+
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="
+      https://api.star-history.com/svg?repos=xiyuesaves/LiteLoaderQQNT-lite_tools&type=Date&theme=dark
+    "
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="
+      https://api.star-history.com/svg?repos=xiyuesaves/LiteLoaderQQNT-lite_tools&type=Date
+    "
+  />
+  <img
+    alt="Star History Chart"
+    src="https://api.star-history.com/svg?repos=xiyuesaves/LiteLoaderQQNT-lite_tools&type=Date"
+  />
+</picture>
