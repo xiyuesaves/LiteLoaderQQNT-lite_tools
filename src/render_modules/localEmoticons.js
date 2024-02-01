@@ -241,7 +241,10 @@ function quickInsertion() {
     if (!quickPreviewEl.classList.contains("show")) {
       quickPreviewEl.classList.add("show");
     }
-
+    if (options.localEmoticons.quickEmoticonsAutoInputOnlyOne === true && filterEmocicons.length === 1) {
+      insertToEditor(filterEmocicons[0].path);
+      return
+    }
     // 如果没有过滤数据，则使用全部图片
     forList = filterEmocicons.length ? filterEmocicons : emoticonsListArr;
 
@@ -339,16 +342,17 @@ function mouseEnter(event) {
 
 /**
  * 插入表情包到编辑器
- * @param {MouseEvent} event
+ * @param {MouseEvent} src 表情包路径
+ * @param {Boolean} altKey 是否按下alt键
+ * @param {Boolean} ctrlKey 是否按下ctrl键
  * @returns
  */
-function insert(event) {
+function insertToEditor(src, altKey = false, ctrlKey = false) {
   if (!insertImg) {
     return;
   }
   // 操作输入框代码参考：https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/blob/4ef44f7010d0150c3577d664b9945af62a7bc54b/src/renderer.js#L208C5-L208C15
   if (ckeditEditorModel) {
-    let src = decodeURI(event.target.querySelector("img").src.replace("local:///", ""));
     // 更新常用表情
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);
@@ -363,7 +367,7 @@ function insert(event) {
       });
     }
 
-    if (event.altKey) {
+    if (altKey) {
       log("直接发送图片");
       const peer = lite_tools.getPeer();
       sendMessage(peer, [{ type: "image", path: src }]);
@@ -381,10 +385,19 @@ function insert(event) {
 
     showEmoticons = false;
     // 如果按下了ctrl键，则不关闭窗口面板
-    if (!event.ctrlKey) {
+    if (!ctrlKey) {
       closeLocalEmoticons();
     }
   }
+}
+
+/**
+ * 插入表情包到编辑器
+ * @param {MouseEvent} event
+ * @returns
+ */
+function insert(event) {
+  insertToEditor(decodeURI(event.target.querySelector("img").src.replace("local:///", "")), event.altKey, event.ctrlKey);
 }
 
 /**
