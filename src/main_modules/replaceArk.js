@@ -1,12 +1,12 @@
 // appid对应小程序名称
-const appidName = new Map([
+const appIdToName = new Map([
   ["1109224783", "微博"],
   ["1109937557", "哔哩哔哩"],
 ]);
 
 // 获取ark卡片对应内容
 function getArkData(json) {
-  return json.meta.detail_1.title || appidName.get(json.meta.detail_1.appid) || json.meta.detail_1.desc;
+  return json.meta.detail_1.title || appIdToName.get(json.meta.detail_1.appid) || json.meta.detail_1.desc;
 }
 
 // 卡片替换函数
