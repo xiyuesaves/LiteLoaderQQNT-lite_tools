@@ -224,8 +224,13 @@ async function onConfigView(view) {
   // 表情加载优化
   addSwitchEventlistener("localEmoticons.majorization", ".majorization");
 
+  addSwitchEventlistener("localEmoticons.quickEmoticonsAutoInputOnlyOne", ".switchQuickEmoticonsAutoInputOnlyOne");
+
   // 快捷输入表情功能
-  addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons");
+  addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons", (_, enabled) => {
+    view.querySelector(".switchQuickEmoticonsAutoInputOnlyOne").parentNode.classList.toggle("disabled-switch", !enabled);
+  });
+
 
   // 常用表情分类
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons");
