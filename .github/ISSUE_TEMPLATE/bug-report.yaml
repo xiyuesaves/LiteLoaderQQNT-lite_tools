@@ -1,15 +1,9 @@
 name: 提交 Bug
-description: 在使用 轻量工具箱 过程中遇到了错误
+description: 在使用 轻量工具箱 过程中遇到了问题
 title: "[Bug]: "
 labels: ["bug"]
 
 body:
-  - type: markdown
-    attributes:
-      value: |
-        ## 感谢你愿意提交 Bug 报告
-        ### 请在提交前确定没有相同的 Issue 已被提出。
-
   - type: textarea
     id: reproduce-steps
     attributes:
@@ -17,8 +11,5 @@ body:
       description: |
         我们需要执行哪些操作才能让 Bug 出现？
         简洁清晰的重现步骤能够帮助我们更迅速地定位问题所在。
-
-  - type: textarea
-    id: extra-desc
-    attributes:
-      label: 补充说明
+    validations:
+      required: true
