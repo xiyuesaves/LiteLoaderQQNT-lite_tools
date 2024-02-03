@@ -171,10 +171,21 @@ async function createSticker(config) {
   if (options.messageToImage.highResolution) {
     zoom = 2;
   }
-  // Set canvas size
-  canvasEl.width = (4 + 32 + 10 + config.width + 20) * zoom;
-  canvasEl.height = (4 + config.height + 16 + 20) * zoom;
 
+  // 测量用户id长度
+  ctx.save();
+  ctx.font = 12 + "px " + config.fontFamily;
+  const textMetrics = ctx.measureText(config.userName);
+  const userNameWidth = textMetrics.width + 42 + 4;
+  ctx.restore();
+  let canWidth = 4 + 32 + 10 + config.width + 20;
+  if (userNameWidth > canWidth) {
+    canWidth = userNameWidth;
+  }
+  log("宽度", userNameWidth, canWidth);
+  // 设置画布大小
+  canvasEl.width = canWidth * zoom;
+  canvasEl.height = (4 + config.height + 16 + 20) * zoom;
   // 绘制圆形头像
   ctx.save();
   ctx.beginPath();
