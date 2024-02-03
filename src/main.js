@@ -356,6 +356,55 @@ function onLoad(plugin) {
     event.returnValue = peer;
   });
 
+  // 保存图片消息到本地
+  ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (event, fileName, base64) => {
+    log("接收到保存为文件事件");
+    const buffer = Buffer.from(base64.split(",")[1], "base64");
+    if (options.messageToImage.path) {
+      const savePath = path.join(options.messageToImage.path, fileName);
+      log("默认文件路径", savePath);
+      fs.writeFileSync(savePath, buffer, { encoding: null });
+    } else {
+      dialog
+        .showSaveDialog({
+          title: "请选择位置", //默认路径,默认选择的文件
+          properties: ["dontAddToRecent "],
+          message: "选择图片保存位置",
+          defaultPath: fileName,
+        })
+        .then((result) => {
+          log(result);
+          if (!result.canceled) {
+            log("选择了文件夹", result.filePath);
+            fs.writeFileSync(result.filePath, buffer, { encoding: null });
+          }
+        })
+        .catch((err) => {
+          log("无效操作", err);
+        });
+    }
+  });
+  // 选择默认图片消息保存路径
+  ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
+    dialog
+      .showOpenDialog({
+        title: "请选择文件夹", //默认路径,默认选择的文件
+        properties: ["openDirectory"],
+        buttonLabel: "选择文件夹",
+      })
+      .then((result) => {
+        log("选择了文件夹", result);
+        if (!result.canceled) {
+          const newPath = path.join(result.filePaths[0]);
+          options.messageToImage.path = newPath;
+          setOptions(options);
+        }
+      })
+      .catch((err) => {
+        log("无效操作", err);
+      });
+  });
+
   // 控制台日志打印
   ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
     // log("渲染进程>", ...message);
@@ -465,7 +514,7 @@ function onLoad(plugin) {
   });
 
   // 选择文件夹事件
-  ipcMain.on("LiteLoader.lite_tools.openSelectFolder", () => {
+  ipcMain.on("LiteLoader.lite_tools.openSelectLocalEmoticonsFolder", () => {
     dialog
       .showOpenDialog({
         title: "请选择文件夹", //默认路径,默认选择的文件

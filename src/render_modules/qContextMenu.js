@@ -1,5 +1,5 @@
 import { options } from "./options.js";
-import { searchIcon, copyIcon } from "./svg.js";
+import { searchIcon, copyIcon, imageIcon } from "./svg.js";
 import "./wrapText.js";
 import { getMembersAvatar } from "./nativeCall.js";
 import { isMac } from "./isMac.js";
@@ -67,11 +67,11 @@ function addEventqContextMenu() {
         log(messageEl?.__VUE__?.[0]?.props);
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
-        if (elements.length === 1 && elements[0].textElement) {
+        const userNameEl = messageEl.querySelector(".user-name .text-ellipsis");
+        if (elements.length === 1 && elements[0].textElement && userNameEl) {
           const content = elements[0].textElement.content;
-          const userName = msgRecord?.sendNickName || msgRecord?.sendMemberName;
+          const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
           const userUid = msgRecord?.senderUid;
-          const userNameEl = messageEl.querySelector(".user-name .text-ellipsis");
           const fontFamily = getComputedStyle(userNameEl).getPropertyValue("font-family");
           const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
           const width = msgEl.offsetWidth;
@@ -85,7 +85,6 @@ function addEventqContextMenu() {
             height,
           };
           log("符合生成条件", msgSticker);
-          createSticker(msgSticker);
         }
       }
     } else {
@@ -124,6 +123,13 @@ function addEventqContextMenu() {
         await navigator.clipboard.writeText(_uid);
       });
     }
+    // 消息转图片
+    if (options.messageToImage.enabled && msgSticker) {
+      const _msgSticker = msgSticker;
+      addQContextMenu(qContextMenu, imageIcon, "转图片", () => {
+        createSticker(_msgSticker);
+      });
+    }
   }).observe(document.querySelector("body"), { childList: true });
 }
 
@@ -150,20 +156,21 @@ function getParentElement(element, className) {
  * @param {Object} config 表情配置
  */
 async function createSticker(config) {
-  const zoom = 1;
-
+  let zoom = 1;
   const userAvatarMap = await getMembersAvatar([config.userUid]);
   const userAvatar = userAvatarMap.get(config.userUid);
   const canvasEl = document.createElement("canvas");
   const ctx = canvasEl.getContext("2d");
-  log("图片路径", "local:///" + userAvatar);
   const img = await new Promise((res) => {
     const image = new Image();
     image.onload = () => res(image);
     image.onerror = () => log("出错");
     image.src = "local:///" + userAvatar;
   });
-  log("图片已载入");
+  // 高清化
+  if (options.messageToImage.highResolution) {
+    zoom = 2;
+  }
   // Set canvas size
   canvasEl.width = (4 + 32 + 10 + config.width + 20) * zoom;
   canvasEl.height = (4 + config.height + 16 + 20) * zoom;
@@ -194,10 +201,8 @@ async function createSticker(config) {
   ctx.fillStyle = "#333333";
   ctx.wrapText(config.content, 52 * zoom, 41 * zoom, (config.width + 2) * zoom, 22 * zoom);
   ctx.restore();
-
   const base64 = canvasEl.toDataURL("image/png", 1);
-  log("绘制结束");
-  log("data:image/png;" + base64);
+  lite_tools.saveBase64ToFile(`${new Date().getTime()}.png`, base64);
 }
 
 export { addEventqContextMenu };

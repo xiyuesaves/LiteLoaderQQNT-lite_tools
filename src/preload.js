@@ -24,7 +24,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 主动获取常用表情列表
   getLocalEmoticonsConfig: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsConfig"),
   // 打开选择本地表情文件夹窗口
-  openSelectFolder: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectFolder"),
+  openSelectLocalEmoticonsFolder: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectLocalEmoticonsFolder"),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
   // 获取配置文件
@@ -77,6 +77,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getUserInfo: (uid) => ipcRenderer.invoke("LiteLoader.lite_tools.getUserInfo", uid),
   sendUserInfo: (userInfo) => ipcRenderer.send("LiteLoader.lite_tools.sendUserInfo", userInfo),
   onRequireUserInfo: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onRequireUserInfo", callback),
+  // 保存blob到本地
+  saveBase64ToFile: (...data) => ipcRenderer.send("LiteLoader.lite_tools.saveBase64ToFile", ...data),
+  // 选择消息图片默认保存位置
+  openSelectDefaultSaveFilePath: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectDefaultSaveFilePath"),
   // 从历史记录中移除指定文件
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   /**

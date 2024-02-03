@@ -19,7 +19,7 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <div class="disabled-input select-path">
+      <div class="select-path">
         <div class="vertical-list-item">
           <input placeholder="请选择文件" readonly class="select-file input-text text_color" type="text" spellcheck="false" />
           <div class="ops-btns">
@@ -180,6 +180,39 @@
           />
         </div>
       </div>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>消息转图片</h2>
+          <span class="secondary-text">将纯文本消息转为图片</span>
+        </div>
+        <div class="messageToImage q-switch">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <li class="vertical-list-item">
+        <div>
+          <h2>高清化</h2>
+          <span class="secondary-text">将生成的图片分辨率翻倍</span>
+        </div>
+        <div class="highResolution q-switch">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <div class="select-default-file-path">
+        <div class="vertical-list-item">
+          <input
+            placeholder="请选择文件夹"
+            readonly
+            class="select-default-save-file-input input-text text_color"
+            type="text"
+            spellcheck="false"
+          />
+          <div class="ops-btns">
+            <button class="q-button q-button--small q-button--secondary select-default-save-file-input">选择</button>
+          </div>
+        </div>
+      </div>
     </ul>
   </setting-panel>
   <!-- 消息相关 -->
@@ -246,9 +279,15 @@
         </div>
       </li>
       <li class="disabled-input select-folder-input vertical-list-item">
-        <input placeholder="请选择文件夹" readonly class="select-folder input-text text_color" type="text" spellcheck="false" />
+        <input
+          placeholder="请选择文件夹"
+          readonly
+          class="select-local-emoticons-folder input-text text_color"
+          type="text"
+          spellcheck="false"
+        />
         <div class="ops-btns">
-          <button class="q-button q-button--small q-button--secondary select-folder">选择</button>
+          <button class="q-button q-button--small q-button--secondary select-local-emoticons-folder">选择</button>
         </div>
       </li>
       <hr class="horizontal-dividing-line" />

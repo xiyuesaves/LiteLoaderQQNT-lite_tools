@@ -206,19 +206,26 @@ async function onConfigView(view) {
   // 消息靠左显示
   addSwitchEventlistener("message.selfMsgToLeft", ".selfMsgToLeft");
 
+  // 消息转图片
+  addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
+  addSwitchEventlistener("messageToImage.highResolution", ".highResolution");
+  view.querySelector(".select-default-save-file-input").value = options.messageToImage.path;
+  view.querySelectorAll(".select-default-save-file-input").forEach((el) => {
+    el.addEventListener("click", () => {
+      log("修改默认保存位置");
+      lite_tools.openSelectDefaultSaveFilePath();
+    });
+  });
+
   // 本地表情包功能
   addSwitchEventlistener("localEmoticons.enabled", ".switchLocalEmoticons", (_, enabled) => {
     view.querySelector(".select-folder-input").classList.toggle("disabled-input", !enabled);
-
-    if (first("switchLocalEmoticons")) {
-      const selectFolderEl = view.querySelector(".select-folder-input input");
-      selectFolderEl.value = options.localEmoticons.localPath;
-      view.querySelectorAll(".select-folder").forEach((el) => {
-        el.addEventListener("click", () => {
-          lite_tools.openSelectFolder();
-        });
-      });
-    }
+  });
+  view.querySelector(".select-folder-input input").value = options.localEmoticons.localPath;
+  view.querySelectorAll(".select-local-emoticons-folder").forEach((el) => {
+    el.addEventListener("click", () => {
+      lite_tools.openSelectLocalEmoticonsFolder();
+    });
   });
 
   // 表情加载优化
@@ -230,7 +237,6 @@ async function onConfigView(view) {
   addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons", (_, enabled) => {
     view.querySelector(".switchQuickEmoticonsAutoInputOnlyOne").parentNode.classList.toggle("disabled-switch", !enabled);
   });
-
 
   // 常用表情分类
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons");
@@ -337,8 +343,10 @@ async function onConfigView(view) {
 
   // 监听设置文件变动
   updateOptions((opt) => {
+    log("检测到配置更新", opt.messageToImage.path);
     view.querySelector(".select-path input").value = opt.background.url;
     view.querySelector(".select-folder-input input").value = opt.localEmoticons.localPath;
+    view.querySelector(".select-default-save-file-input").value = opt.messageToImage.path;
     customTextColorEl.value = options.preventMessageRecall.textColor;
   });
 }

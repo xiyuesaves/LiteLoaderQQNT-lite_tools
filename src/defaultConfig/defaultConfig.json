@@ -44,6 +44,11 @@
       "toBottom": false
     }
   },
+  "messageToImage": {
+    "enabled": false,
+    "highResolution": false,
+    "path": ""
+  },
   "preventMessageRecall": {
     "enabled": false,
     "localStorage": false,
