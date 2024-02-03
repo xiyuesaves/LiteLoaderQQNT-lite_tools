@@ -233,7 +233,7 @@ function onLoad(plugin) {
   }
   // 控制台输出项目logo
   log("轻量工具箱已加载");
-  log("ipcMain对象",ipcMain.emit);
+  log("ipcMain对象", ipcMain.emit);
 
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
@@ -601,7 +601,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   const proxyIpcMsg = new Proxy(ipc_message_proxy, {
     apply(target, thisArg, args) {
-      log("get", thisArg, args[2], args[3]?.[1]?.[0], args);
+      log("get", args[2], args[3]?.[1]?.[0], args);
       ipc_message(args);
       return target.apply(thisArg, args);
     },
@@ -670,7 +670,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
-    log("send", channel, args);
+    log("send", channel, args[0].callbackId, args);
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {

@@ -8,7 +8,7 @@
       if (log && log.length) {
         for (let i = 0; i < log.length; i++) {
           const singLog = log[i];
-          if(singLog[2]?.[3]?.[1]?.[0] !== "info" && singLog[3]?.[0]?.eventName !== "ns-LoggerApi-2"){
+          if(singLog[3] !== "info" && singLog[3]?.[0]?.eventName !== "ns-LoggerApi-2"){
             console.log(...singLog);
           }
         }
