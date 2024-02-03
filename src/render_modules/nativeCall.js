@@ -163,6 +163,36 @@ function getUserInfo(uid) {
 }
 
 /**
+ * 通过uid获取用户头像
+ * @param {String[]} uids 用户uid
+ */
+function getMembersAvatar(uids) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelAvatarService/getMembersAvatarPath",
+    [{ clarity: 0, uids }],
+    webContentId,
+    true,
+    false,
+  );
+}
+
+/**
+ * 通过群号获取群组头像
+ * @param {String[]} groupCodes 群组id
+ */
+function getGroupsAvatar(groupCodes) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelAvatarService/getGroupsAvatarPath",
+    [{ clarity: 0, groupCodes }],
+    webContentId,
+    true,
+    false,
+  );
+}
+
+/**
  * 跳转到指定群组的指定消息id处
  * @param {Object} sceneData 场景数据
  * @returns
@@ -221,4 +251,4 @@ function getGroupsList(forced = false) {
   );
 }
 
-export { sendMessage, forwardMessage, getUserInfo, goMainWindowScene };
+export { sendMessage, forwardMessage, getUserInfo, goMainWindowScene, getMembersAvatar, getGroupsAvatar };

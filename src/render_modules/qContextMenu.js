@@ -1,5 +1,7 @@
 import { options } from "./options.js";
 import { searchIcon, copyIcon } from "./svg.js";
+import "./wrapText.js";
+import { getMembersAvatar } from "./nativeCall.js";
 import { isMac } from "./isMac.js";
 import { Logs } from "./logs.js";
 const log = new Logs("右键菜单");
@@ -42,10 +44,11 @@ function addEventqContextMenu() {
   let imagePath = "";
   let eventName = "mouseup";
   let uid = "";
+  let msgSticker = null;
   if (isMac) {
     eventName = "mousedown";
   }
-  document.addEventListener(eventName, (event) => {
+  document.addEventListener(eventName, async (event) => {
     if (event.button === 2) {
       isRightClick = true;
       selectText = window.getSelection().toString();
@@ -59,15 +62,43 @@ function addEventqContextMenu() {
       } else {
         imagePath = "";
       }
+      const messageEl = getParentElement(event.target, "message");
+      if (messageEl) {
+        log(messageEl?.__VUE__?.[0]?.props);
+        const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
+        const elements = msgRecord?.elements;
+        if (elements.length === 1 && elements[0].textElement) {
+          const content = elements[0].textElement.content;
+          const userName = msgRecord?.sendNickName || msgRecord?.sendMemberName;
+          const userUid = msgRecord?.senderUid;
+          const userNameEl = messageEl.querySelector(".user-name .text-ellipsis");
+          const fontFamily = getComputedStyle(userNameEl).getPropertyValue("font-family");
+          const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
+          const width = msgEl.offsetWidth;
+          const height = msgEl.offsetHeight;
+          msgSticker = {
+            userName,
+            userUid,
+            content,
+            fontFamily,
+            width,
+            height,
+          };
+          log("符合生成条件", msgSticker);
+          createSticker(msgSticker);
+        }
+      }
     } else {
       isRightClick = false;
       selectText = "";
       imagePath = "";
       uid = "";
+      msgSticker = null;
     }
   });
   new MutationObserver(() => {
     const qContextMenu = document.querySelector(".q-context-menu");
+    log("右键菜单", document.querySelectorAll(".q-context-menu"));
     // 在网页搜索
     if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
       const searchText = selectText;
@@ -94,6 +125,79 @@ function addEventqContextMenu() {
       });
     }
   }).observe(document.querySelector("body"), { childList: true });
+}
+
+/**
+ * 获取父级匹配类名的元素
+ * @param {Element} element 目标元素
+ * @param {String} className 类名
+ */
+function getParentElement(element, className) {
+  const parentElement = element?.parentElement;
+  if (parentElement && parentElement !== document.body) {
+    if (parentElement.classList.contains(className)) {
+      return parentElement;
+    } else {
+      return getParentElement(parentElement, className);
+    }
+  } else {
+    return null;
+  }
+}
+
+/**
+ * 生成表情
+ * @param {Object} config 表情配置
+ */
+async function createSticker(config) {
+  const zoom = 1;
+
+  const userAvatarMap = await getMembersAvatar([config.userUid]);
+  const userAvatar = userAvatarMap.get(config.userUid);
+  const canvasEl = document.createElement("canvas");
+  const ctx = canvasEl.getContext("2d");
+  log("图片路径", "local:///" + userAvatar);
+  const img = await new Promise((res) => {
+    const image = new Image();
+    image.onload = () => res(image);
+    image.onerror = () => log("出错");
+    image.src = "local:///" + userAvatar;
+  });
+  log("图片已载入");
+  // Set canvas size
+  canvasEl.width = (4 + 32 + 10 + config.width + 20) * zoom;
+  canvasEl.height = (4 + config.height + 16 + 20) * zoom;
+
+  // 绘制圆形头像
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(20 * zoom, 20 * zoom, 16 * zoom, 0, Math.PI * 2, false);
+  ctx.clip(); //剪切路径
+  ctx.drawImage(img, 4 * zoom, 4 * zoom, 32 * zoom, 32 * zoom);
+  ctx.restore();
+  // 绘制用户名
+  ctx.save();
+  ctx.font = 12 * zoom + "px " + config.fontFamily;
+  ctx.fillStyle = "#999999";
+  ctx.fillText(config.userName, 42 * zoom, 14 * zoom);
+  ctx.restore();
+  // 绘制气泡框
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(42 * zoom, 20 * zoom, (config.width + 20) * zoom, (config.height + 16) * zoom, 8 * zoom);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+  ctx.restore();
+  // 绘制文本
+  ctx.save();
+  ctx.font = 14 * zoom + "px " + config.fontFamily;
+  ctx.fillStyle = "#333333";
+  ctx.wrapText(config.content, 52 * zoom, 41 * zoom, (config.width + 2) * zoom, 22 * zoom);
+  ctx.restore();
+
+  const base64 = canvasEl.toDataURL("image/png", 1);
+  log("绘制结束");
+  log("data:image/png;" + base64);
 }
 
 export { addEventqContextMenu };
