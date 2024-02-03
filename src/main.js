@@ -719,7 +719,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
-    log("send", channel, args[0].callbackId, args);
+    log("send", channel, args?.[0]?.callbackId, args);
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
