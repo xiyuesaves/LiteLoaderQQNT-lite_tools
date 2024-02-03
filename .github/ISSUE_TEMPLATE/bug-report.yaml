@@ -1,90 +1,14 @@
 name: 提交 Bug
 description: 在使用 轻量工具箱 过程中遇到了错误
-title: '[Bug]: '
-labels: [ "bug" ]
+title: "[Bug]: "
+labels: ["bug"]
 
 body:
   - type: markdown
     attributes:
       value: |
         ## 感谢你愿意提交 Bug 报告
-        ## 以下是一些注意事项，请务必阅读让我们能够更容易处理
-
-        ### ❗ | 确定没有相同问题的 Issue 已被提出。
-        ### 🌎 | 请准确填写环境信息。
-        ### 如果您不知道如何有效、精准地表述，我们建议您先阅读 [《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md#%E4%BD%BF%E7%94%A8%E6%9C%89%E6%84%8F%E4%B9%89%E4%B8%94%E6%8F%8F%E8%BF%B0%E6%98%8E%E7%A1%AE%E7%9A%84%E6%A0%87%E9%A2%98)
-        ---
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: 请确保您已阅读以上注意事项，并勾选下方的确认框。
-      options:
-        - label: "我已经使用一个仅安装轻量工具箱的环境测试过，问题依旧存在。"
-          required: true
-        - label: "我已经尝试过本删除插件配置文件并重启 QQ，问题依旧存在。"
-          required: true
-        - label: "我已经在 [Issue Tracker](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues) 中找过我要提出的问题，没有找到相同问题的ISSUE。"
-          required: true
-        - label: 我已知晓并同意，此处仅用于汇报插件中存在的问题。若这个 Issue 并不是关于本插件的问题，则我的 Issue 可能会被无条件自动关闭或/并锁定。
-          required: true
-        - label: 我已知晓并同意，如果我不按照模板提供的指示进行填写，则我的 Issue 可能会被无条件删除。
-          required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ## 环境信息
-
-  - type: input
-    id: env-qqnt-ver
-    attributes:
-      label: QQNT 版本
-    validations:
-      required: true
-
-  - type: input
-    id: env-LiteLoaderQQNT-ver
-    attributes:
-      label: LiteLoaderQQNT 版本
-    validations:
-      required: true
-
-  - type: input
-    id: env-Lite_tools-ver
-    attributes:
-      label: 轻量工具箱 版本
-    validations:
-      required: true
-
-  - type: dropdown
-    id: env-vm-ver
-    attributes:
-      label: 运行环境
-      description: 选择系统版本
-      options:
-        - Windows (64)
-        - Windows (32/x84)
-        - MacOS
-        - Linux
-        - Ubuntu
-        - CentOS
-        - ArchLinux
-        - UNIX (Android)
-        - 其它（请在下方说明）
-    validations:
-      required: true
-
-  - type: dropdown
-    id: env-vm-arch
-    attributes:
-      label: 运行架构
-      description: (可选) 选择系统架构
-      options:
-        - AMD64
-        - x86
-        - ARM [32] (别名：AArch32 / ARMv7）
-        - ARM [64] (别名：AArch64 / ARMv8）
-        - 其它
+        ### 请在提交前确定没有相同的 Issue 已被提出。
 
   - type: textarea
     id: reproduce-steps
@@ -93,24 +17,8 @@ body:
       description: |
         我们需要执行哪些操作才能让 Bug 出现？
         简洁清晰的重现步骤能够帮助我们更迅速地定位问题所在。
-    validations:
-      required: true
-
-  - type: textarea
-    id: expected
-    attributes:
-      label: 期望的结果是什么？
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: 实际的结果是什么？
-    validations:
-      required: true
 
   - type: textarea
     id: extra-desc
     attributes:
-      label: 补充说明（可选）
+      label: 补充说明
