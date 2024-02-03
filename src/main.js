@@ -360,7 +360,7 @@ function onLoad(plugin) {
   ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (event, fileName, base64) => {
     log("接收到保存为文件事件");
     const buffer = Buffer.from(base64.split(",")[1], "base64");
-    if (options.messageToImage.path) {
+    if (options.messageToImage.path && fs.existsSync(options.messageToImage.path)) {
       const savePath = path.join(options.messageToImage.path, fileName);
       log("默认文件路径", savePath);
       fs.writeFileSync(savePath, buffer, { encoding: null });
