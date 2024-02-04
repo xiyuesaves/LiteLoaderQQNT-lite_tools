@@ -6,8 +6,8 @@ import { forwardMessage } from "./nativeCall.js";
 const log = new Logs("消息列表处理");
 
 const observeConfig = {
-  // attributes: true,
-  // attributeFilter: ["style"],
+  attributes: true,
+  attributeFilter: ["style"],
   childList: true,
   subtree: false,
 };
