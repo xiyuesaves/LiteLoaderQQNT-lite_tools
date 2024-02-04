@@ -75,6 +75,31 @@ function processMessageElement() {
       }
     }
 
+    // 合并消息头像
+    if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
+      const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
+      if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
+        const senderUid = elProps?.msgRecord?.senderUid;
+        const sendNickName = elProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? elProps?.msgRecord?.sendNickName;
+        const mapTag = senderUid + sendNickName;
+        const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
+        const prevElUid = prevProps?.msgRecord?.senderUid;
+        const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
+        const prevTag = prevElUid + prevNickName;
+        if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
+          el.classList.remove("merge-main");
+          el.classList.add("merge", "merge-child");
+          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + el.offsetHeight);
+        } else {
+          el.classList.remove("merge-child");
+          el.classList.add("merge", "merge-main");
+          const avatarEl = el.querySelector(".avatar-span");
+          avatarEl.style.height = `${childElHeight.get(mapTag) + el.offsetHeight - 15 - 4}px`;
+          childElHeight.set(mapTag, 0);
+        }
+      }
+    }
+
     // 消息添加插槽
     let slotEl = null;
     const hasSlot = el.querySelector(".lite-tools-slot");
@@ -197,31 +222,6 @@ function processMessageElement() {
             msgEl.appendChild(newReplaceEl);
           }
           log("独立插入");
-        }
-      }
-    }
-
-    // 合并消息头像
-    if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
-      const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
-      if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
-        const senderUid = elProps?.msgRecord?.senderUid;
-        const sendNickName = elProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? elProps?.msgRecord?.sendNickName;
-        const mapTag = senderUid + sendNickName;
-        const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
-        const prevElUid = prevProps?.msgRecord?.senderUid;
-        const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
-        const prevTag = prevElUid + prevNickName;
-        if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
-          el.classList.remove("merge-main");
-          el.classList.add("merge", "merge-child");
-          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + el.offsetHeight);
-        } else {
-          el.classList.remove("merge-child");
-          el.classList.add("merge", "merge-main");
-          const avatarEl = el.querySelector(".avatar-span");
-          avatarEl.style.height = `${childElHeight.get(mapTag) + el.offsetHeight - 15 - 4}px`;
-          childElHeight.set(mapTag, 0);
         }
       }
     }
