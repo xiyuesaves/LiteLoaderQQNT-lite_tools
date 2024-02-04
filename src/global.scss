@@ -875,35 +875,37 @@
 }
 
 // 消息列表仅显示头像
-.two-col-layout__aside.only-avatar {
-  width: 72px !important;
-  width: 72px !important;
-  flex-basis: 72px !important;
-  --min-width-aside: 72px !important;
-  --drag-width-aside: 72px !important;
-  .list-toggler {
-    .viewport-list__inner {
-      padding: 0 !important;
-      gap: 0 !important;
-    }
-    .viewport-list {
-      .list-item {
-        border-radius: 0 !important;
-        position: relative;
-        .list-item__info {
-          position: absolute;
-          top: 38px;
-          left: calc(50% + 15px);
-          transform: translateX(-50%);
-          .list-item__title {
-            display: none;
-          }
-          .list-item__summary {
-            .summary-main {
+.message-panel {
+  .two-col-layout__aside.only-avatar {
+    width: 72px !important;
+    width: 72px !important;
+    flex-basis: 72px !important;
+    --min-width-aside: 72px !important;
+    --drag-width-aside: 72px !important;
+    .list-toggler {
+      .viewport-list__inner {
+        padding: 0 !important;
+        gap: 0 !important;
+      }
+      .viewport-list {
+        .list-item {
+          border-radius: 0 !important;
+          position: relative;
+          .list-item__info {
+            position: absolute;
+            top: 38px;
+            left: calc(50% + 15px);
+            transform: translateX(-50%);
+            .list-item__title {
               display: none;
             }
-            .summary-bubble {
-              margin-left: 0 !important;
+            .list-item__summary {
+              .summary-main {
+                display: none;
+              }
+              .summary-bubble {
+                margin-left: 0 !important;
+              }
             }
           }
         }
