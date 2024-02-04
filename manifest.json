@@ -4,7 +4,7 @@
   "name": "轻量工具箱",
   "slug": "lite_tools",
   "description": "轻量 · 优雅 · 高效",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "icon": "./icon.png",
   "authors": [
     {
@@ -22,7 +22,7 @@
     "repo": "xiyuesaves/lite_tools",
     "branch": "v4",
     "release": {
-      "tag": "2.1.2",
+      "tag": "2.1.3",
       "file": "lite_tools_v4.zip"
     }
   }
