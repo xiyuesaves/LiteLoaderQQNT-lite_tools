@@ -882,8 +882,13 @@
   --min-width-aside: 72px !important;
   --drag-width-aside: 72px !important;
   .list-toggler {
+    .viewport-list__inner {
+      padding: 0 !important;
+      gap: 0 !important;
+    }
     .viewport-list {
       .list-item {
+        border-radius: 0 !important;
         .list-item__info {
           display: none;
         }
