@@ -11,6 +11,8 @@ const observeConfig = {
   childList: true,
   subtree: false,
 };
+const filterClass =
+  ":not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container).mix-message__container,.msg-content-container";
 
 let lastMessageNodeList = [];
 let childElHeight = new Map();
@@ -53,12 +55,14 @@ function processMessageElement() {
     if (!elProps) {
       continue;
     }
+
     // 消息靠左
     if (options.message.selfMsgToLeft) {
       el.querySelector(".message-container")?.classList?.remove("message-container--self");
       el.querySelector(".message-container")?.classList?.remove("message-container--align-right");
       el.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
     }
+
     // 开启背景时优化小图展示
     if (options.background.enabled) {
       // 过小尺寸的图片移除气泡效果
@@ -70,59 +74,87 @@ function processMessageElement() {
         }
       }
     }
+
+    // 消息添加插槽
+    let slotEl = null;
+    const hasSlot = el.querySelector(".lite-tools-slot");
+    if (!hasSlot) {
+      // 插槽元素
+      slotEl = document.createElement("div");
+      slotEl.classList.add("lite-tools-slot");
+      // 气泡-嵌入（必须含有文本内容的消息,文件消息）
+      const bubbleEmbed = el.querySelector(
+        ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner",
+      );
+      // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
+      const bubbleInside = el.querySelector(
+        ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview",
+      );
+      // 气泡-外部消息（兜底样式）
+      const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
+      // 插入插槽
+      if (bubbleEmbed) {
+        slotEl.classList.add("embed-slot");
+        bubbleEmbed.appendChild(slotEl);
+      } else if (bubbleInside) {
+        // 如果是图片则额外判断一次
+        if (bubbleInside.classList.contains("mix-message__container--pic")) {
+          const picEl = bubbleInside.querySelector(".pic-element");
+          if (picEl && picEl.offsetWidth >= 120 && picEl.offsetHeight >= 50) {
+            slotEl.classList.add("inside-slot");
+            bubbleInside.appendChild(slotEl);
+          } else {
+            slotEl.classList.add("outside-slot");
+            if (el.querySelector(".message-container--self")) {
+              bubbleOutside.insertBefore(slotEl, bubbleOutside.firstChild);
+            } else {
+              bubbleOutside.appendChild(slotEl);
+            }
+          }
+        } else {
+          slotEl.classList.add("inside-slot");
+          bubbleInside.appendChild(slotEl);
+        }
+      } else if (bubbleOutside) {
+        slotEl.classList.add("outside-slot");
+        if (el.querySelector(".message-container--self")) {
+          bubbleOutside.insertBefore(slotEl, bubbleOutside.firstChild);
+        } else {
+          bubbleOutside.appendChild(slotEl);
+        }
+      } else {
+        slotEl = null;
+      }
+    }
+
+    // 只有插槽元素有效时执行下面的逻辑
+    if (!slotEl) {
+      continue;
+    }
     // 插入时间气泡
     if (options.message.showMsgTime) {
       // 时间插入元素
-      const timeEl = el.querySelector(".lite-tools-time");
-      if (!timeEl) {
-        // 气泡-嵌入（必须含有文本内容的消息,文件消息）
-        const bubbleEmbed = el.querySelector(
-          ":not(.mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face)>.message-content.mix-message__inner,.normal-file.file-element .file-info,.file-info-mask p:last-child,.message-content__wrapper .count,.reply-message__container .reply-message__inner",
-        );
-        // 气泡-内部消息（单独的图片/视频消息，自己发送的表情）
-        const bubbleInside = el.querySelector(
-          ".mix-message__container--pic,.mix-message__container--market-face,.mix-message__container--lottie-face,.msg-preview",
-        );
-        // 气泡-外部消息（兜底样式）
-        const bubbleOutside = el.querySelector(".message-container .message-content__wrapper");
-        const newTimeEl = document.createElement("div");
+      if (!el.querySelector(".lite-tools-time")) {
         const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
         if (find) {
+          const newTimeEl = document.createElement("div");
           const showTime = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
           newTimeEl.classList.add("lite-tools-time");
           newTimeEl.innerText = showTime;
           newTimeEl.setAttribute("time", showTime);
           newTimeEl.title = `发送于 ${new Date(find).toLocaleString("zh-CN")}`;
-          if (bubbleEmbed) {
-            newTimeEl.classList.add("embed");
-            bubbleEmbed.appendChild(newTimeEl);
-          } else if (bubbleInside) {
-            // 如果目标是图片消息，则额外处理图片样式
-            if (bubbleInside.classList.contains("mix-message__container--pic")) {
-              const picEl = bubbleInside.querySelector(".pic-element");
-              if (picEl && picEl.offsetWidth >= 100 && picEl.offsetHeight >= 50) {
-                newTimeEl.classList.add("bubble-inside");
-                bubbleInside.appendChild(newTimeEl);
-              } else {
-                newTimeEl.classList.add("bubble-outside");
-                bubbleInside.parentElement.appendChild(newTimeEl);
-              }
-            } else {
-              newTimeEl.classList.add("bubble-inside");
-              bubbleInside.appendChild(newTimeEl);
-            }
-          } else if (bubbleOutside) {
-            newTimeEl.classList.add("bubble-outside");
-            bubbleOutside.appendChild(newTimeEl);
-          }
+          slotEl.appendChild(newTimeEl);
         }
       }
     }
+    // 转发消息不执行剩下的内容
+    if (isForward) {
+      continue;
+    }
     // 后处理被撤回的消息
-    if (options.preventMessageRecall.enabled && !isForward) {
+    if (options.preventMessageRecall.enabled) {
       // 撤回插入元素
-      const recallEl = el.querySelector(".lite-tools-recall");
-      if (!recallEl) {
+      if (!el.querySelector(".lite-tools-recall")) {
         const find = elProps?.msgRecord?.lite_tools_recall;
         if (find) {
           // 通用消息撤回处理方法
@@ -131,17 +163,11 @@ function processMessageElement() {
       }
     }
     // 插入复读按钮
-    if (options.message.switchReplace && !isForward) {
+    if (options.message.switchReplace) {
       const msgEl = el.querySelector(".message-content__wrapper");
       // +1插入元素
       const replaceEl = el.querySelector(".message-content-replace");
-      if (
-        msgEl &&
-        el.querySelector(
-          ":not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container).mix-message__container,.msg-content-container",
-        ) &&
-        !replaceEl
-      ) {
+      if (msgEl && el.querySelector(filterClass) && !replaceEl) {
         const newReplaceEl = document.createElement("div");
         const msgId = el.id;
         newReplaceEl.classList.add("message-content-replace");
@@ -150,15 +176,31 @@ function processMessageElement() {
           const peer = lite_tools.getPeer();
           forwardMessage(peer, peer, [msgId]);
         });
-        const showTimeEl = el.querySelector(".bubble-outside");
-        // 如果已经启用显示消息时间，且这条消息的显示方法是外部气泡时，添加合并样式
-        if (showTimeEl) {
-          showTimeEl.classList.add("compatible-replace");
-          newReplaceEl.classList.add("compatible-time");
+        if (slotEl.classList.contains("outside-slot")) {
+          if (el.querySelector(".message-container--self")) {
+            if (slotEl.querySelector(".lite-tools-time")) {
+              slotEl.classList.add("fix-padding-right");
+            }
+            slotEl.insertBefore(newReplaceEl, slotEl.firstChild);
+          } else {
+            if (slotEl.querySelector(".lite-tools-time")) {
+              slotEl.classList.add("fix-padding-left");
+            }
+            slotEl.appendChild(newReplaceEl);
+          }
+          log("插入到插槽");
+        } else {
+          newReplaceEl.classList.add("single");
+          if (el.querySelector(".message-container--self")) {
+            msgEl.insertBefore(newReplaceEl, msgEl.firstChild);
+          } else {
+            msgEl.appendChild(newReplaceEl);
+          }
+          log("独立插入");
         }
-        msgEl.appendChild(newReplaceEl);
       }
     }
+
     // 合并消息头像
     if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
       const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;

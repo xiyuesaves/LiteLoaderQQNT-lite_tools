@@ -136,277 +136,208 @@
   }
 }
 
-// 时间显示原本样式预处理
+// 插槽样式
+.lite-tools-slot {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-// 插入元素通用调整
-.message-container {
-  transition-duration: unset !important;
-  &:hover {
-    .message-content-replace,
-    .bubble-outside,
-    .bubble-inside {
-      visibility: visible !important;
+  // 自定义撤回提示颜色辅助样式
+  .lite-tools-recall.custom-color {
+    opacity: 1 !important;
+    &::after {
+      opacity: 1 !important;
     }
-    // 内部气泡的兼容样式
-    .bubble-inside {
-      &.compatible-time {
-        right: 46px;
+  }
+
+  &.embed-slot {
+    right: 0px;
+    float: right;
+    font-size: 12px;
+    line-height: 13px;
+    text-align: right;
+    visibility: hidden;
+    width: auto;
+    user-select: none;
+    .lite-tools-time {
+      right: 0px;
+      float: right;
+      font-size: 12px;
+      line-height: 13px;
+      width: auto;
+      text-align: right;
+      visibility: hidden;
+      user-select: none;
+      margin-left: 3px;
+      &:first-child {
+        margin-left: 6px;
+      }
+      &::after {
+        content: attr(time);
+        visibility: visible;
+        position: absolute;
+        display: block;
+        width: auto;
+        text-align: right;
+        font-size: 12px;
+        line-height: 11px;
+        bottom: 0;
+        right: 0;
+        opacity: 0.6;
+      }
+    }
+    .lite-tools-recall {
+      font-size: 12px;
+      line-height: 12px;
+      margin-left: 6px;
+      visibility: hidden;
+      user-select: none;
+      &:last-child::after {
+        right: var(--offsetRight, 0);
+      }
+      &::after {
+        content: attr(data-recall);
+        visibility: visible;
+        position: absolute;
+        display: block;
+        right: calc(var(--offsetRight, 0) - 3px);
+        font-size: 12px;
+        line-height: 11px;
+        opacity: 0.6;
+        bottom: 0;
+      }
+    }
+  }
+  &.inside-slot {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    font-size: 12px;
+    color: #ffffff;
+    width: auto;
+    background-color: rgba(0, 0, 0, 0.3);
+    text-align: center;
+    line-height: 14px;
+    border-radius: 4px;
+    .lite-tools-time {
+      text-align: center;
+      padding: 4px 6px;
+      display: none;
+    }
+    .lite-tools-recall {
+      padding: 4px 6px;
+    }
+  }
+  &.outside-slot {
+    color: var(--text-color);
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    z-index: 10;
+    position: relative;
+    white-space: nowrap;
+    display: none;
+    &.recall-tag {
+      display: flex;
+    }
+    &:not(.recall-tag).fix-padding-left {
+      .lite-tools-time {
         padding-right: 0;
-        border-radius: 4px 0 0 4px;
       }
-      &.compatible-recall {
-        width: 42px;
-        padding-left: 4px;
-        border-radius: 0 4px 4px 0;
+      .message-content-replace {
+        padding-left: 6px;
       }
     }
-    // 外部气泡的兼容样式
-    .bubble-outside {
-      &.compatible-time {
-        width: 86px;
-        text-align: left;
+    &:not(.recall-tag).fix-padding-right {
+      .lite-tools-time {
+        padding-left: 0;
       }
-      &.compatible-recall {
-        z-index: 100;
-        left: calc(100% + 44px);
-        &::after {
-          display: none;
-        }
+      .message-content-replace {
+        padding-right: 6px;
       }
     }
-  }
-  .mix-message__inner {
-  }
-  .bubble-outside {
-    left: calc(100% + 4px);
-    &.compatible-replace {
-      border-radius: 50px 0 0 50px;
-      padding-right: 2px;
-      width: 42px;
-      background-color: transparent;
-      box-shadow: unset;
-      &::after {
-        display: none !important;
-      }
+    &:last-child {
+      margin-left: 6px;
     }
-  }
-  .message-content-replace {
-    left: calc(100% + 6px);
-    &.compatible-time {
-      left: calc(100% + 46px);
-      &::after {
-        width: calc(42px + 24px);
-        left: -42px;
-      }
+    &:first-child {
+      margin-right: 6px;
     }
-  }
-  &.message-container--self {
-    .bubble-outside {
-      left: unset;
-      right: calc(100% + 4px);
-      &.compatible-replace {
-        right: calc(100% + 28px);
-        border-radius: 50px 0 0 50px;
-        padding-right: 2px;
-      }
-      &.compatible-recall {
-        left: unset;
-        right: calc(100% + 8px);
-      }
+    &::after {
+      content: "";
+      z-index: -1;
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      border-radius: 50px;
+      box-shadow: var(--box-shadow, unset);
+      background-color: var(--background-color-05, var(--background-color-cb));
+      backdrop-filter: blur(28px);
+    }
+    .lite-tools-time {
+      text-align: center;
+      padding: 4px 8px;
+      display: none;
+      opacity: 0.8;
+    }
+    .lite-tools-recall {
+      padding: 4px 8px;
+      opacity: 0.8;
     }
     .message-content-replace {
-      left: unset;
-      right: calc(100% + 6px);
+      padding: 4px 8px;
+      cursor: pointer;
     }
   }
+}
+
+// 样式调整
+.message-container {
+  position: relative;
   .message-content__wrapper {
-    overflow: unset !important;
-    position: relative;
-    // 红包卡片微调
-    .wallet-message__container {
-      // bottom: -26px;
-    }
-    // 合并转发消息
-    .count {
-      position: relative;
-      .embed {
-        &::after {
-          opacity: 0.8 !important;
-          bottom: 0;
+    align-items: flex-end;
+  }
+  &:hover {
+    .lite-tools-slot {
+      // 内部气泡
+      &.inside-slot {
+        .lite-tools-time {
+          display: block;
+        }
+        .lite-tools-recall:not(:last-child) {
+          padding-right: 0;
+        }
+      }
+      // 外部气泡
+      &.outside-slot {
+        display: flex;
+        .lite-tools-time {
+          display: block;
+        }
+        .lite-tools-recall:not(:last-child) {
+          padding-right: 0;
         }
       }
     }
+    .message-content-replace.single {
+      visibility: visible;
+    }
+  }
+
+  .message-content__wrapper {
+    overflow: unset !important;
     // 默认文件
     .normal-file.file-element {
       .file-info {
         position: relative;
-        .embed {
-          pointer-events: auto;
-          &::after {
-            opacity: 0.5 !important;
-            bottom: 0;
-          }
-        }
       }
     }
     // 图片文件
     .file-info-mask p:last-child {
       position: relative;
-      .embed {
-        pointer-events: auto;
-        &::after {
-          opacity: 0.8 !important;
-          bottom: 0;
-        }
-      }
-      pointer-events: auto;
-    }
-  }
-}
-
-// 时间显示样式
-.lite-tools-time {
-  user-select: none;
-  &.embed {
-    right: 0px;
-    float: right;
-    font-size: 12px;
-    line-height: 13px;
-    width: auto;
-    text-align: right;
-    margin-left: 6px;
-    visibility: hidden;
-    user-select: none;
-    &::after {
-      content: attr(time);
-      visibility: visible;
-      position: absolute;
-      display: block;
-      width: auto;
-      text-align: right;
-      font-size: 12px;
-      line-height: 11px;
-      bottom: 0;
-      right: 0;
-      opacity: 0.6;
-    }
-  }
-  &.bubble-inside {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 4px 6px;
-    color: #ffffff;
-    font-size: 12px;
-    width: 44px;
-    text-align: center;
-    line-height: 14px;
-    border-radius: 4px;
-    visibility: hidden;
-  }
-  &.bubble-outside {
-    white-space: nowrap;
-    position: absolute;
-    padding: 4px 8px;
-    color: var(--text-color);
-    opacity: var(--opacity-1, 0.8);
-    font-size: 12px;
-    line-height: 14px;
-    width: 48px;
-    text-align: center;
-    z-index: 10;
-    visibility: hidden;
-    bottom: 0;
-    &::after {
-      content: "";
-      z-index: -1;
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      border-radius: 50px;
-      box-shadow: var(--box-shadow, unset);
-      background-color: var(--background-color-05, var(--background-color-cb));
-      backdrop-filter: blur(28px);
-    }
-  }
-}
-
-// 撤回样式
-.lite-tools-recall {
-  user-select: none;
-  &.custom-color {
-    &.embed {
-      &::after {
-        opacity: 1 !important;
-      }
-    }
-  }
-  &.embed {
-    right: 0px;
-    float: right;
-    font-size: 12px;
-    line-height: 12px;
-    margin-left: 6px;
-    visibility: hidden;
-    user-select: none;
-    &::after {
-      content: attr(data-recall);
-      visibility: visible;
-      position: absolute;
-      display: block;
-      font-size: 12px;
-      line-height: 11px;
-      bottom: 0;
-      right: 0;
-      opacity: 0.6;
-    }
-    &.compatible-time {
-      margin-left: 2px;
-    }
-    &.compatible-time::after {
-      right: 34px;
-    }
-  }
-  &.bubble-inside {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 4px 6px;
-    color: #ffffff;
-    font-size: 12px;
-    line-height: 14px;
-    border-radius: 4px;
-  }
-  &.bubble-outside {
-    white-space: nowrap;
-    position: absolute;
-    padding: 4px 8px;
-    color: var(--text-color);
-    opacity: var(--opacity-1, 0.8);
-    font-size: 12px;
-    line-height: 14px;
-    width: 52px;
-    text-align: center;
-    z-index: 9;
-    bottom: 0;
-    &::after {
-      content: "";
-      z-index: -1;
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      border-radius: 50px;
-      box-shadow: var(--box-shadow, unset);
-      background-color: var(--background-color-05, var(--background-color-cb));
-      backdrop-filter: blur(28px);
     }
   }
 }
@@ -418,8 +349,10 @@
   }
 }
 
-// 复读样式
-.message-content-replace {
+// 独立插入时的样式
+.message-content-replace.single {
+  cursor: pointer;
+  position: relative;
   border-radius: 50px;
   display: flex;
   align-items: center;
@@ -430,13 +363,13 @@
   text-indent: -2px;
   font-size: 12px;
   width: 22px;
+  min-width: 22px;
   height: 22px;
-  position: absolute;
   line-height: 14px;
-  bottom: 0;
-  cursor: pointer;
   visibility: hidden;
+  margin: 0 6px;
   &::after {
+    content: "";
     z-index: -1;
     display: block;
     position: absolute;
@@ -445,16 +378,49 @@
     top: 0;
     left: 0;
     border-radius: 50px;
-    content: "";
     box-shadow: var(--box-shadow, unset);
     background-color: var(--background-color-05, var(--background-color-cb));
     backdrop-filter: blur(28px);
   }
-  &.compatible-time {
-    border-radius: 0 50px 50px 0;
-    text-indent: -4px;
-  }
 }
+
+// 复读样式
+// .message-content-replace {
+//   border-radius: 50px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   color: var(--text-color);
+//   box-sizing: border-box;
+//   letter-spacing: -2px;
+//   text-indent: -2px;
+//   font-size: 12px;
+//   width: 22px;
+//   height: 22px;
+//   position: absolute;
+//   line-height: 14px;
+//   bottom: 0;
+//   cursor: pointer;
+//   visibility: hidden;
+//   &::after {
+//     z-index: -1;
+//     display: block;
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     top: 0;
+//     left: 0;
+//     border-radius: 50px;
+//     content: "";
+//     box-shadow: var(--box-shadow, unset);
+//     background-color: var(--background-color-05, var(--background-color-cb));
+//     backdrop-filter: blur(28px);
+//   }
+//   &.compatible-time {
+//     border-radius: 0 50px 50px 0;
+//     text-indent: -4px;
+//   }
+// }
 
 // 头像黏贴消息框效果
 .avatar-sticky {
@@ -544,6 +510,7 @@
   }
 }
 
+// 本地表情插入图标样式
 .lite-tools-bar {
   align-items: center;
   display: none;
@@ -587,13 +554,14 @@
     padding: 4px 7px;
     font-size: 13px;
     z-index: 3100;
-    &.hidden {
-      // transition-delay: unset !important;
-      // visibility: hidden !important;
-    }
+    // &.hidden {
+    // transition-delay: unset !important;
+    // visibility: hidden !important;
+    // }
   }
 }
 
+// 本地表情全屏预览样式
 .full-screen-preview {
   position: fixed;
   top: 0;
@@ -814,7 +782,7 @@
     }
   }
 }
-
+// 本地表情样式
 .lite-tools-sticker-bar {
   position: absolute;
   max-width: calc(100% - 28px);

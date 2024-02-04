@@ -4,7 +4,7 @@ import { options, updateOptions } from "./options.js";
 import { first } from "./first.js";
 import { Logs } from "./logs.js";
 const log = new Logs("背景模块");
-
+let timeout = 0;
 updateOptions(updateWallpaper);
 
 /**
@@ -21,8 +21,12 @@ async function updateWallpaper() {
     let backgroundImage = "";
     // 链接被判断为图片类型
     if (/\.(jpg|png|gif|JPG|PNG|GIF)$/.test(options.background.url)) {
-      document.querySelector(".background-wallpaper-video")?.removeEventListener(restartVideo);
-      document.querySelector(".background-wallpaper-video")?.remove();
+      log("更新背景为图片");
+      const videoEl = document.querySelector(".background-wallpaper-video");
+      if (videoEl) {
+        log("移除视频元素");
+        videoEl.remove();
+      }
       backgroundImage = `:root{--background-wallpaper:url("${backgroundUrl}")}`;
       backgroundStyle.textContent = styleText + "\n" + backgroundImage;
       // 链接被判断为视频类型
@@ -42,15 +46,19 @@ async function updateWallpaper() {
         videoEl.volume = 0;
         if (document.querySelector(".tab-container")) {
           document.querySelector(".tab-container").appendChild(videoEl);
+          log("成功挂载视频");
         } else if (document.querySelector(".container")) {
           document.querySelector(".container").appendChild(videoEl);
+          log("成功挂载视频");
         } else if (document.querySelector("#app.forward")) {
           document.querySelector("#app.forward").appendChild(videoEl);
+          log("成功挂载视频");
         } else {
-          console.error("自定义视频挂载失败");
+          log("挂载背景视频失败");
         }
       } else {
         if (videoEl.getAttribute("src") !== backgroundUrl) {
+          log("修改视频背景地址");
           videoEl.setAttribute("src", backgroundUrl);
         }
       }
