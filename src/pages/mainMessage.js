@@ -127,6 +127,8 @@ function chatMessage() {
   } else {
     document.body.classList.remove("disabled-badge");
   }
+  // 消息列表只显示头像
+  document.querySelector(".two-col-layout__aside").classList.toggle("only-avatar", options.message.onlyAvatar);
 
   localEmoticons();
   observeChatTopFunc();

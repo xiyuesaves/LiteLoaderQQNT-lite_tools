@@ -779,3 +779,14 @@
   margin-right: 8px;
   opacity: 0.6;
 }
+
+.two-col-layout__aside.only-avatar {
+  width: 72px !important;
+  width: 72px !important;
+  flex-basis: 72px !important;
+  --min-width-aside: 72px !important;
+  --drag-width-aside: 72px !important;
+}
+.two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info {
+  display: none;
+}

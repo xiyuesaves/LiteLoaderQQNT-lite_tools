@@ -39,6 +39,7 @@
     "removeReplyAt": false,
     "mergeMessage": false,
     "selfMsgToLeft": false,
+    "onlyAvatar": false,
     "avatarSticky": {
       "enabled": false,
       "toBottom": false

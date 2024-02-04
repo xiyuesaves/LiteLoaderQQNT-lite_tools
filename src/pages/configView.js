@@ -206,6 +206,9 @@ async function onConfigView(view) {
   // 消息靠左显示
   addSwitchEventlistener("message.selfMsgToLeft", ".selfMsgToLeft");
 
+  // 消息靠左显示
+  addSwitchEventlistener("message.onlyAvatar", ".onlyAvatar");
+
   // 消息转图片
   addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
   addSwitchEventlistener("messageToImage.highResolution", ".highResolution");
