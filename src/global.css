@@ -798,7 +798,8 @@
 .two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info {
   position: absolute;
   top: 38px;
-  left: 44px;
+  left: calc(50% + 15px);
+  transform: translateX(-50%);
 }
 .two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info .list-item__title {
   display: none;

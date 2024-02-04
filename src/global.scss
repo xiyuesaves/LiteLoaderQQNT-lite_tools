@@ -893,7 +893,8 @@
         .list-item__info {
           position: absolute;
           top: 38px;
-          left: 44px;
+          left: calc(50% + 15px);
+          transform: translateX(-50%);
           .list-item__title {
             display: none;
           }
