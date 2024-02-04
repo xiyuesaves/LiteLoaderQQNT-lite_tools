@@ -889,8 +889,22 @@
     .viewport-list {
       .list-item {
         border-radius: 0 !important;
+        position: relative;
         .list-item__info {
-          display: none;
+          position: absolute;
+          top: 38px;
+          left: 44px;
+          .list-item__title {
+            display: none;
+          }
+          .list-item__summary {
+            .summary-main {
+              display: none;
+            }
+            .summary-bubble {
+              margin-left: 0 !important;
+            }
+          }
         }
       }
     }

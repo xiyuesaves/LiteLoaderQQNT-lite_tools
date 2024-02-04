@@ -793,7 +793,19 @@
 }
 .two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item {
   border-radius: 0 !important;
+  position: relative;
 }
 .two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info {
+  position: absolute;
+  top: 38px;
+  left: 44px;
+}
+.two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info .list-item__title {
   display: none;
+}
+.two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info .list-item__summary .summary-main {
+  display: none;
+}
+.two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item .list-item__info .list-item__summary .summary-bubble {
+  margin-left: 0 !important;
 }
