@@ -484,6 +484,11 @@
 // 消息合并样式
 .merge-message {
   .ml-root.q-scroll-view {
+    .message-container.message-container--selection-mod:not(.message-container--self) {
+      .avatar-span {
+        left: 50px;
+      }
+    }
     .ml-item {
       &.merge {
         &.merge-main {
