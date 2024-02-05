@@ -825,7 +825,7 @@ function onBrowserWindowCreated(window, plugin) {
       log("这是我发送的新消息", args[1]);
       // 阻止撤回
       if (options.preventMessageRecall.enabled) {
-        // 不是撤回标记则记录进内存缓存中
+        // 将消息存入map
         catchMsgList.set(args[1][onAddSendMsg].payload.msgRecord.msgId, args[1][onAddSendMsg].payload.msgRecord);
       }
       // 处理小程序卡片
@@ -849,7 +849,7 @@ function onBrowserWindowCreated(window, plugin) {
       args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
         // 阻止撤回
         if (options.preventMessageRecall.enabled) {
-          // 不是撤回标记则记录进内存缓存中
+          // 将消息存入map
           catchMsgList.set(arrs.msgId, arrs);
         }
         // 处理小程序卡片
@@ -877,32 +877,36 @@ function onBrowserWindowCreated(window, plugin) {
         if (!revokeElement.isSelfOperate) {
           log("捕获到实时撤回事件，已被阻止", msgItem);
           const findInCatch = catchMsgList.get(msgItem.msgId);
-          // 广播实时撤回消息参数
-          const recallData = {
-            operatorNick: revokeElement.operatorNick, // 执行撤回昵称
-            operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
-            operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
+          if (findInCatch) {
+            // 广播实时撤回消息参数
+            const recallData = {
+              operatorNick: revokeElement.operatorNick, // 执行撤回昵称
+              operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
+              operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
 
-            origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
-            origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
-            origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
-            recallTime: msgItem.recallTime, // 撤回时间
-          };
-          findInCatch.lite_tools_recall = recallData;
-          globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
-            msgId: findInCatch.msgId,
-            recallData,
-          });
-          // 写入常驻内存缓存
-          if (options.preventMessageRecall.localStorage) {
-            recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+              origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
+              origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
+              origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
+              recallTime: msgItem.recallTime, // 撤回时间
+            };
+            findInCatch.lite_tools_recall = recallData;
+            globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
+              msgId: findInCatch.msgId,
+              recallData,
+            });
+            // 写入常驻内存缓存
+            if (options.preventMessageRecall.localStorage) {
+              recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+            } else {
+              tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+            }
+            // 从消息列表缓存移除
+            catchMsgList.delete(msgItem.msgId);
+            processPic(findInCatch);
+            msgItem = findInCatch; // 替换撤回标记
           } else {
-            tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+            log("被撤回消息没有在缓存中，反撤回失败");
           }
-          // 从消息列表缓存移除
-          catchMsgList.delete(msgItem.msgId);
-          processPic(findInCatch);
-          msgItem = findInCatch; // 替换撤回标记
         } else {
           log("本人发起的撤回，放行");
         }
