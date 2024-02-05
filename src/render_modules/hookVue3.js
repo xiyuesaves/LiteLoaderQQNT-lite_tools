@@ -9,7 +9,9 @@ window.__VUE_ELEMENTS__ = elements;
  * @param {Element} component
  */
 function watchComponentUnmount(component) {
-  if (!component.bum) component.bum = [];
+  if (!component.bum) {
+    component.bum = [];
+  }
   component.bum.push(() => {
     const element = component.vnode.el;
     if (element) {
@@ -81,7 +83,7 @@ function recordComponent(component) {
  */
 export function hookVue3() {
   if (LiteLoader.plugins["LLAPI"] && !LiteLoader.plugins["LLAPI"].disabled) {
-    log("LLAPI已启用，停止代理");
+    log("LLAPI已启用，停止执行");
     return;
   }
   window.Proxy = new Proxy(window.Proxy, {

@@ -188,18 +188,31 @@ function processMessageElement() {
       }
     }
     // 插入复读按钮
-    if (options.message.switchReplace) {
+    if (options.message.replaceBtn) {
       const msgEl = el.querySelector(".message-content__wrapper");
       // +1插入元素
       const replaceEl = el.querySelector(".message-content-replace");
       if (msgEl && el.querySelector(filterClass) && !replaceEl) {
         const newReplaceEl = document.createElement("div");
         const msgId = el.id;
+        let doubleClick = false;
         newReplaceEl.classList.add("message-content-replace");
         newReplaceEl.innerText = "+1";
         newReplaceEl.addEventListener("click", () => {
-          const peer = lite_tools.getPeer();
-          forwardMessage(peer, peer, [msgId]);
+          if (options.message.doubleClickReplace) {
+            setTimeout(() => {
+              doubleClick = false;
+            }, 500);
+            if (doubleClick) {
+              const peer = lite_tools.getPeer();
+              forwardMessage(peer, peer, [msgId]);
+              doubleClick = false;
+            }
+            doubleClick = true;
+          } else {
+            const peer = lite_tools.getPeer();
+            forwardMessage(peer, peer, [msgId]);
+          }
         });
         if (slotEl.classList.contains("outside-slot")) {
           if (el.querySelector(".message-container--self")) {

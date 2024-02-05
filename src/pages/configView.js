@@ -179,7 +179,9 @@ async function onConfigView(view) {
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
 
   // 复读机
-  addSwitchEventlistener("message.switchReplace", ".switchReplace");
+  addSwitchEventlistener("message.replaceBtn", ".replaceBtn");
+  // 复读机-双击切换
+  addSwitchEventlistener("message.doubleClickReplace", ".doubleClickReplace");
 
   // 禁用推荐表情
   addSwitchEventlistener("message.disabledSticker", ".switchSticker");
