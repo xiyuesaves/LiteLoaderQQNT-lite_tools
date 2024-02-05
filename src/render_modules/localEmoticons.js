@@ -243,7 +243,7 @@ function quickInsertion() {
     }
     if (options.localEmoticons.quickEmoticonsAutoInputOnlyOne === true && filterEmocicons.length === 1) {
       insertToEditor(filterEmocicons[0].path);
-      return
+      return;
     }
     // 如果没有过滤数据，则使用全部图片
     forList = filterEmocicons.length ? filterEmocicons : emoticonsListArr;
@@ -374,11 +374,16 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
     } else {
       const selection = ckeditEditorModel.document.selection;
       const position = selection.getFirstPosition();
-
+      // 以表情包模式发送
+      let picSubType = 1;
+      // 以图片形式发送
+      if (options.localEmoticons.sendBigImage) {
+        picSubType = 0;
+      }
       ckeditEditorModel.change((writer) => {
         writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
         // 插入表情
-        const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType: 0 }) });
+        const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType }) });
         writer.insert(writerEl, position);
       });
     }

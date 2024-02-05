@@ -14,6 +14,7 @@
   "localEmoticons": {
     "enabled": false,
     "quickEmoticons": false,
+    "sendBigImage": false,
     "quickEmoticonsAutoInputOnlyOne": false,
     "majorization": false,
     "commonlyEmoticons": false,

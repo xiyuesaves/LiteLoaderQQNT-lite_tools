@@ -806,7 +806,7 @@ function onBrowserWindowCreated(window, plugin) {
                     recallTime: msgItem.recallTime, // 撤回时间
                   };
                 } else if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
-                  log("自己的撤回操作，放行");
+                  log("本人发起的撤回，放行");
                 } else {
                   catchMsgList.set(msgItem.msgId, msgItem); // 消息数据存入缓存
                 }

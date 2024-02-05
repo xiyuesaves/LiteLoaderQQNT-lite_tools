@@ -235,6 +235,8 @@ async function onConfigView(view) {
 
   // 表情加载优化
   addSwitchEventlistener("localEmoticons.majorization", ".majorization");
+  // 以图片形式发送
+  addSwitchEventlistener("localEmoticons.sendBigImage", ".sendBigImage");
 
   addSwitchEventlistener("localEmoticons.quickEmoticonsAutoInputOnlyOne", ".switchQuickEmoticonsAutoInputOnlyOne");
 
