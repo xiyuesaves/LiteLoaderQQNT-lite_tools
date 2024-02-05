@@ -61,7 +61,7 @@ let localEmoticonsPath;
 /**
  * 内存缓存消息记录-用于根据消息id获取撤回原始内容
  */
-const catchMsgList = new LimitedMap(10000);
+const catchMsgList = new LimitedMap(20000);
 /**
  * 所有撤回消息本地切片列表
  */
