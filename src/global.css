@@ -274,6 +274,9 @@
 .message-container .message-content__wrapper {
   align-items: flex-end;
 }
+.message-container .forward-msg .count {
+  position: relative;
+}
 .message-container:hover .lite-tools-slot.inside-slot .lite-tools-time {
   display: block;
 }

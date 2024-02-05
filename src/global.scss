@@ -300,6 +300,12 @@
   .message-content__wrapper {
     align-items: flex-end;
   }
+  // 修复合并转发消息插入元素错位
+  .forward-msg{
+    .count{
+      position: relative;
+    }
+  }
   &:hover {
     .lite-tools-slot {
       // 内部气泡
