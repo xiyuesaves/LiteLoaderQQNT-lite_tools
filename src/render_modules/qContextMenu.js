@@ -53,7 +53,7 @@ function addEventqContextMenu() {
       isRightClick = true;
       selectText = window.getSelection().toString();
       let imgEl = event.target;
-      uid = event.target.querySelector(".avatar.lite-tools-vue-component")?.__VUE__?.[0]?.props?.uid;
+      uid = event.target.querySelector(".avatar.vue-component")?.__VUE__?.[0]?.props?.uid;
       if (!uid?.startsWith("u_")) {
         uid = "";
       }

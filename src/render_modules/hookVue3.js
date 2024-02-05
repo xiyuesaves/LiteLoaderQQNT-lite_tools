@@ -1,5 +1,6 @@
+import { Logs } from "./logs.js";
+const log = new Logs("hookVue3");
 // hookVue3 功能来自 LLAPI
-
 const elements = new WeakMap();
 window.__VUE_ELEMENTS__ = elements;
 
@@ -28,8 +29,8 @@ function watchComponentUnmount(component) {
 }
 
 /**
- * 
- * @param {Element} component 
+ *
+ * @param {Element} component
  */
 function watchComponentMount(component) {
   let value;
@@ -47,8 +48,8 @@ function watchComponentMount(component) {
 }
 
 /**
- * 
- * @param {Element} component 
+ *
+ * @param {Element} component
  */
 function recordComponent(component) {
   let element = component.vnode.el;
@@ -79,6 +80,10 @@ function recordComponent(component) {
  * 将Vue组件实例挂载到对应元素上
  */
 export function hookVue3() {
+  if (LiteLoader.plugins["LLAPI"] && !LiteLoader.plugins["LLAPI"].disabled) {
+    log("LLAPI已启用，停止代理");
+    return;
+  }
   window.Proxy = new Proxy(window.Proxy, {
     construct(target, [proxyTarget, proxyHandler]) {
       const component = proxyTarget?._;
