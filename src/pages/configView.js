@@ -141,6 +141,7 @@ async function onConfigView(view) {
   // 阻止撤回
   addSwitchEventlistener("preventMessageRecall.enabled", ".preventMessageRecall");
   addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");
+  addSwitchEventlistener("preventMessageRecall.preventSelfMsg", ".preventSelfMsg");
   addSwitchEventlistener("preventMessageRecall.customColor", ".custom-color");
 
   // 初始化自定义撤回样式
