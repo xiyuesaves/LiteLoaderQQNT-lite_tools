@@ -301,8 +301,8 @@
     align-items: flex-end;
   }
   // 修复合并转发消息插入元素错位
-  .forward-msg{
-    .count{
+  .forward-msg {
+    .count {
       position: relative;
     }
   }
@@ -456,11 +456,6 @@
 // 消息合并样式
 .merge-message {
   .ml-root.q-scroll-view {
-    .message-container.message-container--selection-mod:not(.message-container--self) {
-      .avatar-span {
-        left: 50px;
-      }
-    }
     .ml-item {
       &.merge {
         &.merge-main {

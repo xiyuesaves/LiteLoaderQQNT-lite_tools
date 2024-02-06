@@ -359,9 +359,6 @@
   overflow: unset !important;
 }
 
-.merge-message .ml-root.q-scroll-view .message-container.message-container--selection-mod:not(.message-container--self) .avatar-span {
-  left: 50px;
-}
 .merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main {
   padding-top: 15px;
 }
