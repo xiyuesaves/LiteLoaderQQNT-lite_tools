@@ -226,4 +226,4 @@ function processMessageElement() {
   }
 }
 
-export { observerMessageList };
+export { observerMessageList, processMessageElement };
