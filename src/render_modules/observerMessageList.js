@@ -55,14 +55,12 @@ function processMessageElement() {
     if (!elProps) {
       continue;
     }
-
     // 消息靠左
     if (options.message.selfMsgToLeft) {
       el.querySelector(".message-container")?.classList?.remove("message-container--self");
       el.querySelector(".message-container")?.classList?.remove("message-container--align-right");
       el.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
     }
-
     // 开启背景时优化小图展示
     if (options.background.enabled) {
       // 过小尺寸的图片移除气泡效果
@@ -74,36 +72,9 @@ function processMessageElement() {
         }
       }
     }
-
-    // 合并消息头像
-    if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
-      const elProps = el?.querySelector(".message")?.__VUE__?.[0]?.props;
-      if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
-        const senderUid = elProps?.msgRecord?.senderUid;
-        const sendNickName = elProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? elProps?.msgRecord?.sendNickName;
-        const mapTag = senderUid + sendNickName;
-        const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
-        const prevElUid = prevProps?.msgRecord?.senderUid;
-        const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
-        const prevTag = prevElUid + prevNickName;
-        if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
-          el.classList.remove("merge-main");
-          el.classList.add("merge", "merge-child");
-          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + el.offsetHeight);
-        } else {
-          el.classList.remove("merge-child");
-          el.classList.add("merge", "merge-main");
-          const avatarEl = el.querySelector(".avatar-span");
-          avatarEl.style.height = `${childElHeight.get(mapTag) + el.offsetHeight - 15 - 4}px`;
-          childElHeight.set(mapTag, 0);
-        }
-      }
-    }
-
     // 消息添加插槽
     let slotEl = null;
-    const hasSlot = el.querySelector(".lite-tools-slot");
-    if (!hasSlot) {
+    if (!el.querySelector(".lite-tools-slot")) {
       // 插槽元素
       slotEl = document.createElement("div");
       slotEl.classList.add("lite-tools-slot");
@@ -151,13 +122,8 @@ function processMessageElement() {
         slotEl = null;
       }
     }
-
-    // 只有插槽元素有效时执行下面的逻辑
-    if (!slotEl) {
-      continue;
-    }
     // 插入时间气泡
-    if (options.message.showMsgTime) {
+    if (slotEl && options.message.showMsgTime) {
       // 时间插入元素
       if (!el.querySelector(".lite-tools-time")) {
         const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
@@ -172,12 +138,8 @@ function processMessageElement() {
         }
       }
     }
-    // 转发消息不执行剩下的内容
-    if (isForward) {
-      continue;
-    }
-    // 后处理被撤回的消息
-    if (options.preventMessageRecall.enabled) {
+    // 插入撤回提示
+    if (slotEl && !isForward && options.preventMessageRecall.enabled) {
       // 撤回插入元素
       if (!el.querySelector(".lite-tools-recall")) {
         const find = elProps?.msgRecord?.lite_tools_recall;
@@ -187,8 +149,8 @@ function processMessageElement() {
         }
       }
     }
-    // 插入复读按钮
-    if (options.message.replaceBtn) {
+    // 插入+1按钮
+    if (slotEl && !isForward && options.message.replaceBtn) {
       const msgEl = el.querySelector(".message-content__wrapper");
       // +1插入元素
       const replaceEl = el.querySelector(".message-content-replace");
@@ -235,6 +197,29 @@ function processMessageElement() {
             msgEl.appendChild(newReplaceEl);
           }
           log("独立插入");
+        }
+      }
+    }
+    // 连续消息合并
+    if (!isForward && options.message.avatarSticky.enabled && options.message.mergeMessage) {
+      if (elProps?.msgRecord?.elements?.[0]?.grayTipElement === null) {
+        const senderUid = elProps?.msgRecord?.senderUid;
+        const sendNickName = elProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? elProps?.msgRecord?.sendNickName;
+        const mapTag = senderUid + sendNickName;
+        const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
+        const prevElUid = prevProps?.msgRecord?.senderUid;
+        const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
+        const prevTag = prevElUid + prevNickName;
+        if (prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
+          el.classList.remove("merge-main");
+          el.classList.add("merge", "merge-child");
+          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + el.offsetHeight);
+        } else {
+          el.classList.remove("merge-child");
+          el.classList.add("merge", "merge-main");
+          const avatarEl = el.querySelector(".avatar-span");
+          avatarEl.style.height = `${childElHeight.get(mapTag) + el.offsetHeight - 15 - 4}px`;
+          childElHeight.set(mapTag, 0);
         }
       }
     }
