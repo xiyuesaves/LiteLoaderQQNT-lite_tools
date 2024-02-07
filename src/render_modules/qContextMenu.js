@@ -46,6 +46,13 @@ function addEventqContextMenu() {
   let eventName = "mouseup";
   let uid = "";
   let msgSticker = null;
+  let strTruncate = function(str, len) {
+    if (str.length > len) {
+      return str.slice(0, len) + "...";
+    }
+    return str;
+  }
+
   if (isMac || isLinux) {
     eventName = "mousedown";
   }
@@ -110,7 +117,7 @@ function addEventqContextMenu() {
     // 在网页搜索
     if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
       const searchText = selectText;
-      addQContextMenu(qContextMenu, searchIcon, "搜索", () => {
+      addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
         lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
       });
     }
