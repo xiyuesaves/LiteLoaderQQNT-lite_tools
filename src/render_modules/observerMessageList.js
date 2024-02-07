@@ -55,6 +55,10 @@ function processMessageElement() {
     if (!elProps) {
       continue;
     }
+    // 跳过除了群聊和私聊之外的聊天类型
+    if (elProps?.msgRecord?.chatType > 2) {
+      continue;
+    }
     // 消息靠左
     if (options.message.selfMsgToLeft) {
       el.querySelector(".message-container")?.classList?.remove("message-container--self");
