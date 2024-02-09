@@ -51,14 +51,14 @@ async function convertMessage(message) {
         [
           {
             path_info: {
-              md5HexStr: md5,
-              fileName: fileName,
-              elementType: 2,
-              elementSubType: 0,
-              thumbSize: 0,
-              needCreate: true,
               downloadType: 1,
+              elementSubType: message.picSubType,
+              elementType: 2,
+              fileName: fileName,
               file_uuid: "",
+              md5HexStr: md5,
+              needCreate: true,
+              thumbSize: 0,
             },
           },
         ],
@@ -66,7 +66,11 @@ async function convertMessage(message) {
         true,
         false,
       );
-      await lite_tools.nativeCall("ns-FsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, true, false);
+      const fileExist = await lite_tools.nativeCall("ns-FsApi", "isFileExist", [filePath], webContentId, true, false);
+      log("文件是否存在", fileExist, message);
+      if (!fileExist) {
+        await lite_tools.nativeCall("ns-FsApi", "copyFile", [{ fromPath: path, toPath: filePath }], webContentId, true, false);
+      }
       const imageSize = await lite_tools.nativeCall("ns-FsApi", "getImageSizeFromPath", [path], webContentId, true, false);
       const fileSize = await lite_tools.nativeCall("ns-FsApi", "getFileSize", [path], webContentId, true, false);
       const picElement = {
@@ -77,18 +81,22 @@ async function convertMessage(message) {
         fileName: fileName,
         sourcePath: filePath,
         original: true,
-        picType: 1001,
-        picSubType: 0,
+        picType: message.picSubType ? 1002 : 1001,
+        picSubType: message.picSubType,
         fileUuid: "",
         fileSubId: "",
         thumbFileSize: 0,
         summary: "",
       };
-      return {
+      const messageChannel = {
         elementType: 2,
         elementId: "",
         picElement,
       };
+      if (message.picSubType) {
+        messageChannel.extBufForUI = "";
+      }
+      return messageChannel;
     default:
       return null;
   }

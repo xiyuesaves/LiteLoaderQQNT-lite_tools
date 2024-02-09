@@ -366,20 +366,19 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
         }
       });
     }
-
+    // 以表情包模式发送
+    let picSubType = 1;
+    // 以图片形式发送
+    if (options.localEmoticons.sendBigImage) {
+      picSubType = 0;
+    }
     if (altKey) {
       log("直接发送图片");
       const peer = lite_tools.getPeer();
-      sendMessage(peer, [{ type: "image", path: src }]);
+      sendMessage(peer, [{ type: "image", path: src, picSubType }]);
     } else {
       const selection = ckeditEditorModel.document.selection;
       const position = selection.getFirstPosition();
-      // 以表情包模式发送
-      let picSubType = 1;
-      // 以图片形式发送
-      if (options.localEmoticons.sendBigImage) {
-        picSubType = 0;
-      }
       ckeditEditorModel.change((writer) => {
         writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
         // 插入表情
