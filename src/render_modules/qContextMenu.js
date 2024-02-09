@@ -40,25 +40,26 @@ function addQContextMenu(qContextMenu, icon, title, callback) {
  */
 function addEventqContextMenu() {
   let selectText = "";
-  let isLeftUp = true;    //  鼠标左键是否抬起 防止左键没松开就按右键搜索 导致搜索的内容为上一次的内容
+  let isLeftUp = true; //  鼠标左键是否抬起 防止左键没松开就按右键搜索 导致搜索的内容为上一次的内容
   let isRightClick = false;
   let imagePath = "";
   let eventName = "mouseup";
   let uid = "";
   let msgSticker = null;
-  let strTruncate = function(str, len) {
+  let strTruncate = function (str, len) {
     if (str.length > len) {
       return str.slice(0, len) + "...";
     }
     return str;
-  }
+  };
 
   if (isMac || isLinux) {
     eventName = "mousedown";
   }
 
   document.addEventListener("mouseup", async (event) => {
-    if (event.button === 0) {   //  鼠标左键抬起就代表文字选好了
+    if (event.button === 0) {
+      //  鼠标左键抬起就代表文字选好了
       selectText = window.getSelection().toString();
       isLeftUp = true;
     }
@@ -67,13 +68,15 @@ function addEventqContextMenu() {
     if (event.button === 0) {
       isLeftUp = false;
     } else if (event.button === 2 && !isLeftUp) {
-      selectText = window.getSelection().toString();  //  鼠标左键未抬起时按右键 就需要更新选中内容
+      selectText = window.getSelection().toString(); //  鼠标左键未抬起时按右键 就需要更新选中内容
     }
   });
 
   document.addEventListener(eventName, async (event) => {
     if (event.button === 2) {
       isRightClick = true;
+      imagePath = "";
+      msgSticker = null;
       let imgEl = event.target;
       uid = event.target.querySelector(".avatar.vue-component")?.__VUE__?.[0]?.props?.uid;
       if (!uid?.startsWith("u_")) {
@@ -108,7 +111,13 @@ function addEventqContextMenu() {
           };
           log("符合生成条件", msgSticker);
         }
+      } else {
+        msgSticker = null;
       }
+    } else {
+      uid = "";
+      imagePath = "";
+      msgSticker = null;
     }
   });
   new MutationObserver(() => {
