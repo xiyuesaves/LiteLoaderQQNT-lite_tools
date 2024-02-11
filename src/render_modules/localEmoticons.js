@@ -14,7 +14,7 @@ const barIcon = initBarIcon();
 /**
  * 主要元素
  */
-const { emoticonsMainEl, folderListEl, folderIconListEl } = loadDom();
+const { folderListEl, folderIconListEl } = loadDom();
 /**
  * 快速选择表情元素
  */
@@ -229,15 +229,16 @@ function quickInsertion() {
   const msg = ckeditorInstance.getData();
   const msgArr = msg.split("<p>");
   const lastStr = msgArr[msgArr.length - 1];
-  // 一个很抽象的编辑框文本处理方案
-  regOut = lastStr.replace(/<[^>]+>/g, "<element>").match(/\/([^\/]*)(?=<element>$)/);
+  const quickEmoticonsActiveKey = options.localEmoticons.quickEmoticonsActiveKey;
+  const regExp = new RegExp(`${quickEmoticonsActiveKey}([^${quickEmoticonsActiveKey}]*)(?=$)`);
+  regOut = lastStr.replace(/<[^>]+>/g, "").match(regExp);
   let filterEmocicons = [];
   if (regOut) {
     let emoticonsName = regOut[0].slice(1);
     filterEmocicons = emoticonsListArr.filter((emoticons) => emoticons.name.includes(emoticonsName));
   }
-
-  if (lastStr.slice(-5) === "/</p>" || filterEmocicons.length) {
+  // 判断输入框最后5个字符是否匹配激活关键字
+  if (lastStr.slice(-5) === `${quickEmoticonsActiveKey}</p>` || filterEmocicons.length) {
     if (!quickPreviewEl.classList.contains("show")) {
       quickPreviewEl.classList.add("show");
     }
