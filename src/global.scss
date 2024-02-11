@@ -297,6 +297,7 @@
 // 样式调整
 .message-container {
   position: relative;
+  transition-duration: unset !important;
   .message-content__wrapper {
     align-items: flex-end;
   }
@@ -490,13 +491,11 @@
   .message {
     padding-bottom: 0 !important;
     .message-container {
+      padding-top: 0;
       padding-bottom: 4px;
     }
     .message__timestamp {
       display: none;
-    }
-    .message-container {
-      padding-top: 0;
     }
   }
 }

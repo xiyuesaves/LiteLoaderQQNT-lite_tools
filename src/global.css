@@ -270,6 +270,7 @@
 
 .message-container {
   position: relative;
+  transition-duration: unset !important;
 }
 .message-container .message-content__wrapper {
   align-items: flex-end;
@@ -385,13 +386,11 @@
   padding-bottom: 0 !important;
 }
 .merge-message .message .message-container {
+  padding-top: 0;
   padding-bottom: 4px;
 }
 .merge-message .message .message__timestamp {
   display: none;
-}
-.merge-message .message .message-container {
-  padding-top: 0;
 }
 
 .lite-tools-showLocalEmoticons .lite-tools-bar {
