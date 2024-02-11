@@ -17,6 +17,12 @@ function chatMessageList() {
   } else {
     document.body.classList.remove("avatar-sticky", "avatar-end");
   }
+  // 是否保留时间
+  if (options.message.avatarSticky.enabled && options.message.mergeMessage && options.message.mergeMessageKeepTime) {
+    document.body.classList.add("merge-message-keep-time");
+  } else {
+    document.body.classList.remove("merge-message-keep-time");
+  }
   // 是否开启消息合并
   if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
     document.body.classList.add("merge-message");

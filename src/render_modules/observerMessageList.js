@@ -221,7 +221,7 @@ function processMessageElement() {
           el.classList.remove("merge-child");
           el.classList.add("merge", "merge-main");
           const avatarEl = el.querySelector(".avatar-span");
-          avatarEl.style.height = `${childElHeight.get(mapTag) + el.offsetHeight - 15 - 4}px`;
+          avatarEl.style.height = `${childElHeight.get(mapTag) + el.querySelector(".message-container").offsetHeight - 4}px`;
           childElHeight.set(mapTag, 0);
         }
       }

@@ -124,6 +124,7 @@ async function onConfigView(view) {
 
   // 合并消息
   addSwitchEventlistener("message.mergeMessage", ".mergeMessage");
+  addSwitchEventlistener("message.mergeMessageKeepTime", ".mergeMessageKeepTime");
 
   // 头像置底
   addSwitchEventlistener("message.avatarSticky.toBottom", ".avatar-bottom");

@@ -499,6 +499,13 @@
     }
   }
 }
+
+.merge-message-keep-time {
+  .message__timestamp {
+    display: block !important;
+  }
+}
+
 .lite-tools-showLocalEmoticons {
   .lite-tools-bar {
     display: flex !important;

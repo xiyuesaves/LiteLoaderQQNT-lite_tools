@@ -41,6 +41,7 @@
     "doubleClickReplace": false,
     "removeReplyAt": false,
     "mergeMessage": false,
+    "mergeMessageKeepTime": false,
     "selfMsgToLeft": false,
     "onlyAvatar": false,
     "avatarSticky": {
