@@ -235,10 +235,10 @@
 .lite-tools-settings .panel-main .sider-text-wrap .sider-text {
   width: auto;
 }
-.lite-tools-settings .max-commonly-emoticons-num {
+.lite-tools-settings .slot-input-box {
   width: 62px !important;
 }
-.lite-tools-settings .max-commonly-emoticons-num .commonly-emoticons-num {
+.lite-tools-settings .slot-input-box .slot-input {
   text-align: center;
   width: 100%;
   height: 24px;
@@ -248,7 +248,7 @@
   border-bottom-left-radius: 4px;
   background-color: var(--overlay_active);
 }
-.lite-tools-settings .max-commonly-emoticons-num .commonly-emoticons-num::-webkit-inner-spin-button, .lite-tools-settings .max-commonly-emoticons-num .commonly-emoticons-num::-webkit-outer-spin-button {
+.lite-tools-settings .slot-input-box .slot-input::-webkit-inner-spin-button, .lite-tools-settings .slot-input-box .slot-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }

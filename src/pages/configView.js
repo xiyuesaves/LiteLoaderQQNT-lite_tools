@@ -1,7 +1,5 @@
 // 防抖函数
 import { debounce } from "../render_modules/debounce.js";
-// 初次执行检查
-import { first } from "../render_modules/first.js";
 // 检查更新;
 import { checkUpdate } from "../render_modules/checkUpdate.js";
 // 向设置界面插入动态选项
@@ -54,6 +52,11 @@ async function onConfigView(view) {
   view.insertAdjacentHTML("afterbegin", html_text);
   log("dom加载完成");
 
+  // 防抖更新配置方法
+  const debounceSetOptions = debounce(() => {
+    lite_tools.setOptions(options);
+  }, 100);
+
   // 从仓库检查更新
   checkUpdate(view);
   // 调试模式动态更新样式
@@ -95,33 +98,23 @@ async function onConfigView(view) {
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
-    if (first("init-world-search-option")) {
-      const searchEl = view.querySelector(".search-url");
-      searchEl.value = options.wordSearch.searchUrl;
-      searchEl.addEventListener(
-        "input",
-        debounce(() => {
-          options.wordSearch.searchUrl = searchEl.value;
-          lite_tools.setOptions(options);
-        }, 100),
-      );
-    }
+  });
+  const searchEl = view.querySelector(".search-url");
+  searchEl.value = options.wordSearch.searchUrl;
+  searchEl.addEventListener("input", (e) => {
+    options.wordSearch.searchUrl = e.target.value;
+    debounceSetOptions();
   });
 
   // 图片搜索
   addSwitchEventlistener("imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
     view.querySelector(".image-select-search-url").classList.toggle("disabled-input", !enabled);
-    if (first("init-image-search-option")) {
-      const searchEl = view.querySelector(".img-search-url");
-      searchEl.value = options.imageSearch.searchUrl;
-      searchEl.addEventListener(
-        "input",
-        debounce(() => {
-          options.imageSearch.searchUrl = searchEl.value;
-          lite_tools.setOptions(options);
-        }, 100),
-      );
-    }
+  });
+  const imgSearchEl = view.querySelector(".img-search-url");
+  imgSearchEl.value = options.imageSearch.searchUrl;
+  imgSearchEl.addEventListener("input", (e) => {
+    options.imageSearch.searchUrl = e.target.value;
+    debounceSetOptions();
   });
 
   // 头像黏贴消息框效果
@@ -214,6 +207,7 @@ async function onConfigView(view) {
 
   // 消息转图片
   addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
+  // 消息转图片-高清化
   addSwitchEventlistener("messageToImage.highResolution", ".highResolution");
   view.querySelector(".select-default-save-file-input").value = options.messageToImage.path;
   view.querySelectorAll(".select-default-save-file-input").forEach((el) => {
@@ -233,17 +227,27 @@ async function onConfigView(view) {
       lite_tools.openSelectLocalEmoticonsFolder();
     });
   });
-
   // 表情加载优化
   addSwitchEventlistener("localEmoticons.majorization", ".majorization");
   // 以图片形式发送
   addSwitchEventlistener("localEmoticons.sendBigImage", ".sendBigImage");
-
-  addSwitchEventlistener("localEmoticons.quickEmoticonsAutoInputOnlyOne", ".switchQuickEmoticonsAutoInputOnlyOne");
-
   // 快捷输入表情功能
   addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons", (_, enabled) => {
     view.querySelector(".switchQuickEmoticonsAutoInputOnlyOne").parentNode.classList.toggle("disabled-switch", !enabled);
+  });
+  // 快捷表情自动插入
+  addSwitchEventlistener("localEmoticons.quickEmoticonsAutoInputOnlyOne", ".switchQuickEmoticonsAutoInputOnlyOne");
+  const quickEmoticonsActiveKey = view.querySelector(".quickEmoticonsActiveKey");
+  quickEmoticonsActiveKey.value = options.localEmoticons.quickEmoticonsActiveKey;
+  quickEmoticonsActiveKey.addEventListener("input", (e) => {
+    // 只保留一位
+    if (e.target.value.length > 1) {
+      e.target.value = e.target.value.split("")[e.target.value.length - 1];
+    } else if (e.target.value.length === 0) {
+      e.target.value = "/";
+    }
+    options.localEmoticons.quickEmoticonsActiveKey = e.target.value.split("")[0];
+    debounceSetOptions();
   });
 
   // 常用表情分类
@@ -252,34 +256,26 @@ async function onConfigView(view) {
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
     view.querySelector(".select-path").classList.toggle("disabled-input", !enabled);
-    if (first("init-background-option")) {
-      view.querySelector(".select-path input").value = options.background.url;
-      view.querySelectorAll(".select-file").forEach((el) => {
-        el.addEventListener("click", () => {
-          lite_tools.openSelectBackground();
-        });
-      });
-    }
+  });
+  view.querySelector(".select-path input").value = options.background.url;
+  view.querySelectorAll(".select-file").forEach((el) => {
+    el.addEventListener("click", () => {
+      lite_tools.openSelectBackground();
+    });
   });
 
   // 自定义历史表情数量
-  if (first(".commonly-emoticons-num")) {
-    view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
-      options.localEmoticons.rowsSize * 2
-    }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
-    const inputEl = view.querySelector(".commonly-emoticons-num");
-    inputEl.value = options.localEmoticons.commonlyNum;
-    inputEl.addEventListener(
-      "blur",
-      debounce(() => {
-        options.localEmoticons.commonlyNum = parseInt(inputEl.value) || 20;
-        lite_tools.setOptions(options);
-      }, 100),
-    );
-  }
+  view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
+    options.localEmoticons.rowsSize * 2
+  }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
+  const commonlyEmoticonsEl = view.querySelector(".commonly-emoticons-num");
+  commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
+  commonlyEmoticonsEl.addEventListener("blur", (e) => {
+    options.localEmoticons.commonlyNum = parseInt(e.target.value) || 20;
+    debounceSetOptions();
+  });
 
   // 不可复用的拖拽选择方法
-  initSider();
   function initSider() {
     updateSider();
     let hasDown = false;
@@ -314,7 +310,7 @@ async function onConfigView(view) {
           view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
             options.localEmoticons.rowsSize * 2
           }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
-          lite_tools.setOptions(options);
+          debounceSetOptions();
           updateSider();
         }
       }
@@ -323,6 +319,8 @@ async function onConfigView(view) {
       hasDown = false;
     });
   }
+  initSider();
+
   function updateSider() {
     const button = view.querySelector(".sider-button");
     const mask = view.querySelector(".sider-mask");
@@ -351,7 +349,7 @@ async function onConfigView(view) {
 
   // 监听设置文件变动
   updateOptions((opt) => {
-    log("检测到配置更新", opt.messageToImage.path);
+    log("检测到配置更新", opt);
     view.querySelector(".select-path input").value = opt.background.url;
     view.querySelector(".select-folder-input input").value = opt.localEmoticons.localPath;
     view.querySelector(".select-default-save-file-input").value = opt.messageToImage.path;
