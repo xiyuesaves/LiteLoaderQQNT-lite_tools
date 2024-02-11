@@ -11,8 +11,7 @@ const observeConfig = {
   childList: true,
   subtree: false,
 };
-const filterClass =
-  ":not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container).mix-message__container,.msg-content-container";
+const filterClass = ".msg-content-container:not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container)";
 
 let lastMessageNodeList = [];
 let childElHeight = new Map();
@@ -155,10 +154,10 @@ function processMessageElement() {
     }
     // 插入+1按钮
     if (slotEl && !isForward && options.message.replaceBtn) {
-      const msgEl = el.querySelector(".message-content__wrapper");
       // +1插入元素
-      const replaceEl = el.querySelector(".message-content-replace");
-      if (msgEl && el.querySelector(filterClass) && !replaceEl) {
+      log("复读按钮", el, !!el.querySelector(filterClass));
+      if (el.querySelector(filterClass) && !el.querySelector(".message-content-replace")) {
+        const msgEl = el.querySelector(".message-content__wrapper");
         const newReplaceEl = document.createElement("div");
         const msgId = el.id;
         let doubleClick = false;
