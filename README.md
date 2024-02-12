@@ -15,8 +15,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 > [!TIP]
 > macOS 用户如果需要使用本地表情功能，请将表情文件夹选择在沙盒里，否则每次重启 QQ 都需要重新选择一次表情目录
 
-> [!CAUTION]
-> **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
+> [!CAUTION] > **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
 
 ## 使用方法
 
@@ -39,7 +38,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 小程序卡片转链接 | 精简输入框功能 | 精简侧边栏功能     | 精简聊天框功能   |
 | 快速关闭预览图片 | 移除回复@      | 消息合并           | 禁用 GIF 热图    |
 | 划词搜索         | 隐藏小红点     | 禁用表情推荐       | 阻止拖拽多选消息 |
-| 消息靠左显示     | 消息转图片     | 消息列表只显示头像 |                  |
+| 消息靠左显示     | 消息转图片     | 消息列表只显示头像 | 自定义字体       |
 
 ## 待办事项
 
