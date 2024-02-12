@@ -4,7 +4,6 @@ import { options, updateOptions } from "./options.js";
 import { first } from "./first.js";
 import { Logs } from "./logs.js";
 const log = new Logs("背景模块");
-let timeout = 0;
 updateOptions(updateWallpaper);
 
 /**

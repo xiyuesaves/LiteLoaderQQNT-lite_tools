@@ -1,4 +1,4 @@
-import { updateWallpaper } from "../render_modules/updateWallpaper.js";
+import { updateWallpaper } from "../render_modules/wallpaper.js";
 import { observerMessageList, processMessageElement } from "../render_modules/observerMessageList.js";
 // 右键菜单相关操作
 import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
