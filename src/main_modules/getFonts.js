@@ -1,10 +1,11 @@
 const { exec } = require("node:child_process");
-function winGetFonts(cwd) {
+function winGetFonts() {
   return new Promise((res, rej) => {
     exec(
-      "chcp 65001; ./win_getFonts.ps1",
+      `chcp 65001;
+      [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing");
+      (New-Object System.Drawing.Text.InstalledFontCollection).Families;`,
       {
-        cwd,
         shell: "powershell.exe",
         encoding: "utf8",
       },

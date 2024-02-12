@@ -303,7 +303,7 @@ function onLoad(plugin) {
       try {
         switch (LiteLoader.os.platform) {
           case "win32":
-            systemFontList = await winGetFonts(path.join(LiteLoader.plugins["lite_tools"].path.plugin, "src/shell"));
+            systemFontList = await winGetFonts();
             break;
           case "darwin":
             systemFontList = await macGetFonts();
@@ -313,6 +313,7 @@ function onLoad(plugin) {
             break;
         }
       } catch (err) {
+        log("获取字体列表失败", err);
         systemFontList = ["获取系统字体列表失败"];
       }
     }
