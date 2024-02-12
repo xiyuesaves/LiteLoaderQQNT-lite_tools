@@ -255,7 +255,7 @@
     }
     .font-list {
       position: absolute;
-      top: calc(100% + 6px);
+      top: calc(100% + 8px);
       width: 100%;
       max-height: 410px;
       overflow: scroll;
@@ -265,9 +265,14 @@
       backdrop-filter: blur(28px);
       box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
       background-color: var(--background-color-008);
-      display: none;
+      transition: 150ms;
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
       &.show {
-        display: block;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
       }
       .font-item {
         font-size: 14px;
@@ -282,7 +287,7 @@
         white-space-collapse: collapse;
         text-wrap: nowrap;
         color: var();
-        &.poe-none{
+        &.poe-none {
           pointer-events: none;
           opacity: 0.6;
         }
