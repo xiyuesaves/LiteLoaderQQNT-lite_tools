@@ -2,7 +2,6 @@ import { options } from "./options.js";
 import { searchIcon, copyIcon, imageIcon } from "./svg.js";
 import "./wrapText.js";
 import { getMembersAvatar } from "./nativeCall.js";
-import { isMac, isLinux } from "./platform.js";
 import { Logs } from "./logs.js";
 const log = new Logs("右键菜单");
 /**
@@ -46,14 +45,15 @@ function addEventqContextMenu() {
   let eventName = "mouseup";
   let uid = "";
   let msgSticker = null;
-  let strTruncate = function (str, len) {
+  const strTruncate = function (str, len) {
     if (str.length > len) {
       return str.slice(0, len) + "...";
     }
     return str;
   };
 
-  if (isMac || isLinux) {
+  // 使用原生系统判断
+  if (LiteLoader.os.platform !== "win32") {
     eventName = "mousedown";
   }
 
@@ -77,7 +77,7 @@ function addEventqContextMenu() {
       isRightClick = true;
       imagePath = "";
       msgSticker = null;
-      let imgEl = event.target;
+      const imgEl = event.target;
       uid = event.target.querySelector(".avatar.vue-component")?.__VUE__?.[0]?.props?.uid;
       if (!uid?.startsWith("u_")) {
         uid = "";
@@ -132,7 +132,7 @@ function addEventqContextMenu() {
     }
     // 搜索图片
     if (qContextMenu && imagePath && options.imageSearch.enabled) {
-      let localPath = decodeURIComponent(imagePath);
+      const localPath = decodeURIComponent(imagePath);
       addQContextMenu(qContextMenu, searchIcon, "搜索图片", () => {
         const filePathArr = localPath.split("/");
         const fileName = filePathArr[filePathArr.length - 1].split(".")[0].toUpperCase().replace("_0", "");
