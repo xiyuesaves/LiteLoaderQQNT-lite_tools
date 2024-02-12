@@ -130,7 +130,7 @@ async function onConfigView(view) {
       settingOptionEl.setAttribute("data-value", fontName);
       settingOptionEl.setAttribute("title", fontName);
       settingOptionEl.classList.add("font-item");
-      if (fontName === "当前系统不受支持") {
+      if (["当前系统不受支持", "获取系统字体列表失败"].includes(fontName)) {
         settingOptionEl.classList.add("poe-none");
       }
       settingOptionEl.innerText = fontName;
