@@ -8,14 +8,15 @@ LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
 
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
-> [!NOTE]
+> [!NOTE]\
 > 新版仅支持 LiteLoaderQQNT 1.0.0，旧版本在[v3 分支](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/tree/v3) \
 > 该插件在 Windows 环境下测试开发，理论全平台兼容，但没有条件对另外两个平台进行测试
 
-> [!TIP]
+> [!TIP]\
 > macOS 用户如果需要使用本地表情功能，请将表情文件夹选择在沙盒里，否则每次重启 QQ 都需要重新选择一次表情目录
 
-> [!CAUTION] > **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
+> [!CAUTION]\
+> **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
 
 ## 使用方法
 
