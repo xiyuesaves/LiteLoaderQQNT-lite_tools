@@ -1,7 +1,10 @@
-import { options } from "./options.js";
+import { options, updateOptions } from "./options.js";
 import { Logs } from "./logs.js";
 const log = new Logs("全局样式");
-
+updateOptions(updateFont);
+function updateFont() {
+  document.body.style.fontFamily = options.message.overrideFont;
+}
 /**
  * 注入全局样式
  */
@@ -37,6 +40,8 @@ async function initStyle() {
       element.textContent = message;
     }
   });
+
+  updateFont();
   log("模块已加载");
 }
 export { initStyle };

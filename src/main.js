@@ -14,6 +14,7 @@ const processPic = require("./main_modules/processPic");
 const replaceArk = require("./main_modules/replaceArk");
 const debounce = require("./main_modules/debounce");
 const logs = require("./main_modules/logs");
+const { winGetFonts, linuxGetFonts, macGetFonts } = require("./main_modules/getFonts");
 const {
   setOptions,
   getOptions,
@@ -87,6 +88,11 @@ let localEmoticonsList = [];
  */
 let options, localEmoticonsConfig;
 
+/**
+ * 系统字体列表
+ */
+let systemFontList = [];
+
 onBeforeUpdateOptions((newOptions) => {
   log("更新配置前被调用");
   // 判断是否启用了本地表情包功能
@@ -116,6 +122,18 @@ onUpdateOptions((opt) => {
 
 // 加载插件时触发
 function onLoad(plugin) {
+  // 测试代码
+  // (async () => {
+  //   console.log("尝试读取本地字体列表");
+  //   try {
+  //     const list = await winGetFonts(path.join(LiteLoader.plugins["lite_tools"].path.plugin, "src/shell"));
+  //     console.log("读取到结果");
+  //     list.forEach(fontName => console.log(fontName))
+  //   } catch (err) {
+  //     console.log("读取到失败", err);
+  //   }
+  // })();
+
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
   const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
@@ -277,6 +295,28 @@ function onLoad(plugin) {
   recordMessageRecallIdList.onNewRecallMsg(() => {
     localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
     globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+  });
+
+  // 获取系统字体列表
+  ipcMain.handle("LiteLoader.lite_tools.getSystemFonts", async (event) => {
+    if (systemFontList.length <= 1) {
+      try {
+        switch (LiteLoader.os.platform) {
+          case "win32":
+            systemFontList = await winGetFonts(path.join(LiteLoader.plugins["lite_tools"].path.plugin, "src/shell"));
+            break;
+          case "darwin":
+            systemFontList = await macGetFonts();
+            break;
+          case "linux":
+            systemFontList = await linuxGetFonts();
+            break;
+        }
+      } catch (err) {
+        systemFontList = ["获取系统字体列表失败"];
+      }
+    }
+    return systemFontList;
   });
 
   // 获取本地保存的撤回消息数量

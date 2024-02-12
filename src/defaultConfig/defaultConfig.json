@@ -44,6 +44,7 @@
     "mergeMessageKeepTime": false,
     "selfMsgToLeft": false,
     "onlyAvatar": false,
+    "overrideFont": "",
     "avatarSticky": {
       "enabled": false,
       "toBottom": false

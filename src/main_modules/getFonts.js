@@ -27,11 +27,11 @@ function winGetFonts(cwd) {
 
 // 等待有缘人提pr
 function linuxGetFonts() {
-  return Promise.resolve([]);
+  return Promise.resolve(["当前系统不受支持"]);
 }
 
 // 等待有缘人提pr
 function macGetFonts() {
-  return Promise.resolve([]);
+  return Promise.resolve(["当前系统不受支持"]);
 }
 module.exports = { winGetFonts, linuxGetFonts, macGetFonts };
