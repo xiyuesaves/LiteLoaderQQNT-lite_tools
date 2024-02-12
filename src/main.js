@@ -13,6 +13,8 @@ const globalBroadcast = require("./main_modules/globalBroadcast");
 const processPic = require("./main_modules/processPic");
 const replaceArk = require("./main_modules/replaceArk");
 const debounce = require("./main_modules/debounce");
+const RangesServer = require("./main_modules/rangesServer");
+const videoServer = new RangesServer();
 const logs = require("./main_modules/logs");
 const { winGetFonts, linuxGetFonts, macGetFonts } = require("./main_modules/getFonts");
 const {
@@ -93,6 +95,14 @@ let options, localEmoticonsConfig;
  */
 let systemFontList = [];
 
+/**
+ * 背景视频地址
+ */
+let backgroundData = {
+  href: "",
+  type: "",
+};
+
 onBeforeUpdateOptions((newOptions) => {
   log("更新配置前被调用");
   // 判断是否启用了本地表情包功能
@@ -110,6 +120,44 @@ onBeforeUpdateOptions((newOptions) => {
       fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
   }
+  if (newOptions.background.enabled) {
+    if ([".mp4", ".webm"].includes(path.extname(newOptions.background.url))) {
+      videoServer.setFilePath(newOptions.background.url);
+      videoServer
+        .startServer()
+        .then((port) => {
+          backgroundData = {
+            href: `http://localhost:${port}/${path.basename(newOptions.background.url)}`,
+            type: "video",
+          };
+          log("背景-更新为视频");
+          globalBroadcast("LiteLoader.lite_tools.updateWallpaper", newOptions.background.enabled, backgroundData);
+        })
+        .catch((err) => {
+          log("启用视频背景服务时出错", err);
+          backgroundData = {
+            href: "",
+            type: "image",
+          };
+          globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
+        });
+    } else {
+      videoServer.stopServer();
+      backgroundData = {
+        href: `local:///${newOptions.background.url.replace(/\\/g, "//")}`,
+        type: "image",
+      };
+      log("背景-更新为图片");
+      globalBroadcast("LiteLoader.lite_tools.updateWallpaper", newOptions.background.enabled, backgroundData);
+    }
+  } else {
+    videoServer.stopServer();
+    backgroundData = {
+      href: "",
+      type: "image",
+    };
+    globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
+  }
 });
 
 // 配置文件更新后保存到本地并广播更新事件
@@ -122,18 +170,6 @@ onUpdateOptions((opt) => {
 
 // 加载插件时触发
 function onLoad(plugin) {
-  // 测试代码
-  // (async () => {
-  //   console.log("尝试读取本地字体列表");
-  //   try {
-  //     const list = await winGetFonts(path.join(LiteLoader.plugins["lite_tools"].path.plugin, "src/shell"));
-  //     console.log("读取到结果");
-  //     list.forEach(fontName => console.log(fontName))
-  //   } catch (err) {
-  //     console.log("读取到失败", err);
-  //   }
-  // })();
-
   const pluginDataPath = plugin.path.data;
   const settingsPath = path.join(pluginDataPath, "settings.json");
   const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
@@ -253,10 +289,10 @@ function onLoad(plugin) {
   log("轻量工具箱已加载");
   log("ipcMain对象", ipcMain.emit);
 
+  // 初始化本地表情包功能
   // 监听本地表情包文件夹内的更新
   onUpdateEmoticons((emoticonsList) => {
     log("本地表情包更新", emoticonsList.length);
-
     // 将所有的图片路径放入Set
     const newPaths = new Set(
       emoticonsList.flatMap((emoticons) => {
@@ -264,14 +300,12 @@ function onLoad(plugin) {
       }),
     );
     localEmoticonsList = emoticonsList;
-
     // 如果没有启用历史表情，则不推送，但是仍旧要更新配置文件
     localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
     globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
-
   // 判断是否启用了本地表情包功能
   if (options.localEmoticons.enabled) {
     if (options.localEmoticons.localPath) {
@@ -280,10 +314,37 @@ function onLoad(plugin) {
     }
   }
 
+  // 初始化背景功能
+  if (options.background.enabled && options.background.url) {
+    if ([".mp4", ".webm"].includes(path.extname(options.background.url))) {
+      videoServer.setFilePath(options.background.url);
+      videoServer
+        .startServer()
+        .then((port) => {
+          backgroundData = {
+            href: `http://localhost:${port}/${path.basename(options.background.url)}`,
+            type: "video",
+          };
+        })
+        .catch((err) => {
+          log("启用视频背景服务时出错", err);
+          backgroundData = {
+            href: "",
+            type: "image",
+          };
+        });
+    } else {
+      backgroundData = {
+        href: `local:///${options.background.url.replace(/\\/g, "//")}`,
+        type: "image",
+      };
+    }
+  }
+
+  // 初始化阻止撤回功能
   // 初始化常驻撤回消息历史记录-每100条记录切片为一个json文件
   recordMessageRecallIdList = new MessageRecallList(messageRecallJson, messageRecallPath, 100);
   tempRecordMessageRecallIdList = new Map();
-
   // 监听常驻历史撤回记录实例创建新的文件切片
   recordMessageRecallIdList.onNewFile((newFileName) => {
     log("新增切片文件", newFileName);
@@ -291,10 +352,16 @@ function onLoad(plugin) {
     // 排序文件名称
     messageRecallFileList.sort((a, b) => a - b);
   });
-
   recordMessageRecallIdList.onNewRecallMsg(() => {
     localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
     globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+  });
+
+  // 进程通信相关
+
+  // 获取背景数据
+  ipcMain.handle("LiteLoader.lite_tools.getWallpaper", () => {
+    return [options.background.enabled, backgroundData];
   });
 
   // 获取系统字体列表
@@ -474,6 +541,7 @@ function onLoad(plugin) {
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
+  // 中转获取用户信息事件
   ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (event, uid) => {
     settingWindow.webContents.send("LiteLoader.lite_tools.onRequireUserInfo", uid);
     return await new Promise((res) => {
@@ -537,7 +605,7 @@ function onLoad(plugin) {
         filters: [
           {
             name: "img",
-            extensions: ["jpg", "png", "gif", "mp4"],
+            extensions: ["jpg", "png", "gif", "mp4", "webm"],
           },
         ], //打开按钮
         buttonLabel: "选择", //回调结果渲染到img标签上
@@ -545,7 +613,40 @@ function onLoad(plugin) {
       .then((result) => {
         log("选择了文件", result);
         if (!result.canceled) {
-          options.background.url = path.join(result.filePaths[0]);
+          const newFilePath = path.join(result.filePaths[0]);
+          // 背景视频相关
+          if (options.background.enabled && newFilePath !== options.background.url) {
+            if ([".mp4", ".webm"].includes(path.extname(newFilePath))) {
+              videoServer.setFilePath(newFilePath);
+              videoServer
+                .startServer()
+                .then((port) => {
+                  backgroundData = {
+                    href: `http://localhost:${port}/${path.basename(newFilePath)}`,
+                    type: "video",
+                  };
+                  log("背景-更新为视频");
+                  globalBroadcast("LiteLoader.lite_tools.updateWallpaper", options.background.enabled, backgroundData);
+                })
+                .catch((err) => {
+                  log("启用视频背景服务时出错", err);
+                  backgroundData = {
+                    href: "",
+                    type: "image",
+                  };
+                  globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
+                });
+            } else {
+              videoServer.stopServer();
+              backgroundData = {
+                href: `local:///${newFilePath.replace(/\\/g, "//")}`,
+                type: "image",
+              };
+              log("背景-更新为图片");
+              globalBroadcast("LiteLoader.lite_tools.updateWallpaper", options.background.enabled, backgroundData);
+            }
+          }
+          options.background.url = newFilePath;
           setOptions(options);
         }
       })

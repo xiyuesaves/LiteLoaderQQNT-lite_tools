@@ -155,7 +155,6 @@ function processMessageElement() {
     // 插入+1按钮
     if (slotEl && !isForward && options.message.replaceBtn) {
       // +1插入元素
-      log("复读按钮", el, !!el.querySelector(filterClass));
       if (el.querySelector(filterClass) && !el.querySelector(".message-content-replace")) {
         const msgEl = el.querySelector(".message-content__wrapper");
         const newReplaceEl = document.createElement("div");
@@ -191,7 +190,6 @@ function processMessageElement() {
             }
             slotEl.appendChild(newReplaceEl);
           }
-          log("插入到插槽");
         } else {
           newReplaceEl.classList.add("single");
           if (el.querySelector(".message-container--self")) {
@@ -199,7 +197,6 @@ function processMessageElement() {
           } else {
             msgEl.appendChild(newReplaceEl);
           }
-          log("独立插入");
         }
       }
     }

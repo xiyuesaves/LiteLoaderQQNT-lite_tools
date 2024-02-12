@@ -44,6 +44,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 打开选择背景图片窗口
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
+  // 监听背景数据变化
+  onUpdateWallpaper: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateWallpaper", callback),
+  // 获取背景数据
+  getWallpaper: () => ipcRenderer.invoke("LiteLoader.lite_tools.getWallpaper"),
   // 消息窗口向主进程发送侧边栏按钮信息
   sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
   // 聊天窗口顶部功能列表

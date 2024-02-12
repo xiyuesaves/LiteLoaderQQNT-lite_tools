@@ -1,4 +1,4 @@
-import { updateWallpaper } from "../render_modules/wallpaper.js";
+import "../render_modules/wallpaper.js";
 import { observerMessageList, processMessageElement } from "../render_modules/observerMessageList.js";
 // 右键菜单相关操作
 import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
@@ -6,7 +6,6 @@ import { Logs } from "../render_modules/logs.js";
 const log = new Logs("转发界面");
 
 document.querySelector("#app").classList.add("forward");
-updateWallpaper();
 addEventqContextMenu();
 
 function forward() {

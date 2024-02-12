@@ -17,7 +17,7 @@ lite_tools.updatePeer(
 );
 
 updateOptions(() => {
-  log("配置文件更新", options.tail);
+  // log("配置文件更新", options.tail);
   messageTail();
 });
 

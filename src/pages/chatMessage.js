@@ -8,7 +8,7 @@ import { observerMessageList } from "../render_modules/observerMessageList.js";
 // 监听输入框上方功能
 import { observerChatArea } from "../render_modules/observerChatArea.js";
 // 背景壁纸模块
-import { updateWallpaper } from "../render_modules/wallpaper.js";
+import "../render_modules/wallpaper.js";
 // 通用监听输入框编辑事件
 import { observeChatBox } from "../render_modules/observeChatBox.js";
 // 通用聊天消息列表处理模块
@@ -25,7 +25,6 @@ import "../render_modules/messageTail.js";
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
 chatMessageList();
-updateWallpaper();
 newMessageRecall();
 
 const observe = new MutationObserver(chatMessage);
