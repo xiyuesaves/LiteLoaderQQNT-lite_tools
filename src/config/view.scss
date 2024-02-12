@@ -246,7 +246,8 @@
     width: 62px !important;
   }
   .fonts-selector {
-    width: 180px !important;
+    width: calc(100% - 400px) !important;
+    max-width: 300px;
     position: relative;
     .slot-input {
       text-align: left;

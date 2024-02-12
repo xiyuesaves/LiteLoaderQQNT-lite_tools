@@ -100,8 +100,11 @@ async function onConfigView(view) {
     }
   });
   function updateFilterFontList(event) {
+    if (event.type === "focus") {
+      event.target.select();
+    }
     fontListEl.classList.add("show");
-    if (event.target.value.length) {
+    if (event.target.value.length && event.type !== "focus") {
       const filterFontList = systemFonts.filter((fontName) =>
         fontName.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()),
       );

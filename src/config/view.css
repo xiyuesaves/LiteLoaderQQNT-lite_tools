@@ -239,7 +239,8 @@
   width: 62px !important;
 }
 .lite-tools-settings .fonts-selector {
-  width: 180px !important;
+  width: calc(100% - 400px) !important;
+  max-width: 300px;
   position: relative;
 }
 .lite-tools-settings .fonts-selector .slot-input {
