@@ -1,37 +1,107 @@
 import { options } from "./options.js";
-import { searchIcon, copyIcon, imageIcon } from "./svg.js";
+import { localEmoticonsIcon, searchIcon, copyIcon, imageIcon } from "./svg.js";
+import { subMenuIconEl } from "./HTMLtemplate.js";
+import { emoticonsList } from "./localEmoticons.js";
 import "./wrapText.js";
 import { getMembersAvatar } from "./nativeCall.js";
 import { Logs } from "./logs.js";
 const log = new Logs("右键菜单");
+
 /**
  * 右键菜单插入功能方法
- * @param {Element} qContextMenu 右键菜单元素
- * @param {String} icon SVG字符串
- * @param {String} title 选项显示名称
- * @param {Function} callback 回调函数
+ * @param {Element} qContextMenu - 右键菜单元素
+ * @param {String} icon - SVG字符串
+ * @param {String} title - 选项显示名称
+ * @param {Function | [Array, Function]} args - 回调函数或子菜单数组和回调函数的组合
  */
-function addQContextMenu(qContextMenu, icon, title, callback) {
+function addQContextMenu(qContextMenu, icon, title, ...args) {
+  let callback;
+  let subMenu;
+  if (args[0] instanceof Function) {
+    callback = args[0];
+  }
+  if (args[0] instanceof Array) {
+    subMenu = args[0];
+  }
+  if (args[1] instanceof Function) {
+    callback = args[1];
+  }
   if (!document.querySelector(`.q-context-menu :not([disabled="true"])`)) {
     return;
   }
-  const tempEl = document.createElement("div");
-  tempEl.innerHTML = document.querySelector(`.q-context-menu :not([disabled="true"])`)?.outerHTML?.replace(/<!---->/g, "");
-  const item = tempEl.firstChild;
-  item.id = "web-search";
-  if (item.querySelector(".q-icon")) {
-    item.querySelector(".q-icon").innerHTML = icon;
+  /**
+   * @type {Element}
+   */
+  const contextItem = document.querySelector(`.q-context-menu :not([disabled="true"])`).cloneNode(true);
+  if (subMenu && subMenu.length && contextItem.querySelector(".q-context-menu-item__text")) {
+    contextItem.insertAdjacentHTML("beforeend", subMenuIconEl);
+    const subMenuEl = document.createElement("div");
+    const scrollEl = document.createElement("div");
+    scrollEl.classList.add("lite-tools-scroll-box");
+    subMenuEl.appendChild(scrollEl);
+    subMenuEl.classList.add("lite-tools-sub-context-menu");
+    subMenuEl.addEventListener("mouseenter", () => {
+      subMenuEl.classList.add("show");
+    });
+    subMenuEl.addEventListener("mouseleave", () => {
+      subMenuEl.classList.remove("show");
+    });
+    subMenuEl.addEventListener("click", (event) => {
+      callback(event, event.target.menuData);
+    });
+    subMenuEl.addEventListener("wheel", (event) => {
+      const maxTop = scrollEl.offsetHeight - subMenuEl.offsetHeight + 8;
+      if (maxTop < 10) {
+        return;
+      }
+      let addValue = 30;
+      if (event.deltaY > 0) {
+        addValue = -30;
+      }
+      let offsetY = (parseFloat(scrollEl.style.transform.split("translateY(")[1]) || 0) + addValue;
+      if (offsetY > 0) {
+        offsetY = 0;
+      }
+      if (offsetY < -maxTop) {
+        offsetY = -maxTop;
+      }
+      scrollEl.style.transform = `translateY(${offsetY}px)`;
+    });
+    subMenu.forEach((menuData) => {
+      const subMenuItemEl = document.createElement("div");
+      subMenuItemEl.classList.add("sub-context-menu-item");
+      subMenuItemEl.innerText = menuData.name;
+      subMenuItemEl.menuData = menuData;
+      scrollEl.appendChild(subMenuItemEl);
+    });
+    contextItem.addEventListener("mouseenter", (event) => {
+      const rect = event.target.getBoundingClientRect();
+      subMenuEl.classList.add("show");
+      subMenuEl.style.setProperty("--top", `calc(${rect.y}px - 0vh)`);
+      subMenuEl.style.setProperty("--height", `${subMenuEl.offsetHeight}px`);
+      subMenuEl.style.setProperty("--left", `calc(${rect.x + rect.width}px - 0vh)`);
+    });
+    contextItem.addEventListener("mouseleave", () => {
+      subMenuEl.classList.remove("show");
+    });
+    document.body.appendChild(subMenuEl);
   }
-  if (item.classList.contains("q-context-menu-item__text")) {
-    item.innerText = title;
+  if (contextItem.querySelector(".q-icon")) {
+    contextItem.querySelector(".q-icon").innerHTML = icon;
+  }
+  if (contextItem.classList.contains("q-context-menu-item__text")) {
+    contextItem.innerText = title;
   } else {
-    item.querySelector(".q-context-menu-item__text").innerText = title;
+    contextItem.querySelector(".q-context-menu-item__text").innerText = title;
   }
-  item.addEventListener("click", () => {
-    callback();
-    qContextMenu.remove();
-  });
-  qContextMenu.appendChild(item);
+  // 有子菜单时不添加主菜单的点击事件
+  if (callback && !subMenu) {
+    contextItem.addEventListener("click", () => {
+      callback();
+      qContextMenu.remove();
+    });
+  }
+  qContextMenu.appendChild(contextItem);
 }
 
 /**
@@ -89,7 +159,6 @@ function addEventqContextMenu() {
       }
       const messageEl = getParentElement(event.target, "message");
       if (messageEl) {
-        log(messageEl?.__VUE__?.[0]?.props);
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
         const userNameEl = messageEl.querySelector(".user-name .text-ellipsis");
@@ -120,18 +189,26 @@ function addEventqContextMenu() {
       msgSticker = null;
     }
   });
-  new MutationObserver(() => {
-    const qContextMenu = document.querySelector(".q-context-menu");
+  // 菜单监听
+  new MutationObserver((_, observer) => {
+    const qContextMenu = document.querySelector(".q-context-menu:not(.lite-toos-context-menu)");
+    if (!qContextMenu) {
+      if (!document.querySelector(".q-context-menu")) {
+        document.querySelectorAll(".lite-tools-sub-context-menu").forEach((el) => el.remove());
+      }
+      return;
+    }
+    qContextMenu.classList.add("lite-toos-context-menu");
     log("右键菜单", document.querySelectorAll(".q-context-menu"));
     // 在网页搜索
-    if (qContextMenu && isRightClick && selectText.length && options.wordSearch.enabled) {
+    if (isRightClick && selectText.length && options.wordSearch.enabled) {
       const searchText = selectText;
       addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
         lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
       });
     }
     // 搜索图片
-    if (qContextMenu && imagePath && options.imageSearch.enabled) {
+    if (imagePath && options.imageSearch.enabled) {
       const localPath = decodeURIComponent(imagePath);
       addQContextMenu(qContextMenu, searchIcon, "搜索图片", () => {
         const filePathArr = localPath.split("/");
@@ -139,6 +216,14 @@ function addEventqContextMenu() {
         const picSrc = `https://gchat.qpic.cn/gchatpic_new/0/0-0-${fileName}/0`;
         const openUrl = options.imageSearch.searchUrl.replace("%search%", picSrc);
         lite_tools.openWeb(openUrl);
+      });
+    }
+    // 保存到本地表情文件夹
+    log("本地表情数据", emoticonsList);
+    if (imagePath && options.imageSearch.enabled) {
+      const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
+      addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, (event, data) => {
+        log("子菜单被点击", imagePath, data);
       });
     }
     // 复制uid
@@ -155,7 +240,7 @@ function addEventqContextMenu() {
         createSticker(_msgSticker);
       });
     }
-  }).observe(document.querySelector("body"), { childList: true });
+  }).observe(document.body, { childList: true });
 }
 
 /**
