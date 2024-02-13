@@ -37,14 +37,18 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     contextItem.insertAdjacentHTML("beforeend", subMenuIconEl);
     const subMenuEl = document.createElement("div");
     const scrollEl = document.createElement("div");
+    let closeSubMenuTimeout;
     scrollEl.classList.add("lite-tools-scroll-box");
     subMenuEl.appendChild(scrollEl);
     subMenuEl.classList.add("lite-tools-sub-context-menu");
     subMenuEl.addEventListener("mouseenter", () => {
+      clearTimeout(closeSubMenuTimeout);
       subMenuEl.classList.add("show");
     });
     subMenuEl.addEventListener("mouseleave", () => {
-      subMenuEl.classList.remove("show");
+      closeSubMenuTimeout = setTimeout(() => {
+        subMenuEl.classList.remove("show");
+      }, 300);
     });
     subMenuEl.addEventListener("click", (event) => {
       callback(event, event.target.menuData);
@@ -75,6 +79,7 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
       scrollEl.appendChild(subMenuItemEl);
     });
     contextItem.addEventListener("mouseenter", (event) => {
+      clearTimeout(closeSubMenuTimeout);
       const rect = event.target.getBoundingClientRect();
       subMenuEl.classList.add("show");
       subMenuEl.style.setProperty("--top", `calc(${rect.y}px - 0vh)`);
@@ -82,7 +87,9 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
       subMenuEl.style.setProperty("--left", `calc(${rect.x + rect.width}px - 0vh)`);
     });
     contextItem.addEventListener("mouseleave", () => {
-      subMenuEl.classList.remove("show");
+      closeSubMenuTimeout = setTimeout(() => {
+        subMenuEl.classList.remove("show");
+      }, 300);
     });
     document.body.appendChild(subMenuEl);
   }
