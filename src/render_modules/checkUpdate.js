@@ -8,8 +8,8 @@ const log = new Logs("检查更新模块");
  * @returns
  */
 function compareVersions(currentVersion, latestVersion) {
-  const currentParts = currentVersion.split(".");
-  const latestParts = latestVersion.split(".");
+  const currentParts = currentVersion.replace("v", "").split(".");
+  const latestParts = latestVersion.replace("v", "").split(".");
 
   for (let i = 0; i < 3; i++) {
     const currentPart = parseInt(currentParts[i] || 0, 10);
