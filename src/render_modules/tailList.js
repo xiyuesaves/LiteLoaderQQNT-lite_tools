@@ -69,21 +69,17 @@ class TailList {
       this.updateOption();
     });
     // 监听后缀内容修改
-    tailContext.addEventListener(
-      "input",
-      debounce(() => {
-        tail.content = tailContext.value;
-        this.updateOption();
-      }, 100),
-    );
+    const debounceTailContextInput = debounce(() => {
+      tail.content = tailContext.value;
+      this.updateOption();
+    }, 100);
+    tailContext.addEventListener("input", debounceTailContextInput);
     // 监听过滤群组修改
-    ruleGroupList.addEventListener(
-      "input",
-      debounce(() => {
-        tail.filter = ruleGroupList.value.split(",");
-        this.updateOption();
-      }, 100),
-    );
+    const debounceRuleGroupListInput = debounce(() => {
+      tail.filter = ruleGroupList.value.split(",");
+      this.updateOption();
+    }, 100);
+    ruleGroupList.addEventListener("input", debounceRuleGroupListInput);
     log("返回元素", tailEl);
     return tailEl;
   }

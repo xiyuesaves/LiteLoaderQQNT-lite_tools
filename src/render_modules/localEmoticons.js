@@ -482,48 +482,48 @@ function loadDom() {
    */
   const folderIconListEl = barIcon.querySelector(".folder-icon-list .folder-scroll");
 
-  // 监听列表滚动
-  emoticonsMainEl.querySelector(".folder-list").addEventListener(
-    "scroll",
-    debounce((event) => {
-      // 显示区域高度
-      const viewHeight = document.querySelector(".lite-tools-local-emoticons-main .folder-list").offsetHeight;
-      // 当前表情文件夹的底部坐标
-      let folderOffsetBottom = 0;
-      let isActive = false;
-      const scrollTop = event.target.scrollTop;
-      const scrollBottom = scrollTop + viewHeight;
-      for (let i = 0; i < folderInfos.length; i++) {
-        const folder = folderInfos[i];
-        const folderOffsetTop = folderOffsetBottom;
-        folderOffsetBottom += folder.folderEl.offsetHeight;
+  // 防抖监听滚动事件
+  const debounceScroll = debounce((event) => {
+    // 显示区域高度
+    const viewHeight = document.querySelector(".lite-tools-local-emoticons-main .folder-list").offsetHeight;
+    // 当前表情文件夹的底部坐标
+    let folderOffsetBottom = 0;
+    let isActive = false;
+    const scrollTop = event.target.scrollTop;
+    const scrollBottom = scrollTop + viewHeight;
+    for (let i = 0; i < folderInfos.length; i++) {
+      const folder = folderInfos[i];
+      const folderOffsetTop = folderOffsetBottom;
+      folderOffsetBottom += folder.folderEl.offsetHeight;
 
-        // 判断是否需要加载表情符号的条件
-        const shouldLoadEmoticons =
-          (folderOffsetBottom >= scrollTop && folderOffsetTop <= scrollTop) ||
-          (folderOffsetTop <= scrollBottom && folderOffsetBottom >= scrollBottom) ||
-          (folderOffsetTop >= scrollTop && folderOffsetBottom <= scrollBottom);
+      // 判断是否需要加载表情符号的条件
+      const shouldLoadEmoticons =
+        (folderOffsetBottom >= scrollTop && folderOffsetTop <= scrollTop) ||
+        (folderOffsetTop <= scrollBottom && folderOffsetBottom >= scrollBottom) ||
+        (folderOffsetTop >= scrollTop && folderOffsetBottom <= scrollBottom);
 
-        // 判断表情包是否需要加载
-        if (shouldLoadEmoticons && options.localEmoticons.majorization) {
-          const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
-          activeEl.emoticonFolder.load();
-        }
-        // 激活距离顶部最近的表情文件夹图标
-        if (folderOffsetBottom >= scrollTop + 4 && !isActive) {
-          document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
-          const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
-          const folderScroll = document.querySelector(".folder-scroll");
-          activeEl.classList.add("active");
-          folderScroll.scrollTo({
-            top: activeEl.offsetTop - folderScroll.offsetHeight / 2,
-            behavior: "smooth",
-          });
-          isActive = true;
-        }
+      // 判断表情包是否需要加载
+      if (shouldLoadEmoticons && options.localEmoticons.majorization) {
+        const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
+        activeEl.emoticonFolder.load();
       }
-    }, 10),
-  );
+      // 激活距离顶部最近的表情文件夹图标
+      if (folderOffsetBottom >= scrollTop + 4 && !isActive) {
+        document.querySelector(".folder-icon-item.active")?.classList?.remove("active");
+        const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
+        const folderScroll = document.querySelector(".folder-scroll");
+        activeEl.classList.add("active");
+        folderScroll.scrollTo({
+          top: activeEl.offsetTop - folderScroll.offsetHeight / 2,
+          behavior: "smooth",
+        });
+        isActive = true;
+      }
+    }
+  }, 10);
+
+  // 监听列表滚动
+  folderListEl.addEventListener("scroll", debounceScroll);
 
   // 处理鼠标相关事件
   emoticonsMainEl.addEventListener("mousedown", (event) => {

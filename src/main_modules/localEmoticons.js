@@ -7,6 +7,17 @@ let emoticonsList = [];
 let folderNum = 0;
 let watcher;
 
+// 去抖动监听文件变化
+const debounceLoadFolder = debounce(async () => {
+  const beforeEmoticonsList = emoticonsList;
+  emoticonsList = [];
+  folderNum = 0;
+  await loadFolder(folderPath);
+  if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
+    dispatchUpdateFile();
+  }
+}, 100);
+
 /**
  * 加载本地表情文件夹
  * @param {String} folderPath 表情文件夹路径
@@ -19,19 +30,7 @@ async function loadEmoticons(folderPath) {
   if (watcher) {
     watcher.close();
   }
-  watcher = fs.watch(
-    folderPath,
-    { recursive: true },
-    debounce(async () => {
-      const beforeEmoticonsList = emoticonsList;
-      emoticonsList = [];
-      folderNum = 0;
-      await loadFolder(folderPath);
-      if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
-        dispatchUpdateFile();
-      }
-    }, 300),
-  );
+  watcher = fs.watch(folderPath, { recursive: true }, debounceLoadFolder);
 }
 
 /**

@@ -8,16 +8,15 @@ const log = new Logs("消息后缀");
 log("模块加载");
 let peer = lite_tools.getPeer();
 // 增加防抖避免文本闪烁
-lite_tools.updatePeer(
-  debounce((_, newPeer) => {
-    log("peer更新", peer?.uid);
-    peer = newPeer;
-    messageTail();
-  }, 10),
-);
+const debounceUpdatePeer = debounce((_, newPeer) => {
+  log("peer更新", peer?.uid);
+  peer = newPeer;
+  messageTail();
+}, 10);
+lite_tools.updatePeer(debounceUpdatePeer);
 
 updateOptions(() => {
-  // log("配置文件更新", options.tail);
+  log("配置文件更新", options.tail);
   messageTail();
 });
 
