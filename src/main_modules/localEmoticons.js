@@ -62,6 +62,7 @@ function loadFolder(folderPath) {
                   name: path.basename(folderPath),
                   index: folderNum,
                   id: Buffer.from(folderPath).toString("base64"),
+                  path: folderPath,
                   list: [],
                 };
               }
