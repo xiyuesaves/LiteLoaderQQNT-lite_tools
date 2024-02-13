@@ -148,6 +148,10 @@
     color: #0099ff;
   }
   .disabled-switch {
+    &.q-switch {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     .q-switch {
       pointer-events: none;
       opacity: 0.5;

@@ -282,6 +282,7 @@ async function onConfigView(view) {
   // 本地表情包功能
   addSwitchEventlistener("localEmoticons.enabled", ".switchLocalEmoticons", (_, enabled) => {
     view.querySelector(".select-folder-input").classList.toggle("disabled-input", !enabled);
+    view.querySelector(".copyFileTolocalEmoticons").classList.toggle("disabled-switch", !enabled);
   });
   view.querySelector(".select-folder-input input").value = options.localEmoticons.localPath;
   view.querySelectorAll(".select-local-emoticons-folder").forEach((el) => {
@@ -311,9 +312,10 @@ async function onConfigView(view) {
     options.localEmoticons.quickEmoticonsActiveKey = e.target.value.split("")[0];
     debounceSetOptions();
   });
-
   // 常用表情分类
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons");
+  // 保存到本地表情
+  addSwitchEventlistener("localEmoticons.copyFileTolocalEmoticons", ".copyFileTolocalEmoticons");
 
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {

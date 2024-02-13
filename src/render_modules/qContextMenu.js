@@ -254,13 +254,12 @@ function addEventqContextMenu() {
     }
     // 保存到本地表情文件夹
     log("本地表情数据", emoticonsList);
-    if (imagePath && options.imageSearch.enabled) {
+    if (imagePath && options.localEmoticons.enabled && options.localEmoticons.copyFileTolocalEmoticons) {
       const _imagePath = imagePath;
       const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
       addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, (event, data) => {
         const filePathArr = _imagePath.split("/");
         const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace("\\", "/");
-        log("子菜单被点击", _imagePath, filePath, data);
         lite_tools.copyFile(_imagePath, filePath);
       });
     }

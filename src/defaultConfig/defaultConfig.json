@@ -19,6 +19,7 @@
     "sendBigImage": false,
     "majorization": false,
     "commonlyEmoticons": false,
+    "copyFileTolocalEmoticons": false,
     "commonlyNum": 20,
     "rowsSize": 5,
     "localPath": ""
