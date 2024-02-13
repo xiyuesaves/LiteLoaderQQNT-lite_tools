@@ -900,4 +900,4 @@ function closeLocalEmoticons() {
   );
 }
 
-export { localEmoticons };
+export { localEmoticons, emoticonsList };
