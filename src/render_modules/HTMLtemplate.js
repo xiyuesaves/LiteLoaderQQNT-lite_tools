@@ -62,4 +62,13 @@ const localEmoticonsHTML = `<div class="full-screen-preview">
 
 const messageTailTips = `<p title="%title%" class="lite-tools-tail-tips">%s%</p>`;
 
-export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem, localEmoticonsHTML, messageTailTips };
+const subMenuIconEl = `<div class="q-context-menu-item__icon icon_next lite-tools-context-next-icon">
+<i class="q-icon">
+  <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M5.6953 3L10.7993 8.10522L5.6953 13.2104L5 12.5161L9.4098 8.10522L5 3.69439L5.6953 3Z"
+    ></path>
+  </svg>
+</i>
+</div>`;
+
+export { tailElement, recallGroupItem, recallTail, recallImgItem, recallMsgItem, localEmoticonsHTML, messageTailTips, subMenuIconEl };
