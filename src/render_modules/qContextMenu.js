@@ -108,13 +108,44 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
  * 右键菜单监听
  */
 function addEventqContextMenu() {
+  /**
+   * 划词搜索
+   */
   let selectText = "";
-  let isLeftUp = true; //  鼠标左键是否抬起 防止左键没松开就按右键搜索 导致搜索的内容为上一次的内容
-  let isRightClick = false;
+  /**
+   * 图片路径 - 搜索用
+   */
+  let searchImagePath = "";
+  /**
+   * 图片，表情包路径
+   */
   let imagePath = "";
+  /**
+   * 鼠标左键是否抬起 防止左键没松开就按右键搜索 导致搜索的内容为上一次的内容
+   */
+  let isLeftUp = true;
+  /**
+   * 判断按下的是不是右键
+   */
+  let isRightClick = false;
+  /**
+   * 监听事件名称
+   */
   let eventName = "mouseup";
+  /**
+   * 用户Uid
+   */
   let uid = "";
+  /**
+   * 用于生成消息表情的数据
+   */
   let msgSticker = null;
+  /**
+   * 裁切字符串到指定长度
+   * @param {String} str 选中字符串
+   * @param {Number} len 裁切长度
+   * @returns String
+   */
   const strTruncate = function (str, len) {
     if (str.length > len) {
       return str.slice(0, len) + "...";
@@ -144,24 +175,20 @@ function addEventqContextMenu() {
 
   document.addEventListener(eventName, async (event) => {
     if (event.button === 2) {
-      isRightClick = true;
-      imagePath = "";
-      msgSticker = null;
-      const imgEl = event.target;
       uid = event.target.querySelector(".avatar.vue-component")?.__VUE__?.[0]?.props?.uid;
+      imagePath = "";
+      searchImagePath = "";
+      msgSticker = null;
+      isRightClick = true;
       if (!uid?.startsWith("u_")) {
         uid = "";
-      }
-      if (imgEl.classList.contains("image-content") && imgEl?.src?.startsWith("appimg://")) {
-        imagePath = imgEl?.src?.replace("appimg://", "");
-      } else {
-        imagePath = "";
       }
       const messageEl = getParentElement(event.target, "message");
       if (messageEl) {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
         const userNameEl = messageEl.querySelector(".user-name .text-ellipsis");
+        // 生成表情逻辑
         if (elements.length === 1 && elements[0].textElement && userNameEl) {
           const content = elements[0].textElement.content;
           const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
@@ -180,12 +207,19 @@ function addEventqContextMenu() {
           };
           log("符合生成条件", msgSticker);
         }
-      } else {
-        msgSticker = null;
+        // 发送图片检测
+        if (event.target.classList.contains("image-content") && elements.some((ele) => ele.picElement)) {
+          imagePath = searchImagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
+        }
+        // 发送表情包检测
+        if (elements.some((ele) => ele.marketFaceElement)) {
+          imagePath = elements.find((ele) => ele.marketFaceElement)?.marketFaceElement?.staticFacePath;
+        }
       }
     } else {
       uid = "";
       imagePath = "";
+      searchImagePath = "";
       msgSticker = null;
     }
   });
@@ -208,10 +242,10 @@ function addEventqContextMenu() {
       });
     }
     // 搜索图片
-    if (imagePath && options.imageSearch.enabled) {
-      const localPath = decodeURIComponent(imagePath);
+    if (searchImagePath && options.imageSearch.enabled) {
+      const _searchImagePath = searchImagePath;
       addQContextMenu(qContextMenu, searchIcon, "搜索图片", () => {
-        const filePathArr = localPath.split("/");
+        const filePathArr = _searchImagePath.split("/");
         const fileName = filePathArr[filePathArr.length - 1].split(".")[0].toUpperCase().replace("_0", "");
         const picSrc = `https://gchat.qpic.cn/gchatpic_new/0/0-0-${fileName}/0`;
         const openUrl = options.imageSearch.searchUrl.replace("%search%", picSrc);
@@ -221,9 +255,13 @@ function addEventqContextMenu() {
     // 保存到本地表情文件夹
     log("本地表情数据", emoticonsList);
     if (imagePath && options.imageSearch.enabled) {
+      const _imagePath = imagePath;
       const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
       addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, (event, data) => {
-        log("子菜单被点击", imagePath, data);
+        const filePathArr = _imagePath.split("/");
+        const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace("\\", "/");
+        log("子菜单被点击", _imagePath, filePath, data);
+        lite_tools.copyFile(_imagePath, filePath);
       });
     }
     // 复制uid
@@ -259,6 +297,10 @@ function getParentElement(element, className) {
   } else {
     return null;
   }
+}
+
+function containsPictures(msgElement) {
+  return msgElement.picElement;
 }
 
 /**
