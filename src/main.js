@@ -364,6 +364,18 @@ function onLoad(plugin) {
     return [options.background.enabled, backgroundData];
   });
 
+  // 复制文件
+  ipcMain.on("LiteLoader.lite_tools.copyFile", (event, from, to) => {
+    log("复制文件", from, to);
+    fs.copyFile(from, to, (err) => {
+      if (err) {
+        log("复制文件出错", err);
+      } else {
+        log("复制文件完成");
+      }
+    });
+  });
+
   // 获取系统字体列表
   ipcMain.handle("LiteLoader.lite_tools.getSystemFonts", async (event) => {
     if (systemFontList.length <= 1) {
