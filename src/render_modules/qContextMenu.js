@@ -83,8 +83,9 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
       const rect = event.target.getBoundingClientRect();
       subMenuEl.classList.add("show");
       subMenuEl.style.setProperty("--top", `calc(${rect.y}px - 0vh)`);
-      subMenuEl.style.setProperty("--height", `${subMenuEl.offsetHeight}px`);
       subMenuEl.style.setProperty("--left", `calc(${rect.x + rect.width}px - 0vh)`);
+      subMenuEl.style.setProperty("--height", `${subMenuEl.offsetHeight}px`);
+      subMenuEl.style.setProperty("--width", `${subMenuEl.offsetWidth}px`);
     });
     contextItem.addEventListener("mouseleave", () => {
       closeSubMenuTimeout = setTimeout(() => {

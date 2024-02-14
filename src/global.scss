@@ -860,7 +860,7 @@
   height: auto;
   width: auto;
   top: calc(min(calc(var(--top) + var(--height)), calc(100vh - 8px)) - var(--height));
-  left: min(calc(100vw - 140px - 8px), var(--left));
+  left: calc(min(calc(var(--left) + var(--width)), calc(100vw - 8px)) - var(--width));
   max-height: 70vh;
   max-width: 140px;
   position: absolute;
