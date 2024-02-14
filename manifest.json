@@ -19,7 +19,7 @@
     "preload": "./src/preload.js"
   },
   "repository": {
-    "repo": "xiyuesaves/lite_tools",
+    "repo": "xiyuesaves/LiteLoaderQQNT-lite_tools",
     "branch": "v4",
     "release": {
       "tag": "v2.6.1",
