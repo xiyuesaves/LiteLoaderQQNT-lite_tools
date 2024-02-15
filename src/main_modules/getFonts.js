@@ -2,7 +2,7 @@ const { exec } = require("node:child_process");
 function winGetFonts() {
   return new Promise((res, rej) => {
     exec(
-      `chcp 65001;
+      `[Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
       [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing");
       (New-Object System.Drawing.Text.InstalledFontCollection).Families;`,
       {
