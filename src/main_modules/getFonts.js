@@ -26,9 +26,34 @@ function winGetFonts() {
   });
 }
 
-// 等待有缘人提pr
 function linuxGetFonts() {
-  return Promise.resolve(["当前系统不受支持"]);
+  return new Promise((res, rej) => {
+    exec(
+      `fc-list | grep -oP "(?<=: ).*?(?=:)"`,
+      {
+        shell: "/bin/sh",
+        encoding: "utf8",
+      },
+      (err, stdout, stderr) => {
+        if (err) {
+          rej(err);
+        }
+        if (stderr) {
+          rej(stderr);
+        }
+        const fontList = stdout.split("\n").filter(v => v.trim());
+        const uniqueFontList = [];
+        const seen = new Set();
+        fontList.forEach((v) => {
+          if (!seen.has(v)) {
+            seen.add(v);
+            uniqueFontList.push(v);
+          }
+        })
+        res(uniqueFontList);
+      },
+    );
+  });
 }
 
 // 等待有缘人提pr
