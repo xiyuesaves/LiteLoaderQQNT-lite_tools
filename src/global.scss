@@ -294,6 +294,16 @@
   }
 }
 
+// 时间插入到名称时的样式
+.user-name {
+  .lite-tools-time {
+    margin: 0 4px;
+    &.self-and-tag {
+      margin: 0;
+    }
+  }
+}
+
 // 样式调整
 .message-container {
   position: relative;

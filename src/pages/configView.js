@@ -257,6 +257,10 @@ async function onConfigView(view) {
 
   // 显示每条消息发送时间
   addSwitchEventlistener("message.showMsgTime", ".showMsgTime");
+  // 显示完整日期
+  addSwitchEventlistener("message.showMsgTimeFullDate", ".showMsgTimeFullDate");
+  // 插入到用户名后方
+  addSwitchEventlistener("message.showMsgTimeToSenderName", ".showMsgTimeToSenderName");
 
   // 禁用滑动多选消息
   addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");

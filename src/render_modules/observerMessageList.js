@@ -125,19 +125,51 @@ function processMessageElement() {
         slotEl = null;
       }
     }
-    // 插入时间气泡
+    // 插入消息时间
     if (slotEl && options.message.showMsgTime) {
-      // 时间插入元素
       if (!el.querySelector(".lite-tools-time")) {
         const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
         if (find) {
           const newTimeEl = document.createElement("div");
-          const showTime = new Date(find).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+          const showTime = new Date(find).toLocaleTimeString("zh-CN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const fullTime = new Date(find).toLocaleTimeString("zh-CN", {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+          if (options.message.showMsgTimeFullDate) {
+            newTimeEl.innerText = fullTime;
+            newTimeEl.setAttribute("time", fullTime);
+          } else {
+            newTimeEl.innerText = showTime;
+            newTimeEl.title = `发送于 ${fullTime}`;
+            newTimeEl.setAttribute("time", showTime);
+          }
           newTimeEl.classList.add("lite-tools-time");
-          newTimeEl.innerText = showTime;
-          newTimeEl.setAttribute("time", showTime);
-          newTimeEl.title = `发送于 ${new Date(find).toLocaleString("zh-CN")}`;
-          slotEl.appendChild(newTimeEl);
+          /**
+           * @type {Element}
+           */
+          const senderNameEl = el.querySelector(".user-name");
+          if (options.message.showMsgTimeToSenderName && senderNameEl) {
+            if (el.querySelector(".message-container--self")) {
+              if (el.querySelector(".q-tag")) {
+                newTimeEl.classList.add("self-and-tag");
+                senderNameEl.insertAdjacentElement("beforeend", newTimeEl);
+              } else {
+                senderNameEl.insertAdjacentElement("afterbegin", newTimeEl);
+              }
+            } else {
+              senderNameEl.insertAdjacentElement("beforeend", newTimeEl);
+            }
+          } else {
+            slotEl.appendChild(newTimeEl);
+          }
         }
       }
     }

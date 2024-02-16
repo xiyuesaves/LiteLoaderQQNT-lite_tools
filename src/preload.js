@@ -95,7 +95,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
    * @param {String} sendEventName 发送事件名称
    * @param {String} cmdName 命令名称
    * @param {Array} args 参数数组
-   * @param {Boolean} awaitCallback 是否需要等待回调，如果传入为字符串，则将回调监听事件改为该字符串
+   * @param {Null | Boolean | String | String[]} awaitCallback 是否需要等待回调，如果传入为字符串，则将回调监听事件改为该字符串
    * @param {Boolean} register 注册（未知）
    * @returns
    */

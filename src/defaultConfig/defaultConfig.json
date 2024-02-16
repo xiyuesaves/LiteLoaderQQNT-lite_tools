@@ -38,6 +38,8 @@
     "disabledSlideMultipleSelection": false,
     "convertMiniPrgmArk": false,
     "showMsgTime": false,
+    "showMsgTimeFullDate": false,
+    "showMsgTimeToSenderName": false,
     "replaceBtn": false,
     "doubleClickReplace": false,
     "removeReplyAt": false,
