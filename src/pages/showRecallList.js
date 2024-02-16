@@ -85,7 +85,14 @@ function updateUid(uid) {
       const recallMsgItemEl = parser.parseFromString(recallMsgItem, "text/html").querySelector(".msg-item");
       const recallTailEl = parser.parseFromString(recallTail, "text/html").querySelector(".tail");
       recallTailEl.innerText = msg?.lite_tools_recall?.recallTime
-        ? `${new Date(msg.lite_tools_recall.recallTime * 1000).toLocaleString("zh-CN")} 被 ${
+        ? `${new Date(msg.lite_tools_recall.recallTime * 1000).toLocaleTimeString("zh-CN", {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })} 被 ${
             msg.lite_tools_recall.operatorMemRemark || msg.lite_tools_recall.operatorRemark || msg.lite_tools_recall.operatorNick
           } 撤回`
         : "没有撤回信息";
