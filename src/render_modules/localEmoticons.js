@@ -826,7 +826,8 @@ class emoticonFolder {
 
     this.categoryListEl.append(...this.categoryItemsEl);
 
-    if (!options.localEmoticons.majorization) {
+    // 如果没有开启内存优化或者本地表情窗口处于打开状态，则初始化时就加载该实例
+    if (!options.localEmoticons.majorization || showEmoticons) {
       this.load();
     }
   }
