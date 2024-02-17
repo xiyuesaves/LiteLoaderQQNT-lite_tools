@@ -935,10 +935,9 @@ function closeCommonlyEmoticonsPanel(immediately = false) {
   if (showEmoticons) {
     return;
   }
-  commonlyEmoticonsPanelEl.classList.remove("show");
   if (immediately) {
     folderListEl.insertBefore(commonlyEmoticons.folderEl, folderListEl.querySelector(":first-child"));
-  } else {
+  } else if (commonlyEmoticonsPanelEl.classList.contains("show")) {
     commonlyEmoticonsPanelEl.addEventListener(
       "transitionend",
       () => {
@@ -950,6 +949,7 @@ function closeCommonlyEmoticonsPanel(immediately = false) {
       { once: true },
     );
   }
+  commonlyEmoticonsPanelEl.classList.remove("show");
 }
 
 /**
@@ -977,18 +977,20 @@ function showLocalEmoticons() {
 function closeLocalEmoticons() {
   showEmoticons = false;
   const localEmoticonsEl = barIcon.querySelector(".lite-tools-local-emoticons-main");
+  if (localEmoticonsEl.classList.contains("show")) {
+    localEmoticonsEl.addEventListener(
+      "transitionend",
+      () => {
+        if (!localEmoticonsEl.classList.contains("show") && options.localEmoticons.majorization) {
+          folderInfos.forEach((folderInfo) => {
+            folderInfo.unLoad();
+          });
+        }
+      },
+      { once: true },
+    );
+  }
   localEmoticonsEl.classList.remove("show");
-  localEmoticonsEl.addEventListener(
-    "transitionend",
-    () => {
-      if (!localEmoticonsEl.classList.contains("show") && options.localEmoticons.majorization) {
-        folderInfos.forEach((folderInfo) => {
-          folderInfo.unLoad();
-        });
-      }
-    },
-    { once: true },
-  );
 }
 
 export { localEmoticons, emoticonsList };
