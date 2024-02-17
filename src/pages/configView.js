@@ -254,6 +254,7 @@ async function onConfigView(view) {
   // debug开关
   addSwitchEventlistener("debug.console", ".switchDebug");
   addSwitchEventlistener("debug.mainConsole", ".switchMainDebug");
+  addSwitchEventlistener("debug.showChannedCommunication", ".showChannedCommunication");
 
   // 显示每条消息发送时间
   addSwitchEventlistener("message.showMsgTime", ".showMsgTime");

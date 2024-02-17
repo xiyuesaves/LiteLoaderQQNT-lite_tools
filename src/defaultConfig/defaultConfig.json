@@ -1,7 +1,8 @@
 {
   "debug": {
     "console": false,
-    "mainConsole": false
+    "mainConsole": false,
+    "showChannedCommunication": false
   },
   "wordSearch": {
     "enabled": false,
