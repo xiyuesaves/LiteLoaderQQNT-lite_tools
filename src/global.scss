@@ -567,7 +567,8 @@
 }
 
 // 本地表情预览样式
-.lite-tools-local-emoticons-main {
+.lite-tools-local-emoticons-main,
+.commonly-emoticons-panel {
   position: absolute;
   width: calc((64px * 5) + 12px);
   height: 450px;
@@ -586,6 +587,10 @@
   overflow: hidden;
   padding-bottom: 36px;
   z-index: 1000;
+  &.commonly-emoticons-panel {
+    height: auto;
+    padding-bottom: 0;
+  }
   &.show {
     transform: translateY(0px) scale(1);
     opacity: 1;
@@ -645,12 +650,12 @@
       }
     }
   }
-  .folder-list {
+  .folder-list,
+  .folder-list-commonly {
     width: 100%;
     height: auto;
     max-height: 100%;
     overflow-y: auto;
-
     .folder-item {
       width: 100%;
       height: auto;

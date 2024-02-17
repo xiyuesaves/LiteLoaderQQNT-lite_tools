@@ -481,7 +481,8 @@
   object-fit: contain;
 }
 
-.lite-tools-local-emoticons-main {
+.lite-tools-local-emoticons-main,
+.commonly-emoticons-panel {
   position: absolute;
   width: 332px;
   height: 450px;
@@ -501,19 +502,29 @@
   padding-bottom: 36px;
   z-index: 1000;
 }
-.lite-tools-local-emoticons-main.show {
+.lite-tools-local-emoticons-main.commonly-emoticons-panel,
+.commonly-emoticons-panel.commonly-emoticons-panel {
+  height: auto;
+  padding-bottom: 0;
+}
+.lite-tools-local-emoticons-main.show,
+.commonly-emoticons-panel.show {
   transform: translateY(0px) scale(1);
   opacity: 1;
   pointer-events: auto;
 }
 .lite-tools-local-emoticons-main.show-menu .folder-list,
-.lite-tools-local-emoticons-main.show-menu .folder-icon-list {
+.lite-tools-local-emoticons-main.show-menu .folder-icon-list,
+.commonly-emoticons-panel.show-menu .folder-list,
+.commonly-emoticons-panel.show-menu .folder-icon-list {
   pointer-events: none;
 }
-.lite-tools-local-emoticons-main.show-menu .context-menu {
+.lite-tools-local-emoticons-main.show-menu .context-menu,
+.commonly-emoticons-panel.show-menu .context-menu {
   display: block;
 }
-.lite-tools-local-emoticons-main .context-menu {
+.lite-tools-local-emoticons-main .context-menu,
+.commonly-emoticons-panel .context-menu {
   position: absolute;
   z-index: 4000;
   top: 120px;
@@ -528,7 +539,8 @@
   border: var(--border_secondary);
   display: none;
 }
-.lite-tools-local-emoticons-main .context-menu .context-menu-item {
+.lite-tools-local-emoticons-main .context-menu .context-menu-item,
+.commonly-emoticons-panel .context-menu .context-menu-item {
   transition-duration: 0.2s;
   transition-timing-function: cubic-bezier(0.2, 0.2, 0, 1);
   transition-delay: 0s;
@@ -539,16 +551,20 @@
   border-radius: 4px;
   cursor: pointer;
 }
-.lite-tools-local-emoticons-main .context-menu .context-menu-item.hide {
+.lite-tools-local-emoticons-main .context-menu .context-menu-item.hide,
+.commonly-emoticons-panel .context-menu .context-menu-item.hide {
   display: none;
 }
-.lite-tools-local-emoticons-main .context-menu .context-menu-item:hover {
+.lite-tools-local-emoticons-main .context-menu .context-menu-item:hover,
+.commonly-emoticons-panel .context-menu .context-menu-item:hover {
   background-color: var(--context-menu-hover);
 }
-.lite-tools-local-emoticons-main .context-menu .context-menu-item:active {
+.lite-tools-local-emoticons-main .context-menu .context-menu-item:active,
+.commonly-emoticons-panel .context-menu .context-menu-item:active {
   background-color: var(--context-menu-active);
 }
-.lite-tools-local-emoticons-main .context-menu .context-menu-item .context-menu-item__text {
+.lite-tools-local-emoticons-main .context-menu .context-menu-item .context-menu-item__text,
+.commonly-emoticons-panel .context-menu .context-menu-item .context-menu-item__text {
   font-size: 14px;
   flex-grow: 1;
   flex-shrink: 1;
@@ -558,19 +574,28 @@
   display: inline-block;
   line-height: 20px;
 }
-.lite-tools-local-emoticons-main .folder-list {
+.lite-tools-local-emoticons-main .folder-list,
+.lite-tools-local-emoticons-main .folder-list-commonly,
+.commonly-emoticons-panel .folder-list,
+.commonly-emoticons-panel .folder-list-commonly {
   width: 100%;
   height: auto;
   max-height: 100%;
   overflow-y: auto;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item {
+.lite-tools-local-emoticons-main .folder-list .folder-item,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item,
+.commonly-emoticons-panel .folder-list .folder-item,
+.commonly-emoticons-panel .folder-list-commonly .folder-item {
   width: 100%;
   height: auto;
   box-sizing: border-box;
   position: relative;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-name {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-name,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-name,
+.commonly-emoticons-panel .folder-list .folder-item .category-name,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-name {
   width: 100%;
   padding: 0 6px;
   line-height: 28px;
@@ -583,7 +608,10 @@
   bottom: 0;
   z-index: 100;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list,
+.commonly-emoticons-panel .folder-list .folder-item .category-list,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list {
   width: 100%;
   padding: 0 6px 6px;
   height: auto;
@@ -592,7 +620,10 @@
   flex-wrap: wrap;
   justify-content: flex-start;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list .category-item,
+.commonly-emoticons-panel .folder-list .folder-item .category-list .category-item,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list .category-item {
   width: var(--category-item-size);
   height: var(--category-item-size);
   border-radius: 4px;
@@ -602,10 +633,16 @@
   align-items: center;
   justify-content: center;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item:hover {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item:hover,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list .category-item:hover,
+.commonly-emoticons-panel .folder-list .folder-item .category-list .category-item:hover,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list .category-item:hover {
   background-color: var(--emoticons-category-hover-bg);
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .sticker-preview {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .sticker-preview,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list .category-item .sticker-preview,
+.commonly-emoticons-panel .folder-list .folder-item .category-list .category-item .sticker-preview,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list .category-item .sticker-preview {
   width: 100%;
   height: 100%;
   font-size: 0;
@@ -613,20 +650,30 @@
   padding: 4px;
   cursor: pointer;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .sticker-preview.active {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .sticker-preview.active,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list .category-item .sticker-preview.active,
+.commonly-emoticons-panel .folder-list .folder-item .category-list .category-item .sticker-preview.active,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list .category-item .sticker-preview.active {
   background-color: var(--emoticons-category-hover-bg);
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .sticker-preview img {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .sticker-preview img,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list .category-item .sticker-preview img,
+.commonly-emoticons-panel .folder-list .folder-item .category-list .category-item .sticker-preview img,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list .category-item .sticker-preview img {
   pointer-events: none;
   user-select: none;
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .skiter-name {
+.lite-tools-local-emoticons-main .folder-list .folder-item .category-list .category-item .skiter-name,
+.lite-tools-local-emoticons-main .folder-list-commonly .folder-item .category-list .category-item .skiter-name,
+.commonly-emoticons-panel .folder-list .folder-item .category-list .category-item .skiter-name,
+.commonly-emoticons-panel .folder-list-commonly .folder-item .category-list .category-item .skiter-name {
   display: none;
 }
-.lite-tools-local-emoticons-main .folder-icon-list {
+.lite-tools-local-emoticons-main .folder-icon-list,
+.commonly-emoticons-panel .folder-icon-list {
   width: 100%;
   height: 36px;
   z-index: 100;
@@ -635,7 +682,8 @@
   bottom: 0;
   left: 0;
 }
-.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll {
+.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll,
+.commonly-emoticons-panel .folder-icon-list .folder-scroll {
   width: 36px;
   height: 332px;
   transform-origin: top left;
@@ -644,7 +692,8 @@
   padding: 3px;
   overflow-y: auto;
 }
-.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item {
+.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item,
+.commonly-emoticons-panel .folder-icon-list .folder-scroll .folder-icon-item {
   width: 30px;
   height: 30px;
   border-radius: 6px;
@@ -652,18 +701,22 @@
   transform: rotate(90deg);
   margin-bottom: 3px;
 }
-.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item:last-child {
+.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item:last-child,
+.commonly-emoticons-panel .folder-icon-list .folder-scroll .folder-icon-item:last-child {
   margin-bottom: 0;
 }
-.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item.active {
+.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item.active,
+.commonly-emoticons-panel .folder-icon-list .folder-scroll .folder-icon-item.active {
   background-color: rgba(110, 110, 110, 0.15);
 }
-.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item .icon-box {
+.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item .icon-box,
+.commonly-emoticons-panel .folder-icon-list .folder-scroll .folder-icon-item .icon-box {
   width: 100%;
   height: 100%;
   cursor: pointer;
 }
-.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item .icon-box img {
+.lite-tools-local-emoticons-main .folder-icon-list .folder-scroll .folder-icon-item .icon-box img,
+.commonly-emoticons-panel .folder-icon-list .folder-scroll .folder-icon-item .icon-box img {
   pointer-events: none;
   user-select: none;
   width: 100%;

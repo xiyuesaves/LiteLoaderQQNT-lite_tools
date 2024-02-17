@@ -9,7 +9,7 @@ class RangesServer {
   constructor() {
     this.videoPath = "";
     this.port = 0;
-    this.server = http.createServer(this.httpListener.bind(this)); // server.listening 用于判断服务是否处于启动状态
+    this.server = http.createServer(this.httpListener.bind(this));
     this.mimeNames = {
       ".mp4": "video/mp4",
       ".webm": "video/webm",

@@ -20,6 +20,7 @@
     "majorization": false,
     "commonlyEmoticons": false,
     "copyFileTolocalEmoticons": false,
+    "hoverShowCommonlyEmoticons": false,
     "commonlyNum": 20,
     "rowsSize": 5,
     "localPath": ""

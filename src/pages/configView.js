@@ -317,7 +317,11 @@ async function onConfigView(view) {
     debounceSetOptions();
   });
   // 常用表情分类
-  addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons");
+  addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons", (_, enabled) => {
+    view.querySelector(".hoverShowCommonlyEmoticons").classList.toggle("disabled-switch", !enabled);
+  });
+  // 移入显示历史表情
+  addSwitchEventlistener("localEmoticons.hoverShowCommonlyEmoticons", ".hoverShowCommonlyEmoticons");
   // 保存到本地表情
   addSwitchEventlistener("localEmoticons.copyFileTolocalEmoticons", ".copyFileTolocalEmoticons");
 
