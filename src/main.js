@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 
 // 本地模块
-const defaultConfig = require("./defaultConfig/defaultConfig.json"); // 默认插件配置文件
+const Opt = require("./main_modules/option"); // 配置管理模块
 const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json"); // 默认本地表情配置文件
 const loadOptions = require("./main_modules/loadOptions");
 const LimitedMap = require("./main_modules/LimitedMap");
@@ -17,18 +17,18 @@ const RangesServer = require("./main_modules/rangesServer");
 const videoServer = new RangesServer();
 const logs = require("./main_modules/logs");
 const { winGetFonts, linuxGetFonts, macGetFonts } = require("./main_modules/getFonts");
-const {
-  setOptions,
-  getOptions,
-  onBeforeUpdateOptions,
-  onUpdateOptions,
-  offBeforeUpdateOptions,
-  offUpdateOptions,
-} = require("./main_modules/options");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 
 let log = () => {};
 
+/**
+ * 配置数据
+ */
+let options = Opt.value;
+/**
+ * 本地表情模块配置数据
+ */
+let localEmoticonsConfig;
 /**
  * 主窗口对象
  */
@@ -85,10 +85,6 @@ let historyMessageRecallList = new Map();
  * 本地表情包数据
  */
 let localEmoticonsList = [];
-/**
- * 配置数据
- */
-let options, localEmoticonsConfig;
 
 /**
  * 系统字体列表
@@ -103,23 +99,34 @@ let backgroundData = {
   type: "",
 };
 
-onBeforeUpdateOptions((newOptions) => {
-  log("更新配置前被调用");
+// 配置文件更新后保存到本地并广播更新事件
+const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
+
+// 监听配置修改
+Opt.on("update", (newOptions) => {
+  const oldOpt = JSON.parse(JSON.stringify(options));
+  log("更新配置数据", oldOpt, newOptions);
+  options = newOptions;
+  fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+  globalBroadcast("LiteLoader.lite_tools.updateOptions", Opt._options);
+
   // 判断是否启用了本地表情包功能
   if (newOptions.localEmoticons.enabled) {
     // 如果新的配置文件中打开了本地表情功能，且当前文件夹路径和新路径不一致则刷新表情包列表
-    if (newOptions.localEmoticons.localPath && options.localEmoticons.localPath !== newOptions.localEmoticons.localPath) {
+    if (newOptions.localEmoticons.localPath && oldOpt.localEmoticons.localPath !== newOptions.localEmoticons.localPath) {
       resetCommonlyEmoticons(); // 重置常用表情
       loadEmoticons(newOptions.localEmoticons.localPath); // 读取本地表情文件夹
     }
   }
-  if (newOptions.localEmoticons.commonlyNum !== options.localEmoticons.commonlyNum) {
-    if (newOptions.localEmoticons.commonlyNum < options.localEmoticons.commonlyNum) {
+  // 动态更新历史表情数量限制
+  if (newOptions.localEmoticons.commonlyNum !== oldOpt.localEmoticons.commonlyNum) {
+    if (newOptions.localEmoticons.commonlyNum < oldOpt.localEmoticons.commonlyNum) {
       localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.splice(0, newOptions.localEmoticons.commonlyNum);
       globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
       fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
   }
+  // 更新窗口背景
   if (newOptions.background.enabled) {
     if ([".mp4", ".webm"].includes(path.extname(newOptions.background.url))) {
       videoServer.setFilePath(newOptions.background.url);
@@ -160,18 +167,9 @@ onBeforeUpdateOptions((newOptions) => {
   }
 });
 
-// 配置文件更新后保存到本地并广播更新事件
-const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
-onUpdateOptions((opt) => {
-  log("更新配置调用");
-  fs.writeFileSync(settingsPath, JSON.stringify(opt, null, 4));
-  globalBroadcast("LiteLoader.lite_tools.updateOptions", opt);
-});
-
 // 加载插件时触发
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
-  const settingsPath = path.join(pluginDataPath, "settings.json");
   const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
   const stylePath = path.join(plugin.path.plugin, "src/style.css");
   const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
@@ -228,8 +226,6 @@ function onLoad(plugin) {
   });
 
   // 使用配置加载模块解决插件不同版本配置文件差异
-  options = loadOptions(defaultConfig, settingsPath);
-  setOptions(options);
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
   if (options.debug.mainConsole) {
@@ -287,7 +283,6 @@ function onLoad(plugin) {
   }
   // 控制台输出项目logo
   log("轻量工具箱已加载");
-  log("ipcMain对象", ipcMain.emit);
 
   // 初始化本地表情包功能
   // 监听本地表情包文件夹内的更新
@@ -300,7 +295,7 @@ function onLoad(plugin) {
       }),
     );
     localEmoticonsList = emoticonsList;
-    // 如果没有启用历史表情，则不推送，但是仍旧要更新配置文件
+    // 如果没有启用历史表情
     localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
     globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
@@ -428,7 +423,6 @@ function onLoad(plugin) {
     const list = await new Promise((res) => {
       ipcMain.once("LiteLoader.lite_tools.sendSidebar", (event, list) => {
         options.sidebar = list;
-        setOptions(options);
         res(list);
       });
     });
@@ -440,7 +434,6 @@ function onLoad(plugin) {
     let res = new Map();
     let concat = options.textAreaFuncList.concat(list);
     options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
-    setOptions(options);
   });
 
   // 更新聊天框上方功能列表
@@ -448,20 +441,18 @@ function onLoad(plugin) {
     let res = new Map();
     let concat = options.chatAreaFuncList.concat(list);
     options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
-    setOptions(options);
   });
 
   // 修改配置信息
   ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
     log("更新配置信息", opt);
-    options = opt;
-    setOptions(options);
+    Opt.updateOptions(opt);
   });
 
   // 获取配置信息
   ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
     log("获取配置信息");
-    event.returnValue = options;
+    event.returnValue = Opt._options;
   });
 
   // 返回窗口id
@@ -517,7 +508,6 @@ function onLoad(plugin) {
         if (!result.canceled) {
           const newPath = path.join(result.filePaths[0]);
           options.messageToImage.path = newPath;
-          setOptions(options);
         }
       })
       .catch((err) => {
@@ -659,7 +649,6 @@ function onLoad(plugin) {
             }
           }
           options.background.url = newFilePath;
-          setOptions(options);
         }
       })
       .catch((err) => {
@@ -687,7 +676,6 @@ function onLoad(plugin) {
             }
           }
           options.localEmoticons.localPath = newPath;
-          setOptions(options);
         }
       })
       .catch((err) => {
@@ -804,7 +792,9 @@ function onBrowserWindowCreated(window, plugin) {
 
   const proxyIpcMsg = new Proxy(ipc_message_proxy, {
     apply(target, thisArg, args) {
-      log("get", args[2], args[3]?.[1]?.[0], args);
+      if (options.debug.showChannedCommunication) {
+        log("get", args[2], args[3]?.[1]?.[0], args);
+      }
       ipc_message(args);
       return target.apply(thisArg, args);
     },
@@ -873,11 +863,13 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
-    log("send", channel, args?.[0]?.callbackId, args);
+    if (options.debug.showChannedCommunication) {
+      log("send", channel, args?.[0]?.callbackId, args);
+    }
     // 捕获消息列表
     const msgList = args[1]?.msgList;
     if (msgList && msgList.length) {
-      log("捕获到消息数据", msgList);
+      log("捕获到消息数据", msgList.length);
       // 遍历消息列表中的所有消息
       if (options.message.convertMiniPrgmArk || options.preventMessageRecall.enabled) {
         msgList.forEach((msgItem, index) => {
