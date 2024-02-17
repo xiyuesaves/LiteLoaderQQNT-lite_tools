@@ -401,6 +401,7 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
     // 如果按下了ctrl键，则不关闭窗口面板
     if (!ctrlKey) {
       closeLocalEmoticons();
+      closeCommonlyEmoticonsPanel();
     }
   }
 }
@@ -543,7 +544,9 @@ function loadDom() {
   folderListEl.addEventListener("scroll", debounceScroll);
 
   // 处理鼠标相关事件
-  emoticonsMainEl.addEventListener("mousedown", (event) => {
+  emoticonsMainEl.addEventListener("mousedown", emoticonsMousedown);
+  commonlyEmoticonsPanelEl.addEventListener("mousedown", emoticonsMousedown);
+  function emoticonsMousedown(event) {
     if (event.target.closest(".category-item")) {
       if (event.button === 0) {
         mouseDown(event);
@@ -551,19 +554,23 @@ function loadDom() {
         contextMenu(event);
       }
     }
-  });
-  emoticonsMainEl.addEventListener("mousemove", (event) => {
+  }
+  emoticonsMainEl.addEventListener("mousemove", emoticonsMousemove);
+  commonlyEmoticonsPanelEl.addEventListener("mousemove", emoticonsMousemove);
+  function emoticonsMousemove(event) {
     if (event.target.closest(".category-item")) {
       mouseEnter(event);
     }
-  });
-  emoticonsMainEl.addEventListener("click", (event) => {
+  }
+  emoticonsMainEl.addEventListener("click", clickEmoticons);
+  commonlyEmoticonsPanelEl.addEventListener("click", clickEmoticons);
+  function clickEmoticons(event) {
     if (event.target.closest(".category-item")) {
       insert(event);
     } else if (event.target.closest(".folder-icon-item")) {
       jumpFolder(event);
     }
-  });
+  }
 
   // 处理右键菜单监听事件
   const contextMenuEl = barIcon.querySelector(".context-menu");
