@@ -5,33 +5,61 @@ const debounce = require("./debounce");
 let callbackFunc = new Set();
 let emoticonsList = [];
 let folderNum = 0;
-let watcher;
+let watchSignals = [];
+let folderPath;
+
+/**
+ * 防抖函数
+ */
+const folderUpdate = debounce(async () => {
+  const beforeEmoticonsList = emoticonsList;
+  emoticonsList = [];
+  folderNum = 0;
+  closeAllFileWatcher();
+  addWatchFolders([folderPath]);
+  await loadFolder(folderPath);
+  if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
+    console.log("触发监听");
+    dispatchUpdateFile();
+  }
+  console.log("触发文件修改事件", watchSignals.length);
+}, 100);
+
+/**
+ * 清空所有文件夹监听事件
+ */
+function closeAllFileWatcher() {
+  if (watchSignals.length) {
+    watchSignals.forEach((ac) => ac.abort());
+    watchSignals = [];
+  }
+}
+
+/**
+ * 批量监听文件夹变动
+ * @param {Array} paths 文件夹路径数组
+ */
+function addWatchFolders(paths) {
+  paths.forEach((path) => {
+    const ac = new AbortController();
+    watchSignals.push(ac);
+    const watcher = fs.watch(path, { signal: ac.signal });
+    watcher.on("change", folderUpdate);
+  });
+}
 
 /**
  * 加载本地表情文件夹
  * @param {String} folderPath 表情文件夹路径
  */
-async function loadEmoticons(folderPath) {
+async function loadEmoticons(_folderPath) {
+  folderPath = _folderPath;
   emoticonsList = [];
   folderNum = 0;
+  closeAllFileWatcher();
+  addWatchFolders([folderPath]);
   await loadFolder(folderPath);
   dispatchUpdateFile();
-  if (watcher) {
-    watcher.close();
-  }
-  watcher = fs.watch(
-    folderPath,
-    { recursive: true },
-    debounce(async () => {
-      const beforeEmoticonsList = emoticonsList;
-      emoticonsList = [];
-      folderNum = 0;
-      await loadFolder(folderPath);
-      if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
-        dispatchUpdateFile();
-      }
-    }, 100),
-  );
 }
 
 /**
@@ -54,7 +82,7 @@ function loadFolder(folderPath) {
           });
           if (fileStat) {
             if (fileStat.isFile()) {
-              if (![".gif", ".jpg", ".png", ".webp"].includes(path.extname(filePath).toLocaleLowerCase())) {
+              if (![".png", ".jpg", ".jpeg", ".gif", ".webp"].includes(path.extname(filePath).toLocaleLowerCase())) {
                 continue;
               }
               // 初始化表情文件夹
@@ -85,12 +113,19 @@ function loadFolder(folderPath) {
           const filePath = deepFolder[i];
           await loadFolder(filePath);
         }
+        addWatchFolders(deepFolder);
         res();
       });
     });
   }
 }
 
+/**
+ * 对比两个数组是否一致
+ * @param {Array} arr1 原始数组
+ * @param {Array} arr2 新数组
+ * @returns {Boolean}
+ */
 function arraysAreEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) {
     return false;
