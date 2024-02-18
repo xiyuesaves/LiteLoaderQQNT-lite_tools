@@ -503,7 +503,7 @@
       right: unset;
       left: -40%;
     }
-    .lite-tools-q-tooltips__content{
+    .lite-tools-q-tooltips__content {
       left: 80%;
     }
   }
@@ -882,7 +882,6 @@
 .lite-tools-context-next-icon {
   transform: translateX(8px);
 }
-
 .lite-tools-sub-context-menu {
   height: auto;
   width: auto;
@@ -942,5 +941,12 @@
     &:active {
       background-color: var(--context-menu-active);
     }
+  }
+}
+
+// 兼容性样式
+.lite-tools-compatible-AntiRecall {
+  .message-content-replace {
+    display: none !important;
   }
 }

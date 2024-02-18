@@ -58,6 +58,11 @@ function processMessageElement() {
     if (elProps?.msgRecord?.chatType > 2) {
       continue;
     }
+    // 兼容性检测
+    const AntiRecall = el.querySelector(".message-content-recalled-parent");
+    if (AntiRecall) {
+      el.classList.add("lite-tools-compatible-AntiRecall");
+    }
     // 消息靠左
     if (options.message.selfMsgToLeft) {
       el.querySelector(".message-container")?.classList?.remove("message-container--self");
@@ -174,7 +179,7 @@ function processMessageElement() {
       }
     }
     // 插入撤回提示
-    if (slotEl && !isForward && options.preventMessageRecall.enabled) {
+    if (slotEl && !AntiRecall && !isForward && options.preventMessageRecall.enabled) {
       // 撤回插入元素
       if (!el.querySelector(".lite-tools-recall")) {
         const find = elProps?.msgRecord?.lite_tools_recall;
@@ -185,7 +190,7 @@ function processMessageElement() {
       }
     }
     // 插入+1按钮
-    if (slotEl && !isForward && options.message.replaceBtn) {
+    if (slotEl && !AntiRecall && !isForward && options.message.replaceBtn) {
       // +1插入元素
       if (el.querySelector(filterClass) && !el.querySelector(".message-content-replace")) {
         const msgEl = el.querySelector(".message-content__wrapper");

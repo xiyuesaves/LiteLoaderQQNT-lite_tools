@@ -885,3 +885,7 @@
 .lite-tools-sub-context-menu .sub-context-menu-item:active {
   background-color: var(--context-menu-active);
 }
+
+.lite-tools-compatible-AntiRecall .message-content-replace {
+  display: none !important;
+}
