@@ -18,7 +18,7 @@
     "quickEmoticonsAutoInputOnlyOne": false,
     "quickEmoticonsActiveKey": "/",
     "sendBigImage": false,
-    "majorization": false,
+    "majorization": true,
     "commonlyEmoticons": false,
     "copyFileTolocalEmoticons": false,
     "toLeftSlot": false,
