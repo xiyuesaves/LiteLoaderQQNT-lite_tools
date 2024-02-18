@@ -799,30 +799,39 @@
     opacity: 1;
     pointer-events: auto;
   }
-
   .preview-list {
     width: 90px;
     white-space: nowrap;
     box-sizing: border-box;
-    padding: 10px;
+    padding: 5px;
     font-size: 0;
     overflow: auto;
     transform-origin: top left;
     transform: translateY(90px) rotate(-90deg);
     .preview-item {
       transform: rotate(90deg);
-      width: calc(90px - 20px);
-      height: calc(90px - 20px);
+      width: calc(90px - 10px);
+      height: calc(90px - 10px);
       border-radius: 8px;
       font-size: 12px;
-      margin-bottom: 10px;
       cursor: pointer;
-      img {
-        pointer-events: none;
-        user-select: none;
+      pointer-events: auto;
+      &:hover {
+        background-color: var(--emoticons-category-hover-bg);
+      }
+      .sticker-preview {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        box-sizing: border-box;
+        padding: 5px;
+        img {
+          border-radius: 8px;
+          pointer-events: none;
+          user-select: none;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
       }
       &:last-child {
         margin-bottom: 0;

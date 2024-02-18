@@ -18,7 +18,7 @@ const { folderListEl, folderIconListEl, commonlyEmoticonsPanelEl } = loadDom();
 /**
  * 快速选择表情元素
  */
-const { quickPreviewEl, previewListEl } = initQuickPreview();
+const { quickPreviewEl, previewListEl, previewListScroll } = initQuickPreview();
 /**
  * 是否处于全屏预览状态
  * @type {Boolean}
@@ -286,18 +286,25 @@ function quickInsertion() {
     document.querySelectorAll(".preview-list .preview-item").forEach((el) => el.remove());
 
     // 插入过滤后的表情列表
+    const previewItems = [];
     for (let i = 0; i < forList.length; i++) {
       const previewItem = document.createElement("div");
       previewItem.classList.add("preview-item");
       const stickerPreview = document.createElement("div");
       stickerPreview.classList.add("sticker-preview");
       const img = document.createElement("img");
-      img.setAttribute("lazy", "");
-      img.src = "local:///" + forList[i].path;
+      if (options.localEmoticons.majorization) {
+        img.setAttribute("data-src", `local:///${forList[i].path}`);
+      } else {
+        img.src = `local:///${forList[i].path}`;
+      }
       stickerPreview.appendChild(img);
       previewItem.appendChild(stickerPreview);
-      previewListEl.appendChild(previewItem);
+      previewItems.push(previewItem);
     }
+    previewListEl.append(...previewItems);
+    previewListEl.scrollTop = 0;
+    previewListScroll({ target: previewListEl });
   } else {
     quickPreviewEl?.classList?.remove("show");
   }
@@ -647,7 +654,32 @@ function initQuickPreview() {
     }
   });
 
-  return { quickPreviewEl, previewListEl };
+  const previewListScroll = debounce((event) => {
+    log("快捷预览窗口滚动", event.target.scrollTop);
+    const startTop = event.target.scrollTop;
+    const endBottom = startTop + event.target.offsetHeight;
+    event.target.querySelectorAll(".preview-item").forEach((el) => {
+      if (options.localEmoticons.majorization) {
+        const elTop = el.offsetTop;
+        const elBottom = elTop + el.offsetHeight;
+        log(elTop);
+        if (
+          (elBottom >= startTop && elTop <= startTop) ||
+          (elBottom >= startTop && elTop <= endBottom) ||
+          (elTop <= endBottom && elBottom >= endBottom)
+        ) {
+          const imgEl = el.querySelector("img");
+          if (!imgEl.src) {
+            imgEl.src = imgEl.getAttribute("data-src");
+          }
+        }
+      }
+    });
+  }, 10);
+
+  previewListEl.addEventListener("scroll", previewListScroll);
+
+  return { quickPreviewEl, previewListEl, previewListScroll };
 }
 
 /**
