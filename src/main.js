@@ -2,6 +2,7 @@
 const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 // 本地模块
 const Opt = require("./main_modules/option"); // 配置管理模块
@@ -180,21 +181,8 @@ function onLoad(plugin) {
   messageRecallJson = path.join(pluginDataPath, "/messageRecall/latestRecallMessage.json");
   localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
 
+  // 重置函数this指向
   ipcMain.emit = ipcMain.emit.bind(ipcMain);
-  // new Promise((resolve) => {
-  //   ipcMain.emit(
-  //     "IPC_UP_2",
-  //     {
-  //       sender: {
-  //         send: (...args) => {
-  //           resolve(args);
-  //         },
-  //       },
-  //     },
-  //     { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-FsApi-2" },
-  //     ["getFileType", ...args],
-  //   );
-  // });
 
   // 初始化配置文件路径
   if (!fs.existsSync(pluginDataPath)) {
@@ -717,7 +705,34 @@ function onLoad(plugin) {
   });
 
   ipcMain.on("LiteLoader.lite_tools.sendToMsg", (event, sceneData) => {
-    settingWindow.webContents.send("LiteLoader.lite_tools.goToMsg", sceneData);
+    new Promise((resolve) => {
+      ipcMain.emit(
+        "IPC_UP_2",
+        {
+          sender: {
+            send: (...args) => {
+              log("send-ok-goMainWindowScene", args);
+              resolve(args);
+            },
+          },
+        },
+        { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-WindowApi-2" },
+        [
+          "goMainWindowScene",
+          {
+            scene: sceneData.scene,
+            sceneParams: {
+              peerUid: sceneData.peerUid,
+              chatType: sceneData.chatType,
+              type: sceneData.type,
+              params: {
+                msgId: sceneData.msgId,
+              },
+            },
+          },
+        ],
+      );
+    });
   });
 }
 onLoad(LiteLoader.plugins["lite_tools"]);
@@ -727,7 +742,6 @@ function openRecallView() {
     recallViewWindow.webContents.focus();
   } else {
     recallViewWindow = new BrowserWindow({
-      parent: settingWindow,
       width: 800,
       height: 600,
       autoHideMenuBar: true,
