@@ -5,8 +5,8 @@ const debounce = require("./debounce");
 let callbackFunc = new Set();
 let emoticonsList = [];
 let folderNum = 0;
-let watchSignals = [];
 let folderPath;
+let watchingList = new Set();
 
 /**
  * 防抖函数
@@ -15,7 +15,6 @@ const folderUpdate = debounce(async () => {
   const beforeEmoticonsList = emoticonsList;
   emoticonsList = [];
   folderNum = 0;
-  closeAllFileWatcher();
   addWatchFolders([folderPath]);
   await loadFolder(folderPath);
   if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
@@ -26,24 +25,14 @@ const folderUpdate = debounce(async () => {
 }, 100);
 
 /**
- * 清空所有文件夹监听事件
- */
-function closeAllFileWatcher() {
-  if (watchSignals.length) {
-    watchSignals.forEach((ac) => ac.abort());
-    watchSignals = [];
-  }
-}
-
-/**
  * 批量监听文件夹变动
  * @param {Array} paths 文件夹路径数组
  */
 function addWatchFolders(paths) {
   paths.forEach((path) => {
-    const ac = new AbortController();
-    watchSignals.push(ac);
-    const watcher = fs.watch(path, { signal: ac.signal });
+    if(watchingList.has(path)) return;
+    watchingList.add(path);
+    const watcher = fs.watch(path);
     watcher.on("change", folderUpdate);
   });
 }
@@ -56,7 +45,6 @@ async function loadEmoticons(_folderPath) {
   folderPath = _folderPath;
   emoticonsList = [];
   folderNum = 0;
-  closeAllFileWatcher();
   addWatchFolders([folderPath]);
   await loadFolder(folderPath);
   dispatchUpdateFile();
