@@ -483,6 +483,7 @@
     display: flex !important;
   }
 }
+// 部分情况下右侧插槽可能会被qq隐藏，此处将其强制显示
 .chat-func-bar {
   .func-bar:last-child {
     display: flex !important;
@@ -495,6 +496,17 @@
   display: none;
   margin: 0px 8px;
   position: relative;
+  &.position-left {
+    .commonly-emoticons-panel,
+    .lite-tools-local-emoticons-main {
+      transform-origin: left bottom;
+      right: unset;
+      left: -40%;
+    }
+    .lite-tools-q-tooltips__content{
+      left: 80%;
+    }
+  }
   .lite-tools-q-tooltips {
     align-items: center;
     display: flex;

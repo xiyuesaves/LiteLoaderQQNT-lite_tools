@@ -105,6 +105,14 @@ updateOptions(async (opt) => {
   if (opt.localEmoticons.enabled) {
     localEmoticons();
     folderListEl.setAttribute("style", `--category-item-size: ${(folderListEl.offsetWidth - 12) / opt.localEmoticons.rowsSize}px;`);
+    if (options.localEmoticons.toLeftSlot) {
+      const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:first-child");
+      barIcon.classList.add("position-left");
+      targetPosition?.insertAdjacentElement("afterbegin", barIcon);
+    } else {
+      const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
+      targetPosition?.appendChild(barIcon);
+    }
     if (opt.localEmoticons.commonlyEmoticons) {
       const config = await lite_tools.getLocalEmoticonsConfig();
       const list = config.commonlyEmoticons.map((path, index) => ({ path, index }));
@@ -190,8 +198,14 @@ async function localEmoticons() {
 
   // 插入主要本地表情元素
   if (!document.querySelector(".lite-tools-bar")) {
-    const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
-    targetPosition?.appendChild(barIcon);
+    if (options.localEmoticons.toLeftSlot) {
+      const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:first-child");
+      barIcon.classList.add("position-left");
+      targetPosition?.insertAdjacentElement("afterbegin", barIcon);
+    } else {
+      const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
+      targetPosition?.appendChild(barIcon);
+    }
   }
 
   // 插入快速选择表情元素

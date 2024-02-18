@@ -418,6 +418,15 @@
   margin: 0px 8px;
   position: relative;
 }
+.lite-tools-bar.position-left .commonly-emoticons-panel,
+.lite-tools-bar.position-left .lite-tools-local-emoticons-main {
+  transform-origin: left bottom;
+  right: unset;
+  left: -40%;
+}
+.lite-tools-bar.position-left .lite-tools-q-tooltips__content {
+  left: 80%;
+}
 .lite-tools-bar .lite-tools-q-tooltips {
   align-items: center;
   display: flex;

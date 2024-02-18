@@ -21,6 +21,7 @@
     "majorization": false,
     "commonlyEmoticons": false,
     "copyFileTolocalEmoticons": false,
+    "toLeftSlot": false,
     "hoverShowCommonlyEmoticons": false,
     "commonlyNum": 20,
     "rowsSize": 5,

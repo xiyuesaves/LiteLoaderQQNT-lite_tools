@@ -295,6 +295,8 @@ async function onConfigView(view) {
       lite_tools.openSelectLocalEmoticonsFolder();
     });
   });
+  // 移动插入位置
+  addSwitchEventlistener("localEmoticons.toLeftSlot", ".toLeftSlot");
   // 表情加载优化
   addSwitchEventlistener("localEmoticons.majorization", ".majorization");
   // 以图片形式发送
