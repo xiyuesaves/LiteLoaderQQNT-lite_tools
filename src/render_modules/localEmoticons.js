@@ -111,6 +111,7 @@ updateOptions(async (opt) => {
       targetPosition?.insertAdjacentElement("afterbegin", barIcon);
     } else {
       const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:last-child");
+      barIcon.classList.remove("position-left");
       targetPosition?.appendChild(barIcon);
     }
     if (opt.localEmoticons.commonlyEmoticons) {
