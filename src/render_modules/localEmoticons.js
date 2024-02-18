@@ -930,7 +930,7 @@ function handleMouseEvents(event) {
  * 显示常用表情面板
  */
 function showCommonlyEmoticonsPanel() {
-  if (showEmoticons) {
+  if (showEmoticons || !commonlyEmoticons) {
     return;
   }
   commonlyEmoticons.load();
@@ -947,7 +947,7 @@ function showCommonlyEmoticonsPanel() {
  * 关闭常用表情面板
  */
 function closeCommonlyEmoticonsPanel(immediately = false) {
-  if (showEmoticons) {
+  if (showEmoticons || !commonlyEmoticons) {
     return;
   }
   if (immediately) {
