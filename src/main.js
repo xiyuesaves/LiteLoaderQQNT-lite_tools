@@ -3,6 +3,9 @@ const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
+const EventEmitter = require("events");
+class MainEvent extends EventEmitter {}
+const mainEvent = new MainEvent();
 
 // 本地模块
 const Opt = require("./main_modules/option"); // 配置管理模块
@@ -531,14 +534,28 @@ function onLoad(plugin) {
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
 
-  // 中转获取用户信息事件
+  // 获取用户信息事件
   ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (event, uid) => {
-    settingWindow.webContents.send("LiteLoader.lite_tools.onRequireUserInfo", uid);
-    return await new Promise((res) => {
-      ipcMain.once("LiteLoader.lite_tools.sendUserInfo", (event, userInfo) => {
-        res(userInfo);
-      });
+    const userInfo = await new Promise((resolve) => {
+      function onEvent(channel, ...args) {
+        if (
+          channel === "IPC_DOWN_2" &&
+          ["nodeIKernelProfileListener/onProfileDetailInfoChanged", "nodeIKernelProfileListener/onProfileSimpleChanged"].includes(
+            args?.[1]?.[0]?.cmdName,
+          )
+        ) {
+          mainEvent.off("send", onEvent);
+          resolve(args[1]);
+        }
+      }
+      mainEvent.on("send", onEvent);
+      ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
+        "nodeIKernelProfileService/getUserDetailInfo",
+        { uid: uid },
+        null,
+      ]);
     });
+    return userInfo;
   });
 
   // 发送所有的本地撤回数据
@@ -705,34 +722,29 @@ function onLoad(plugin) {
   });
 
   ipcMain.on("LiteLoader.lite_tools.sendToMsg", (event, sceneData) => {
-    new Promise((resolve) => {
-      ipcMain.emit(
-        "IPC_UP_2",
+    ipcMain.emit(
+      "IPC_UP_2",
+      {
+        sender: {
+          send: (...args) => {},
+        },
+      },
+      { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-WindowApi-2" },
+      [
+        "goMainWindowScene",
         {
-          sender: {
-            send: (...args) => {
-              log("send-ok-goMainWindowScene", args);
-              resolve(args);
+          scene: sceneData.scene,
+          sceneParams: {
+            peerUid: sceneData.peerUid,
+            chatType: sceneData.chatType,
+            type: sceneData.type,
+            params: {
+              msgId: sceneData.msgId,
             },
           },
         },
-        { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-WindowApi-2" },
-        [
-          "goMainWindowScene",
-          {
-            scene: sceneData.scene,
-            sceneParams: {
-              peerUid: sceneData.peerUid,
-              chatType: sceneData.chatType,
-              type: sceneData.type,
-              params: {
-                msgId: sceneData.msgId,
-              },
-            },
-          },
-        ],
-      );
-    });
+      ],
+    );
   });
 }
 onLoad(LiteLoader.plugins["lite_tools"]);
@@ -877,6 +889,7 @@ function onBrowserWindowCreated(window, plugin) {
 
   // 主进程发送消息方法
   const patched_send = function (channel, ...args) {
+    mainEvent.emit("send", channel, ...args);
     if (options.debug.showChannedCommunication) {
       log("send", channel, args?.[0]?.callbackId, args);
     }

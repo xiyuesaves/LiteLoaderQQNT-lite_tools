@@ -10,8 +10,6 @@ import { SwitchEventlistener } from "../render_modules/addSwitchEventlistener.js
 import { options, updateOptions } from "../render_modules/options.js";
 // 后缀类
 import { TailList } from "../render_modules/tailList.js";
-// 原生事件模块
-import { getUserInfo, goMainWindowScene } from "../render_modules/nativeCall.js";
 // 引入图标
 import { pluginIcon } from "../render_modules/svg.js";
 
@@ -214,21 +212,12 @@ async function onConfigView(view) {
   lite_tools.onUpdateRecallListNum((_, num) => {
     view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${num} 条消息`;
   });
-  lite_tools.goToMsg((_, msgData) => {
-    goMainWindowScene(msgData);
-  });
   const recallNum = lite_tools.getRecallListNum();
   view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${recallNum} 条消息`;
 
   view.querySelector(".open-recall-msg-list").addEventListener("click", () => {
     log("查看撤回数据");
     lite_tools.openRecallMsgList();
-  });
-
-  // 只能在qq自己创建的窗口内调用原生事件
-  lite_tools.onRequireUserInfo(async (event, uid) => {
-    log("尝试获取数据", uid);
-    lite_tools.sendUserInfo(await getUserInfo(uid));
   });
 
   // 快速关闭图片

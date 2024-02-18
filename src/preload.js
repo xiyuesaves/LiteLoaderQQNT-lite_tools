@@ -76,11 +76,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   onUpdateRecallListNum: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateRecallListNum", callback),
   // 跳转到指定聊天对话的指定位置处
   sendToMsg: (sceneData) => ipcRenderer.send("LiteLoader.lite_tools.sendToMsg", sceneData),
-  goToMsg: (callback) => ipcRenderer.on("LiteLoader.lite_tools.goToMsg", callback),
   // 通过Uid获取用户信息
   getUserInfo: (uid) => ipcRenderer.invoke("LiteLoader.lite_tools.getUserInfo", uid),
-  sendUserInfo: (userInfo) => ipcRenderer.send("LiteLoader.lite_tools.sendUserInfo", userInfo),
-  onRequireUserInfo: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onRequireUserInfo", callback),
   // 保存blob到本地
   saveBase64ToFile: (...data) => ipcRenderer.send("LiteLoader.lite_tools.saveBase64ToFile", ...data),
   // 选择消息图片默认保存位置
