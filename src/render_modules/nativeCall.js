@@ -259,4 +259,27 @@ function getGroupsList(forced = false) {
   );
 }
 
+/**
+ * 搜索好友/群
+ * @param {String} keyword 搜索内容
+ */
+function openExternalWindow(keyword = "") {
+  lite_tools.nativeCall(
+    "ns-WindowApi",
+    "openExternalWindow",
+    [
+      "SearchWindow",
+      {
+        keyword,
+        type: "networkAll",
+        windowType: 1,
+        source: 3,
+      },
+    ],
+    webContentId,
+    false,
+    false,
+  );
+}
+
 export { sendMessage, forwardMessage, getUserInfo, goMainWindowScene, getMembersAvatar, getGroupsAvatar };
