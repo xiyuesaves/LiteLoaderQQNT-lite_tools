@@ -607,7 +607,7 @@ function onLoad(plugin) {
         filters: [
           {
             name: "img",
-            extensions: ["jpg", "png", "gif", "mp4", "webm"],
+            extensions: ["jpg", "png", "gif", "webp", "jpeg", "mp4", "webm"],
           },
         ], //打开按钮
         buttonLabel: "选择", //回调结果渲染到img标签上
