@@ -439,7 +439,8 @@
   visibility: visible;
 }
 .lite-tools-bar .lite-tools-q-icon {
-  width: 21px;
+  color: var(--icon_primary);
+  width: 20.5px;
   height: 20px;
 }
 .lite-tools-bar .lite-tools-q-tooltips__content {
