@@ -141,10 +141,6 @@ function addEventqContextMenu() {
    */
   let eventName = "mouseup";
   /**
-   * 用户Uid
-   */
-  let uid = "";
-  /**
    * 用于生成消息表情的数据
    */
   let msgSticker = null;
@@ -183,14 +179,10 @@ function addEventqContextMenu() {
 
   document.addEventListener(eventName, async (event) => {
     if (event.button === 2) {
-      uid = event.target.querySelector(".avatar.vue-component")?.__VUE__?.[0]?.props?.uid;
       imagePath = "";
       searchImagePath = "";
       msgSticker = null;
       isRightClick = true;
-      if (!uid?.startsWith("u_")) {
-        uid = "";
-      }
       const messageEl = getParentElement(event.target, "message");
       if (messageEl) {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
@@ -225,7 +217,6 @@ function addEventqContextMenu() {
         }
       }
     } else {
-      uid = "";
       imagePath = "";
       searchImagePath = "";
       msgSticker = null;
@@ -269,13 +260,6 @@ function addEventqContextMenu() {
         const filePathArr = _imagePath.split("/");
         const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace("\\", "/");
         lite_tools.copyFile(_imagePath, filePath);
-      });
-    }
-    // 复制uid
-    if (uid) {
-      const _uid = uid;
-      addQContextMenu(qContextMenu, copyIcon, "复制Uid", async () => {
-        await navigator.clipboard.writeText(_uid);
       });
     }
     // 消息转图片
