@@ -773,7 +773,6 @@
   border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  pointer-events: auto;
 }
 .lite-tools-sticker-bar .preview-list .preview-item:hover {
   background-color: var(--emoticons-category-hover-bg);
