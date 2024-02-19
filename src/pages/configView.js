@@ -241,6 +241,7 @@ async function onConfigView(view) {
   addSwitchEventlistener("message.convertMiniPrgmArk", ".switchDisabledMiniPrgm");
 
   // debug开关
+  addSwitchEventlistener("debug.showWeb", ".showWeb");
   addSwitchEventlistener("debug.console", ".switchDebug");
   addSwitchEventlistener("debug.mainConsole", ".switchMainDebug");
   addSwitchEventlistener("debug.showChannedCommunication", ".showChannedCommunication");

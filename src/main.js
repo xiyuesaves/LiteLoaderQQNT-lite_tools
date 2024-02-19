@@ -222,7 +222,9 @@ function onLoad(plugin) {
 
   if (options.debug.mainConsole) {
     let mainLogs = new logs("主进程");
-    mainLogs.startLogServer();
+    if(options.debug.showWeb){
+      mainLogs.startLogServer();
+    }
     log = mainLogs.log;
     // let renderLogs = new logs("渲染进程");
     // renderLog = renderLogs.log;
