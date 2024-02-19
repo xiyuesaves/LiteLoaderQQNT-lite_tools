@@ -107,7 +107,7 @@ let backgroundData = {
 const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
 
 // 监听配置修改
-Opt.on("update", (newOptions) => {
+const debounceUpdateOptions = debounce((newOptions) => {
   const oldOpt = JSON.parse(JSON.stringify(options));
   log("更新配置数据", oldOpt, newOptions);
   options = newOptions;
@@ -169,7 +169,8 @@ Opt.on("update", (newOptions) => {
     };
     globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
   }
-});
+}, 10);
+Opt.on("update", debounceUpdateOptions);
 
 // 加载插件时触发
 function onLoad(plugin) {
@@ -422,16 +423,20 @@ function onLoad(plugin) {
 
   // 更新输入框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
-    let res = new Map();
-    let concat = options.textAreaFuncList.concat(list);
-    options.textAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
+    list.forEach((item) => {
+      if (!options.textAreaFuncList.find((el) => el.name === item.name)) {
+        options.textAreaFuncList.push(item);
+      }
+    });
   });
 
   // 更新聊天框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (event, list) => {
-    let res = new Map();
-    let concat = options.chatAreaFuncList.concat(list);
-    options.chatAreaFuncList = concat.filter((item) => !res.has(item["name"]) && res.set(item["name"], 1));
+    list.forEach((item) => {
+      if (!options.chatAreaFuncList.find((el) => el.name === item.name)) {
+        options.chatAreaFuncList.push(item);
+      }
+    });
   });
 
   // 修改配置信息
@@ -721,6 +726,7 @@ function onLoad(plugin) {
     }
   });
 
+  // 跳转到指定聊天窗口的对应消息
   ipcMain.on("LiteLoader.lite_tools.sendToMsg", (event, sceneData) => {
     ipcMain.emit(
       "IPC_UP_2",

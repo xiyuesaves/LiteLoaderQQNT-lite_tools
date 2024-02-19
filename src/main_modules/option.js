@@ -16,7 +16,12 @@ class Options extends EventEmitter {
     this._options = options;
     this.handler = {
       get: (target, key, receiver) => {
-        if (target[key] instanceof Object || target[key] instanceof Array) {
+        const desc = Object.getOwnPropertyDescriptor(target, key);
+        const value = Reflect.get(target, key, receiver);
+        if (desc && !desc.writable && !desc.configurable) {
+          return Reflect.get(target, key, receiver);
+        }
+        if (typeof value === "object" && value !== null) {
           return new Proxy(target[key], this.handler);
         }
         return Reflect.get(target, key, receiver);
