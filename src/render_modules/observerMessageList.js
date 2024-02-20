@@ -58,6 +58,8 @@ function processMessageElement() {
     if (elProps?.msgRecord?.chatType > 2) {
       continue;
     }
+    // 消息对象数组
+    const elements = elProps?.msgRecord?.elements || [];
     // 兼容性检测
     const AntiRecall = el.querySelector(".message-content-recalled-parent");
     if (AntiRecall) {
@@ -68,6 +70,12 @@ function processMessageElement() {
       el.querySelector(".message-container")?.classList?.remove("message-container--self");
       el.querySelector(".message-container")?.classList?.remove("message-container--align-right");
       el.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
+    }
+    // 图片自适应宽度
+    const findImageElement = elements.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
+    if (options.message.imageAutoWidth && findImageElement) {
+      el.classList.add("image-auto-width");
+      el.querySelector(".msg-content-container").style.setProperty("--img-max-width-2", `${findImageElement.picElement.picWidth}px`);
     }
     // 开启背景时优化小图展示
     if (options.background.enabled) {

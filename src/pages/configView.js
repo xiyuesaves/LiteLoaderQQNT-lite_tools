@@ -226,6 +226,9 @@ async function onConfigView(view) {
   // 移除vip红名
   addSwitchEventlistener("message.removeVipName", ".removeVipName");
 
+  // 图片宽度自适应
+  addSwitchEventlistener("message.imageAutoWidth", ".imageAutoWidth");
+
   // 复读机
   addSwitchEventlistener("message.replaceBtn", ".replaceBtn");
   // 复读机-双击切换

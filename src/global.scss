@@ -73,6 +73,19 @@
     color: unset !important;
   }
 }
+// 图片自适应大小
+.image-auto-width {
+  .message-content__wrapper {
+    .msg-content-container {
+      max-width: var(--img-max-width-2) !important;
+      .image.pic-element {
+        width: unset !important;
+        height: unset !important;
+      }
+    }
+  }
+}
+
 /* 修复图片预览窗口悬浮窗文本模糊 */
 .image-viewer {
   .main-area__loading-tip,
@@ -243,7 +256,7 @@
     z-index: 10;
     position: relative;
     white-space: nowrap;
-    display: none;
+    visibility: hidden;
     &.recall-tag {
       display: flex;
     }
@@ -286,7 +299,7 @@
     .lite-tools-time {
       text-align: center;
       padding: 4px 8px;
-      display: none;
+      visibility: hidden;
       opacity: 0.8;
     }
     .lite-tools-recall {
@@ -336,9 +349,9 @@
       }
       // 外部气泡
       &.outside-slot {
-        display: flex;
+        visibility: visible;
         .lite-tools-time {
-          display: block;
+          visibility: visible;
         }
         .lite-tools-recall:not(:last-child) {
           padding-right: 0;

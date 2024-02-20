@@ -62,6 +62,14 @@
   color: unset !important;
 }
 
+.image-auto-width .message-content__wrapper .msg-content-container {
+  max-width: var(--img-max-width-2) !important;
+}
+.image-auto-width .message-content__wrapper .msg-content-container .image.pic-element {
+  width: unset !important;
+  height: unset !important;
+}
+
 /* 修复图片预览窗口悬浮窗文本模糊 */
 .image-viewer .main-area__loading-tip,
 .image-viewer .image-viewer__tip {
@@ -220,7 +228,7 @@
   z-index: 10;
   position: relative;
   white-space: nowrap;
-  display: none;
+  visibility: hidden;
 }
 .lite-tools-slot.outside-slot.recall-tag {
   display: flex;
@@ -260,7 +268,7 @@
 .lite-tools-slot.outside-slot .lite-tools-time {
   text-align: center;
   padding: 4px 8px;
-  display: none;
+  visibility: hidden;
   opacity: 0.8;
 }
 .lite-tools-slot.outside-slot .lite-tools-recall {
@@ -296,10 +304,10 @@
   padding-right: 0;
 }
 .message-container:hover .lite-tools-slot.outside-slot {
-  display: flex;
+  visibility: visible;
 }
 .message-container:hover .lite-tools-slot.outside-slot .lite-tools-time {
-  display: block;
+  visibility: visible;
 }
 .message-container:hover .lite-tools-slot.outside-slot .lite-tools-recall:not(:last-child) {
   padding-right: 0;

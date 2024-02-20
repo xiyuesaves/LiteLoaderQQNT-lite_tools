@@ -51,9 +51,10 @@
     "mergeMessageKeepTime": false,
     "selfMsgToLeft": false,
     "onlyAvatar": false,
-    "removeBubbleLimit":false,
+    "removeBubbleLimit": false,
     "overrideFont": "",
     "removeVipName": false,
+    "imageAutoWidth": false,
     "avatarSticky": {
       "enabled": false,
       "toBottom": false
