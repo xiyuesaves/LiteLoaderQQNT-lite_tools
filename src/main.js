@@ -840,7 +840,6 @@ function onBrowserWindowCreated(window, plugin) {
       if (args[3][1][1] && args[3][1][1].msgElements) {
         if (options.tail.enabled) {
           const peerUid = args[3][1][1]?.peer?.peerUid;
-          const chatType = args[3][1][1]?.peer?.chatType;
           const tail = options.tail.list.find((tail) => {
             if (tail.filter.length === 1 && tail.filter[0] === "") {
               return true;

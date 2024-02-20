@@ -237,6 +237,9 @@ async function onConfigView(view) {
   // 禁用红点
   addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
 
+  // 未读气泡显示真实数量
+  addSwitchEventlistener("message.removeBubbleLimit", ".removeBubbleLimit");
+
   // 将哔哩哔哩小程序替换为url卡片
   addSwitchEventlistener("message.convertMiniPrgmArk", ".switchDisabledMiniPrgm");
 

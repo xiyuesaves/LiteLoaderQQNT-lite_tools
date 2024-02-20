@@ -129,6 +129,15 @@ function chatMessage() {
   // 消息列表只显示头像
   document.querySelector(".two-col-layout__aside").classList.toggle("only-avatar", options.message.onlyAvatar);
 
+  // 消息列表气泡数字调整
+  document.querySelectorAll(".list-item .list-item__container .list-item__summary .summary-bubble .vue-component").forEach((el) => {
+    if (options.message.removeBubbleLimit) {
+      el.__VUE__[0].props.countLimit = Number.MAX_SAFE_INTEGER;
+    } else {
+      el.__VUE__[0].props.countLimit = 99;
+    }
+  });
+
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();
