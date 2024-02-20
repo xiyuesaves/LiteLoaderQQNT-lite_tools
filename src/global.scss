@@ -67,6 +67,12 @@
     }
   }
 }
+// 移除vip红名
+.remove-vip-name {
+  .vip-name {
+    color: unset !important;
+  }
+}
 /* 修复图片预览窗口悬浮窗文本模糊 */
 .image-viewer {
   .main-area__loading-tip,

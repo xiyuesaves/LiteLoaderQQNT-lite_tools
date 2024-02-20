@@ -45,6 +45,14 @@ function chatMessage(mutationList) {
   } else {
     document.body.classList.remove("disabled-sticker-hot-gif");
   }
+
+  // 移除vip红名
+  if (options.message.removeVipName) {
+    document.body.classList.add("remove-vip-name");
+  } else {
+    document.body.classList.remove("remove-vip-name");
+  }
+
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();

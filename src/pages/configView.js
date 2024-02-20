@@ -223,6 +223,9 @@ async function onConfigView(view) {
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
 
+  // 移除vip红名
+  addSwitchEventlistener("message.removeVipName", ".removeVipName");
+
   // 复读机
   addSwitchEventlistener("message.replaceBtn", ".replaceBtn");
   // 复读机-双击切换

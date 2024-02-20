@@ -53,6 +53,7 @@
     "onlyAvatar": false,
     "removeBubbleLimit":false,
     "overrideFont": "",
+    "removeVipName": false,
     "avatarSticky": {
       "enabled": false,
       "toBottom": false
