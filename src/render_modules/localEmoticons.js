@@ -449,6 +449,7 @@ function changeListSize() {
     }
     quickPreviewEl.style.width = fixedWidth + "px";
     previewListEl.style.height = fixedWidth + "px";
+    previewListScroll({ target: previewListEl });
   }
 }
 
@@ -656,25 +657,20 @@ function initQuickPreview() {
 
   const previewListScroll = debounce((event) => {
     log("快捷预览窗口滚动", event.target.scrollTop);
-    const startTop = event.target.scrollTop;
-    const endBottom = startTop + event.target.offsetHeight;
-    event.target.querySelectorAll(".preview-item").forEach((el) => {
-      if (options.localEmoticons.majorization) {
-        const elTop = el.offsetTop;
-        const elBottom = elTop + el.offsetHeight;
-        log(elTop);
-        if (
-          (elBottom >= startTop && elTop <= startTop) ||
-          (elBottom >= startTop && elTop <= endBottom) ||
-          (elTop <= endBottom && elBottom >= endBottom)
-        ) {
-          const imgEl = el.querySelector("img");
-          if (!imgEl.src) {
-            imgEl.src = imgEl.getAttribute("data-src");
-          }
+    if (options.localEmoticons.majorization) {
+      const listItemHeight = 80;
+      const startTop = event.target.scrollTop;
+      const endBottom = startTop + event.target.offsetHeight;
+      const startNum = parseInt(startTop / listItemHeight);
+      const endNum = Math.ceil((endBottom - startTop) / listItemHeight) + 1;
+      for (let i = 0; i < endNum; i++) {
+        const index = i + startNum + 1;
+        const prevItemImg = event.target.querySelector(`.preview-item:nth-child(${index}) img`);
+        if (prevItemImg && !prevItemImg.src) {
+          prevItemImg.src = prevItemImg.getAttribute("data-src");
         }
       }
-    });
+    }
   }, 10);
 
   previewListEl.addEventListener("scroll", previewListScroll);
