@@ -52,7 +52,7 @@
   width: 100%;
   height: 100%;
   position: absolute;
-  opacity: 0.5;
+  opacity: var(--background-opacity, 0.5);
   top: 0;
   left: 0;
 }
@@ -83,7 +83,68 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: var(--background-opacity, 0.5);
+}
+
+.sidebar-nav {
+  background: unset !important;
+}
+
+.overlay-sider-bar #app > .container::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-image: var(--background-wallpaper) !important;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--background-opacity, 0.5);
+}
+.overlay-sider-bar #app > .container .tab-container {
+  background: unset !important;
+}
+.overlay-sider-bar #app > .container .tab-container::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -2;
+  background-color: var(--bg_bottom_standard);
+}
+.overlay-sider-bar .background-wallpaper-video {
+  position: fixed;
+}
+.overlay-sider-bar .message-panel::after,
+.overlay-sider-bar .contact-layout::after {
+  display: none !important;
+}
+
+.remove-background-mask.overlay-sider-bar .aio-independent::after {
+  display: none;
+}
+.remove-background-mask #app > .container {
+  background: unset !important;
+}
+.remove-background-mask #app.forward::before {
+  display: none;
+}
+.remove-background-mask .tab-container {
+  background-color: unset !important;
+}
+.remove-background-mask .tab-container::after {
+  display: none !important;
+}
+.remove-background-mask .tab-container .message-panel,
+.remove-background-mask .tab-container .contact-layout {
+  background-color: unset !important;
 }
 
 /* 转发消息样式 */
@@ -122,7 +183,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: var(--background-opacity, 0.5);
 }
 .forward#app::before {
   content: "";
@@ -153,7 +214,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: var(--background-opacity, 0.5);
 }
 .aio-independent .draggable-view__container {
   background: unset !important;

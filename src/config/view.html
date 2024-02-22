@@ -1,7 +1,7 @@
 <lite-tools class="lite-tools-settings plugins">
   <h1>功能</h1>
   <!-- 界面调整 -->
-  <setting-panel class="wrap background">
+  <setting-panel class="wrap interface">
     <div class="vertical-list-item title">
       <h2>界面调整</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -9,24 +9,6 @@
       </svg>
     </div>
     <ul class="hidden">
-      <hr class="horizontal-dividing-line" />
-      <li class="vertical-list-item">
-        <div>
-          <h2>自定义背景</h2>
-          <span class="secondary-text">仅支持单张图片/视频</span>
-        </div>
-        <div class="switchBackgroundImage q-switch">
-          <span class="q-switch__handle"></span>
-        </div>
-      </li>
-      <div class="select-path">
-        <div class="vertical-list-item">
-          <input placeholder="请选择文件" readonly class="select-file input-text text_color" type="text" spellcheck="false" />
-          <div class="ops-btns">
-            <button class="q-button q-button--small q-button--secondary select-file">选择</button>
-          </div>
-        </div>
-      </div>
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
@@ -277,20 +259,18 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <div class="select-default-file-path">
-        <div class="vertical-list-item">
-          <input
-            placeholder="请选择文件夹"
-            readonly
-            class="select-default-save-file-input input-text text_color"
-            type="text"
-            spellcheck="false"
-          />
-          <div class="ops-btns">
-            <button class="q-button q-button--small q-button--secondary select-default-save-file-input">选择</button>
-          </div>
+      <li class="select-default-file-path vertical-list-item">
+        <input
+          placeholder="请选择文件夹"
+          readonly
+          class="select-default-save-file-input input-text text_color"
+          type="text"
+          spellcheck="false"
+        />
+        <div class="ops-btns">
+          <button class="q-button q-button--small q-button--secondary select-default-save-file-input">选择</button>
         </div>
-      </div>
+      </li>
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
@@ -628,6 +608,63 @@
         </div>
         <div class="ops-btns">
           <button class="q-button q-button--small q-button--secondary open-recall-msg-list">查看</button>
+        </div>
+      </li>
+    </ul>
+  </setting-panel>
+  <!-- 背景功能 -->
+  <setting-panel class="wrap background">
+    <div class="vertical-list-item title">
+      <h2>背景调整</h2>
+      <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 8L12 17L3 8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+      </svg>
+    </div>
+    <ul class="hidden">
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>自定义背景</h2>
+          <span class="secondary-text">仅支持单张图片/视频</span>
+        </div>
+        <div class="switchBackgroundImage q-switch">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <li class="select-path vertical-list-item">
+        <input placeholder="请选择文件" readonly class="select-file input-text text_color" type="text" spellcheck="false" />
+        <div class="ops-btns">
+          <button class="q-button q-button--small q-button--secondary select-file">选择</button>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>覆盖侧边栏</h2>
+          <span class="secondary-text">背景图片/视频内容覆盖窗口左侧功能栏</span>
+        </div>
+        <div class="overlaySiderBar q-switch">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>窗口磨砂化</h2>
+          <span class="secondary-text">移除窗口背景层，建议搭配 <a class="removeMaskLink link">More Materials</a> 使用</span>
+        </div>
+        <div class="removeMask q-switch">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>背景透明度</h2>
+          <span class="secondary-text">背景图片/视频的透明度，范围为0-100</span>
+        </div>
+        <div class="slot-input-box">
+          <input placeholder="50" class="slot-input background-opacity text_color" type="number" spellcheck="false" />
         </div>
       </li>
     </ul>

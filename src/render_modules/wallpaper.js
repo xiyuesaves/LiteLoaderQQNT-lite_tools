@@ -2,6 +2,7 @@
 let styleText = "";
 let timeout;
 import { Logs } from "./logs.js";
+import { options } from "./options.js";
 const log = new Logs("背景模块");
 
 /**
@@ -11,7 +12,7 @@ async function updateWallpaper(enabled, wallpaperData) {
   const { href, type } = wallpaperData;
   const backgroundStyle = document.querySelector(".background-style");
   // 初始化背景样式
-  if (!styleText) {
+  if (!styleText || options.debug.mainConsole) {
     styleText = await lite_tools.getStyle();
   }
   // 循环直到匹配到对应元素为止
@@ -21,10 +22,29 @@ async function updateWallpaper(enabled, wallpaperData) {
       log("没有找到元素，等待中");
       updateWallpaper(enabled, wallpaperData);
     }, 100);
+    return;
   }
+
   if (enabled) {
     log("更新背景");
     backgroundStyle.textContent = styleText;
+
+    // 背景图片覆盖侧边栏
+    if (options.background.overlaySiderBar) {
+      document.body.classList.add("overlay-sider-bar");
+    } else {
+      document.body.classList.remove("overlay-sider-bar");
+    }
+
+    // 移除背景遮罩
+    if (options.background.removeMask) {
+      document.body.classList.add("remove-background-mask");
+    } else {
+      document.body.classList.remove("remove-background-mask");
+    }
+
+    backgroundStyle.textContent += `:root{--background-opacity: ${options.background.opacity};}`;
+
     if (type === "video") {
       let videoEl = document.querySelector(".background-wallpaper-video");
       // 如果已经有video元素了，那么直接替换资源路径
@@ -57,7 +77,7 @@ async function updateWallpaper(enabled, wallpaperData) {
     } else {
       log("更新背景为图片");
       document.querySelector(".background-wallpaper-video")?.remove();
-      backgroundStyle.textContent += `\n:root{--background-wallpaper:url("${href}")}`;
+      backgroundStyle.textContent += `\n:root{--background-wallpaper:url("${href}");}`;
     }
   } else {
     backgroundStyle.textContent = "";

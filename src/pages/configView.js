@@ -25,7 +25,6 @@ async function onConfigView(view) {
   document.querySelectorAll(".nav-item.liteloader").forEach((node) => {
     if (node.textContent === "轻量工具箱") {
       node.querySelector(".q-icon").innerHTML = pluginIcon;
-      // console.log(node.querySelector(".q-icon"))
     }
   });
   // 返回通用监听方法
@@ -328,14 +327,34 @@ async function onConfigView(view) {
   addSwitchEventlistener("localEmoticons.copyFileTolocalEmoticons", ".copyFileTolocalEmoticons");
 
   // 自定义背景
-  addSwitchEventlistener("background.enabled", ".switchBackgroundImage", (_, enabled) => {
-    view.querySelector(".select-path").classList.toggle("disabled-input", !enabled);
-  });
+  addSwitchEventlistener("background.enabled", ".switchBackgroundImage");
+  // 覆盖侧边栏
+  addSwitchEventlistener("background.overlaySiderBar", ".overlaySiderBar");
+  // 移除背景遮罩
+  addSwitchEventlistener("background.removeMask", ".removeMask");
+  // 初始化背景路径选择监听和值
   view.querySelector(".select-path input").value = options.background.url;
   view.querySelectorAll(".select-file").forEach((el) => {
     el.addEventListener("click", () => {
       lite_tools.openSelectBackground();
     });
+  });
+  // 初始化背景透明度输入框监听和值
+  view.querySelector(".background-opacity").value = options.background.opacity * 100;
+  view.querySelector(".background-opacity").addEventListener("blur", (e) => {
+    const inputValue = parseInt(e.target.value) / 100;
+    if (inputValue !== NaN && inputValue >= 0 && inputValue <= 1) {
+      options.background.opacity = inputValue;
+    } else {
+      options.background.opacity = 0.5;
+    }
+    e.target.value = options.background.opacity * 100;
+    debounceSetOptions();
+  });
+
+  // 跳转到 More Materials 插件页面
+  view.querySelector(".removeMaskLink").addEventListener("click", () => {
+    lite_tools.openWeb("https://github.com/mo-jinran/More-Materials");
   });
 
   // 自定义历史表情数量
@@ -346,6 +365,7 @@ async function onConfigView(view) {
   commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
   commonlyEmoticonsEl.addEventListener("blur", (e) => {
     options.localEmoticons.commonlyNum = parseInt(e.target.value) || 20;
+    commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
     debounceSetOptions();
   });
 

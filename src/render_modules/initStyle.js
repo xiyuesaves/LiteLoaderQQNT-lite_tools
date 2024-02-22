@@ -26,8 +26,9 @@ async function initStyle() {
     if (element) {
       let backgroundImage = "";
       if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-        backgroundImage = `:root{--background-wallpaper:url("local:///${options.background.url.replace(/\\/g, "//")}")}`;
+        backgroundImage = `:root{--background-wallpaper:url("local:///${options.background.url.replace(/\\/g, "//")}");}`;
       }
+      backgroundImage = `:root{--background-opacity: ${options.background.opacity};}`;
       element.textContent = message + "\n" + backgroundImage;
     }
   });
