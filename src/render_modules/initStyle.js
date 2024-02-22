@@ -41,6 +41,11 @@ async function initStyle() {
     }
   });
 
+  // 兼容 Telegram-Theme 主题
+  if (LiteLoader.plugins["telegram_theme"] && !LiteLoader.plugins["telegram_theme"].disabled) {
+    document.body.classList.add("compatible-Telegram-Theme");
+  }
+
   updateFont();
   log("模块已加载");
 }

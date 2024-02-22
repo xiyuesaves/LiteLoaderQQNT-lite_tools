@@ -280,6 +280,14 @@
   cursor: pointer;
 }
 
+.compatible-Telegram-Theme .message-content__wrapper .msg-content-container:has(.pic-element:nth-child(n+2)) .lite-tools-slot.embed-slot .lite-tools-time, .compatible-Telegram-Theme .message-content__wrapper .msg-content-container:has(.text-element):has(.pic-element) .lite-tools-slot.embed-slot .lite-tools-time {
+  margin-right: 16px;
+}
+.compatible-Telegram-Theme .message-content__wrapper .msg-content-container:has(.pic-element:nth-child(n+2)) .lite-tools-slot.embed-slot .lite-tools-time::after, .compatible-Telegram-Theme .message-content__wrapper .msg-content-container:has(.text-element):has(.pic-element) .lite-tools-slot.embed-slot .lite-tools-time::after {
+  bottom: 8px;
+  right: 16px;
+}
+
 .user-name .lite-tools-time {
   margin: 0 4px;
 }
