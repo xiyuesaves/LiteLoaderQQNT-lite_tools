@@ -313,25 +313,26 @@
   }
 }
 
-// 兼容 Telegram-Theme 主题
-.compatible-Telegram-Theme {
-  .message-content__wrapper {
-    .msg-content-container {
-      &:has(.pic-element:nth-child(n + 2)),
-      &:has(.text-element):has(.pic-element) {
-        .lite-tools-slot.embed-slot {
-          .lite-tools-time{
-            margin-right: 16px;
-            &::after {
-              bottom: 8px;
-              right: 16px;
-            }
-          }
-        }
-      }
-    }
-  }
-}
+// 兼容 Telegram-Theme 主题 - 主题已实现兼容
+// .compatible-Telegram-Theme {
+//   .message-content__wrapper {
+//     .msg-content-container {
+//       &:has(.pic-element:nth-child(n + 2)),
+//       &:has(.text-element):has(.pic-element) {
+//         .lite-tools-slot.embed-slot {
+//           .lite-tools-time{
+//             margin-right: 16px;
+//             margin-bottom: 12px;
+//             &::after {
+//               bottom: 8px;
+//               right: 16px;
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
 // 时间插入到名称时的样式
 .user-name {
