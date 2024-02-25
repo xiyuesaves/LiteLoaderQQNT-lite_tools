@@ -282,4 +282,26 @@ function openExternalWindow(keyword = "") {
   );
 }
 
-export { sendMessage, forwardMessage, getUserInfo, goMainWindowScene, getMembersAvatar, getGroupsAvatar };
+/**
+ * 打开频道窗口
+ */
+function openGuidMainWindow() {
+  lite_tools.nativeCall(
+    "ns-WindowApi",
+    "openExternalWindow",
+    [
+      "GuildMainWindow",
+      {
+        guildId: "2",
+        id: 3,
+        title: "频道",
+        windowName: "GuildMainWindow",
+      },
+    ],
+    webContentId,
+    false,
+    false,
+  );
+}
+
+export { sendMessage, forwardMessage, getUserInfo, goMainWindowScene, getMembersAvatar, getGroupsAvatar, openGuidMainWindow };

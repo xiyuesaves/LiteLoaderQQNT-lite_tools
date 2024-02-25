@@ -79,6 +79,7 @@
   },
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
+  "fixAbnormalResourceUsage":false,
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,

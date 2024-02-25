@@ -26,6 +26,11 @@ const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmotic
 let log = () => {};
 
 /**
+ * 第一次关闭频道窗口检测
+ */
+let isFirstCloseGuidMainWindow = true;
+
+/**
  * 配置数据
  */
 let options = Opt.value;
@@ -222,7 +227,7 @@ function onLoad(plugin) {
 
   if (options.debug.mainConsole) {
     let mainLogs = new logs("主进程");
-    if(options.debug.showWeb){
+    if (options.debug.showWeb) {
       mainLogs.startLogServer();
     }
     log = mainLogs.log;
@@ -811,6 +816,16 @@ function deleteFilesInDirectory(directoryPath, fileToPreserve) {
 function onBrowserWindowCreated(window, plugin) {
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
+    // 如果打开的是频道窗口且启用了临时修复方法，则直接关闭窗口
+    if (window.webContents.getURL().indexOf("#/index/2") !== -1) {
+      if (options.fixAbnormalResourceUsage && isFirstCloseGuidMainWindow) {
+        setTimeout(() => {
+          window.close();
+        }, 500);
+      }
+      isFirstCloseGuidMainWindow = false;
+    }
+
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
       log("捕获到主窗口");
       mainMessage = window;

@@ -21,6 +21,8 @@ import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 import { localEmoticons } from "../render_modules/localEmoticons.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
+// 打开频道事件
+import { openGuidMainWindow } from "../render_modules/nativeCall.js";
 
 // log
 import { Logs } from "../render_modules/logs.js";
@@ -30,6 +32,11 @@ addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
 chatMessageList();
 newMessageRecall();
+
+// 修复占用过高的一个临时解决办法
+if (options.fixAbnormalResourceUsage) {
+  openGuidMainWindow();
+}
 
 // 设置页面获取侧边栏项目
 lite_tools.optionsOpen((event, message) => {
