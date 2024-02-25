@@ -817,7 +817,7 @@ function onBrowserWindowCreated(window, plugin) {
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     // 如果打开的是频道窗口且启用了临时修复方法，则直接关闭窗口
-    if (window.webContents.getURL().indexOf("#/index/2") !== -1) {
+    if (window.webContents.getURL().indexOf("#/index/2") !== -1 && isFirstCloseGuidMainWindow) {
       if (options.fixAbnormalResourceUsage && isFirstCloseGuidMainWindow) {
         setTimeout(() => {
           window.close();
