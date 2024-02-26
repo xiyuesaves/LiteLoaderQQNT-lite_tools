@@ -108,6 +108,11 @@ let backgroundData = {
   type: "",
 };
 
+/**
+ * 调试实例
+ */
+let mainLogs = null;
+
 // 配置文件更新后保存到本地并广播更新事件
 const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
 
@@ -226,7 +231,7 @@ function onLoad(plugin) {
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
   if (options.debug.mainConsole) {
-    let mainLogs = new logs("主进程");
+    mainLogs = new logs("主进程");
     if (options.debug.showWeb) {
       mainLogs.startLogServer();
     }
