@@ -1,8 +1,15 @@
 <p align=center>
-  <img width="192" alt="icon" height="192" src="./icon.png" />
+  <img width="160" alt="icon" height="160" src="./icon.png" />
 </p>
 
 <h1 align="center">轻量工具箱</h1>
+
+<p align="center">
+  <a href="/LICENSE"><img src="https://img.shields.io/github/license/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="LICENSE"></a>
+  <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases"><img src="https://img.shields.io/github/v/release/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Release"></a>
+  <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues"><img src="https://img.shields.io/github/issues/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Issues"></a>
+  <a href="http://vanilla-js.com"><img src="https://img.shields.io/badge/vanilla-js-aaaaaa?labelColor=f3d890" alt="vanilla-js"></a>
+</p>
 
 LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
 
@@ -40,7 +47,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 快速关闭预览图片 | 移除回复@          | 消息合并                 | 禁用 GIF 热图    |
 | 划词搜索         | 隐藏小红点         | 禁用表情推荐             | 阻止拖拽多选消息 |
 | 消息靠左显示     | 消息转图片         | 消息列表只显示头像       | 自定义字体       |
-| 移除 VIP 红名    | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 |                  |
+| 移除 VIP 红名    | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 | __修复CPU占用过高（临时）__ |
 
 ## 声明
 
