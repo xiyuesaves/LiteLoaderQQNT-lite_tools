@@ -9,7 +9,7 @@ log("模块加载");
 let peer = lite_tools.getPeer();
 // 增加防抖避免文本闪烁
 const debounceUpdatePeer = debounce((_, newPeer) => {
-  log("peer更新", peer?.uid);
+  log("peer更新");
   peer = newPeer;
   messageTail();
 }, 10);
