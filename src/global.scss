@@ -258,7 +258,10 @@
     white-space: nowrap;
     visibility: hidden;
     &.recall-tag {
-      display: flex;
+      visibility: visible;
+      .lite-tools-time{
+        display: none;
+      }
     }
     &:not(.recall-tag).fix-padding-left {
       .lite-tools-time {
@@ -371,6 +374,11 @@
       // 外部气泡
       &.outside-slot {
         visibility: visible;
+        &.recall-tag{
+          .lite-tools-time {
+            display: block;
+          }
+        }
         .lite-tools-time {
           visibility: visible;
         }

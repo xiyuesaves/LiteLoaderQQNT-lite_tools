@@ -231,7 +231,10 @@
   visibility: hidden;
 }
 .lite-tools-slot.outside-slot.recall-tag {
-  display: flex;
+  visibility: visible;
+}
+.lite-tools-slot.outside-slot.recall-tag .lite-tools-time {
+  display: none;
 }
 .lite-tools-slot.outside-slot:not(.recall-tag).fix-padding-left .lite-tools-time {
   padding-right: 0;
@@ -305,6 +308,9 @@
 }
 .message-container:hover .lite-tools-slot.outside-slot {
   visibility: visible;
+}
+.message-container:hover .lite-tools-slot.outside-slot.recall-tag .lite-tools-time {
+  display: block;
 }
 .message-container:hover .lite-tools-slot.outside-slot .lite-tools-time {
   visibility: visible;
