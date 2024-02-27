@@ -765,7 +765,11 @@ function onLoad(plugin) {
     );
   });
 }
-onLoad(LiteLoader.plugins["lite_tools"]);
+try {
+  onLoad(LiteLoader.plugins["lite_tools"]);
+} catch (err) {
+  log("主进程 onLoad 出错", err.message);
+}
 
 function openRecallView() {
   if (recallViewWindow) {
@@ -857,36 +861,40 @@ function onBrowserWindowCreated(window, plugin) {
   function ipc_message(args) {
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
       log("消息发送事件", args);
-      if (args[3][1][1] && args[3][1][1].msgElements) {
-        if (options.tail.enabled) {
-          const peerUid = args[3][1][1]?.peer?.peerUid;
-          const tail = options.tail.list.find((tail) => {
-            if (tail.filter.length === 1 && tail.filter[0] === "") {
-              return true;
-            }
-            if (tail.filter.includes(peerUid)) {
-              return true;
-            }
-          });
-          // 必须含有peerUid且匹配到后缀数据
-          if (peerUid && tail) {
-            const tailContext = tail.content;
-            const newLine = tail.newLine;
-            args[3][1][1].msgElements.forEach((el) => {
-              if (el.textElement && el.textElement?.content?.length !== 0) {
-                if (newLine) {
-                  el.textElement.content += "\n";
-                }
-                el.textElement.content += tailContext;
-                log("消息增加后缀", el.textElement.content);
+      if (checkChatType(args[3][1][1].peer)) {
+        if (args[3][1][1] && args[3][1][1].msgElements) {
+          if (options.tail.enabled) {
+            const peerUid = args[3][1][1]?.peer?.peerUid;
+            const tail = options.tail.list.find((tail) => {
+              if (tail.filter.length === 1 && tail.filter[0] === "") {
+                return true;
+              }
+              if (tail.filter.includes(peerUid)) {
+                return true;
               }
             });
+            // 必须含有peerUid且匹配到后缀数据
+            if (peerUid && tail) {
+              const tailContext = tail.content;
+              const newLine = tail.newLine;
+              args[3][1][1].msgElements.forEach((el) => {
+                if (el.textElement && el.textElement?.content?.length !== 0) {
+                  if (newLine) {
+                    el.textElement.content += "\n";
+                  }
+                  el.textElement.content += tailContext;
+                  log("消息增加后缀", el.textElement.content);
+                }
+              });
+            }
           }
         }
+      } else {
+        log("消息发送事件-拒绝处理");
       }
     }
     if (args[3]?.[1]?.[0] === "changeRecentContacPeerUid") {
-      log("切换聊天窗口", args[3]?.[1]?.[1]);
+      log("切换聊天对象", args[3]?.[1]?.[1]);
       peer = {
         chatType: args[3]?.[1]?.[1]?.peerUid[0] === "u" ? "friend" : "group",
         uid: args[3]?.[1]?.[1]?.peerUid,
@@ -896,12 +904,16 @@ function onBrowserWindowCreated(window, plugin) {
     }
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
       log("切换聚焦窗口", args[3]?.[1]?.[1]);
-      peer = {
-        chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
-        uid: args[3]?.[1]?.[1].peer.peerUid,
-        guildId: args[3]?.[1]?.[1]?.peer.guildId,
-      };
-      globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
+      if (checkChatType(args[3]?.[1]?.[1].peer)) {
+        peer = {
+          chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
+          uid: args[3]?.[1]?.[1].peer.peerUid,
+          guildId: args[3]?.[1]?.[1]?.peer.guildId,
+        };
+        globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
+      } else {
+        log("切换聚焦窗口-拒绝处理");
+      }
     }
   }
 
@@ -922,34 +934,84 @@ function onBrowserWindowCreated(window, plugin) {
     }
     // 捕获消息列表
     const msgList = args[1]?.msgList;
+    // msgList[0].chatType <= 2 用于过滤消息类型，1为好友2为群组 其他类型的消息不处理
     if (msgList && msgList.length) {
       log("捕获到消息数据", msgList.length);
-      // 遍历消息列表中的所有消息
-      if (options.message.convertMiniPrgmArk || options.preventMessageRecall.enabled) {
-        msgList.forEach((msgItem, index) => {
-          let msg_seq = msgItem.msgSeq;
-          // 遍历消息内容数组
-          msgItem.elements.forEach((msgElements) => {
-            // 替换历史消息中的小程序卡片
-            if (msgElements?.arkElement?.bytesData && options.message.convertMiniPrgmArk) {
-              const json = JSON.parse(msgElements.arkElement.bytesData);
-              if (json?.prompt.includes("[QQ小程序]")) {
-                msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
+      if (checkChatType(msgList?.[0])) {
+        // 遍历消息列表中的所有消息
+        if (options.message.convertMiniPrgmArk || options.preventMessageRecall.enabled) {
+          msgList.forEach((msgItem, index) => {
+            let msg_seq = msgItem.msgSeq;
+            // 遍历消息内容数组
+            msgItem.elements.forEach((msgElements) => {
+              // 替换历史消息中的小程序卡片
+              if (msgElements?.arkElement?.bytesData && options.message.convertMiniPrgmArk) {
+                const json = JSON.parse(msgElements.arkElement.bytesData);
+                if (json?.prompt.includes("[QQ小程序]")) {
+                  msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
+                }
               }
-            }
-            // 替换被撤回的消息内容
-            if (options.preventMessageRecall.enabled) {
-              // 检测到消息里有撤回标记，且不是自己发送的消息
-              if (msgElements?.grayTipElement?.revokeElement) {
-                const findInCatch = catchMsgList.get(msgItem.msgId); // 尝试从内存中查找对应消息并替换元素
-                // 如果在聊天缓存里找到了被撤回的内容，且是自己发起的撤回，那么需要额外判断是否开启了拦截自己的撤回事件
-                if (
-                  findInCatch &&
-                  (!msgElements?.grayTipElement?.revokeElement?.isSelfOperate || options.preventMessageRecall.preventSelfMsg)
-                ) {
-                  log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
-                  // 在消息对象上补充撤回信息
-                  findInCatch.lite_tools_recall = {
+              // 替换被撤回的消息内容
+              if (options.preventMessageRecall.enabled) {
+                // 检测到消息里有撤回标记，且不是自己发送的消息
+                if (msgElements?.grayTipElement?.revokeElement) {
+                  const findInCatch = catchMsgList.get(msgItem.msgId); // 尝试从内存中查找对应消息并替换元素
+                  // 如果在聊天缓存里找到了被撤回的内容，且是自己发起的撤回，那么需要额外判断是否开启了拦截自己的撤回事件
+                  if (
+                    findInCatch &&
+                    (!msgElements?.grayTipElement?.revokeElement?.isSelfOperate || options.preventMessageRecall.preventSelfMsg)
+                  ) {
+                    log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
+                    // 在消息对象上补充撤回信息
+                    findInCatch.lite_tools_recall = {
+                      operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回昵称
+                      operatorRemark: msgElements.grayTipElement.revokeElement.operatorRemark, // 执行撤回备注昵称
+                      operatorMemRemark: msgElements.grayTipElement.revokeElement.operatorMemRemark, // 执行撤回群昵称
+
+                      origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
+                      origMsgSenderRemark: msgElements.grayTipElement.revokeElement.origMsgSenderRemark, // 发送消息角色
+                      origMsgSenderMemRemark: msgElements.grayTipElement.revokeElement.origMsgSenderMemRemark, // 发送消息角色
+                      recallTime: msgItem.recallTime, // 撤回时间
+                    };
+                    if (options.preventMessageRecall.localStorage) {
+                      recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                    } else {
+                      tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 重启QQ后丢失
+                    }
+                    processPic(findInCatch);
+                    msgList[index] = findInCatch; // 替换撤回标记
+                  } else {
+                    const findInRecord = (
+                      options.preventMessageRecall.localStorage ? recordMessageRecallIdList : tempRecordMessageRecallIdList
+                    ).get(msgItem.msgId); // 从常驻历史撤回记录中查找消息id
+                    if (findInRecord) {
+                      log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
+                      processPic(findInRecord);
+                      msgList[index] = findInRecord; // 替换撤回标记
+                      // 只有在开启持久化保存选项时，才读取本地已保存的撤回数据
+                    } else if (options.preventMessageRecall.localStorage) {
+                      const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
+                      const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
+                      if (historyFile) {
+                        if (!historyMessageRecallList.has(historyFile)) {
+                          const messageRecallList = new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`));
+                          historyMessageRecallList.set(historyFile, messageRecallList);
+                        }
+                        const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
+                        if (findInHistory) {
+                          log(`${msgItem.msgId} 从历史缓存中找到消息记录`, findInHistory);
+                          processPic(findInHistory);
+                          msgList[index] = findInHistory; // 替换撤回标记
+                        } else {
+                          log(`${msgItem.msgId} 没有撤回记录`);
+                        }
+                      } else {
+                        log(`${msgItem.msgId} 没有对应时间的历史切片`);
+                      }
+                    }
+                  }
+                  // 针对撤回消息添加特殊字段用于展示数据
+                  msgList[index].lite_tools_recall = {
                     operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回昵称
                     operatorRemark: msgElements.grayTipElement.revokeElement.operatorRemark, // 执行撤回备注昵称
                     operatorMemRemark: msgElements.grayTipElement.revokeElement.operatorMemRemark, // 执行撤回群昵称
@@ -959,65 +1021,20 @@ function onBrowserWindowCreated(window, plugin) {
                     origMsgSenderMemRemark: msgElements.grayTipElement.revokeElement.origMsgSenderMemRemark, // 发送消息角色
                     recallTime: msgItem.recallTime, // 撤回时间
                   };
-                  if (options.preventMessageRecall.localStorage) {
-                    recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
-                  } else {
-                    tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 重启QQ后丢失
-                  }
-                  processPic(findInCatch);
-                  msgList[index] = findInCatch; // 替换撤回标记
+                } else if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
+                  log("本人发起的撤回，放行");
                 } else {
-                  const findInRecord = (
-                    options.preventMessageRecall.localStorage ? recordMessageRecallIdList : tempRecordMessageRecallIdList
-                  ).get(msgItem.msgId); // 从常驻历史撤回记录中查找消息id
-                  if (findInRecord) {
-                    log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
-                    processPic(findInRecord);
-                    msgList[index] = findInRecord; // 替换撤回标记
-                    // 只有在开启持久化保存选项时，才读取本地已保存的撤回数据
-                  } else if (options.preventMessageRecall.localStorage) {
-                    const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
-                    const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
-                    if (historyFile) {
-                      if (!historyMessageRecallList.has(historyFile)) {
-                        const messageRecallList = new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`));
-                        historyMessageRecallList.set(historyFile, messageRecallList);
-                      }
-                      const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
-                      if (findInHistory) {
-                        log(`${msgItem.msgId} 从历史缓存中找到消息记录`, findInHistory);
-                        processPic(findInHistory);
-                        msgList[index] = findInHistory; // 替换撤回标记
-                      } else {
-                        log(`${msgItem.msgId} 没有撤回记录`);
-                      }
-                    } else {
-                      log(`${msgItem.msgId} 没有对应时间的历史切片`);
-                    }
-                  }
+                  catchMsgList.set(msgItem.msgId, msgItem); // 消息数据存入缓存
                 }
-                // 针对撤回消息添加特殊字段用于展示数据
-                msgList[index].lite_tools_recall = {
-                  operatorNick: msgElements.grayTipElement.revokeElement.operatorNick, // 执行撤回昵称
-                  operatorRemark: msgElements.grayTipElement.revokeElement.operatorRemark, // 执行撤回备注昵称
-                  operatorMemRemark: msgElements.grayTipElement.revokeElement.operatorMemRemark, // 执行撤回群昵称
-
-                  origMsgSenderNick: msgElements.grayTipElement.revokeElement.origMsgSenderNick, // 发送消息角色
-                  origMsgSenderRemark: msgElements.grayTipElement.revokeElement.origMsgSenderRemark, // 发送消息角色
-                  origMsgSenderMemRemark: msgElements.grayTipElement.revokeElement.origMsgSenderMemRemark, // 发送消息角色
-                  recallTime: msgItem.recallTime, // 撤回时间
-                };
-              } else if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
-                log("本人发起的撤回，放行");
-              } else {
-                catchMsgList.set(msgItem.msgId, msgItem); // 消息数据存入缓存
               }
-            }
+            });
           });
-        });
+        }
+        // 销毁加载的只读历史数据实例
+        historyMessageRecallList = new Map();
+      } else {
+        log("捕获到消息数据-拒绝处理");
       }
-      // 销毁加载的只读历史数据实例
-      historyMessageRecallList = new Map();
     }
 
     // 本人发送的消息
@@ -1025,33 +1042,10 @@ function onBrowserWindowCreated(window, plugin) {
     if (onAddSendMsg !== -1) {
       log("这是我发送的新消息", args[1]);
       // 处理小程序卡片
-      if (options.message.convertMiniPrgmArk) {
-        const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
-        args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
-          if (msgElements.arkElement && msgElements.arkElement.bytesData) {
-            const json = JSON.parse(msgElements.arkElement.bytesData);
-            if (json?.prompt.includes("[QQ小程序]")) {
-              msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
-            }
-          }
-        });
-      }
-    }
-
-    // 接收到的新消息
-    const onRecvMsg = findEventIndex(args, "nodeIKernelMsgListener/onRecvMsg");
-    if (onRecvMsg !== -1) {
-      // log("收到新消息", args[1]);
-      args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
-        // 阻止撤回
-        if (options.preventMessageRecall.enabled) {
-          // 将消息存入map
-          catchMsgList.set(arrs.msgId, arrs);
-        }
-        // 处理小程序卡片
+      if (checkChatType(args[1][onAddSendMsg]?.payload?.msgRecord)) {
         if (options.message.convertMiniPrgmArk) {
-          const msg_seq = arrs.msgSeq;
-          arrs.elements.forEach((msgElements) => {
+          const msg_seq = args[1][onAddSendMsg].payload.msgRecord.msgSeq;
+          args[1][onAddSendMsg].payload.msgRecord.elements.forEach((msgElements) => {
             if (msgElements.arkElement && msgElements.arkElement.bytesData) {
               const json = JSON.parse(msgElements.arkElement.bytesData);
               if (json?.prompt.includes("[QQ小程序]")) {
@@ -1060,58 +1054,93 @@ function onBrowserWindowCreated(window, plugin) {
             }
           });
         }
-      });
+      } else {
+        log("这是我发送的新消息-拒绝处理");
+      }
+    }
+
+    // 接收到的新消息
+    const onRecvMsg = findEventIndex(args, "nodeIKernelMsgListener/onRecvMsg");
+    if (onRecvMsg !== -1) {
+      log("收到新消息", args[1]);
+      if (checkChatType(args?.[1]?.[onRecvMsg]?.payload?.msgList?.[0])) {
+        args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
+          // 阻止撤回
+          if (options.preventMessageRecall.enabled) {
+            // 将消息存入map
+            catchMsgList.set(arrs.msgId, arrs);
+          }
+          // 处理小程序卡片
+          if (options.message.convertMiniPrgmArk) {
+            const msg_seq = arrs.msgSeq;
+            arrs.elements.forEach((msgElements) => {
+              if (msgElements.arkElement && msgElements.arkElement.bytesData) {
+                const json = JSON.parse(msgElements.arkElement.bytesData);
+                if (json?.prompt.includes("[QQ小程序]")) {
+                  msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
+                }
+              }
+            });
+          }
+        });
+      } else {
+        log("收到新消息-拒绝处理");
+      }
     }
 
     // 更新消息信息列表
     const onMsgInfoListUpdate = findEventIndex(args, "nodeIKernelMsgListener/onMsgInfoListUpdate");
     if (onMsgInfoListUpdate !== -1) {
       log("更新消息信息列表", args[1]);
-      const msgItem = args[1][0]?.payload?.msgList[0];
-      if (options.preventMessageRecall.enabled) {
-        if (msgItem.elements[0]?.grayTipElement?.revokeElement) {
-          const revokeElement = msgItem.elements[0].grayTipElement.revokeElement;
-          // 如果开启了拦截自己的撤回事件，则始终为true
-          if (!revokeElement.isSelfOperate || options.preventMessageRecall.preventSelfMsg) {
-            log("捕获到实时撤回事件，已被阻止", msgItem);
-            const findInCatch = catchMsgList.get(msgItem.msgId);
-            if (findInCatch) {
-              // 广播实时撤回消息参数
-              const recallData = {
-                operatorNick: revokeElement.operatorNick, // 执行撤回昵称
-                operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
-                operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
+      if (checkChatType(args?.[1]?.[onMsgInfoListUpdate]?.payload?.msgList?.[0])) {
+        const msgItem = args[1][onMsgInfoListUpdate]?.payload?.msgList[0];
+        if (options.preventMessageRecall.enabled) {
+          if (msgItem.elements[0]?.grayTipElement?.revokeElement) {
+            const revokeElement = msgItem.elements[0].grayTipElement.revokeElement;
+            // 如果开启了拦截自己的撤回事件，则始终为true
+            if (!revokeElement.isSelfOperate || options.preventMessageRecall.preventSelfMsg) {
+              log("捕获到实时撤回事件，已被阻止", msgItem);
+              const findInCatch = catchMsgList.get(msgItem.msgId);
+              if (findInCatch) {
+                // 广播实时撤回消息参数
+                const recallData = {
+                  operatorNick: revokeElement.operatorNick, // 执行撤回昵称
+                  operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
+                  operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
 
-                origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
-                origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
-                origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
-                recallTime: msgItem.recallTime, // 撤回时间
-              };
-              findInCatch.lite_tools_recall = recallData;
-              globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
-                msgId: findInCatch.msgId,
-                recallData,
-              });
-              // 写入常驻内存缓存
-              if (options.preventMessageRecall.localStorage) {
-                recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                  origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
+                  origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
+                  origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
+                  recallTime: msgItem.recallTime, // 撤回时间
+                };
+                findInCatch.lite_tools_recall = recallData;
+                globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
+                  msgId: findInCatch.msgId,
+                  recallData,
+                });
+                // 写入常驻内存缓存
+                if (options.preventMessageRecall.localStorage) {
+                  recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                } else {
+                  tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+                }
+                // 从消息列表缓存移除
+                // catchMsgList.delete(msgItem.msgId);
+                processPic(findInCatch);
+                msgItem = findInCatch; // 替换撤回标记
               } else {
-                tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+                log("被撤回消息没有在缓存中，反撤回失败");
               }
-              // 从消息列表缓存移除
-              // catchMsgList.delete(msgItem.msgId);
-              processPic(findInCatch);
-              msgItem = findInCatch; // 替换撤回标记
             } else {
-              log("被撤回消息没有在缓存中，反撤回失败");
+              log("本人发起的撤回，放行");
             }
           } else {
-            log("本人发起的撤回，放行");
+            // 将消息存入map
+            catchMsgList.set(msgItem.msgId, msgItem);
           }
-        } else {
-          // 将消息存入map
-          catchMsgList.set(msgItem.msgId, msgItem);
         }
+      } else {
+        log("更新消息信息列表-拒绝处理");
       }
     }
     // 记录下可能会用到的事件名称
@@ -1127,6 +1156,14 @@ function onBrowserWindowCreated(window, plugin) {
   };
 
   window.webContents.send = patched_send;
+}
+
+function tryOnBrowserWindowCreated(...args) {
+  try {
+    onBrowserWindowCreated(...args);
+  } catch (err) {
+    log("主进程 onBrowserWindowCreated 出错", err.message);
+  }
 }
 
 // 判断事件名称
@@ -1161,6 +1198,11 @@ function addCommonlyEmoticons(event, src) {
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
+// 判断chatType是否为需要处理的类型
+function checkChatType(peer) {
+  return [1, 2].includes(peer?.chatType);
+}
+
 module.exports = {
-  onBrowserWindowCreated,
+  onBrowserWindowCreated: tryOnBrowserWindowCreated,
 };
