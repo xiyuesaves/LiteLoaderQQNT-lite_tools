@@ -114,7 +114,7 @@ let backgroundData = {
 let mainLogs = null;
 
 // 配置文件更新后保存到本地并广播更新事件
-const settingsPath = path.join(LiteLoader.plugins["lite_tools"].path.data, "settings.json");
+const settingsPath = path.join(LiteLoader.plugins.lite_tools.path.data, "settings.json");
 
 // 监听配置修改
 const debounceUpdateOptions = debounce((newOptions) => {
@@ -766,7 +766,7 @@ function onLoad(plugin) {
   });
 }
 try {
-  onLoad(LiteLoader.plugins["lite_tools"]);
+  onLoad(LiteLoader.plugins.lite_tools);
 } catch (err) {
   log("主进程 onLoad 出错", err.message);
 }
@@ -780,13 +780,13 @@ function openRecallView() {
       height: 600,
       autoHideMenuBar: true,
       webPreferences: {
-        preload: path.join(LiteLoader.plugins["lite_tools"].path.plugin, "/src/preload.js"),
+        preload: path.join(LiteLoader.plugins.lite_tools.path.plugin, "/src/preload.js"),
       },
     });
-    recallViewWindow.loadFile(path.join(LiteLoader.plugins["lite_tools"].path.plugin, `/src/config/showRecallList.html`));
+    recallViewWindow.loadFile(path.join(LiteLoader.plugins.lite_tools.path.plugin, `/src/config/showRecallList.html`));
     recallViewWindow.webContents.on("before-input-event", (event, input) => {
       if (input.key == "F5" && input.type == "keyUp") {
-        recallViewWindow.loadFile(path.join(LiteLoader.plugins["lite_tools"].path.plugin, `/src/config/showRecallList.html`));
+        recallViewWindow.loadFile(path.join(LiteLoader.plugins.lite_tools.path.plugin, `/src/config/showRecallList.html`));
       }
     });
 

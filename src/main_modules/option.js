@@ -3,7 +3,7 @@ const { join } = require("path");
 const { existsSync, mkdirSync } = require("fs");
 const defaultConfig = require("../defaultConfig/defaultConfig.json");
 const loadOptions = require("./loadOptions");
-const pluginDataPath = LiteLoader.plugins["lite_tools"].path.data;
+const pluginDataPath = LiteLoader.plugins.lite_tools.path.data;
 const settingsPath = join(pluginDataPath, "settings.json");
 if (!existsSync(pluginDataPath)) {
   mkdirSync(pluginDataPath, { recursive: true });

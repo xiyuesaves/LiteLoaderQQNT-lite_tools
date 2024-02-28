@@ -40,7 +40,7 @@ class logs {
         res.end(log);
       } else if (req.url === "/debug" && req.method === "GET") {
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Access-Control-Allow-Origin": "*" });
-        const html = fs.readFileSync(`${LiteLoader.plugins["lite_tools"].path.plugin}/src/config/debug.html`, { encoding: "utf-8" });
+        const html = fs.readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/src/config/debug.html`, { encoding: "utf-8" });
         res.end(html);
       } else if (req.url === "/step" && req.method === "GET") {
         const res_ = this.res.shift();
