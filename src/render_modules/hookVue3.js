@@ -3,6 +3,8 @@ const log = new Logs("hookVue3");
 // hookVue3 功能来自 LLAPI
 const elements = new WeakMap();
 window.__VUE_ELEMENTS__ = elements;
+window.__VUE_MOUNT__ = []; // Functions to call when component found ((component) => {})
+window.__VUE_UNMOUNT__ = []; // Functions to call when component unmounts ((component) => {})
 
 /**
  *
@@ -27,6 +29,14 @@ function watchComponentUnmount(component) {
         element.__VUE__?.splice(element.__VUE__.indexOf(component));
       }
     }
+    // Call functions in __VUE_UNMOUNT__ when component unmounts
+    window.__VUE_UNMOUNT__.forEach((func) => {
+      try {
+        func(component);
+      } catch (e) {
+        console.error(e);
+      }
+    });
   });
 }
 
@@ -76,16 +86,20 @@ function recordComponent(component) {
     elements.set(element, [component]);
   }
   watchComponentUnmount(component);
+  // Call functions in __VUE_MOUNT__ when component found
+  window.__VUE_MOUNT__.forEach((func) => {
+    try {
+      func(component);
+    } catch (e) {
+      console.error(e);
+    }
+  });
 }
 
 /**
  * 将Vue组件实例挂载到对应元素上
  */
 export function hookVue3() {
-  if (LiteLoader.plugins["LLAPI"] && !LiteLoader.plugins["LLAPI"].disabled) {
-    log("LLAPI已启用，停止执行");
-    return;
-  }
   window.Proxy = new Proxy(window.Proxy, {
     construct(target, [proxyTarget, proxyHandler]) {
       const component = proxyTarget?._;
