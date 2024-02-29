@@ -259,7 +259,7 @@
     visibility: hidden;
     &.recall-tag {
       visibility: visible;
-      .lite-tools-time{
+      .lite-tools-time {
         display: none;
       }
     }
@@ -374,7 +374,7 @@
       // 外部气泡
       &.outside-slot {
         visibility: visible;
-        &.recall-tag{
+        &.recall-tag {
           .lite-tools-time {
             display: block;
           }

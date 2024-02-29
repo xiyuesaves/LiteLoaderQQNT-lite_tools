@@ -758,6 +758,9 @@ try {
   log("主进程 onLoad 出错", err.message);
 }
 
+/**
+ * 打开撤回消息查看窗口
+ */
 function openRecallView() {
   if (recallViewWindow) {
     recallViewWindow.webContents.focus();
@@ -783,7 +786,11 @@ function openRecallView() {
   }
 }
 
-// 删除文件夹内的所有文件
+/**
+ * 清理本地撤回数据
+ * @param {String} directoryPath 文件夹路径
+ * @param {String} fileToPreserve 需要保留的文件
+ */
 function deleteFilesInDirectory(directoryPath, fileToPreserve) {
   // 读取目录中的所有文件
   fs.readdir(directoryPath, (err, files) => {
