@@ -233,6 +233,22 @@ function addEventqContextMenu() {
     }
     qContextMenu.classList.add("lite-toos-context-menu");
     log("右键菜单", document.querySelectorAll(".q-context-menu"));
+
+    if (options.message.HighlightReplies) {
+      const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
+      targetElements.forEach((element) => {
+        if (element.textContent === "回复") {
+          element.parentNode.style.color = "green";
+        }
+        if (element.textContent === "撤回") {
+          element.parentNode.style.color = "red";
+        }
+        if (element.textContent === "删除") {
+          element.parentNode.style.color = "red";
+        }
+      });
+    }
+
     // 在网页搜索
     if (isRightClick && selectText.length && options.wordSearch.enabled) {
       const searchText = selectText;
@@ -288,10 +304,6 @@ function getParentElement(element, className) {
   } else {
     return null;
   }
-}
-
-function containsPictures(msgElement) {
-  return msgElement.picElement;
 }
 
 /**

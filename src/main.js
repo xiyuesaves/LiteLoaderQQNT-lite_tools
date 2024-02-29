@@ -826,6 +826,10 @@ function onBrowserWindowCreated(window, plugin) {
       log("捕获到主窗口");
       mainMessage = window;
     }
+    if (window.webContents.getURL().indexOf("#/chat") !== -1) {
+      log("捕获到聊天窗口");
+      // mainMessage = window;
+    }
     if (window.webContents.getURL().indexOf("#/setting/settings/common") !== -1) {
       log("捕获到设置口");
       settingWindow = window;

@@ -36,6 +36,7 @@
     "quickClose": false
   },
   "message": {
+    "HighlightReplies": false,
     "disabledSticker": false,
     "disabledHotGIF": false,
     "disabledBadge": false,

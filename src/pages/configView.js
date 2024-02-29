@@ -62,9 +62,6 @@ async function onConfigView(view) {
   });
   // 显示插件版本信息
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
-  view.querySelector(".version .link").addEventListener("click", () => {
-    lite_tools.openWeb("https://github.com/xiyuesaves/lite_tools/tree/v4");
-  });
 
   // 获取侧边栏按钮列表
   options.sidebar = await lite_tools.getSidebar({ type: "get" });
@@ -156,8 +153,6 @@ async function onConfigView(view) {
   // 临时功能
   // 修复cpu占用过高的问题
   addSwitchEventlistener("fixAbnormalResourceUsage", ".fixAbnormalResourceUsage");
-
-
 
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
@@ -276,6 +271,9 @@ async function onConfigView(view) {
   // 消息靠左显示
   addSwitchEventlistener("message.onlyAvatar", ".onlyAvatar");
 
+  // 消息靠左显示
+  addSwitchEventlistener("message.HighlightReplies", ".HighlightReplies");
+
   // 消息转图片
   addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
   // 消息转图片-高清化
@@ -358,9 +356,11 @@ async function onConfigView(view) {
     debounceSetOptions();
   });
 
-  // 跳转到 More Materials 插件页面
-  view.querySelector(".removeMaskLink").addEventListener("click", () => {
-    lite_tools.openWeb("https://github.com/mo-jinran/More-Materials");
+  // 监听连接元素点击
+  view.querySelectorAll("a").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      lite_tools.openWeb(event.target.getAttribute("data-href"));
+    });
   });
 
   // 自定义历史表情数量
