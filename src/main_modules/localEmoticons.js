@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const debounce = require("./debounce");
+const logs = require("./logs");
+const log = logs("本地表情模块");
 
 let callbackFunc = new Set();
 let emoticonsList = [];
@@ -19,10 +21,10 @@ const folderUpdate = debounce(async () => {
   addWatchFolders([folderPath]);
   await loadFolder(folderPath);
   if (!arraysAreEqual(beforeEmoticonsList, emoticonsList)) {
-    console.log("触发监听");
+    log("触发监听");
     dispatchUpdateFile();
   }
-  console.log("触发文件修改事件", watchSignals.length);
+  log("触发文件修改事件", watchSignals.length);
 }, 100);
 
 /**

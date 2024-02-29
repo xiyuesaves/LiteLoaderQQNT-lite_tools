@@ -23,7 +23,7 @@ const logs = require("./main_modules/logs");
 const { winGetFonts, linuxGetFonts, macGetFonts } = require("./main_modules/getFonts");
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 
-let log = () => {};
+let log = logs("主进程");
 
 /**
  * 第一次关闭频道窗口检测
@@ -107,11 +107,6 @@ let backgroundData = {
   href: "",
   type: "",
 };
-
-/**
- * 调试实例
- */
-let mainLogs = null;
 
 // 配置文件更新后保存到本地并广播更新事件
 const settingsPath = path.join(LiteLoader.plugins.lite_tools.path.data, "settings.json");
@@ -231,14 +226,6 @@ function onLoad(plugin) {
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
   if (options.debug.mainConsole) {
-    mainLogs = new logs("主进程");
-    if (options.debug.showWeb) {
-      mainLogs.startLogServer();
-    }
-    log = mainLogs.log;
-    // let renderLogs = new logs("渲染进程");
-    // renderLog = renderLogs.log;
-
     try {
       // 调试工具
       const inspector = require("node:inspector");

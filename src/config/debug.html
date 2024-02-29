@@ -1,18 +1,33 @@
-<h1>打开控制台查看输出</h1>
-<script>
-  const port = location.port;
-  console.log("端口", port);
-  (async () => {
-    while (true) {
-      let log = JSON.parse(await (await fetch(`http://localhost:${port}/`)).text());
-      if (log && log.length) {
-        for (let i = 0; i < log.length; i++) {
-          const singLog = log[i];
-          if(singLog[3] !== "info" && singLog[3]?.[0]?.eventName !== "ns-LoggerApi-2"){
-            console.log(...singLog);
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/ico;base64,aWNv" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>打开控制台查看输出</h1>
+    <script>
+      const port = location.port;
+      console.log("通信端口", port);
+      (async () => {
+        try {
+          while (true) {
+            let log = JSON.parse(await (await fetch(`http://localhost:${port}/`)).text());
+            if (log && log.length) {
+              for (let i = 0; i < log.length; i++) {
+                const singLog = log[i];
+                if (singLog[3] !== "info" && singLog[3]?.[0]?.eventName !== "ns-LoggerApi-2") {
+                  console.log(...singLog);
+                }
+              }
+            }
           }
+        } catch (err) {
+          console.log("=========已断开连接=========");
         }
-      }
-    }
-  })();
-</script>
+      })();
+    </script>
+  </body>
+</html>

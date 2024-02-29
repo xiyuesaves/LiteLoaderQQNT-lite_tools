@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const logs = require("./logs");
-const log = new logs("撤回管理").log;
+const log = logs("撤回管理");
 
 // 撤回消息切片管理
 class MessageRecallList {

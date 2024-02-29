@@ -4,6 +4,8 @@ const http = require("http");
 const net = require("net");
 const fs = require("fs");
 const { extname } = require("path");
+const logs = require("./logs");
+const log = logs("视频背景服务模块");
 
 class RangesServer {
   constructor() {
@@ -32,6 +34,7 @@ class RangesServer {
             return port;
           })();
           this.server.on("listening", () => {
+            log("http服务已启动");
             res(this.server.address().port);
           });
           this.server.listen(this.port);
@@ -43,12 +46,14 @@ class RangesServer {
   }
   stopServer() {
     if (this.server.listening) {
+      log("http服务已停止");
       this.server.close();
     }
   }
   httpListener(request, response) {
     // 仅响应 GET 请求
     if (request.method != "GET") {
+      log("请求视频数据");
       this.sendResponse(response, 405, { Allow: "GET" }, null);
       return;
     }
