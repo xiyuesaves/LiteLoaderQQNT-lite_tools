@@ -273,7 +273,7 @@ function addEventqContextMenu() {
       const _imagePath = imagePath;
       const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
       addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, (event, data) => {
-        const filePathArr = _imagePath.split("/");
+        const filePathArr = _imagePath.replace(/\\/g, "/").split("/");
         const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace("\\", "/");
         lite_tools.copyFile(_imagePath, filePath);
       });
