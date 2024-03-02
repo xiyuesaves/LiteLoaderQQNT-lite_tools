@@ -52,6 +52,7 @@
   width: 100%;
   height: 100%;
   position: absolute;
+  pointer-events: none;
   opacity: var(--background-opacity, 0.5);
   top: 0;
   left: 0;
@@ -121,6 +122,7 @@
 }
 .overlay-sider-bar .background-wallpaper-video {
   position: fixed;
+  z-index: -1;
 }
 .overlay-sider-bar .message-panel::after,
 .overlay-sider-bar .contact-layout::after {
