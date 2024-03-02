@@ -8,6 +8,7 @@
   <a href="/LICENSE"><img src="https://img.shields.io/github/license/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="LICENSE"></a>
   <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases"><img src="https://img.shields.io/github/v/release/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Release"></a>
   <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues"><img src="https://img.shields.io/github/issues/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Issues"></a>
+  <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases"><img src="https://img.shields.io/github/downloads/xiyuesaves/LiteLoaderQQNT-lite_tools/total.svg" alt="downloads"></a>
   <a href="http://vanilla-js.com"><img src="https://img.shields.io/badge/vanilla-js-aaaaaa?labelColor=f3d890" alt="vanilla-js"></a>
 </p>
 
