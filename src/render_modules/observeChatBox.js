@@ -25,6 +25,7 @@ function observeChatBox() {
         isReply = true;
         setTimeout(() => {
           isReply = false;
+          // 功能参考自 LLAPI
           const model = ckeditorInstance.model;
           model.change((writer) => {
             const rootNodes = model.document.getRoot();
