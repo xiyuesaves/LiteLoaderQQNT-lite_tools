@@ -24,7 +24,7 @@ class BackgroundWallpaper {
     if (enabled) {
       this.videoEl.style.opacity = options.background.opacity;
       this.imgEl.style.opacity = options.background.opacity;
-      this.el.classList.toggle("background-transparent",options.background.removeMask)
+      this.el.classList.toggle("background-transparent", options.background.removeMask);
       const { href, type } = wallpaperData;
       if (type === "video") {
         this.imgEl.remove();
@@ -66,6 +66,10 @@ async function updateWallpaper(enabled, wallpaperData) {
   }
   wallpaper.updateWallpaper(enabled, wallpaperData);
   if (enabled) {
+    liteToolsBackgroundStyle.setAttribute(
+      "href",
+      `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`,
+    );
     // 主窗口
     if (app.classList.contains("lite-tools-main")) {
       app.classList.toggle("lite-tools-full-wallpaper", options.background.overlaySiderBar);
@@ -83,6 +87,8 @@ async function updateWallpaper(enabled, wallpaperData) {
     if (app.classList.contains("lite-tools-forward")) {
       app.appendChild(wallpaper);
     }
+  } else {
+    liteToolsBackgroundStyle.setAttribute("href", ``);
   }
 }
 log("模块已加载");

@@ -19,19 +19,23 @@ async function initStyle() {
   // 插入自定义样式style容器
   const backgroundStyle = document.createElement("link");
   backgroundStyle.id = "liteToolsBackgroundStyle";
-  backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+  if (options.background.enabled) {
+    backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+  }
   backgroundStyle.setAttribute("rel", "stylesheet");
   document.body.appendChild(backgroundStyle);
 
   // 调试用-styleCss刷新
   lite_tools.updateStyle(() => {
-    log("更新styleCss")
-    backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+    log("更新styleCss");
+    if (options.background.enabled) {
+      backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+    }
   });
 
   // 调试用-globalCss刷新
   lite_tools.updateGlobalStyle(() => {
-    log("更新globalCss")
+    log("更新globalCss");
     globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/global.css?r=${new Date().getTime()}`);
   });
 
