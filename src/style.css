@@ -1,11 +1,37 @@
+@charset "UTF-8";
+:root {
+  --lt-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+  --lt-box-radius: 8px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     --lt-background-transparent: transparent;
+    --lt-background-color-008: rgba(255, 255, 255, 0.08);
+    --lt-background-color-015: rgba(255, 255, 255, 0.15);
+    --lt-background-color-03: rgba(255, 255, 255, 0.3);
+    --lt-background-color-05: rgba(255, 255, 255, 0.5);
+    --lt-background-color-07: rgba(255, 255, 255, 0.7);
+    --lt-background-color-08: rgba(255, 255, 255, 0.8);
+    --lt-background-color-1: rgba(255, 255, 255, 1);
+    --lt-voice-play-icon: rgba(255, 255, 255, 1);
+    --lt-text-color: rgba(0, 0, 0, 0.8);
+    --lt-link-url-color: rgb(45, 119, 229);
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --lt-background-transparent: transparent;
+    --lt-background-color-008: rgba(0, 0, 0, 0.08);
+    --lt-background-color-015: rgba(0, 0, 0, 0.15);
+    --lt-background-color-03: rgba(0, 0, 0, 0.3);
+    --lt-background-color-05: rgba(0, 0, 0, 0.5);
+    --lt-background-color-07: rgba(0, 0, 0, 0.7);
+    --lt-background-color-08: rgba(0, 0, 0, 0.8);
+    --lt-background-color-1: rgba(0, 0, 0, 1);
+    --lt-voice-play-icon: rgba(255, 255, 255, 0.6);
+    --lt-text-color: rgba(255, 255, 255, 0.8);
+    --lt-link-url-color: rgb(45, 119, 229);
   }
 }
 .ark-view-message_not-support {
@@ -71,4 +97,161 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.file-message--content {
+  border-radius: var(--lt-box-radius);
+  box-shadow: var(--lt-box-shadow);
+}
+
+/* 消息内容外部块 */
+.message-content__wrapper {
+  overflow: unset;
+}
+
+/* 消息内容块 */
+.forward-msg:focus .image:after, .forward-msg:focus:before,
+.forward-msg .image:focus:after,
+.msg-content-container:focus .image:after,
+.msg-content-container:focus:before,
+.msg-content-container .image:focus:after,
+.ark-view-message_not-support:focus .image:after,
+.ark-view-message_not-support:focus:before,
+.ark-view-message_not-support .image:focus:after,
+.mix-message__container:focus .image:after,
+.mix-message__container:focus:before,
+.mix-message__container .image:focus:after {
+  background: unset !important;
+}
+.forward-msg:not(.wallet-message__container, .hidden-background),
+.msg-content-container:not(.wallet-message__container, .hidden-background),
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background),
+.mix-message__container:not(.wallet-message__container, .hidden-background) {
+  background: unset !important;
+  color: var(--lt-text-color);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--lt-box-shadow);
+  overflow: hidden;
+  backdrop-filter: blur(28px);
+  /* 我的消息 */
+  /* 别人的消息 */
+}
+.forward-msg:not(.wallet-message__container, .hidden-background)::after,
+.msg-content-container:not(.wallet-message__container, .hidden-background)::after,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background)::after,
+.mix-message__container:not(.wallet-message__container, .hidden-background)::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(28px);
+  background-color: var(--lt-background-color-05);
+  z-index: -1;
+}
+.forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
+.msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .text-link,
+.mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
+  color: var(--lt-link-url-color);
+}
+.forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
+.msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
+.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .reply-element,
+.mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
+  color: var(--lt-text-color);
+}
+
+/* 语音消息样式 */
+.ptt-element__top-area .ptt-element__button {
+  background: var(--brand_standard);
+}
+.ptt-element__top-area .ptt-element__button .q-icon {
+  color: var(--lt-voice-play-icon);
+}
+.ptt-element__top-area .ptt-element__progress div {
+  background: var(--brand_standard);
+}
+.ptt-element__top-area .ptt-element__duration {
+  color: var(--brand_standard);
+}
+.ptt-element__top-area .ptt-element__duration span {
+  transform: translateY(1px);
+}
+
+/* 跳转到顶部-底部 */
+.chat-msg-area__tip--top-btn,
+.chat-msg-area__tip--bottom {
+  background-color: var(--lt-background-color-05) !important;
+  box-shadow: var(--lt-box-shadow);
+  position: relative;
+  overflow: hidden;
+  border-width: 0;
+  backdrop-filter: blur(8px);
+}
+.chat-msg-area__tip--top-btn.theme-primary::after,
+.chat-msg-area__tip--bottom.theme-primary::after {
+  background-color: var(--brand_standard);
+}
+
+/* 小程序消息 */
+.ark-msg-content-container {
+  background: unset;
+  color: unset;
+  font-size: 0;
+}
+.ark-msg-content-container ::after {
+  display: none;
+}
+
+/* 夜间模式增强文本可阅读性 */
+@media (prefers-color-scheme: dark) {
+  .user-name {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  .message__timestamp,
+  .gray-tip-message {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  .group-box__wrapper span:not(.text--link) {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+}
+/* 联系人列表 */
+.container .contact {
+  backdrop-filter: blur(8px);
+}
+.container .contact-profile .profile {
+  backdrop-filter: blur(8px);
+}
+
+/* 输入框 */
+.chat-input-area {
+  background: unset !important;
+  background-color: var(--lt-background-color-03) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* 群组右侧列表 */
+.group-box__wrapper {
+  background-color: var(--lt-background-color-03) !important;
+}
+
+/* 消息内容外部块 */
+.message-content__wrapper {
+  overflow: unset !important;
+}
+
+/* 工具栏项目 */
+.panel-header__action .side-panel {
+  background-color: var(--lt-background-color-05) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* 左侧消息列表 */
+.recent-contact {
+  background-color: var(--lt-background-color-05) !important;
+  backdrop-filter: blur(8px);
 }
