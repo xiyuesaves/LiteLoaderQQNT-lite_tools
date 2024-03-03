@@ -9,43 +9,31 @@ function updateFont() {
  * 注入全局样式
  */
 async function initStyle() {
-  // 插入自定义样式style容器
-  const backgroundStyle = document.createElement("style");
-  backgroundStyle.classList.add("background-style");
-  document.body.appendChild(backgroundStyle);
-
-  // 全局加载通用样式
-  const globalStyle = document.createElement("style");
-  globalStyle.textContent = await lite_tools.getGlobalStyle();
-  globalStyle.classList.add("global-style");
+  // 加载通用样式
+  const globalStyle = document.createElement("link");
+  globalStyle.id = "liteToolsGlobalStyle";
+  globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/global.css?r=${new Date().getTime()}`);
+  globalStyle.setAttribute("rel", "stylesheet");
   document.body.append(globalStyle);
 
+  // 插入自定义样式style容器
+  const backgroundStyle = document.createElement("link");
+  backgroundStyle.id = "liteToolsBackgroundStyle";
+  backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+  backgroundStyle.setAttribute("rel", "stylesheet");
+  document.body.appendChild(backgroundStyle);
+
   // 调试用-styleCss刷新
-  lite_tools.updateStyle((event, message) => {
-    const element = document.querySelector(".background-style");
-    if (element) {
-      let backgroundImage = "";
-      if (/\.(jpg|png|gif|JPG|PNG|GIF)/.test(options.background.url)) {
-        backgroundImage = `:root{--background-wallpaper:url("local:///${options.background.url.replace(/\\/g, "//")}");}`;
-      }
-      backgroundImage = `:root{--background-opacity: ${options.background.opacity};}`;
-      element.textContent = message + "\n" + backgroundImage;
-    }
+  lite_tools.updateStyle(() => {
+    log("更新styleCss")
+    backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
   });
 
   // 调试用-globalCss刷新
-  lite_tools.updateGlobalStyle((event, message) => {
-    const element = document.querySelector(".global-style");
-    element.removeAttribute("href");
-    if (element) {
-      element.textContent = message;
-    }
+  lite_tools.updateGlobalStyle(() => {
+    log("更新globalCss")
+    globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/global.css?r=${new Date().getTime()}`);
   });
-
-  // 兼容 Telegram-Theme 主题 - 主题已实现兼容
-  // if (LiteLoader.plugins["telegram_theme"] && !LiteLoader.plugins["telegram_theme"].disabled) {
-  //   document.body.classList.add("compatible-Telegram-Theme");
-  // }
 
   updateFont();
   log("模块已加载");

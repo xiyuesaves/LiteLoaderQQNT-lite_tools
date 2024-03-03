@@ -1,467 +1,74 @@
-@charset "UTF-8";
-/* 独立所有变量 */
-:root {
-  --box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
-  --opacity-1: 1 !important;
-}
-
 @media (prefers-color-scheme: light) {
   :root {
-    --background-color-0: transparent;
-    --background-color-008: rgba(255, 255, 255, 0.08);
-    --background-color-015: rgba(255, 255, 255, 0.15);
-    --background-color-03: rgba(255, 255, 255, 0.3);
-    --background-color-05: rgba(255, 255, 255, 0.5);
-    --background-color-07: rgba(255, 255, 255, 0.7);
-    --background-color-08: rgba(255, 255, 255, 0.8);
-    --background-color-1: rgba(255, 255, 255, 1);
-    --text-color: rgba(0, 0, 0, 0.8);
-    --text-color-06: rgba(0, 0, 0, 0.6);
-    --text-color-05: rgba(0, 0, 0, 0.5);
-    --link-url-color: rgb(45, 119, 229);
-    --voice-color-07: rgba(0, 153, 255, 1);
-    --voice-color-1: rgba(0, 153, 255, 1);
+    --lt-background-transparent: transparent;
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color-0: transparent;
-    --background-color-008: rgba(0, 0, 0, 0.08);
-    --background-color-015: rgba(0, 0, 0, 0.15);
-    --background-color-03: rgba(0, 0, 0, 0.3);
-    --background-color-05: rgba(0, 0, 0, 0.5);
-    --background-color-07: rgba(0, 0, 0, 0.7);
-    --background-color-08: rgba(0, 0, 0, 0.8);
-    --background-color-1: rgba(0, 0, 0, 1);
-    --text-color: rgba(255, 255, 255, 0.8);
-    --text-color-06: rgba(255, 255, 255, 0.6);
-    --text-color-05: rgba(255, 255, 255, 0.5);
-    --link-url-color: rgb(45, 119, 229);
-    --voice-color-07: rgba(255, 255, 255, 1);
-    --voice-color-1: rgba(255, 255, 255, 1);
+    --lt-background-transparent: transparent;
   }
 }
-/* 更透亮的侧边栏 */
-.acrylic .sidebar-nav {
-  background-color: transparent !important;
-}
-
-/* 背景视频样式 */
-.background-wallpaper-video {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  opacity: var(--background-opacity, 0.5);
-  top: 0;
-  left: 0;
-}
-
-/* 卡片样式调整 */
 .ark-view-message_not-support {
-  background-color: unset !important;
+  background-color: unset;
 }
 
-.tab-container {
+#app.lite-tools-main .tab-container {
+  background-color: unset;
+}
+#app.lite-tools-main .two-col-layout__aside .recent-contact {
+  background-color: unset;
+}
+#app.lite-tools-main .two-col-layout__aside .recent-contact .viewport-list__inner {
+  background-color: unset;
+}
+#app.lite-tools-main .two-col-layout__aside .contact {
+  background-color: unset;
+}
+#app.lite-tools-main .two-col-layout__aside .contact .tab-header {
+  background-color: unset;
+}
+#app.lite-tools-main .two-col-layout__aside .contact .tab-content .q-collapse-item__header, #app.lite-tools-main .two-col-layout__aside .contact .tab-content > .list-item:not(.list-item--selected) {
+  background-color: unset;
+}
+#app.lite-tools-main .two-col-layout__main .profile {
+  background-color: unset;
+}
+#app.lite-tools-chat > .container {
+  background: unset;
+}
+#app.lite-tools-forward .draggable-view__container .title {
+  background: unset;
+}
+#app.lite-tools-forward #ml-root {
+  background: unset;
+}
+
+.acrylic .lite-tools-main .sidebar-nav {
+  background-color: unset;
+}
+
+.lite-tools-main.lite-tools-full-wallpaper .sidebar-nav {
+  background-color: unset;
+}
+.lite-tools-main .tab-container {
   position: relative;
 }
-.tab-container .message-panel,
-.tab-container .contact-layout {
-  background: unset !important;
-  position: relative;
-  z-index: 1;
-}
-.tab-container .message-panel::after,
-.tab-container .contact-layout::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: -1;
-  background-image: var(--background-wallpaper) !important;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: var(--background-opacity, 0.5);
-}
 
-.sidebar-nav {
-  background: unset !important;
-}
-
-.overlay-sider-bar #app > .container::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
+.lite-tools-background-wallpaper {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: -1;
-  background-image: var(--background-wallpaper) !important;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: var(--background-opacity, 0.5);
-}
-.overlay-sider-bar #app > .container .tab-container {
-  background: unset !important;
-}
-.overlay-sider-bar #app > .container .tab-container::after {
-  content: "";
-  display: block;
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -2;
+  z-index: -1;
   background-color: var(--bg_bottom_standard);
+  font-size: 0;
 }
-.overlay-sider-bar .background-wallpaper-video {
-  position: fixed;
-  z-index: -1;
+.lite-tools-background-wallpaper.background-transparent {
+  background-color: unset;
 }
-.overlay-sider-bar .message-panel::after,
-.overlay-sider-bar .contact-layout::after {
-  display: none !important;
-}
-
-.remove-background-mask.overlay-sider-bar .aio-independent::after {
-  display: none;
-}
-.remove-background-mask #app > .container {
-  background: unset !important;
-}
-.remove-background-mask #app.forward::before {
-  display: none;
-}
-.remove-background-mask .tab-container {
-  background-color: unset !important;
-}
-.remove-background-mask .tab-container::after {
-  display: none !important;
-}
-.remove-background-mask .tab-container .message-panel,
-.remove-background-mask .tab-container .contact-layout {
-  background-color: unset !important;
-}
-
-/* 转发消息样式 */
-.forward#app {
-  position: relative;
-}
-.forward#app .draggable-view__container .text-ellipsis {
-  background: unset !important;
-}
-.forward#app .background-wallpaper-video {
-  z-index: -1;
-}
-.forward#app .ark-msg-content-container canvas:not(:first-child) {
-  display: none;
-}
-.forward#app .draggable-view__container {
-  background-color: var(--background-color-03) !important;
-  backdrop-filter: blur(8px) !important;
-}
-.forward#app .list {
-  background: unset !important;
-}
-.forward#app .bubble-outside {
-  z-index: 1;
-}
-.forward#app::after {
-  content: "";
-  display: block;
+.lite-tools-background-wallpaper * {
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  background-image: var(--background-wallpaper) !important;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: var(--background-opacity, 0.5);
+  object-fit: cover;
 }
-.forward#app::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -2;
-  background: var(--background-color-1) !important;
-}
-
-/* 独立聊天窗口样式 */
-.aio-independent {
-  background: unset !important;
-  position: relative;
-  z-index: 1;
-}
-.aio-independent::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: -1;
-  background-image: var(--background-wallpaper) !important;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: var(--background-opacity, 0.5);
-}
-.aio-independent .draggable-view__container {
-  background: unset !important;
-}
-
-/* 主窗口样式 */
-/* 左侧消息列表 */
-.recent-contact {
-  background-color: var(--background-color-05) !important;
-  backdrop-filter: blur(8px);
-}
-
-.list-toggler .viewport-list__inner {
-  background-color: transparent !important;
-}
-
-/* 顶部消息栏 */
-.chat-header {
-  background-color: var(--background-color-03) !important;
-  position: relative;
-  z-index: 1000;
-}
-.chat-header::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  backdrop-filter: blur(8px);
-  z-index: -1;
-}
-
-/* 输入框 */
-.chat-input-area {
-  background: transparent !important;
-  position: relative;
-  z-index: 1;
-}
-.chat-input-area::after {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background-color: var(--background-color-03) !important;
-  backdrop-filter: blur(8px);
-}
-
-/* 群组右侧列表 */
-.group-box__wrapper {
-  background-color: var(--background-color-03) !important;
-}
-
-/* 消息内容外部块 */
-.message-content__wrapper {
-  overflow: unset !important;
-}
-
-/* 消息内容块 */
-.forward-msg:focus .image:after, .forward-msg:focus:before,
-.forward-msg .image:focus:after,
-.msg-content-container:focus .image:after,
-.msg-content-container:focus:before,
-.msg-content-container .image:focus:after,
-.ark-view-message_not-support:focus .image:after,
-.ark-view-message_not-support:focus:before,
-.ark-view-message_not-support .image:focus:after,
-.mix-message__container:focus .image:after,
-.mix-message__container:focus:before,
-.mix-message__container .image:focus:after {
-  background: unset !important;
-}
-.forward-msg:not(.wallet-message__container, .hidden-background),
-.msg-content-container:not(.wallet-message__container, .hidden-background),
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background),
-.mix-message__container:not(.wallet-message__container, .hidden-background) {
-  background: unset !important;
-  color: var(--text-color) !important;
-  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2) !important;
-  box-shadow: var(--box-shadow);
-  overflow: hidden !important;
-  position: relative;
-  backdrop-filter: blur(28px);
-  /* 我的消息 */
-  /* 别人的消息 */
-}
-.forward-msg:not(.wallet-message__container, .hidden-background) *::selection,
-.msg-content-container:not(.wallet-message__container, .hidden-background) *::selection,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) *::selection,
-.mix-message__container:not(.wallet-message__container, .hidden-background) *::selection {
-  background-color: rgba(0, 153, 255, 0.5) !important;
-}
-.forward-msg:not(.wallet-message__container, .hidden-background)::after,
-.msg-content-container:not(.wallet-message__container, .hidden-background)::after,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background)::after,
-.mix-message__container:not(.wallet-message__container, .hidden-background)::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  backdrop-filter: blur(28px);
-  background-color: var(--background-color-05);
-  z-index: -1;
-}
-.forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
-.msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .text-link,
-.mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
-  color: var(--link-url-color) !important;
-}
-.forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
-.msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .reply-element,
-.mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
-  color: var(--text-color) !important;
-}
-
-.file-message--content {
-  border-radius: 8px;
-  box-shadow: var(--box-shadow);
-}
-
-/* 语音消息样式微调 */
-.ptt-element__top-area .ptt-element__button {
-  background: var(--voice-color-1) !important;
-}
-.ptt-element__top-area .ptt-element__button .q-icon {
-  color: var(--background-color-1) !important;
-}
-.ptt-element__top-area .ptt-element__progress div {
-  background: var(--voice-color-07) !important;
-}
-.ptt-element__top-area .ptt-element__duration {
-  color: var(--voice-color-1) !important;
-}
-.ptt-element__top-area .ptt-element__duration span {
-  transform: translateY(1px);
-}
-
-/* 工具栏项目 */
-.panel-header__action .side-panel {
-  background-color: var(--background-color-05) !important;
-  backdrop-filter: blur(8px);
-}
-
-/* 跳转到顶部-底部 */
-.chat-msg-area__tip--top-btn,
-.chat-msg-area__tip--bottom {
-  background: unset !important;
-  box-shadow: var(--box-shadow);
-  position: relative;
-  overflow: hidden;
-  border-width: 0 !important;
-}
-.chat-msg-area__tip--top-btn.theme-primary::after,
-.chat-msg-area__tip--bottom.theme-primary::after {
-  background-color: var(--brand_standard) !important;
-}
-.chat-msg-area__tip--top-btn::after,
-.chat-msg-area__tip--bottom::after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(8px);
-  background-color: var(--background-color-07);
-  z-index: -1;
-}
-
-/* 联系人列表 */
-.container .contact {
-  background-color: var(--background-color-05) !important;
-  backdrop-filter: blur(8px);
-  background: unset !important;
-}
-.container .contact .tab-header,
-.container .contact .q-collapse-item__header {
-  background: unset !important;
-}
-.container .q-divider.q-divider__vertical {
-  display: none !important;
-}
-.container .sys-notify {
-  background: unset !important;
-  backdrop-filter: blur(8px);
-}
-.container .sys-notify .sys-notify-list {
-  background: unset !important;
-}
-.container .sys-notify .sys-notify-list > div {
-  background: unset !important;
-}
-.container .contact-profile .profile {
-  background: unset !important;
-  backdrop-filter: blur(8px);
-}
-
-/* 小程序消息 */
-.ark-msg-content-container {
-  background: unset !important;
-  color: unset !important;
-  font-size: 0 !important;
-}
-.ark-msg-content-container ::after {
-  display: none !important;
-}
-
-/* 夜间模式增强文本可阅读性 */
-@media (prefers-color-scheme: dark) {
-  .user-name {
-    color: rgba(255, 255, 255, 0.8) !important;
-  }
-  .message__timestamp,
-  .gray-tip-message {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  .group-box__wrapper span:not(.text--link) {
-    color: rgba(255, 255, 255, 0.8) !important;
-  }
-}
-/* .chat-msg-area__vlist */
-/* 转发消息 */
-/* .forward-msg{} */
-/* 卡片消息 */
-/* .ark-msg-content-container {} */
-/* 文件消息 */
-/* .file-message--content{} */
-/* 预览消息 */
-/* .msg-preview{} */
-/* 视频预览 */
-/* .msg-preview--video{} */
-/* 视频消息 */
-/* .video-element{} */
-/* 图片消息 */
-/* .mix-message__container--pic{} */
-/* 普通消息 */
-/* mix-message__container{} */

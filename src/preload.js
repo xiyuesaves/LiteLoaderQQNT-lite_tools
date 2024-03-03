@@ -31,10 +31,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getOptions: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getOptions"),
   // 更新配置文件
   setOptions: (options) => ipcRenderer.send("LiteLoader.lite_tools.setOptions", options),
-  // 获取背景样式
-  getStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getStyle"),
-  // 获取全局样式
-  getGlobalStyle: () => ipcRenderer.invoke("LiteLoader.lite_tools.getGlobalStyle"),
   // 获取当前窗口peer
   getPeer: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getPeer"),
   updatePeer: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updatePeer", callback),

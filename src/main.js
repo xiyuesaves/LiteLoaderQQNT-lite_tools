@@ -255,7 +255,7 @@ function onLoad(plugin) {
         debounce(() => {
           const cssText = sass.compile(globalScssPath).css;
           fs.writeFileSync(globalPath, cssText);
-          globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle", cssText);
+          globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle");
         }, 100),
       );
       // 监听并编译view.scss
@@ -573,38 +573,6 @@ function onLoad(plugin) {
     }
     log("发送消息数据", msgList.size);
     recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", msgList);
-  });
-
-  // 获取全局样式
-  ipcMain.handle("LiteLoader.lite_tools.getGlobalStyle", (event) => {
-    try {
-      return fs.readFileSync(globalPath, "utf-8");
-    } catch (err) {
-      if (fs.existsSync(globalScssPath)) {
-        const cssText = sass.compile(globalScssPath).css;
-        fs.writeFileSync(globalPath, cssText);
-        return cssText;
-      } else {
-        log("无法找到源scss文件");
-        return "";
-      }
-    }
-  });
-
-  // 获取自定义样式
-  ipcMain.handle("LiteLoader.lite_tools.getStyle", (event) => {
-    try {
-      return fs.readFileSync(stylePath, "utf-8");
-    } catch (err) {
-      if (fs.existsSync(styleSassPath)) {
-        const cssText = sass.compile(styleSassPath).css;
-        fs.writeFileSync(stylePath, cssText);
-        return cssText;
-      } else {
-        log("无法找到源scss文件");
-        return "";
-      }
-    }
   });
 
   // 选择文件事件

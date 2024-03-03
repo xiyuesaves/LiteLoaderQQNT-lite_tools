@@ -23,15 +23,19 @@ function onLoad() {
       return;
     }
     if (hash.includes("#/chat")) {
+      app.classList.add("lite-tools-chat");
       import("./pages/chatMessage.js");
       log("进入独立聊天窗口");
     } else if (hash.includes("#/forward")) {
+      app.classList.add("lite-tools-forward");
       import("./pages/forward.js");
       log("进入转发窗口");
     } else if (hash.includes("#/main/message")) {
+      app.classList.add("lite-tools-main");
       import("./pages/mainMessage.js");
       log("进入主窗口");
     } else if (hash.includes("#/image-viewer")) {
+      app.classList.add("lite-tools-image-viewer");
       import("./pages/imageViewer.js");
       log("进入媒体预览窗口");
     }

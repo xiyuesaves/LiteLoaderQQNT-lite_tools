@@ -5,7 +5,6 @@ import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("转发界面");
 
-document.querySelector("#app").classList.add("forward");
 addEventqContextMenu();
 
 function forward() {
