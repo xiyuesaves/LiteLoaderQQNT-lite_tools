@@ -14,7 +14,7 @@ function observeChatBox() {
   ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable")?.ckeditorInstance;
   let isReply = false;
 
-  const originalApplyOperation = ckeditorInstance?.editing?.model?.applyOperation;
+  const originalApplyOperation = ckeditorInstance?.model?.applyOperation;
   if (!originalApplyOperation) {
     return;
   }
@@ -29,15 +29,12 @@ function observeChatBox() {
       }
       if (args[0]?.nodes?._nodes[0]?.name === "msg-at" && isReply) {
         args[0].nodes._nodes = [];
-      }
-      if (args[0]?.nodes?._nodes[0]?._data === " " && isReply) {
-        args[0].nodes._nodes = [];
         isReply = false;
       }
     }
-    return originalApplyOperation?.call(ckeditorInstance.editing.model, ...args);
+    return originalApplyOperation?.call(ckeditorInstance.model, ...args);
   };
-  ckeditorInstance.editing.model.applyOperation = patchedApplyOperation;
+  ckeditorInstance.model.applyOperation = patchedApplyOperation;
   log("模块已加载");
 }
 
