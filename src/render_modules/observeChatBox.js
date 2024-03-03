@@ -25,6 +25,16 @@ function observeChatBox() {
         isReply = true;
         setTimeout(() => {
           isReply = false;
+          const model = ckeditorInstance.model;
+          model.change((writer) => {
+            const rootNodes = model.document.getRoot();
+            const node = rootNodes.getChild(1) ?? rootNodes.getChild(0);
+            if (node && node.is("element", "paragraph")) {
+              const position = model.document.selection.getFirstPosition();
+              const range = writer.createRange(position.getShiftedBy(-1), position);
+              writer.remove(range);
+            }
+          });
         });
       }
       if (args[0]?.nodes?._nodes[0]?.name === "msg-at" && isReply) {
