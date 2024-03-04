@@ -254,9 +254,9 @@ function processMessageElement() {
         const prevProps = el.nextElementSibling?.querySelector(".message")?.__VUE__?.[0]?.props;
         const prevElUid = prevProps?.msgRecord?.senderUid;
         const prevNickName = prevProps?.msgRecord?.anonymousExtInfo?.anonymousNick ?? prevProps?.msgRecord?.sendNickName;
-        const prevHasTimeEl = options.message.mergeMessageKeepTime ? prevProps?.msgRecord?.showTimestamp : false;
+        const hasShowTimestamp = options.message.mergeMessageKeepTime ? elProps?.msgRecord?.showTimestamp : false;
         const prevTag = prevElUid + prevNickName;
-        if (!prevHasTimeEl && prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
+        if (!hasShowTimestamp && prevProps?.msgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
           el.classList.remove("merge-main");
           el.classList.add("merge", "merge-child");
           childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + el.offsetHeight);
