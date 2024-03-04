@@ -70,6 +70,8 @@ async function updateWallpaper(enabled, wallpaperData) {
       "href",
       `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`,
     );
+    document.body.classList.toggle("lite-tools-blur-filter", options.background.blurFilter);
+    document.body.classList.toggle("lite-tools-background-visible", options.background.backgroundVisible);
     // 主窗口
     if (app.classList.contains("lite-tools-main")) {
       app.classList.toggle("lite-tools-full-wallpaper", options.background.overlaySiderBar);
@@ -89,6 +91,8 @@ async function updateWallpaper(enabled, wallpaperData) {
     }
   } else {
     liteToolsBackgroundStyle.setAttribute("href", ``);
+    document.body.classList.remove("lite-tools-blur-filter");
+    document.body.classList.remove("lite-tools-background-visible");
   }
 }
 log("模块已加载");

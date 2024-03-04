@@ -166,7 +166,6 @@
     box-shadow: var(--lt-box-shadow);
     overflow: hidden;
     backdrop-filter: blur(28px);
-
     /* 我的消息 */
     // &.container--self {
     // }
@@ -237,21 +236,37 @@
   }
 }
 
+/* 工具栏项目 */
+.panel-header__action {
+  .side-panel {
+    background-color: var(--lt-background-color-05);
+    backdrop-filter: blur(8px);
+  }
+}
+
 /* 夜间模式增强文本可阅读性 */
 @media (prefers-color-scheme: dark) {
+  // 用户名
   .user-name {
     color: rgba(255, 255, 255, 0.8) !important;
   }
+  // 灰字内容
   .message__timestamp,
   .gray-tip-message {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
   }
+  // 消息列表小字
+  .list-item__summary {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  // 群组右侧列表用户名
   .group-box__wrapper span:not(.text--link) {
     color: rgba(255, 255, 255, 0.8) !important;
   }
 }
 
-// .blur-mask {
+// 背景磨砂效果
+.lite-tools-blur-filter {
   /* 联系人列表 */
   .container {
     .contact {
@@ -265,28 +280,40 @@
   }
   /* 输入框 */
   .chat-input-area {
-    background: unset !important;
-    background-color: var(--lt-background-color-03) !important;
-    backdrop-filter: blur(8px);
-  }
-  /* 群组右侧列表 */
-  .group-box__wrapper {
-    background-color: var(--lt-background-color-03) !important;
+    z-index: 1;
+    &::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      backdrop-filter: blur(8px);
+    }
   }
   /* 消息内容外部块 */
   .message-content__wrapper {
     overflow: unset !important;
   }
-  /* 工具栏项目 */
-  .panel-header__action {
-    .side-panel {
-      background-color: var(--lt-background-color-05) !important;
-      backdrop-filter: blur(8px);
-    }
+  /* 左侧消息列表 */
+  .recent-contact {
+    backdrop-filter: blur(8px);
+  }
+}
+
+// 可读性增强背景
+.lite-tools-background-visible {
+  .chat-input-area {
+    background: var(--lt-background-color-03);
+  }
+  /* 群组右侧列表 */
+  .group-box__wrapper {
+    background-color: var(--lt-background-color-03);
   }
   /* 左侧消息列表 */
   .recent-contact {
-    background-color: var(--lt-background-color-05) !important;
-    backdrop-filter: blur(8px);
+    background-color: var(--lt-background-color-03) !important;
   }
-// }
+}

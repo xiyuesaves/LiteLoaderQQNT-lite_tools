@@ -332,6 +332,10 @@ async function onConfigView(view) {
 
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage");
+  // 磨砂效果
+  addSwitchEventlistener("background.blurFilter", ".blurFilter");
+  // 增强可见性
+  addSwitchEventlistener("background.backgroundVisible", ".backgroundVisible");
   // 覆盖侧边栏
   addSwitchEventlistener("background.overlaySiderBar", ".overlaySiderBar");
   // 移除背景遮罩

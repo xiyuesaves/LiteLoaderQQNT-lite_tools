@@ -84,6 +84,8 @@
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,
+    "backgroundVisible": true,
+    "blurFilter": true,
     "opacity": 0.5,
     "enabled": false,
     "url": ""

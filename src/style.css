@@ -206,6 +206,12 @@
   display: none;
 }
 
+/* 工具栏项目 */
+.panel-header__action .side-panel {
+  background-color: var(--lt-background-color-05);
+  backdrop-filter: blur(8px);
+}
+
 /* 夜间模式增强文本可阅读性 */
 @media (prefers-color-scheme: dark) {
   .user-name {
@@ -213,45 +219,58 @@
   }
   .message__timestamp,
   .gray-tip-message {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .list-item__summary {
+    color: rgba(255, 255, 255, 0.6) !important;
   }
   .group-box__wrapper span:not(.text--link) {
     color: rgba(255, 255, 255, 0.8) !important;
   }
 }
-/* 联系人列表 */
-.container .contact {
+.lite-tools-blur-filter {
+  /* 联系人列表 */
+  /* 输入框 */
+  /* 消息内容外部块 */
+  /* 左侧消息列表 */
+}
+.lite-tools-blur-filter .container .contact {
   backdrop-filter: blur(8px);
 }
-.container .contact-profile .profile {
+.lite-tools-blur-filter .container .contact-profile .profile {
   backdrop-filter: blur(8px);
 }
-
-/* 输入框 */
-.chat-input-area {
-  background: unset !important;
-  background-color: var(--lt-background-color-03) !important;
+.lite-tools-blur-filter .chat-input-area {
+  z-index: 1;
+}
+.lite-tools-blur-filter .chat-input-area::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
   backdrop-filter: blur(8px);
 }
-
-/* 群组右侧列表 */
-.group-box__wrapper {
-  background-color: var(--lt-background-color-03) !important;
-}
-
-/* 消息内容外部块 */
-.message-content__wrapper {
+.lite-tools-blur-filter .message-content__wrapper {
   overflow: unset !important;
 }
-
-/* 工具栏项目 */
-.panel-header__action .side-panel {
-  background-color: var(--lt-background-color-05) !important;
+.lite-tools-blur-filter .recent-contact {
   backdrop-filter: blur(8px);
 }
 
-/* 左侧消息列表 */
-.recent-contact {
-  background-color: var(--lt-background-color-05) !important;
-  backdrop-filter: blur(8px);
+.lite-tools-background-visible {
+  /* 群组右侧列表 */
+  /* 左侧消息列表 */
+}
+.lite-tools-background-visible .chat-input-area {
+  background: var(--lt-background-color-03);
+}
+.lite-tools-background-visible .group-box__wrapper {
+  background-color: var(--lt-background-color-03);
+}
+.lite-tools-background-visible .recent-contact {
+  background-color: var(--lt-background-color-03) !important;
 }
