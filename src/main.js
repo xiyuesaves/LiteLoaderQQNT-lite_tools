@@ -790,6 +790,8 @@ function onBrowserWindowCreated(window, plugin) {
     // 如果打开的是频道窗口且启用了临时修复方法，则直接关闭窗口
     if (window.webContents.getURL().indexOf("#/index/2") !== -1 && isFirstCloseGuidMainWindow) {
       if (options.fixAbnormalResourceUsage && isFirstCloseGuidMainWindow) {
+        // 检测到后直接最小化频道窗口
+        window.minimize();
         setTimeout(() => {
           window.close();
         }, 500);
