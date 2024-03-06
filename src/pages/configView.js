@@ -226,6 +226,9 @@ async function onConfigView(view) {
   // 移除vip红名
   addSwitchEventlistener("message.removeVipName", ".removeVipName");
 
+  // 进入聊天时回到离开的位置
+  addSwitchEventlistener("message.currentLocation", ".currentLocation");
+
   // 图片宽度自适应
   addSwitchEventlistener("message.imageAutoWidth", ".imageAutoWidth");
 

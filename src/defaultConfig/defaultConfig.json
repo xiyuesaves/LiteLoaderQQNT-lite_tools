@@ -56,6 +56,7 @@
     "overrideFont": "",
     "removeVipName": false,
     "imageAutoWidth": false,
+    "currentLocation": false,
     "avatarSticky": {
       "enabled": false,
       "toBottom": false
