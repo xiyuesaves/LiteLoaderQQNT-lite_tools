@@ -193,6 +193,11 @@
   }
 }
 
+/* 修改转发消息定位方式 */
+.forward-msg {
+  position: relative;
+}
+
 /* 语音消息样式 */
 .ptt-element__top-area {
   .ptt-element__button {
