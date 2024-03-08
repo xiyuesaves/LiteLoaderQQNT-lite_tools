@@ -115,6 +115,9 @@
 .msg-content-container:focus .image:after,
 .msg-content-container:focus:before,
 .msg-content-container .image:focus:after,
+.file-element:focus .image:after,
+.file-element:focus:before,
+.file-element .image:focus:after,
 .ark-view-message_not-support:focus .image:after,
 .ark-view-message_not-support:focus:before,
 .ark-view-message_not-support .image:focus:after,
@@ -125,6 +128,7 @@
 }
 .forward-msg:not(.wallet-message__container, .hidden-background),
 .msg-content-container:not(.wallet-message__container, .hidden-background),
+.file-element:not(.wallet-message__container, .hidden-background),
 .ark-view-message_not-support:not(.wallet-message__container, .hidden-background),
 .mix-message__container:not(.wallet-message__container, .hidden-background) {
   background: unset !important;
@@ -138,6 +142,7 @@
 }
 .forward-msg:not(.wallet-message__container, .hidden-background)::after,
 .msg-content-container:not(.wallet-message__container, .hidden-background)::after,
+.file-element:not(.wallet-message__container, .hidden-background)::after,
 .ark-view-message_not-support:not(.wallet-message__container, .hidden-background)::after,
 .mix-message__container:not(.wallet-message__container, .hidden-background)::after {
   content: "";
@@ -153,12 +158,14 @@
 }
 .forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
 .msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
+.file-element:not(.wallet-message__container, .hidden-background) .text-link,
 .ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .text-link,
 .mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
   color: var(--lt-link-url-color);
 }
 .forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
 .msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
+.file-element:not(.wallet-message__container, .hidden-background) .reply-element,
 .ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .reply-element,
 .mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
   color: var(--lt-text-color);
