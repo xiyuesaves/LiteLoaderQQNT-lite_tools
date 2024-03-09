@@ -34,10 +34,14 @@ class BackgroundWallpaper {
         this.el.appendChild(this.videoEl);
       } else if (type === "image") {
         this.videoEl.remove();
-        if (this.imgEl.getAttribute("src") !== href) {
-          this.imgEl.src = href;
+        if (href !== "local:///") {
+          if (this.imgEl.getAttribute("src") !== href) {
+            this.imgEl.src = href;
+          }
+          this.el.appendChild(this.imgEl);
+        } else {
+          this.imgEl.remove();
         }
-        this.el.appendChild(this.imgEl);
       }
     } else {
       this.el.remove();
