@@ -109,6 +109,11 @@
   overflow: unset;
 }
 
+.ark-item-container .ark-view-message_not-support {
+  background: unset !important;
+  color: var(--lt-text-color) !important;
+}
+
 /* 消息内容块 */
 .forward-msg:focus .image:after, .forward-msg:focus:before,
 .forward-msg .image:focus:after,
@@ -118,9 +123,6 @@
 .file-element:focus .image:after,
 .file-element:focus:before,
 .file-element .image:focus:after,
-.ark-view-message_not-support:focus .image:after,
-.ark-view-message_not-support:focus:before,
-.ark-view-message_not-support .image:focus:after,
 .mix-message__container:focus .image:after,
 .mix-message__container:focus:before,
 .mix-message__container .image:focus:after {
@@ -129,7 +131,6 @@
 .forward-msg:not(.wallet-message__container, .hidden-background),
 .msg-content-container:not(.wallet-message__container, .hidden-background),
 .file-element:not(.wallet-message__container, .hidden-background),
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background),
 .mix-message__container:not(.wallet-message__container, .hidden-background) {
   background: unset !important;
   color: var(--lt-text-color);
@@ -143,7 +144,6 @@
 .forward-msg:not(.wallet-message__container, .hidden-background)::after,
 .msg-content-container:not(.wallet-message__container, .hidden-background)::after,
 .file-element:not(.wallet-message__container, .hidden-background)::after,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background)::after,
 .mix-message__container:not(.wallet-message__container, .hidden-background)::after {
   content: "";
   display: block;
@@ -159,14 +159,12 @@
 .forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
 .msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
 .file-element:not(.wallet-message__container, .hidden-background) .text-link,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .text-link,
 .mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
   color: var(--lt-link-url-color);
 }
 .forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
 .msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
 .file-element:not(.wallet-message__container, .hidden-background) .reply-element,
-.ark-view-message_not-support:not(.wallet-message__container, .hidden-background) .reply-element,
 .mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
   color: var(--lt-text-color);
 }
@@ -211,7 +209,6 @@
 /* 小程序消息 */
 .ark-msg-content-container {
   background: unset;
-  color: unset;
   font-size: 0;
 }
 .ark-msg-content-container ::after {

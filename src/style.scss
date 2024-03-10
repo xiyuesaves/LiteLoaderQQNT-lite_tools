@@ -149,11 +149,18 @@
   overflow: unset;
 }
 
+// 不受支持的小程序样式
+.ark-item-container {
+  .ark-view-message_not-support {
+    background: unset !important;
+    color: var(--lt-text-color) !important;
+  }
+}
+
 /* 消息内容块 */
 .forward-msg,
 .msg-content-container,
 .file-element,
-.ark-view-message_not-support,
 .mix-message__container {
   &:focus .image:after,
   &:focus:before,
@@ -235,7 +242,6 @@
 /* 小程序消息 */
 .ark-msg-content-container {
   background: unset;
-  color: unset;
   font-size: 0;
   ::after {
     display: none;
