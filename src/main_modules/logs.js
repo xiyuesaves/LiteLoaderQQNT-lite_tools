@@ -30,7 +30,9 @@ class Logs {
   }
   createLog(logname) {
     const name = logname;
-    return (...args) => this.log(name, ...args);
+    const fn = (...args) => this.log(name, ...args);
+    fn.step = this.step.bind(this);
+    return fn;
   }
   log = (moduleName, ...args) => {
     if (options.debug.mainConsole) {

@@ -445,9 +445,10 @@ function onLoad(plugin) {
   });
 
   // 获取配置信息
-  ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
+  ipcMain.handle("LiteLoader.lite_tools.getOptions", async (event) => {
     log("获取配置信息");
-    event.returnValue = Opt._options;
+    // event.returnValue = Opt._options;
+    return Opt._options;
   });
 
   // 返回窗口id
