@@ -17,6 +17,11 @@
   /* 选择框选项菜单-图标 */
   /* 选择框选项菜单-选择后图标 */
 }
+.lite-tools-settings .select-default-save-file-input-clear,
+.lite-tools-settings .select-local-emoticons-folder-clear,
+.lite-tools-settings .select-background-wallpaper-clear {
+  cursor: pointer;
+}
 .lite-tools-settings .vertical-list-item.fl-d {
   flex-direction: column;
   align-items: flex-start;

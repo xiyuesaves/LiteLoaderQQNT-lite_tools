@@ -281,12 +281,16 @@ async function onConfigView(view) {
   addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
   // 消息转图片-高清化
   addSwitchEventlistener("messageToImage.highResolution", ".highResolution");
-  view.querySelector(".select-default-save-file-input").value = options.messageToImage.path;
-  view.querySelectorAll(".select-default-save-file-input").forEach((el) => {
-    el.addEventListener("click", () => {
-      log("修改默认保存位置");
-      lite_tools.openSelectDefaultSaveFilePath();
-    });
+  view.querySelector(".select-default-save-file-input-clear").value = options.messageToImage.path;
+  view.querySelector(".select-default-save-file-input").addEventListener("click", () => {
+    log("修改默认保存位置");
+    lite_tools.openSelectDefaultSaveFilePath();
+  });
+  view.querySelector(".select-default-save-file-input-clear").addEventListener("click", () => {
+    log("删除默认保存位置");
+    view.querySelector(".select-default-save-file-input-clear").value = "";
+    options.messageToImage.path = "";
+    lite_tools.setOptions(options);
   });
 
   // 本地表情包功能
@@ -295,10 +299,13 @@ async function onConfigView(view) {
     view.querySelector(".copyFileTolocalEmoticons").classList.toggle("disabled-switch", !enabled);
   });
   view.querySelector(".select-folder-input input").value = options.localEmoticons.localPath;
-  view.querySelectorAll(".select-local-emoticons-folder").forEach((el) => {
-    el.addEventListener("click", () => {
-      lite_tools.openSelectLocalEmoticonsFolder();
-    });
+  view.querySelector(".select-local-emoticons-folder").addEventListener("click", () => {
+    lite_tools.openSelectLocalEmoticonsFolder();
+  });
+  view.querySelector(".select-local-emoticons-folder-clear").addEventListener("click", () => {
+    view.querySelector(".select-local-emoticons-folder-clear").value = "";
+    options.localEmoticons.localPath = "";
+    lite_tools.setOptions(options);
   });
   // 移动插入位置
   addSwitchEventlistener("localEmoticons.toLeftSlot", ".toLeftSlot");
@@ -344,11 +351,14 @@ async function onConfigView(view) {
   // 移除背景遮罩
   addSwitchEventlistener("background.removeMask", ".removeMask");
   // 初始化背景路径选择监听和值
-  view.querySelector(".select-path input").value = options.background.url;
-  view.querySelectorAll(".select-file").forEach((el) => {
-    el.addEventListener("click", () => {
-      lite_tools.openSelectBackground();
-    });
+  view.querySelector(".select-background-wallpaper-clear").value = options.background.url;
+  view.querySelector(".select-background-wallpaper").addEventListener("click", () => {
+    lite_tools.openSelectBackground();
+  });
+  view.querySelector(".select-background-wallpaper-clear").addEventListener("click", () => {
+    view.querySelector(".select-background-wallpaper-clear").value = "";
+    options.background.url = "";
+    lite_tools.setOptions(options);
   });
   // 初始化背景透明度输入框监听和值
   view.querySelector(".background-opacity").value = options.background.opacity * 100;
@@ -457,9 +467,9 @@ async function onConfigView(view) {
   // 监听设置文件变动
   updateOptions((opt) => {
     log("检测到配置更新", opt);
-    view.querySelector(".select-path input").value = opt.background.url;
-    view.querySelector(".select-folder-input input").value = opt.localEmoticons.localPath;
-    view.querySelector(".select-default-save-file-input").value = opt.messageToImage.path;
+    view.querySelector(".select-background-wallpaper-clear").value = opt.background.url;
+    view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
+    view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
     customTextColorEl.value = options.preventMessageRecall.textColor;
   });
 }

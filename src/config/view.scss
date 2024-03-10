@@ -1,4 +1,9 @@
 .lite-tools-settings {
+  .select-default-save-file-input-clear,
+  .select-local-emoticons-folder-clear,
+  .select-background-wallpaper-clear {
+    cursor: pointer;
+  }
   .vertical-list-item {
     &.fl-d {
       flex-direction: column;
