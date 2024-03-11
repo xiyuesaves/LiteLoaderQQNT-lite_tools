@@ -111,13 +111,13 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
     log("uin更新", newVal);
     curAioData = newVal;
     curUid = newVal?.header?.uid;
-    if (newVal?.header?.uid) {
+    if (options.message.currentLocation && newVal?.header?.uid) {
       const messageId = uidToMessageId.get(newVal.header.uid);
       if (messageId && messageId != "0") {
         log("有记录历史位置，执行跳转", messageId);
         document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.scrollToItem(messageId);
       } else {
-        uidToMessageId.set(newVal.header.uid, "0");
+        log("没有记录历史位置，不执行跳转");
       }
     }
   },
@@ -182,7 +182,7 @@ function chatMessage() {
   } else {
     document.body.classList.remove("remove-vip-name");
   }
-  
+
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();
@@ -193,18 +193,18 @@ function chatMessage() {
 function listenScroll() {
   const el = document.querySelector(".ml-area .q-scroll-view");
   const debounceFunc = debounce(() => {
-    // 如果没有位于最底部，则记录当前第一条可见消息的id
-    if (!app.__vue_app__.config.globalProperties.$store.state.common_Aio.isScrollInBottom) {
-      const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.getVisibleItems();
-      const visibleItem = visibleItems.shift();
-      log("更新可见消息id", visibleItem);
-      uidToMessageId.set(curUid, visibleItem.id);
-    } else {
-      log("此群组已经在最底部，删除id", curUid);
-      uidToMessageId.delete(curUid);
+    if (options.message.currentLocation) {
+      // 如果没有位于最底部，则记录当前第一条可见消息的id
+      if (!app.__vue_app__.config.globalProperties.$store.state.common_Aio.isScrollInBottom) {
+        const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.getVisibleItems();
+        const visibleItem = visibleItems.shift();
+        log("更新可见消息id", visibleItem);
+        uidToMessageId.set(curUid, visibleItem.id);
+      } else {
+        log("此群组已经在最底部，删除id", curUid);
+        uidToMessageId.delete(curUid);
+      }
     }
   }, 100);
-  if (el) {
-    el.addEventListener("scroll", debounceFunc);
-  }
+  el.addEventListener("scroll", debounceFunc);
 }
