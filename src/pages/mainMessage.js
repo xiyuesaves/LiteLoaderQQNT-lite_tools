@@ -182,12 +182,7 @@ function chatMessage() {
   } else {
     document.body.classList.remove("remove-vip-name");
   }
-
-  // 从离开处继续阅读
-  // if (options.message.currentLocation) {
-  //   document.querySelector(".chat-msg-area__tip--top-btn")?.click();
-  // }
-
+  
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();
