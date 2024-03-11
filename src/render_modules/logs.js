@@ -15,26 +15,20 @@ window.LT_logs = () => {
 class Logs {
   constructor(moduleName) {
     this.moduleName = moduleName;
+    return this.logToConsole.bind(this);
+  }
+  logToConsole(...args) {
     if (options.debug.console) {
-      return this.logToConsole.bind(this);
-    } else {
-      return this.emptyFunction;
+      console.log(`[${this.moduleName}]`, ...args);
+      this.saveToLogList(args);
     }
   }
-
-  logToConsole(...args) {
-    console.log(`[${this.moduleName}]`, ...args);
-    this.saveToLogList(args);
-  }
-
   saveToLogList(logData) {
     logList.push({
       name: this.moduleName,
       log: logData,
     });
   }
-
-  emptyFunction() {}
 }
 
 export { Logs };
