@@ -115,7 +115,7 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
       const messageId = uidToMessageId.get(newVal.header.uid);
       if (messageId && messageId != "0") {
         log("有记录历史位置，执行跳转", messageId);
-        document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.scrollToItem(messageId);
+        document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
       } else {
         log("没有记录历史位置，不执行跳转");
       }
@@ -196,7 +196,7 @@ function listenScroll() {
     if (options.message.currentLocation) {
       // 如果没有位于最底部，则记录当前第一条可见消息的id
       if (!app.__vue_app__.config.globalProperties.$store.state.common_Aio.isScrollInBottom) {
-        const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.getVisibleItems();
+        const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
         const visibleItem = visibleItems.shift();
         log("更新可见消息id", visibleItem);
         uidToMessageId.set(curUid, visibleItem.id);
