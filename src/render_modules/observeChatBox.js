@@ -30,7 +30,7 @@ function observeChatBox() {
           model.change((writer) => {
             const rootNodes = model.document.getRoot();
             const node = rootNodes.getChild(1) ?? rootNodes.getChild(0);
-            if (node && node.is("element", "paragraph")) {
+            if (node && node.is("element", "paragraph") && node?._children?._nodes?.[0]?._data === " ") {
               const position = model.document.selection.getFirstPosition();
               const range = writer.createRange(position.getShiftedBy(-1), position);
               writer.remove(range);
