@@ -157,6 +157,11 @@
   }
 }
 
+/* 统一选中文本样式颜色 */
+*::selection {
+  background: var(--brand_standard) !important;
+}
+
 /* 消息内容块 */
 .forward-msg,
 .msg-content-container,
