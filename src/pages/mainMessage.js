@@ -22,9 +22,11 @@ import { localEmoticons } from "../render_modules/localEmoticons.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
 // 打开频道事件
-import { openGuidMainWindow, goMainWindowScene } from "../render_modules/nativeCall.js";
-
+import { openGuidMainWindow } from "../render_modules/nativeCall.js";
+// 防抖函数
 import { debounce } from "../render_modules/debounce.js";
+// 首次执行检测
+import { first } from "../render_modules/first.js";
 
 // log
 import { Logs } from "../render_modules/logs.js";
@@ -96,44 +98,42 @@ lite_tools.optionsOpen((event, message) => {
   });
 });
 
-// let uidToMessageId = new Map();
-// let curAioData = undefined;
-// let curUid = undefined;
-// Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.common_Aio, "curAioData", {
-//   enumerable: true,
-//   configurable: true,
-//   get() {
-//     return curAioData;
-//   },
-//   set(newVal) {
-//     log("uin更新", newVal);
-//     curAioData = newVal;
-//     curUid = newVal?.header?.uid;
-//     if (newVal?.header?.uid) {
-//       const messageId = uidToMessageId.get(newVal.header.uid);
-//       if (messageId && messageId != "0") {
-//         log("有记录历史位置，执行跳转", messageId);
-//         document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.scrollToItem(messageId);
-//       } else {
-//         uidToMessageId.set(newVal.header.uid, "0");
-//       }
-//     }
-//   },
-// });
+let uidToMessageId = new Map();
+let curAioData = undefined;
+let curUid = undefined;
+Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.common_Aio, "curAioData", {
+  enumerable: true,
+  configurable: true,
+  get() {
+    return curAioData;
+  },
+  set(newVal) {
+    log("uin更新", newVal);
+    curAioData = newVal;
+    curUid = newVal?.header?.uid;
+    if (newVal?.header?.uid) {
+      const messageId = uidToMessageId.get(newVal.header.uid);
+      if (messageId && messageId != "0") {
+        log("有记录历史位置，执行跳转", messageId);
+        document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.scrollToItem(messageId);
+      } else {
+        uidToMessageId.set(newVal.header.uid, "0");
+      }
+    }
+  },
+});
 
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
   childList: true,
   subtree: true,
 });
-// let first = false;
 updateOptions(chatMessage);
 chatMessage();
 function chatMessage() {
-  // if (document.querySelector(".ml-area .q-scroll-view") && !first) {
-  //   first = true;
-  //   listenScroll();
-  // }
+  if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
+    listenScroll();
+  }
   // log("更新内容");
   // 初始化推荐表情
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
@@ -195,20 +195,21 @@ function chatMessage() {
   observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
 }
 
-// function listenScroll() {
-//   const el = document.querySelector(".ml-area .q-scroll-view");
-//   if (el) {
-//     el.addEventListener("scroll", () => {
-//       const scrollView = document.querySelector(".ml-area .q-scroll-view");
-//       const windowTop = Math.abs(scrollView.scrollTop) + scrollView.offsetHeight;
-//       let messageHeight = 0;
-//       document.querySelectorAll(".ml-area .q-scroll-view .ml-item").forEach((el) => {
-//         messageHeight += el.offsetHeight;
-//         if (messageHeight <= windowTop) {
-//           log("记录位置更新", el.id);
-//           uidToMessageId.set(curUid, el.id);
-//         }
-//       });
-//     });
-//   }
-// }
+function listenScroll() {
+  const el = document.querySelector(".ml-area .q-scroll-view");
+  const debounceFunc = debounce(() => {
+    // 如果没有位于最底部，则记录当前第一条可见消息的id
+    if (!app.__vue_app__.config.globalProperties.$store.state.common_Aio.isScrollInBottom) {
+      const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].proxy._.exposed.getVisibleItems();
+      const visibleItem = visibleItems.shift();
+      log("更新可见消息id", visibleItem);
+      uidToMessageId.set(curUid, visibleItem.id);
+    } else {
+      log("此群组已经在最底部，删除id", curUid);
+      uidToMessageId.delete(curUid);
+    }
+  }, 100);
+  if (el) {
+    el.addEventListener("scroll", debounceFunc);
+  }
+}
