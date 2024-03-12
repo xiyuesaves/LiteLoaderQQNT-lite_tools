@@ -101,6 +101,16 @@ lite_tools.optionsOpen((event, message) => {
 let uidToMessageId = new Map();
 let curAioData = undefined;
 let curUid = undefined;
+
+const debounceFunc = debounce(() => {
+  if (options.message.currentLocation) {
+    const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
+    const visibleItem = visibleItems.shift();
+    log("更新可见消息id", visibleItem);
+    uidToMessageId.set(curUid, visibleItem.id);
+  }
+}, 100);
+
 Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.common_Aio, "curAioData", {
   enumerable: true,
   configurable: true,
@@ -118,6 +128,7 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
         document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
       } else {
         log("没有记录历史位置，不执行跳转");
+        debounceFunc();
       }
     }
   },
@@ -132,8 +143,10 @@ updateOptions(chatMessage);
 chatMessage();
 function chatMessage() {
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
-    listenScroll();
+    const el = document.querySelector(".ml-area .q-scroll-view");
+    el.addEventListener("scroll", debounceFunc);
   }
+  debounceFunc();
   // log("更新内容");
   // 初始化推荐表情
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
@@ -188,23 +201,4 @@ function chatMessage() {
   observerChatArea();
   observeChatBox();
   observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
-}
-
-function listenScroll() {
-  const el = document.querySelector(".ml-area .q-scroll-view");
-  const debounceFunc = debounce(() => {
-    if (options.message.currentLocation) {
-      // 如果没有位于最底部，则记录当前第一条可见消息的id
-      if (!app.__vue_app__.config.globalProperties.$store.state.common_Aio.isScrollInBottom) {
-        const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
-        const visibleItem = visibleItems.shift();
-        log("更新可见消息id", visibleItem);
-        uidToMessageId.set(curUid, visibleItem.id);
-      } else {
-        log("此群组已经在最底部，删除id", curUid);
-        uidToMessageId.delete(curUid);
-      }
-    }
-  }, 100);
-  el.addEventListener("scroll", debounceFunc);
 }
