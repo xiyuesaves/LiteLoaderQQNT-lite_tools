@@ -54,8 +54,8 @@ function processMessageElement() {
     if (!elProps) {
       continue;
     }
-    // 跳过除了群聊和私聊之外的聊天类型
-    if (elProps?.msgRecord?.chatType > 2) {
+    // 过滤指定聊天类型 1 私聊 2 群聊 100 临时会话
+    if (![1, 2, 100].includes(elProps?.msgRecord?.chatType)) {
       continue;
     }
     // 消息对象数组
