@@ -117,9 +117,16 @@ function chatMessage() {
     navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
   } else {
     navStore.finalTabConfig.forEach((tabIcon) => {
-      tabIcon.status = options.sidebar.top.find((el) => el.id == tabIcon.id)?.disabled ? 2 : 1;
+      const find = options.sidebar.top.find((el) => el?.id == tabIcon?.id);
+      // tabIcon.status = find ? (find.id !== undefined ? (find.disabled ? 2 : 1) : tabIcon.status) : tabIcon.status;
+      if(find && find.id !== undefined){
+        if(find.disabled){
+          tabIcon.status = 2;
+        } else {
+          tabIcon.status = 1;
+        }
+      }
     });
-    navStore.updateTabConfig(navStore.finalTabConfig);
   }
 
   // 初始化推荐表情
