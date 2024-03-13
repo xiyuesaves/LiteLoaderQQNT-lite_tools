@@ -102,7 +102,7 @@ let uidToMessageId = new Map();
 let curAioData = undefined;
 let curUid = undefined;
 
-const debounceFunc = debounce(() => {
+const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
     const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
     const visibleItem = visibleItems.shift();
@@ -128,7 +128,7 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
         document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
       } else {
         log("没有记录历史位置，不执行跳转");
-        debounceFunc();
+        updateVisibleItem();
       }
     }
   },
@@ -144,9 +144,9 @@ chatMessage();
 function chatMessage() {
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
     const el = document.querySelector(".ml-area .q-scroll-view");
-    el.addEventListener("scroll", debounceFunc);
+    el.addEventListener("scroll", updateVisibleItem);
   }
-  debounceFunc();
+  updateVisibleItem();
   // log("更新内容");
   // 初始化推荐表情
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
