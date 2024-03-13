@@ -105,9 +105,11 @@ let curUid = undefined;
 const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
     const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
-    const visibleItem = visibleItems.shift();
-    log("更新可见消息id", visibleItem);
-    uidToMessageId.set(curUid, visibleItem.id);
+    if (visibleItems.length) {
+      const visibleItem = visibleItems.shift();
+      // log("更新可见消息id", visibleItem);
+      uidToMessageId.set(curUid, visibleItem.id);
+    }
   }
 }, 100);
 
@@ -124,10 +126,10 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
     if (options.message.currentLocation && newVal?.header?.uid) {
       const messageId = uidToMessageId.get(newVal.header.uid);
       if (messageId && messageId != "0") {
-        log("有记录历史位置，执行跳转", messageId);
+        // log("有记录历史位置，执行跳转", messageId);
         document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
       } else {
-        log("没有记录历史位置，不执行跳转");
+        // log("没有记录历史位置，不执行跳转");
         updateVisibleItem();
       }
     }
