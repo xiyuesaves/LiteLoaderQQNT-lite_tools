@@ -108,25 +108,40 @@ updateOptions(chatMessage);
  * 初始化聊天消息功能，包括滚动事件、贴纸条、侧边栏项目、GIF热点地图、徽章、头像显示、消息气泡调整和移除VIP红名。
  */
 function chatMessage() {
+  // 监听消息列表滚动
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
     const el = document.querySelector(".ml-area .q-scroll-view");
     el.addEventListener("scroll", updateVisibleItem);
   }
   updateVisibleItem();
+
+  // 精简侧边栏
   if (!navStore) {
     navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
   } else {
     navStore.finalTabConfig.forEach((tabIcon) => {
       const find = options.sidebar.top.find((el) => el?.id == tabIcon?.id);
       // tabIcon.status = find ? (find.id !== undefined ? (find.disabled ? 2 : 1) : tabIcon.status) : tabIcon.status;
-      if(find && find.id !== undefined){
-        if(find.disabled){
+      if (find && find.id !== undefined) {
+        if (find.disabled) {
           tabIcon.status = 2;
         } else {
           tabIcon.status = 1;
         }
       }
     });
+  }
+
+  // 特殊的三个图标
+  const arr = ["消息", "联系人", "更多"];
+  for (let i = 0; i < arr.length; i++) {
+    const areaLabel = arr[i];
+    const findLabel = options.sidebar.top.find((el) => el.name === areaLabel);
+    if (findLabel) {
+      document
+        .querySelector(`.sidebar__upper .nav.sidebar__nav .nav-item[aria-label="${areaLabel}"]`)
+        ?.classList?.toggle("LT-disabled", findLabel.disabled);
+    }
   }
 
   // 初始化推荐表情
@@ -183,6 +198,12 @@ function updateSiderbarNavFuncList() {
     id: tabIcon.id,
     disabled: tabIcon.status === 1 ? false : true,
   }));
+  // 插入特殊的三个图标数据
+  top.unshift(
+    { name: "消息", disabled: false, id: -1 },
+    { name: "联系人", disabled: false, id: -1 },
+    { name: "更多", disabled: false, id: -1 },
+  );
   // 获取侧边栏底部的功能入口
   let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
     if (el.querySelector(".icon-item").getAttribute("aria-label")) {
