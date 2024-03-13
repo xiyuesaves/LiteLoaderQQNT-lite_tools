@@ -64,7 +64,7 @@ async function onConfigView(view) {
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
 
   // 获取侧边栏按钮列表
-  options.sidebar = await lite_tools.getSidebar({ type: "get" });
+  // options.sidebar = await lite_tools.getSidebar({ type: "get" });
 
   const sidebar = view.querySelector(".sidebar ul");
   const textArea = view.querySelector(".textArea ul");

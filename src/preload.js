@@ -3,8 +3,6 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 // 在window对象下导出只读对象
 contextBridge.exposeInMainWorld("lite_tools", {
-  // 设置界面打开，动态获取侧边栏数据
-  optionsOpen: (callback) => ipcRenderer.on("LiteLoader.lite_tools.optionsOpen", callback),
   // 更新样式信息
   updateStyle: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateStyle", callback),
   // 更新全局样式
@@ -38,6 +36,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getMessageRecallId: () => ipcRenderer.invoke("LiteLoader.lite_tools.getMessageRecallId"),
   // 消息窗口向主进程发送输入框上方功能列表
   sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
+  // 消息窗口向主进程发送侧边栏按钮信息
+  sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
   // 打开选择背景图片窗口
   openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
   // 监听背景数据变化

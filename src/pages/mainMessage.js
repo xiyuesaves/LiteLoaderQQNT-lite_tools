@@ -42,66 +42,25 @@ if (options.fixAbnormalResourceUsage) {
   openGuidMainWindow();
 }
 
-// 设置页面获取侧边栏项目
-lite_tools.optionsOpen((event, message) => {
-  let top = Array.from(document.querySelectorAll(".nav.sidebar__nav .nav-item")).map((el, index) => {
-    if (el.getAttribute("aria-label")) {
-      if (el.getAttribute("aria-label").includes("消息")) {
-        return {
-          name: "消息",
-          index,
-          disabled: el.classList.contains("LT-disabled"),
-        };
-      } else {
-        return {
-          name: el.getAttribute("aria-label"),
-          index,
-          disabled: el.classList.contains("LT-disabled"),
-        };
-      }
-    } else if (el.querySelector(".game-center-item")) {
-      return {
-        name: "游戏中心",
-        index,
-        disabled: el.classList.contains("LT-disabled"),
-      };
-    } else {
-      return {
-        name: "未知功能",
-        index,
-        disabled: el.classList.contains("LT-disabled"),
-      };
-    }
-  });
-  let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
-    if (el.querySelector(".icon-item").getAttribute("aria-label")) {
-      const item = {
-        name: el.querySelector(".icon-item").getAttribute("aria-label"),
-        index,
-        disabled: el.classList.contains("LT-disabled"),
-      };
-      if (item.name === "更多") {
-        item.name = "更多 （此选项内包含设置页面入口，不要关闭，除非你知道自己在做什么）";
-      }
-      return item;
-    } else {
-      return {
-        name: "未知功能",
-        index,
-        disabled: el.classList.contains("LT-disabled"),
-      };
-    }
-  });
-  lite_tools.sendSidebar({
-    top,
-    bottom,
-  });
-});
-
+/**
+ * 记录的聊天对象对应离开时的消息id
+ */
 let uidToMessageId = new Map();
+/**
+ * 代理数据
+ */
 let curAioData = undefined;
+/**
+ * 当前聊天对象的uid
+ */
 let curUid = undefined;
 
+/**
+ * 侧边栏数据
+ */
+let navStore = undefined;
+
+// 更新可见消息id
 const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
     const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
@@ -113,6 +72,7 @@ const updateVisibleItem = debounce(() => {
   }
 }, 100);
 
+// 监听聊天对象变动
 Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.common_Aio, "curAioData", {
   enumerable: true,
   configurable: true,
@@ -136,20 +96,32 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
   },
 });
 
+chatMessage();
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
   childList: true,
   subtree: true,
 });
 updateOptions(chatMessage);
-chatMessage();
+
+/**
+ * 初始化聊天消息功能，包括滚动事件、贴纸条、侧边栏项目、GIF热点地图、徽章、头像显示、消息气泡调整和移除VIP红名。
+ */
 function chatMessage() {
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
     const el = document.querySelector(".ml-area .q-scroll-view");
     el.addEventListener("scroll", updateVisibleItem);
   }
   updateVisibleItem();
-  // log("更新内容");
+  if (!navStore) {
+    navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
+  } else {
+    navStore.finalTabConfig.forEach((tabIcon) => {
+      tabIcon.status = options.sidebar.top.find((el) => el.id == tabIcon.id)?.disabled ? 2 : 1;
+    });
+    navStore.updateTabConfig(navStore.finalTabConfig);
+  }
+
   // 初始化推荐表情
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
 
@@ -160,6 +132,7 @@ function chatMessage() {
       el.classList.toggle("LT-disabled", find.disabled);
     }
   });
+
   // 初始化底部侧边栏
   document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
     const find = options.sidebar.bottom.find((opt) => opt.index == index);
@@ -167,40 +140,66 @@ function chatMessage() {
       el.classList.toggle("LT-disabled", find.disabled);
     }
   });
-  // 禁用GIF热图
-  if (options.message.disabledHotGIF) {
-    document.body.classList.add("disabled-sticker-hot-gif");
-  } else {
-    document.body.classList.remove("disabled-sticker-hot-gif");
-  }
-  // 禁用小红点
-  if (options.message.disabledBadge) {
-    document.body.classList.add("disabled-badge");
-  } else {
-    document.body.classList.remove("disabled-badge");
-  }
-  // 消息列表只显示头像
-  document.querySelector(".two-col-layout__aside").classList.toggle("only-avatar", options.message.onlyAvatar);
 
   // 消息列表气泡数字调整
   document.querySelectorAll(".list-item .list-item__container .list-item__summary .summary-bubble .vue-component").forEach((el) => {
-    if (options.message.removeBubbleLimit) {
-      el.__VUE__[0].props.countLimit = Number.MAX_SAFE_INTEGER;
-    } else {
-      el.__VUE__[0].props.countLimit = 99;
-    }
+    el.__VUE__[0].props.countLimit = options.message.removeBubbleLimit ? Number.MAX_SAFE_INTEGER : 99;
   });
 
   // 移除vip红名
-  if (options.message.removeVipName) {
-    document.body.classList.add("remove-vip-name");
-  } else {
-    document.body.classList.remove("remove-vip-name");
-  }
+  document.body.classList.toggle("remove-vip-name", options.message.removeVipName);
+
+  // 禁用GIF热图
+  document.body.classList.toggle("disabled-sticker-hot-gif", options.message.disabledHotGIF);
+
+  // 禁用小红点
+  document.body.classList.toggle("disabled-badge", options.message.disabledBadge);
+
+  // 消息列表只显示头像
+  document.querySelector(".two-col-layout__aside").classList.toggle("only-avatar", options.message.onlyAvatar);
 
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();
   observeChatBox();
+  updateSiderbarNavFuncList();
   observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
+}
+
+function updateSiderbarNavFuncList() {
+  if (!navStore) {
+    return;
+  }
+  // 获取侧边栏顶部的功能入口
+  let top = navStore.finalTabConfig.map((tabIcon) => ({
+    name: tabIcon.label,
+    id: tabIcon.id,
+    disabled: tabIcon.status === 1 ? false : true,
+  }));
+  // 获取侧边栏底部的功能入口
+  let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
+    if (el.querySelector(".icon-item").getAttribute("aria-label")) {
+      const item = {
+        name: el.querySelector(".icon-item").getAttribute("aria-label"),
+        index,
+        disabled: el.classList.contains("LT-disabled"),
+      };
+      if (item.name === "更多") {
+        item.name = "更多 （此选项内包含设置页面入口，不要关闭，除非你知道自己在做什么）";
+      }
+      return item;
+    } else {
+      return {
+        name: "未知功能",
+        index,
+        disabled: el.classList.contains("LT-disabled"),
+      };
+    }
+  });
+  if (options.sidebar.top.join() !== top.join() || options.sidebar.bottom.join() !== bottom.join()) {
+    lite_tools.sendSidebar({
+      top,
+      bottom,
+    });
+  }
 }
