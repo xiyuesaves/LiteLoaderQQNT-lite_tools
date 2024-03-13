@@ -200,9 +200,9 @@ function updateSiderbarNavFuncList() {
   }));
   // 插入特殊的三个图标数据
   top.unshift(
-    { name: "消息", disabled: false, id: -1 },
-    { name: "联系人", disabled: false, id: -1 },
-    { name: "更多", disabled: false, id: -1 },
+    { name: "消息", disabled: options?.sidebar?.top?.find((el) => el.name === "消息")?.disabled ?? false, id: -1 },
+    { name: "联系人", disabled: options?.sidebar?.top?.find((el) => el.name === "联系人")?.disabled ?? false, id: -1 },
+    { name: "更多", disabled: options?.sidebar?.top?.find((el) => el.name === "更多")?.disabled ?? false, id: -1 },
   );
   // 获取侧边栏底部的功能入口
   let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
