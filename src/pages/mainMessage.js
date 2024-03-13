@@ -197,6 +197,7 @@ function updateSiderbarNavFuncList() {
     }
   });
   if (options.sidebar.top.join() !== top.join() || options.sidebar.bottom.join() !== bottom.join()) {
+    log("更新侧边栏数据", top, bottom);
     lite_tools.sendSidebar({
       top,
       bottom,
