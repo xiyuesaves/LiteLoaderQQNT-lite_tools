@@ -66,9 +66,11 @@ contextBridge.exposeInMainWorld("lite_tools", {
   openRecallMsgList: () => ipcRenderer.send("LiteLoader.lite_tools.openRecallMsgList"),
   // 获取所有的撤回消息
   getReacllMsgData: () => ipcRenderer.send("LiteLoader.lite_tools.getReacllMsgData"),
+  // 获取所有撤回数据
   onReacllMsgData: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onReacllMsgData", callback),
   // 获取所有的撤回消息数量
   getRecallListNum: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getRecallListNum"),
+  // 更新撤回消息数量
   onUpdateRecallListNum: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateRecallListNum", callback),
   // 跳转到指定聊天对话的指定位置处
   sendToMsg: (sceneData) => ipcRenderer.send("LiteLoader.lite_tools.sendToMsg", sceneData),
@@ -82,6 +84,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   // 获取系统字体列表
   getSystemFonts: () => ipcRenderer.invoke("LiteLoader.lite_tools.getSystemFonts"),
+  // 复制文件
   copyFile: (...data) => ipcRenderer.send("LiteLoader.lite_tools.copyFile", ...data),
   /**
    *
