@@ -328,12 +328,6 @@ function openGuidMainWindow() {
   );
 }
 
-/**
- * 切换聊天对象
- */
-function changeRecentContacPeerUid(peerUid) {
-  lite_tools.nativeCall("ns-BusinessApi", "changeRecentContacPeerUid", [peerUid], webContentId, false, false);
-}
 
 export {
   sendMessage,
@@ -346,6 +340,5 @@ export {
   openGuidMainWindow,
   getGroupInfo,
   getGroupsList,
-  openExternalWindow,
-  changeRecentContacPeerUid,
+  openExternalWindow
 };
