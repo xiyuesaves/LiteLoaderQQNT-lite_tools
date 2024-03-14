@@ -116,20 +116,21 @@ function chatMessage() {
   updateVisibleItem();
 
   // 精简侧边栏
-  if (!navStore) {
-    navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
-  } else {
-    navStore.finalTabConfig.forEach((tabIcon) => {
-      const find = options.sidebar.top.find((el) => el?.id == tabIcon?.id);
-      // tabIcon.status = find ? (find.id !== undefined ? (find.disabled ? 2 : 1) : tabIcon.status) : tabIcon.status;
-      if (find && find.id !== undefined) {
-        if (find.disabled) {
-          tabIcon.status = 2;
-        } else {
-          tabIcon.status = 1;
-        }
+  navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
+  navStore?.finalTabConfig?.forEach((tabIcon) => {
+    const find = options.sidebar.top.find((el) => el?.id == tabIcon?.id);
+    if (find && find.id !== undefined) {
+      if (find.disabled) {
+        tabIcon.status = 2;
+      } else {
+        tabIcon.status = 1;
       }
-    });
+    }
+  });
+
+  // 只执行一次
+  if (navStore && navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
+    updateSiderbarNavFuncList();
   }
 
   // 特殊的三个图标
@@ -184,14 +185,10 @@ function chatMessage() {
   observeChatTopFunc();
   observerChatArea();
   observeChatBox();
-  updateSiderbarNavFuncList();
   observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
 }
 
 function updateSiderbarNavFuncList() {
-  if (!navStore) {
-    return;
-  }
   // 获取侧边栏顶部的功能入口
   let top = navStore.finalTabConfig.map((tabIcon) => ({
     name: tabIcon.label,
@@ -224,7 +221,24 @@ function updateSiderbarNavFuncList() {
       };
     }
   });
-  if (options.sidebar.top.join() !== top.join() || options.sidebar.bottom.join() !== bottom.join()) {
+  if (
+    options.sidebar.top
+      .map((el) => el.name)
+      .sort()
+      .join() !==
+      top
+        .map((el) => el.name)
+        .sort()
+        .join() ||
+    options.sidebar.bottom
+      .map((el) => el.name)
+      .sort()
+      .join() !==
+      bottom
+        .map((el) => el.name)
+        .sort()
+        .join()
+  ) {
     log("更新侧边栏数据", top, bottom);
     lite_tools.sendSidebar({
       top,
