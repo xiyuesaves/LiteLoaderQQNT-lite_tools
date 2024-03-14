@@ -283,7 +283,6 @@ function getGroupsList(forced = false) {
     false,
   );
 }
-
 /**
  * 搜索好友/群
  * @param {String} keyword 搜索内容
@@ -345,4 +344,8 @@ export {
   getMembersAvatar,
   getGroupsAvatar,
   openGuidMainWindow,
+  getGroupInfo,
+  getGroupsList,
+  openExternalWindow,
+  changeRecentContacPeerUid,
 };
