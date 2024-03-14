@@ -20,9 +20,7 @@ function touchMoveSelectin(className) {
       log("已捕获目标元素");
       document.querySelector(`.${className}`).addEventListener("mousedown", (event) => {
         if (options.message.disabledSlideMultipleSelection && (event.buttons === 1 || event.buttons === 4)) {
-          if (document.querySelector("#qContextMenu")) {
-            document.querySelector("#qContextMenu").remove();
-          }
+          document.querySelector(".q-context-menu")?.remove();
         }
       });
       listenTarget = true;
