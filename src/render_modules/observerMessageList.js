@@ -5,15 +5,28 @@ import { Logs } from "./logs.js";
 import { forwardMessage } from "./nativeCall.js";
 const log = new Logs("消息列表处理");
 
+/**
+ * 监听配置
+ */
 const observeConfig = {
   attributes: true,
   attributeFilter: ["style"],
   childList: true,
   subtree: false,
 };
+
+/**
+ * 过滤消息元素
+ */
 const filterClass = ".msg-content-container:not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container)";
 
+/**
+ * 上一轮循环的消息列表
+ */
 let lastMessageNodeList = [];
+/**
+ * 合并消息元素高度
+ */
 let childElHeight = new Map();
 let observe, msgItemEl, isForward, observerElement;
 /**
