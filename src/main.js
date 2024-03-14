@@ -408,18 +408,6 @@ function onLoad(plugin) {
     shell.openExternal(url);
   });
 
-  // 获取侧边栏按钮
-  // ipcMain.handle("LiteLoader.lite_tools.getSidebar", async (event, message) => {
-  //   mainMessage.webContents.send("LiteLoader.lite_tools.optionsOpen", message);
-  //   const list = await new Promise((res) => {
-  //     ipcMain.once("LiteLoader.lite_tools.sendSidebar", (event, list) => {
-  //       options.sidebar = list;
-  //       res(list);
-  //     });
-  //   });
-  //   return list;
-  // });
-
   // 更新侧边栏功能列表
   ipcMain.on("LiteLoader.lite_tools.sendSidebar", (event, list) => {
     options.sidebar = list;

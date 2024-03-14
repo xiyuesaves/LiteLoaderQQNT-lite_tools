@@ -129,6 +129,31 @@ async function sendMessage(peer, messages) {
 
 /**
  *
+ * @param {Peer} peer peer对象，通过lite_tools.getPeer()获取
+ * @param {msgElements[]} message 原始消息数组
+ */
+function sendRawMessage(peer, messages) {
+  log("发送Raw消息", peer, messages);
+  lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelMsgService/sendMsg",
+    [
+      {
+        msgId: "0",
+        peer: convertPeer(peer),
+        msgElements: messages,
+        msgAttributeInfos: new Map(),
+      },
+      null,
+    ],
+    webContentId,
+    false,
+    false,
+  );
+}
+
+/**
+ *
  * @param {Peer} srcpeer 转发消息Peer
  * @param {Peer} dstpeer 目标Peer
  * @param {Array} msgIds 消息Id数组
@@ -313,6 +338,7 @@ function changeRecentContacPeerUid(peerUid) {
 
 export {
   sendMessage,
+  sendRawMessage,
   forwardMessage,
   getUserInfo,
   goMainWindowScene,
