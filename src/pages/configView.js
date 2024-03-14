@@ -191,6 +191,9 @@ async function onConfigView(view) {
   // 移除回复时的@标记
   addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
 
+  // 侧键返回
+  addSwitchEventlistener("message.goBackMainList", ".goBackMainList");
+
   // 阻止撤回
   addSwitchEventlistener("preventMessageRecall.enabled", ".preventMessageRecall");
   addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");

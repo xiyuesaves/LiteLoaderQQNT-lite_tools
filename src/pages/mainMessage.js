@@ -105,6 +105,17 @@ observe.observe(document.body, {
 updateOptions(chatMessage);
 
 /**
+ * 监听鼠标侧键返回事件
+ */
+
+// 返回没有选中聊天时的状态
+document.addEventListener("mouseup", (event) => {
+  if (event.button === 3 && options.message.goBackMainList) {
+    document.querySelector(".two-col-layout__aside .recent-contact .list-toggler").__VUE__[1].proxy.goBackMainList();
+  }
+});
+
+/**
  * 初始化聊天消息功能，包括滚动事件、贴纸条、侧边栏项目、GIF热点地图、徽章、头像显示、消息气泡调整和移除VIP红名。
  */
 function chatMessage() {
