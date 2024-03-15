@@ -4,6 +4,7 @@ import { subMenuIconEl } from "./HTMLtemplate.js";
 import { emoticonsList } from "./localEmoticons.js";
 import "./wrapText.js";
 import { getMembersAvatar } from "./nativeCall.js";
+import { showToast } from "./toast.js";
 import { Logs } from "./logs.js";
 const log = new Logs("右键菜单");
 
@@ -279,13 +280,18 @@ function addEventqContextMenu() {
           const rawPath = _imagePath.split("qqface:")[1];
           if (await lite_tools.copyFile(rawPath + "_aio.png", filePath + "_aio.png")) {
             log("保存成功");
+            showToast("保存成功", "success", 3000);
           } else if (await lite_tools.copyFile(rawPath + "_thu.png", filePath + "_thu.png")) {
             log("保存成功");
+            showToast("保存成功", "success", 3000);
           } else if (!(await lite_tools.copyFile(rawPath, filePath + ".png"))) {
             log("保存失败");
+            showToast("保存失败", "error", 3000);
           }
+        } else if (await lite_tools.copyFile(_imagePath, filePath)) {
+          showToast("保存成功", "success", 3000);
         } else {
-          await lite_tools.copyFile(_imagePath, filePath);
+          showToast("保存失败", "error", 3000);
         }
       });
     }
@@ -380,6 +386,7 @@ async function createSticker(config) {
   ctx.restore();
   const base64 = canvasEl.toDataURL("image/png", 1);
   lite_tools.saveBase64ToFile(`${new Date().getTime()}.png`, base64);
+  showToast("生成成功", "success", 3000);
 }
 
 export { addEventqContextMenu };
