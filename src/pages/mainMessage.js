@@ -27,7 +27,7 @@ import { openGuidMainWindow } from "../render_modules/nativeCall.js";
 import { debounce } from "../render_modules/debounce.js";
 // 首次执行检测
 import { first } from "../render_modules/first.js";
-
+import { reminderEl } from "../render_modules/HTMLtemplate.js";
 // log
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("主窗口");
@@ -60,6 +60,20 @@ let curUid = undefined;
  */
 let navStore = undefined;
 
+lite_tools.onKeywordReminder((_, peerUid, msgId) => {
+  if (!window.keywordReminder) {
+    window.keywordReminder = new Map();
+  }
+  let value = window.keywordReminder.get(peerUid);
+  if (!value) {
+    value = [];
+  }
+  value.push(msgId);
+  log("新增 关键词提醒", peerUid, msgId, value);
+  window.keywordReminder.set(peerUid, value);
+  injectReminder(curUid);
+});
+
 // 更新可见消息id
 const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
@@ -85,6 +99,7 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
     curUid = newVal?.header?.uid;
     if (options.message.currentLocation && newVal?.header?.uid) {
       const messageId = uidToMessageId.get(newVal.header.uid);
+      injectReminder(curUid);
       if (messageId && messageId != "0") {
         // log("有记录历史位置，执行跳转", messageId);
         document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
@@ -95,6 +110,38 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
     }
   },
 });
+
+function injectReminder(uid) {
+  if (!window.keywordReminder) {
+    window.keywordReminder = new Map();
+  }
+  const value = window.keywordReminder.get(uid);
+  log("获取当前页面的关键词提醒", uid, value);
+  if (value?.length) {
+    let keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
+    if (!keywordReminderEl) {
+      const HTMLtemplate = reminderEl.replace("{{nums}}", value.length);
+      log("插入元素到页面", HTMLtemplate);
+      document.querySelector(".ml-area.v-list-area").insertAdjacentHTML("beforeend", HTMLtemplate);
+      keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
+    }
+    keywordReminderEl.innerText = `${value.length} 条消息有提醒词`;
+    keywordReminderEl.addEventListener("click", () => {
+      const msgId = value.pop();
+      document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(msgId);
+      window.keywordReminder.set(uid, value);
+      if (value.length) {
+        keywordReminderEl.innerText = `${value.length} 条消息有提醒词`;
+      } else {
+        keywordReminderEl.remove();
+        hookUpdate();
+      }
+    });
+  } else {
+    document.querySelector(".lite-tools-keywordReminder")?.remove();
+    hookUpdate();
+  }
+}
 
 chatMessage();
 const observe = new MutationObserver(chatMessage);
@@ -196,6 +243,7 @@ function chatMessage() {
   observeChatTopFunc();
   observerChatArea();
   observeChatBox();
+  hookUpdate();
   observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
 }
 
@@ -256,4 +304,38 @@ function updateSiderbarNavFuncList() {
       bottom,
     });
   }
+}
+
+function hookUpdate() {
+  document.querySelectorAll(".viewport-list__inner .list-item").forEach((el) => {
+    if (!el?.__VUE__?.[1]?.update?.isHooked) {
+      const vue = el.__VUE__[1];
+      const peerUid = vue.ctx.peerUid;
+      const tempUpdate = vue.update;
+      if (!window.keywordReminder) {
+        window.keywordReminder = new Map();
+      }
+      vue.update = () => {
+        const value = window.keywordReminder.get(peerUid);
+        // // log("消息更新", value);
+        if (value?.length) {
+          if (vue?.ctx?.abstracts[0]?.content !== "关键词提醒") {
+            vue.ctx.abstracts.unshift({
+              content: "关键词提醒",
+              contentStyle: "warning",
+              type: "msgBox",
+            });
+          }
+        } else {
+          if (vue?.ctx?.abstracts[0]?.content === "关键词提醒") {
+            vue.ctx.abstracts.shift();
+          }
+        }
+        tempUpdate();
+      };
+      vue.update.isHooked = true;
+    } else {
+      el?.__VUE__?.[1]?.update();
+    }
+  });
 }

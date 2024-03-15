@@ -84,6 +84,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   // 获取系统字体列表
   getSystemFonts: () => ipcRenderer.invoke("LiteLoader.lite_tools.getSystemFonts"),
+  // 关键字提醒
+  onKeywordReminder: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onKeywordReminder", callback),
   // 复制文件
   copyFile: (...data) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...data),
   /**

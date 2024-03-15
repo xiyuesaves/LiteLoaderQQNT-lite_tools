@@ -801,7 +801,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
     if (window.webContents.getURL().indexOf("#/chat") !== -1) {
       log("捕获到聊天窗口");
-      // mainMessage = window;
+      // chatMessage = window;
     }
     if (window.webContents.getURL().indexOf("#/setting/settings/common") !== -1) {
       log("捕获到设置口");
@@ -1028,12 +1028,25 @@ function onBrowserWindowCreated(window, plugin) {
     if (onRecvMsg !== -1) {
       log("收到新消息", args[1]);
       if (checkChatType(args?.[1]?.[onRecvMsg]?.payload?.msgList?.[0])) {
+        // mainMessage.webContents.send("LiteLoader.lite_tools.onKeywordReminder",)
         args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
+          // 检测关键字
+          if (options.keywordReminder.enabled) {
+            arrs.elements.forEach((msgElements) => {
+              if (msgElements.textElement) {
+                if (options.keywordReminder.keyList.some((key) => msgElements.textElement.content.includes(key))) {
+                  mainMessage.webContents.send("LiteLoader.lite_tools.onKeywordReminder", arrs.peerUid, arrs.msgId);
+                }
+              }
+            });
+          }
+
           // 阻止撤回
           if (options.preventMessageRecall.enabled) {
             // 将消息存入map
             catchMsgList.set(arrs.msgId, arrs);
           }
+
           // 处理小程序卡片
           if (options.message.convertMiniPrgmArk) {
             const msg_seq = arrs.msgSeq;

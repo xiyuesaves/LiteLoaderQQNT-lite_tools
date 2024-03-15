@@ -88,6 +88,8 @@ const errorIcon = `<i style="width:20px;height:20px; color:#FF5967;"><svg viewBo
 <path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 8C14.5 11.5899 11.5899 14.5 8 14.5C4.41015 14.5 1.5 11.5899 1.5 8C1.5 4.41015 4.41015 1.5 8 1.5C11.5899 1.5 14.5 4.41015 14.5 8ZM8.5 4.5V9.5H7.5V4.5H8.5ZM8.5 11.5V10.5H7.5V11.5H8.5Z"></path>
 </svg></i>`;
 
+const reminderEl = `<div class="lite-tools-keywordReminder">{{nums}} 条消息有提醒词</div>`;
+
 export {
   tailElement,
   recallGroupItem,
@@ -102,4 +104,5 @@ export {
   defaultIcon,
   successIcon,
   errorIcon,
+  reminderEl,
 };

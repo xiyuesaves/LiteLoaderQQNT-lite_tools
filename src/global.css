@@ -4,6 +4,21 @@
   display: none !important;
 }
 
+.lite-tools-keywordReminder {
+  position: absolute;
+  right: 0;
+  top: 70px;
+  z-index: 999;
+  backdrop-filter: blur(8px);
+  padding: 8px 4px 8px 16px;
+  border-radius: 50px 0 0 50px;
+  background-color: var(--lt-background-color-05);
+  box-shadow: var(--lt-box-shadow);
+  color: var(--brand_standard);
+  font-size: 13px;
+  cursor: pointer;
+}
+
 /* 禁用GIF热图 */
 .disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item {
   pointer-events: none;

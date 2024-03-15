@@ -5,6 +5,10 @@
     "showWeb": false,
     "showChannedCommunication": false
   },
+  "keywordReminder": {
+    "enabled": true,
+    "keyList": ["哈", "阿龙", "的"]
+  },
   "wordSearch": {
     "enabled": false,
     "searchUrl": "https://www.bing.com/search?q=%search%"
@@ -82,7 +86,7 @@
   },
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
-  "fixAbnormalResourceUsage":false,
+  "fixAbnormalResourceUsage": false,
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,
