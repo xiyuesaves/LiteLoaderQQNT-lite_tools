@@ -213,7 +213,7 @@ function addEventqContextMenu() {
         }
         // 发送表情包检测
         if (elements.some((ele) => ele.marketFaceElement)) {
-          imagePath = elements.find((ele) => ele.marketFaceElement)?.marketFaceElement?.staticFacePath;
+          imagePath = "qqface:" + elements.find((ele) => ele.marketFaceElement)?.marketFaceElement?.dynamicFacePath;
         }
       }
     } else {
@@ -268,14 +268,25 @@ function addEventqContextMenu() {
       });
     }
     // 保存到本地表情文件夹
-    log("本地表情数据", emoticonsList);
+    log("图片地址", imagePath);
     if (imagePath && options.localEmoticons.enabled && options.localEmoticons.copyFileTolocalEmoticons) {
       const _imagePath = imagePath;
       const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
-      addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, (event, data) => {
+      addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, async (event, data) => {
         const filePathArr = _imagePath.replace(/\\/g, "/").split("/");
         const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace("\\", "/");
-        lite_tools.copyFile(_imagePath, filePath);
+        if (_imagePath.startsWith("qqface:")) {
+          const rawPath = _imagePath.split("qqface:")[1];
+          if (await lite_tools.copyFile(rawPath + "_aio.png", filePath + "_aio.png")) {
+            log("保存成功");
+          } else if (await lite_tools.copyFile(rawPath + "_thu.png", filePath + "_thu.png")) {
+            log("保存成功");
+          } else if (!(await lite_tools.copyFile(rawPath, filePath + ".png"))) {
+            log("保存失败");
+          }
+        } else {
+          await lite_tools.copyFile(_imagePath, filePath);
+        }
       });
     }
     // 消息转图片

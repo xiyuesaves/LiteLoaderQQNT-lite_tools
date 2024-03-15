@@ -351,14 +351,16 @@ function onLoad(plugin) {
   });
 
   // 复制文件
-  ipcMain.on("LiteLoader.lite_tools.copyFile", (event, from, to) => {
+  ipcMain.handle("LiteLoader.lite_tools.copyFile", async (event, from, to) => {
     log("复制文件", from, to);
-    fs.copyFile(from, to, (err) => {
-      if (err) {
-        log("复制文件出错", err);
-      } else {
-        log("复制文件完成");
-      }
+    return new Promise((res, rej) => {
+      fs.copyFile(from, to, (err) => {
+        if (err) {
+          res(false);
+        } else {
+          res(true);
+        }
+      });
     });
   });
 

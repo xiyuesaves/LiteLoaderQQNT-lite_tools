@@ -85,7 +85,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 获取系统字体列表
   getSystemFonts: () => ipcRenderer.invoke("LiteLoader.lite_tools.getSystemFonts"),
   // 复制文件
-  copyFile: (...data) => ipcRenderer.send("LiteLoader.lite_tools.copyFile", ...data),
+  copyFile: (...data) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...data),
   /**
    *
    * @param {String} sendEventName 发送事件名称
