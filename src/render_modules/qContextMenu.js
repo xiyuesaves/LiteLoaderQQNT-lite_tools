@@ -279,13 +279,10 @@ function addEventqContextMenu() {
         if (_imagePath.startsWith("qqface:")) {
           const rawPath = _imagePath.split("qqface:")[1];
           if (await lite_tools.copyFile(rawPath + "_aio.png", filePath + "_aio.png")) {
-            log("保存成功");
             showToast("保存成功", "success", 3000);
           } else if (await lite_tools.copyFile(rawPath + "_thu.png", filePath + "_thu.png")) {
-            log("保存成功");
             showToast("保存成功", "success", 3000);
           } else if (!(await lite_tools.copyFile(rawPath, filePath + ".png"))) {
-            log("保存失败");
             showToast("保存失败", "error", 3000);
           }
         } else if (await lite_tools.copyFile(_imagePath, filePath)) {
