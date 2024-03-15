@@ -67,6 +67,23 @@
     }
   }
 }
+
+// 悬浮提示内容
+.lite-tools-toast {
+  .lite-tools-toast-item {
+    opacity: 0;
+    transform: translateY(-30px);
+    height: 0;
+    transition: 200ms;
+    position: relative;
+    &.lite-tools-toast-show {
+      opacity: 1;
+      height: 62px;
+      transform: translateY(0);
+    }
+  }
+}
+
 // 移除vip红名
 .remove-vip-name {
   .vip-name {
