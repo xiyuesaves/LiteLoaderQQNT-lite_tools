@@ -188,7 +188,7 @@ function chatMessage() {
   document.body.classList.toggle("remove-vip-name", options.message.removeVipName);
 
   // 禁用GIF热图
-  document.body.classList.toggle("disabled-sticker-hot-gif", options.message.disabledHotGIF);
+  document.querySelector(`.q-icon[title="GIF热图"]`)?.parentElement?.classList?.toggle("LT-disabled", options.message.disabledHotGIF);
 
   // 禁用小红点
   document.body.classList.toggle("disabled-badge", options.message.disabledBadge);

@@ -23,53 +23,6 @@
   cursor: pointer;
 }
 
-/* 禁用GIF热图 */
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item {
-  pointer-events: none;
-  background-color: unset !important;
-  width: unset !important;
-  margin-right: 0;
-  position: relative;
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item::after {
-  top: 0;
-  left: 0;
-  border-radius: 6px;
-  z-index: -1;
-  position: absolute;
-  content: "";
-  height: 100%;
-  width: calc(100% - 10px) !important;
-  transition: background 300ms;
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item:hover {
-  background-color: unset !important;
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item:hover::after {
-  background-color: var(--overlay_hover);
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item:active {
-  background-color: unset !important;
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item:active::after {
-  background-color: rgba(0, 0, 0, 0.15);
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item.tabs-container-item-active::after {
-  background-color: var(--global-brand_standard);
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item > * {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto !important;
-  margin-right: 10px;
-  width: 40px;
-}
-.disabled-sticker-hot-gif .sticker-panel__bar .tabs-container .tabs-container-item .q-icon[title=GIF热图] {
-  display: none !important;
-}
-
 /* 禁用小红点 */
 .disabled-badge .q-badge .q-badge-num,
 .disabled-badge .q-badge .q-badge-sub,
@@ -113,22 +66,6 @@
   right: 0 !important;
   bottom: 0 !important;
   margin: auto !important;
-}
-
-/* 修改贴图css结构 */
-.message-panel .sticker-panel {
-  max-width: 600px !important;
-}
-.message-panel .sticker-panel .sticker-panel__pages {
-  width: 100% !important;
-}
-.message-panel .sticker-panel .tabs-container .tabs-container-item {
-  width: unset !important;
-}
-.message-panel .sticker-panel .tabs-container .tabs-container-item .q-icon,
-.message-panel .sticker-panel .tabs-container .tabs-container-item div.tabs-container-item-img {
-  text-align: center;
-  width: 40px !important;
 }
 
 /* 消息列表时间元素样式 */

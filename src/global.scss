@@ -23,61 +23,6 @@
   cursor: pointer;
 }
 
-/* 禁用GIF热图 */
-.disabled-sticker-hot-gif {
-  .sticker-panel__bar {
-    .tabs-container {
-      .tabs-container-item {
-        pointer-events: none;
-        background-color: unset !important;
-        width: unset !important;
-        &::after {
-          top: 0;
-          left: 0;
-          border-radius: 6px;
-          z-index: -1;
-          position: absolute;
-          content: "";
-          height: 100%;
-          width: calc(100% - 10px) !important;
-          transition: background 300ms;
-        }
-        &:hover {
-          background-color: unset !important;
-          &::after {
-            background-color: var(--overlay_hover);
-          }
-        }
-        &:active {
-          background-color: unset !important;
-          &::after {
-            background-color: rgba(0, 0, 0, 0.15);
-          }
-        }
-        margin-right: 0;
-        position: relative;
-
-        &.tabs-container-item-active {
-          &::after {
-            background-color: var(--global-brand_standard);
-          }
-        }
-        & > * {
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          pointer-events: auto !important;
-          margin-right: 10px;
-          width: 40px;
-        }
-        .q-icon[title="GIF热图"] {
-          display: none !important;
-        }
-      }
-    }
-  }
-}
 /* 禁用小红点 */
 .disabled-badge {
   .q-badge {
@@ -136,25 +81,6 @@
     right: 0 !important;
     bottom: 0 !important;
     margin: auto !important;
-  }
-}
-/* 修改贴图css结构 */
-.message-panel {
-  .sticker-panel {
-    max-width: 600px !important;
-    .sticker-panel__pages {
-      width: 100% !important;
-    }
-    .tabs-container {
-      .tabs-container-item {
-        width: unset !important;
-        .q-icon,
-        div.tabs-container-item-img {
-          text-align: center;
-          width: 40px !important;
-        }
-      }
-    }
   }
 }
 /* 消息列表时间元素样式 */

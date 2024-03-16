@@ -40,18 +40,10 @@ function chatMessage(mutationList) {
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
 
   // 禁用GIF热图
-  if (options.message.disabledHotGIF) {
-    document.body.classList.add("disabled-sticker-hot-gif");
-  } else {
-    document.body.classList.remove("disabled-sticker-hot-gif");
-  }
+  document.querySelector(`.q-icon[title="GIF热图"]`)?.parentElement?.classList?.toggle("LT-disabled", options.message.disabledHotGIF);
 
   // 移除vip红名
-  if (options.message.removeVipName) {
-    document.body.classList.add("remove-vip-name");
-  } else {
-    document.body.classList.remove("remove-vip-name");
-  }
+  document.body.classList.toggle("remove-vip-name", options.message.removeVipName);
 
   localEmoticons();
   observeChatTopFunc();
