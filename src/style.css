@@ -203,8 +203,8 @@
   box-shadow: var(--lt-box-shadow);
   position: relative;
   overflow: hidden;
-  border-width: 0;
   backdrop-filter: blur(8px);
+  cursor: pointer;
 }
 .chat-msg-area__tip--top-btn.theme-primary::after,
 .chat-msg-area__tip--bottom.theme-primary::after {

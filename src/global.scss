@@ -5,17 +5,21 @@
 
 // 提醒词
 .lite-tools-keywordReminder {
+  padding: 5.5px 16px;
+  box-shadow: var(--lt-box-shadow, rgba(0, 0, 0, 0.04) 0px 2px 4px);
+  border: solid 1px transparent;
   position: absolute;
   right: 0;
-  top: 70px;
-  z-index: 999;
+  top: 40px;
+  overflow: hidden;
+  border-radius: 50px;
   backdrop-filter: blur(8px);
-  padding: 8px 4px 8px 16px;
-  border-radius: 50px 0 0 50px;
-  background-color: var(--lt-background-color-05);
-  box-shadow: var(--lt-box-shadow);
-  color: var(--brand_standard);
-  font-size: 13px;
+  background-color: var(--lt-background-color-05, var(--bg_top_light));
+  color: var(--feedback_warning, var(--brand_standard));
+  min-width: 40px;
+  font-size: 12px;
+  margin: 12px;
+  text-align: center;
   cursor: pointer;
 }
 

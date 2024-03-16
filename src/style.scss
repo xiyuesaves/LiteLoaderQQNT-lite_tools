@@ -237,8 +237,8 @@
   box-shadow: var(--lt-box-shadow);
   position: relative;
   overflow: hidden;
-  border-width: 0;
   backdrop-filter: blur(8px);
+  cursor: pointer;
   &.theme-primary::after {
     background-color: var(--brand_standard);
   }

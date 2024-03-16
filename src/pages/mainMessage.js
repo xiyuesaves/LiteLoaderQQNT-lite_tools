@@ -120,7 +120,7 @@ function injectReminder(uid) {
   if (value?.length) {
     document.querySelector(".lite-tools-keywordReminder")?.remove();
     const HTMLtemplate = reminderEl.replace("{{nums}}", value.length);
-    document.querySelector(".ml-area.v-list-area").insertAdjacentHTML("beforeend", HTMLtemplate);
+    document.querySelector(".chat-msg-area__tip--top").insertAdjacentHTML("beforeend", HTMLtemplate);
     const keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
     keywordReminderEl.innerText = `${value.length} 条消息有提醒词`;
     keywordReminderEl.addEventListener("click", () => {
