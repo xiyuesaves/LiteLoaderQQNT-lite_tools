@@ -1024,12 +1024,13 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 接收到的新消息
-    const onRecvMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecv${LiteLoader.versions.qqnt >= "9.9.8-22106" ? "Active" : ""}Msg`);
-    if (onRecvMsg !== -1) {
+    const onRecvMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecvMsg`);
+    const onRecvActiveMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecvActiveMsg`);
+    if (onRecvMsg !== -1 || onRecvActiveMsg !== -1) {
+      const events = onRecvMsg !== -1 ? onRecvMsg : onRecvActiveMsg;
       log("收到新消息", args[1]);
-      if (checkChatType(args?.[1]?.[onRecvMsg]?.payload?.msgList?.[0])) {
-        // mainMessage.webContents.send("LiteLoader.lite_tools.onKeywordReminder",)
-        args[1][onRecvMsg].payload.msgList.forEach((arrs) => {
+      if (checkChatType(args?.[1]?.[events]?.payload?.msgList?.[0])) {
+        args[1][events].payload.msgList.forEach((arrs) => {
           // 检测关键字
           if (options.keywordReminder.enabled) {
             arrs.elements.forEach((msgElements) => {
@@ -1067,10 +1068,12 @@ function onBrowserWindowCreated(window, plugin) {
 
     // 更新消息信息列表
     const onMsgInfoListUpdate = findEventIndex(args, "nodeIKernelMsgListener/onMsgInfoListUpdate");
-    if (onMsgInfoListUpdate !== -1) {
+    const onActiveMsgInfoUpdate = findEventIndex(args, "nodeIKernelMsgListener/onActiveMsgInfoUpdate");
+    if (onMsgInfoListUpdate !== -1 || onActiveMsgInfoUpdate !== -1) {
+      const events = onMsgInfoListUpdate !== -1 ? onMsgInfoListUpdate : onActiveMsgInfoUpdate;
       log("更新消息信息列表", args[1]);
-      if (checkChatType(args?.[1]?.[onMsgInfoListUpdate]?.payload?.msgList?.[0])) {
-        const msgItem = args[1][onMsgInfoListUpdate]?.payload?.msgList[0];
+      if (checkChatType(args?.[1]?.[events]?.payload?.msgList?.[0])) {
+        const msgItem = args[1][events]?.payload?.msgList[0];
         if (options.preventMessageRecall.enabled) {
           if (msgItem.elements[0]?.grayTipElement?.revokeElement) {
             const revokeElement = msgItem.elements[0].grayTipElement.revokeElement;
