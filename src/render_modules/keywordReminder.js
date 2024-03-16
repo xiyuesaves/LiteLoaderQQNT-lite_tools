@@ -38,7 +38,7 @@ function injectReminder(uid) {
 function hookUpdate() {
   if (!options.keywordReminder.enabled) {
     document.querySelector(".lite-tools-keywordReminder")?.remove();
-    return;
+    window.keywordReminder = null;
   }
   document.querySelectorAll(".two-col-layout__aside .viewport-list__inner .list-item").forEach((el) => {
     if (!el?.__VUE__?.[1]?.update?.isHooked) {
@@ -49,7 +49,7 @@ function hookUpdate() {
         window.keywordReminder = new Map();
       }
       vue.update = () => {
-        const value = window.keywordReminder.get(peerUid);
+        const value = window?.keywordReminder?.get(peerUid);
         // // log("消息更新", value);
         if (value?.length) {
           if (vue?.ctx?.abstracts[0]?.content !== "关键词提醒") {

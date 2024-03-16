@@ -45,7 +45,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 划词搜索                                                                            | 隐藏小红点         | 禁用表情推荐             | 阻止拖拽多选消息              |
 | 消息靠左显示                                                                        | 消息转图片         | 消息列表只显示头像       | 自定义字体                    |
 | 移除 VIP 红名                                                                       | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 | **修复 CPU 占用过高（临时）** |
-| [右键菜单选项高亮](https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies) | 记录离开时的位置   | 侧键返回                 |                               |
+| [右键菜单选项高亮](https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies) | 记录离开时的位置   | 侧键返回                 | 关键词提醒                    |
 
 ## 声明
 

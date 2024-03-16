@@ -280,6 +280,21 @@ async function onConfigView(view) {
   // 消息靠左显示
   addSwitchEventlistener("message.HighlightReplies", ".HighlightReplies");
 
+  // 消息关键词
+  addSwitchEventlistener("keywordReminder.enabled", ".keywordReminder", (_, enabled) => {
+    view.querySelector(".keywordReminder-keyword").classList.toggle("disabled-input", !enabled);
+  });
+  const keywordReminder = view.querySelector(".keywordReminder-keyword-input");
+  keywordReminder.value = options.keywordReminder.keyList.join(",");
+  keywordReminder.addEventListener("input", (e) => {
+    if (e.target.value.length) {
+      options.keywordReminder.keyList = e.target.value.split(",");
+    } else {
+      options.keywordReminder.keyList = [];
+    }
+    debounceSetOptions();
+  });
+
   // 消息转图片
   addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
   // 消息转图片-高清化

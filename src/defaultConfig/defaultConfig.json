@@ -6,8 +6,8 @@
     "showChannedCommunication": false
   },
   "keywordReminder": {
-    "enabled": true,
-    "keyList": ["哈", "阿龙", "的"]
+    "enabled": false,
+    "keyList": []
   },
   "wordSearch": {
     "enabled": false,
