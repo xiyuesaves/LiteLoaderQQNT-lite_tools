@@ -1024,7 +1024,7 @@ function onBrowserWindowCreated(window, plugin) {
     }
 
     // 接收到的新消息
-    const onRecvMsg = findEventIndex(args, "nodeIKernelMsgListener/onRecvMsg");
+    const onRecvMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecv${LiteLoader.versions.qqnt >= "9.9.8-22106" ? "Active" : ""}Msg`);
     if (onRecvMsg !== -1) {
       log("收到新消息", args[1]);
       if (checkChatType(args?.[1]?.[onRecvMsg]?.payload?.msgList?.[0])) {
