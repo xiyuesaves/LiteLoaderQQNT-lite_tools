@@ -27,7 +27,10 @@ import { openGuidMainWindow } from "../render_modules/nativeCall.js";
 import { debounce } from "../render_modules/debounce.js";
 // 首次执行检测
 import { first } from "../render_modules/first.js";
-import { reminderEl } from "../render_modules/HTMLtemplate.js";
+// 提醒词模块
+import { injectReminder, hookUpdate } from "../render_modules/keywordReminder.js";
+// 更新侧边栏功能列表
+import { updateSiderbarNavFuncList } from "../render_modules/updateSiderbarNavFuncList.js";
 // log
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("主窗口");
@@ -97,9 +100,9 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
     log("uin更新", newVal);
     curAioData = newVal;
     curUid = newVal?.header?.uid;
+    injectReminder(curUid);
     if (options.message.currentLocation && newVal?.header?.uid) {
       const messageId = uidToMessageId.get(newVal.header.uid);
-      injectReminder(curUid);
       if (messageId && messageId != "0") {
         // log("有记录历史位置，执行跳转", messageId);
         document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
@@ -110,35 +113,6 @@ Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.commo
     }
   },
 });
-
-function injectReminder(uid) {
-  if (!window.keywordReminder) {
-    window.keywordReminder = new Map();
-  }
-  const value = window.keywordReminder.get(uid);
-  log("获取当前页面的关键词提醒", uid, value);
-  if (value?.length) {
-    document.querySelector(".lite-tools-keywordReminder")?.remove();
-    const HTMLtemplate = reminderEl.replace("{{nums}}", value.length);
-    document.querySelector(".chat-msg-area__tip--top").insertAdjacentHTML("beforeend", HTMLtemplate);
-    const keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
-    keywordReminderEl.innerText = `${value.length} 条消息有提醒词`;
-    keywordReminderEl.addEventListener("click", () => {
-      const msgId = value.pop();
-      document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(msgId);
-      window.keywordReminder.set(uid, value);
-      if (value.length) {
-        keywordReminderEl.innerText = `${value.length} 条消息有提醒词`;
-      } else {
-        keywordReminderEl.remove();
-        hookUpdate();
-      }
-    });
-  } else {
-    document.querySelector(".lite-tools-keywordReminder")?.remove();
-    hookUpdate();
-  }
-}
 
 chatMessage();
 const observe = new MutationObserver(chatMessage);
@@ -185,7 +159,7 @@ function chatMessage() {
 
   // 只执行一次
   if (navStore && navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
-    updateSiderbarNavFuncList();
+    updateSiderbarNavFuncList(navStore);
   }
 
   // 特殊的三个图标
@@ -242,97 +216,4 @@ function chatMessage() {
   observeChatBox();
   hookUpdate();
   observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
-}
-
-function updateSiderbarNavFuncList() {
-  // 获取侧边栏顶部的功能入口
-  let top = navStore.finalTabConfig.map((tabIcon) => ({
-    name: tabIcon.label,
-    id: tabIcon.id,
-    disabled: tabIcon.status === 1 ? false : true,
-  }));
-  // 插入特殊的三个图标数据
-  top.unshift(
-    { name: "消息", disabled: options?.sidebar?.top?.find((el) => el.name === "消息")?.disabled ?? false, id: -1 },
-    { name: "联系人", disabled: options?.sidebar?.top?.find((el) => el.name === "联系人")?.disabled ?? false, id: -1 },
-    { name: "更多", disabled: options?.sidebar?.top?.find((el) => el.name === "更多")?.disabled ?? false, id: -1 },
-  );
-  // 获取侧边栏底部的功能入口
-  let bottom = Array.from(document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item")).map((el, index) => {
-    if (el.querySelector(".icon-item").getAttribute("aria-label")) {
-      const item = {
-        name: el.querySelector(".icon-item").getAttribute("aria-label"),
-        index,
-        disabled: el.classList.contains("LT-disabled"),
-      };
-      if (item.name === "更多") {
-        item.name = "更多 （此选项内包含设置页面入口，不要关闭，除非你知道自己在做什么）";
-      }
-      return item;
-    } else {
-      return {
-        name: "未知功能",
-        index,
-        disabled: el.classList.contains("LT-disabled"),
-      };
-    }
-  });
-  if (
-    options.sidebar.top
-      .map((el) => el.name)
-      .sort()
-      .join() !==
-      top
-        .map((el) => el.name)
-        .sort()
-        .join() ||
-    options.sidebar.bottom
-      .map((el) => el.name)
-      .sort()
-      .join() !==
-      bottom
-        .map((el) => el.name)
-        .sort()
-        .join()
-  ) {
-    log("更新侧边栏数据", top, bottom);
-    lite_tools.sendSidebar({
-      top,
-      bottom,
-    });
-  }
-}
-
-function hookUpdate() {
-  document.querySelectorAll(".two-col-layout__aside .viewport-list__inner .list-item").forEach((el) => {
-    if (!el?.__VUE__?.[1]?.update?.isHooked) {
-      const vue = el.__VUE__[1];
-      const peerUid = vue.ctx.peerUid;
-      const tempUpdate = vue.update;
-      if (!window.keywordReminder) {
-        window.keywordReminder = new Map();
-      }
-      vue.update = () => {
-        const value = window.keywordReminder.get(peerUid);
-        // // log("消息更新", value);
-        if (value?.length) {
-          if (vue?.ctx?.abstracts[0]?.content !== "关键词提醒") {
-            vue.ctx.abstracts.unshift({
-              content: "关键词提醒",
-              contentStyle: "warning",
-              type: "msgBox",
-            });
-          }
-        } else {
-          if (vue?.ctx?.abstracts[0]?.content === "关键词提醒") {
-            vue.ctx.abstracts.shift();
-          }
-        }
-        tempUpdate();
-      };
-      vue.update.isHooked = true;
-    } else {
-      el?.__VUE__?.[1]?.update();
-    }
-  });
 }
