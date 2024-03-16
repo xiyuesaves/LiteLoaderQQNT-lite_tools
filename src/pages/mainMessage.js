@@ -118,13 +118,10 @@ function injectReminder(uid) {
   const value = window.keywordReminder.get(uid);
   log("获取当前页面的关键词提醒", uid, value);
   if (value?.length) {
-    let keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
-    if (!keywordReminderEl) {
-      const HTMLtemplate = reminderEl.replace("{{nums}}", value.length);
-      log("插入元素到页面", HTMLtemplate);
-      document.querySelector(".ml-area.v-list-area").insertAdjacentHTML("beforeend", HTMLtemplate);
-      keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
-    }
+    document.querySelector(".lite-tools-keywordReminder")?.remove();
+    const HTMLtemplate = reminderEl.replace("{{nums}}", value.length);
+    document.querySelector(".ml-area.v-list-area").insertAdjacentHTML("beforeend", HTMLtemplate);
+    const keywordReminderEl = document.querySelector(".lite-tools-keywordReminder");
     keywordReminderEl.innerText = `${value.length} 条消息有提醒词`;
     keywordReminderEl.addEventListener("click", () => {
       const msgId = value.pop();
@@ -307,7 +304,7 @@ function updateSiderbarNavFuncList() {
 }
 
 function hookUpdate() {
-  document.querySelectorAll(".viewport-list__inner .list-item").forEach((el) => {
+  document.querySelectorAll(".two-col-layout__aside .viewport-list__inner .list-item").forEach((el) => {
     if (!el?.__VUE__?.[1]?.update?.isHooked) {
       const vue = el.__VUE__[1];
       const peerUid = vue.ctx.peerUid;
