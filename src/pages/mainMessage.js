@@ -56,26 +56,12 @@ let curAioData = undefined;
 /**
  * 当前聊天对象的uid
  */
-let curUid = undefined;
+export let curUid = undefined;
 
 /**
  * 侧边栏数据
  */
 let navStore = undefined;
-
-lite_tools.onKeywordReminder((_, peerUid, msgId) => {
-  if (!window.keywordReminder) {
-    window.keywordReminder = new Map();
-  }
-  let value = window.keywordReminder.get(peerUid);
-  if (!value) {
-    value = [];
-  }
-  value.push(msgId);
-  log("新增 关键词提醒", peerUid, msgId, value);
-  window.keywordReminder.set(peerUid, value);
-  injectReminder(curUid);
-});
 
 // 更新可见消息id
 const updateVisibleItem = debounce(() => {

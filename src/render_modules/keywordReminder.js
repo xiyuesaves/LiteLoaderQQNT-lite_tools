@@ -1,9 +1,31 @@
 import { reminderEl } from "./HTMLtemplate.js";
 import { options } from "./options.js";
 import { Logs } from "./logs.js";
+import { curUid } from "../pages/mainMessage.js";
 export const log = new Logs("提醒词模块");
 
+lite_tools.onKeywordReminder((_, peerUid, msgId) => {
+  if (!window.keywordReminder) {
+    window.keywordReminder = new Map();
+  }
+  if (peerUid === curUid) {
+    log("是当前群聊，跳过记录");
+    return;
+  }
+  let value = window.keywordReminder.get(peerUid);
+  if (!value) {
+    value = [];
+  }
+  value.push(msgId);
+  log("新增 关键词提醒", peerUid, msgId, value);
+  window.keywordReminder.set(peerUid, value);
+  injectReminder(curUid);
+});
+
 function injectReminder(uid) {
+  if (!uid) {
+    return;
+  }
   if (!options.keywordReminder.enabled) {
     document.querySelector(".lite-tools-keywordReminder")?.remove();
     return;
