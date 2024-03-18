@@ -781,6 +781,13 @@ function deleteFilesInDirectory(directoryPath, fileToPreserve) {
 
 // 创建窗口时触发
 function onBrowserWindowCreated(window, plugin) {
+  window.webContents.on("before-input-event", async (event, input) => {
+    // 阻止按下 ESC 键时关闭窗口
+    if (input.key == "Escape" && options.preventEscape) {
+      event.preventDefault();
+    }
+  });
+
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
     // 如果打开的是频道窗口且启用了临时修复方法，则直接关闭窗口

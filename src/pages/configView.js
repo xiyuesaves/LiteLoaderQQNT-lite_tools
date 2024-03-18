@@ -252,6 +252,9 @@ async function onConfigView(view) {
   // 未读气泡显示真实数量
   addSwitchEventlistener("message.removeBubbleLimit", ".removeBubbleLimit");
 
+  // 未读气泡显示真实数量
+  addSwitchEventlistener("preventEscape", ".preventEscape");
+
   // 将哔哩哔哩小程序替换为url卡片
   addSwitchEventlistener("message.convertMiniPrgmArk", ".switchDisabledMiniPrgm");
 

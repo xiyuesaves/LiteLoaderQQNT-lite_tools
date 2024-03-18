@@ -87,6 +87,7 @@
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
   "fixAbnormalResourceUsage": false,
+  "preventEscape": false,
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,
