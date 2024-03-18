@@ -13,8 +13,8 @@ CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, li
     return;
   }
 
-  var context = this;
-  var canvas = context.canvas;
+  const context = this;
+  const canvas = context.canvas;
 
   if (typeof maxWidth == "undefined") {
     maxWidth = (canvas && canvas.width) || 300;
@@ -25,16 +25,25 @@ CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, li
   }
 
   // 字符分隔为数组
-  var arrText = text.split("");
-  var line = "";
-
-  for (var n = 0; n < arrText.length; n++) {
-    var testLine = line + arrText[n];
-    var metrics = context.measureText(testLine);
-    var testWidth = metrics.width;
-    if (testWidth > maxWidth && n > 0) {
+  const arrText = text.split("");
+  let line = "";
+  for (let n = 0; n < arrText.length; n++) {
+    let testLine = line;
+    if (arrText[n] !== "\n") {
+      console.log(arrText[n].toString());
+      testLine += arrText[n];
+    }
+    console.log(testLine, arrText[n]);
+    let metrics = context.measureText(testLine);
+    let testWidth = metrics.width;
+    if ((testWidth > maxWidth && n > 0) || arrText[n] === "\n") {
+      console.log(line);
       context.fillText(line, x, y);
-      line = arrText[n];
+      if (arrText[n] !== "\n") {
+        line = arrText[n];
+      } else {
+        line = "";
+      }
       y += lineHeight;
     } else {
       line = testLine;
