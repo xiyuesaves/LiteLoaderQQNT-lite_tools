@@ -34,7 +34,7 @@
   opacity: 0;
   transform: translateY(-30px);
   height: 0;
-  transition: 200ms;
+  transition: 500ms;
   position: relative;
 }
 .lite-tools-toast .lite-tools-toast-item.lite-tools-toast-show {
