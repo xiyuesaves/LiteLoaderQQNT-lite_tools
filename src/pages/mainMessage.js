@@ -1,3 +1,8 @@
+// 背景壁纸模块
+import "../render_modules/wallpaper.js";
+// 消息后缀提示模块
+import "../render_modules/messageTail.js";
+// 配置模块
 import { options, updateOptions } from "../render_modules/options.js";
 // 右键菜单相关操作
 import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
@@ -7,8 +12,6 @@ import { newMessageRecall } from "../render_modules/messageRecall.js";
 import { observerMessageList } from "../render_modules/observerMessageList.js";
 // 监听输入框上方功能
 import { observerChatArea } from "../render_modules/observerChatArea.js";
-// 背景壁纸模块
-import "../render_modules/wallpaper.js";
 // 通用监听输入框编辑事件
 import { observeChatBox } from "../render_modules/observeChatBox.js";
 // 通用聊天消息列表处理模块
@@ -19,8 +22,6 @@ import { touchMoveSelectin } from "../render_modules/touchMoveSelectin.js";
 import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
 import { localEmoticons } from "../render_modules/localEmoticons.js";
-// 消息后缀提示模块
-import "../render_modules/messageTail.js";
 // 打开频道事件
 import { openGuidMainWindow } from "../render_modules/nativeCall.js";
 // 防抖函数
@@ -194,7 +195,7 @@ function chatMessage() {
   document.body.classList.toggle("disabled-badge", options.message.disabledBadge);
 
   // 消息列表只显示头像
-  document.querySelector(".two-col-layout__aside").classList.toggle("only-avatar", options.message.onlyAvatar);
+  document.querySelector(".two-col-layout__aside")?.classList?.toggle("only-avatar", options.message.onlyAvatar);
 
   localEmoticons();
   observeChatTopFunc();
