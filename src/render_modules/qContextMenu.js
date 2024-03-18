@@ -260,6 +260,9 @@ function addEventqContextMenu() {
         if (element.textContent === "回复") {
           element.parentNode.style.color = "green";
         }
+        if (element.textContent === "引用") {
+          element.parentNode.style.color = "green";
+        }
         if (element.textContent === "撤回") {
           element.parentNode.style.color = "red";
         }
