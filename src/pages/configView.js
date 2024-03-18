@@ -252,7 +252,7 @@ async function onConfigView(view) {
   // 未读气泡显示真实数量
   addSwitchEventlistener("message.removeBubbleLimit", ".removeBubbleLimit");
 
-  // 未读气泡显示真实数量
+  // 阻止 ESC 关闭窗口
   addSwitchEventlistener("preventEscape", ".preventEscape");
 
   // 将哔哩哔哩小程序替换为url卡片
@@ -277,10 +277,10 @@ async function onConfigView(view) {
   // 消息靠左显示
   addSwitchEventlistener("message.selfMsgToLeft", ".selfMsgToLeft");
 
-  // 消息靠左显示
+  // 消息列表只显示头像
   addSwitchEventlistener("message.onlyAvatar", ".onlyAvatar");
 
-  // 消息靠左显示
+  // 右键菜单选项高亮
   addSwitchEventlistener("message.HighlightReplies", ".HighlightReplies");
 
   // 消息关键词
