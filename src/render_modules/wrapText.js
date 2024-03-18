@@ -30,14 +30,11 @@ CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, li
   for (let n = 0; n < arrText.length; n++) {
     let testLine = line;
     if (arrText[n] !== "\n") {
-      console.log(arrText[n].toString());
       testLine += arrText[n];
     }
-    console.log(testLine, arrText[n]);
     let metrics = context.measureText(testLine);
     let testWidth = metrics.width;
     if ((testWidth > maxWidth && n > 0) || arrText[n] === "\n") {
-      console.log(line);
       context.fillText(line, x, y);
       if (arrText[n] !== "\n") {
         line = arrText[n];
