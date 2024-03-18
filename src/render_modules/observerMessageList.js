@@ -89,6 +89,11 @@ function processMessageElement() {
     if (options.message.imageAutoWidth && findImageElement) {
       el.classList.add("image-auto-width");
       el.querySelector(".msg-content-container").style.setProperty("--img-max-width-2", `${findImageElement.picElement.picWidth}px`);
+      el.querySelectorAll(".image.pic-element").forEach((imgEl) => {
+        if (imgEl?.__VUE__?.[0]?.props?.picSubType === 0) {
+          imgEl.classList.add("max-width");
+        }
+      });
     }
     // 开启背景时优化小图展示
     if (options.background.enabled) {

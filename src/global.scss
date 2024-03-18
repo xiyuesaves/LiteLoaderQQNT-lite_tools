@@ -61,7 +61,7 @@
   .message-content__wrapper {
     .msg-content-container {
       max-width: var(--img-max-width-2) !important;
-      .image.pic-element {
+      .image.pic-element.max-width {
         width: unset !important;
         height: unset !important;
       }
