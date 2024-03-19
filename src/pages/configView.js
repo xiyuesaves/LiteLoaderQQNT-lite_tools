@@ -183,6 +183,7 @@ async function onConfigView(view) {
 
   // 合并消息
   addSwitchEventlistener("message.mergeMessage", ".mergeMessage");
+  // 合并消息并保留时间
   addSwitchEventlistener("message.mergeMessageKeepTime", ".mergeMessageKeepTime");
 
   // 头像置底
@@ -208,16 +209,19 @@ async function onConfigView(view) {
     lite_tools.setOptions(options);
   });
 
+  // 清除本地撤回数据
   view.querySelector(".clear-localStorage-recall-msg").addEventListener("click", () => {
     log("清除本地数据");
     lite_tools.clearLocalStorageRecallMsg();
   });
+  // 动态更新界面上的撤回数据
   lite_tools.onUpdateRecallListNum((_, num) => {
     view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${num} 条消息`;
   });
+  // 获取本地撤回消息数量
   const recallNum = lite_tools.getRecallListNum();
   view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${recallNum} 条消息`;
-
+  // 查看撤回数据
   view.querySelector(".open-recall-msg-list").addEventListener("click", () => {
     log("查看撤回数据");
     lite_tools.openRecallMsgList();
@@ -252,7 +256,7 @@ async function onConfigView(view) {
   // 未读气泡显示真实数量
   addSwitchEventlistener("message.removeBubbleLimit", ".removeBubbleLimit");
 
-  // 未读气泡显示真实数量
+  // 阻止 ESC 关闭窗口
   addSwitchEventlistener("preventEscape", ".preventEscape");
 
   // 将哔哩哔哩小程序替换为url卡片
@@ -277,10 +281,10 @@ async function onConfigView(view) {
   // 消息靠左显示
   addSwitchEventlistener("message.selfMsgToLeft", ".selfMsgToLeft");
 
-  // 消息靠左显示
+  // 消息列表只显示头像
   addSwitchEventlistener("message.onlyAvatar", ".onlyAvatar");
 
-  // 消息靠左显示
+  // 右键菜单高亮
   addSwitchEventlistener("message.HighlightReplies", ".HighlightReplies");
 
   // 消息关键词
