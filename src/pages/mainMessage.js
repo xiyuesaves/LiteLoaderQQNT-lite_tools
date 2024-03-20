@@ -9,7 +9,7 @@ import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
 // 撤回事件监听
 import { newMessageRecall } from "../render_modules/messageRecall.js";
 // 消息列表监听
-import { observerMessageList } from "../render_modules/observerMessageList.js";
+import "../render_modules/observerMessageList.js";
 // 监听输入框上方功能
 import { observerChatArea } from "../render_modules/observerChatArea.js";
 // 通用监听输入框编辑事件
@@ -202,5 +202,4 @@ function chatMessage() {
   observerChatArea();
   observeChatBox();
   hookUpdate();
-  observerMessageList(".ml-list.list", ".ml-list.list .ml-item");
 }
