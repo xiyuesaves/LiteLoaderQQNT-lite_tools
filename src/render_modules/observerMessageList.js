@@ -277,5 +277,11 @@ function initMessageList() {
     const el = msgList[index];
     messageProcessing(document.querySelector(`[id="${el.id}"]`), el.data);
   }
+  if (!msgList.length) {
+    setTimeout(initMessageList, 1000);
+  }
 }
+// 避免异步数据没有加载
 initMessageList();
+setTimeout(initMessageList, 500);
+setTimeout(initMessageList, 1000);
