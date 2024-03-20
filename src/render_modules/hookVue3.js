@@ -99,19 +99,17 @@ function recordComponent(component) {
 /**
  * 将Vue组件实例挂载到对应元素上
  */
-export function hookVue3() {
-  window.Proxy = new Proxy(window.Proxy, {
-    construct(target, [proxyTarget, proxyHandler]) {
-      const component = proxyTarget?._;
-      if (component?.uid >= 0) {
-        const element = component.vnode.el;
-        if (element) {
-          recordComponent(component);
-        } else {
-          watchComponentMount(component);
-        }
+window.Proxy = new Proxy(window.Proxy, {
+  construct(target, [proxyTarget, proxyHandler]) {
+    const component = proxyTarget?._;
+    if (component?.uid >= 0) {
+      const element = component.vnode.el;
+      if (element) {
+        recordComponent(component);
+      } else {
+        watchComponentMount(component);
       }
-      return new target(proxyTarget, proxyHandler);
-    },
-  });
-}
+    }
+    return new target(proxyTarget, proxyHandler);
+  },
+});

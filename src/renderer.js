@@ -3,13 +3,12 @@
  * @date 2024-01-22
  */
 
-import { hookVue3 } from "./render_modules/hookVue3.js";
+import "./render_modules/hookVue3.js";
 import { initStyle } from "./render_modules/initStyle.js";
 import { Logs } from "./render_modules/logs.js";
 const log = new Logs("主渲染进程模块");
 
 function onLoad() {
-  hookVue3();
   if (location.hash === "#/blank") {
     navigation.addEventListener("navigatesuccess", updateHash, { once: true });
   } else {
