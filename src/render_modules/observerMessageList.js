@@ -346,13 +346,13 @@ export { observerMessageList, processMessageElement };
 //   console.log("getlist");
 //   return patch();
 // };
-
-const debounceMsgMerge = debounce(() => {
+const mergeMessage = () => {
   console.log("更新消息合并");
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
-  curMsgs.forEach((el, index) => {
-    const msgRecord = el.data;
+  for (let index = 0; index < curMsgs.length; index++) {
+    const el = curMsgs[index];
+    const msgRecord = curMsgs[index].data;
     if (msgRecord?.elements?.[0]?.grayTipElement === null) {
       const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
       const senderUid = msgRecord?.senderUid;
@@ -364,25 +364,28 @@ const debounceMsgMerge = debounce(() => {
       const hasShowTimestamp = options.message.mergeMessageKeepTime ? msgRecord?.showTimestamp : false;
       const prevTag = prevElUid + prevNickName;
       const messageEl = document.querySelector(`[id="${el.id}"]`);
-      if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
-        messageEl.classList.remove("merge-main");
-        messageEl.classList.add("merge", "merge-child");
-        childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + messageEl.offsetHeight);
-      } else {
-        messageEl.classList.remove("merge-child");
-        messageEl.classList.add("merge", "merge-main");
-        const avatarEl = messageEl.querySelector(".avatar-span");
-        avatarEl.style.height = `${childElHeight.get(mapTag) + messageEl.querySelector(".message-container").offsetHeight - 4}px`;
-        childElHeight.delete(mapTag);
+      if (messageEl) {
+        if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
+          messageEl.classList.remove("merge-main");
+          messageEl.classList.add("merge", "merge-child");
+          curMsgs[index].height = messageEl.offsetHeight;
+          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + messageEl.offsetHeight);
+        } else {
+          messageEl.classList.remove("merge-child");
+          messageEl.classList.add("merge", "merge-main");
+          const avatarEl = messageEl.querySelector(".avatar-span");
+          avatarEl.style.height = `${childElHeight.get(mapTag) + messageEl.querySelector(".message-container").offsetHeight - 4}px`;
+          childElHeight.delete(mapTag);
+        }
       }
     }
-  });
-});
+  }
+};
+const debounceMsgMerge = debounce(mergeMessage);
 
 window.__VUE_MOUNT__.push((component) => {
   // 处理消息列表
   if (component?.vnode?.el?.classList && component?.vnode?.el?.classList?.contains("message")) {
-    console.log(component);
     const messageEl = component?.vnode?.el;
     if (messageEl) {
       const elProps = component.props;
@@ -578,7 +581,11 @@ window.__VUE_MOUNT__.push((component) => {
         }
         // 连续消息合并
         if (!isForward && options.message.avatarSticky.enabled && options.message.mergeMessage) {
-          debounceMsgMerge();
+          if (true) {
+            debounceMsgMerge();
+          } else {
+            mergeMessage();
+          }
         }
       }
     }
