@@ -361,7 +361,7 @@ const debounceMsgMerge = debounce(() => {
       const nextMsgRecord = curMsgs[index + 1]?.data;
       const prevElUid = nextMsgRecord?.senderUid;
       const prevNickName = nextMsgRecord?.anonymousExtInfo?.anonymousNick ?? nextMsgRecord?.sendNickName;
-      const hasShowTimestamp = options.message.mergeMessageKeepTime ? nextMsgRecord?.showTimestamp : false;
+      const hasShowTimestamp = options.message.mergeMessageKeepTime ? msgRecord?.showTimestamp : false;
       const prevTag = prevElUid + prevNickName;
       const messageEl = document.querySelector(`[id="${el.id}"]`);
       if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
