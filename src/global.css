@@ -354,23 +354,41 @@
   overflow: unset !important;
 }
 
-.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main {
+.screen-mask .chat-header__contact-name {
+  filter: blur(12px);
+}
+.screen-mask .message-content,
+.screen-mask .user-name,
+.screen-mask .ark-item-container,
+.screen-mask .group-notice,
+.screen-mask .group-user__name,
+.screen-mask .list-item__title,
+.screen-mask .summary-main,
+.screen-mask .summary-bubble {
+  filter: blur(12px);
+}
+.screen-mask .avatar {
+  background-image: unset !important;
+  background-color: #8199c1;
+}
+
+.merge-message .ml-root.q-scroll-view .ml-item .merge.merge-main.message {
   padding-top: 15px;
 }
-.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main .avatar-span {
+.merge-message .ml-root.q-scroll-view .ml-item .merge.merge-main .avatar-span {
   position: absolute !important;
   display: grid;
   top: 0 !important;
 }
-.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-main .avatar-span .avatar {
+.merge-message .ml-root.q-scroll-view .ml-item .merge.merge-main .avatar-span .avatar {
   position: sticky !important;
   top: 10px !important;
   bottom: 10px !important;
 }
-.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-child .user-name {
+.merge-message .ml-root.q-scroll-view .ml-item .merge.merge-child .user-name {
   display: none !important;
 }
-.merge-message .ml-root.q-scroll-view .ml-item.merge.merge-child .avatar-span {
+.merge-message .ml-root.q-scroll-view .ml-item .merge.merge-child .avatar-span {
   display: none !important;
 }
 .merge-message .chat-msg-area__vlist .virtual-scroll-area .ml-list.list .ml-item:first-child {

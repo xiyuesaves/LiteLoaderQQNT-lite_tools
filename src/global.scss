@@ -438,13 +438,36 @@
   }
 }
 
+// 打码遮罩 - 测试用
+.screen-mask {
+  .chat-header__contact-name {
+    filter: blur(12px);
+  }
+  .message-content,
+  .user-name,
+  .ark-item-container,
+  .group-notice,
+  .group-user__name,
+  .list-item__title,
+  .summary-main,
+  .summary-bubble {
+    filter: blur(12px);
+  }
+  .avatar {
+    background-image: unset !important;
+    background-color: #8199c1;
+  }
+}
+
 // 消息合并样式
 .merge-message {
   .ml-root.q-scroll-view {
     .ml-item {
-      &.merge {
+      .merge {
         &.merge-main {
-          padding-top: 15px;
+          &.message {
+            padding-top: 15px;
+          }
           .avatar-span {
             position: absolute !important;
             display: grid;
