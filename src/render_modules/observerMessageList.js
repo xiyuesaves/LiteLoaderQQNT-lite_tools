@@ -346,7 +346,10 @@ export { observerMessageList, processMessageElement };
 //   console.log("getlist");
 //   return patch();
 // };
-const mergeMessage = () => {
+
+const msgElMergeType = new Map();
+
+const mergeMessage = async () => {
   console.log("更新消息合并");
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
@@ -363,19 +366,21 @@ const mergeMessage = () => {
       const prevNickName = nextMsgRecord?.anonymousExtInfo?.anonymousNick ?? nextMsgRecord?.sendNickName;
       const hasShowTimestamp = options.message.mergeMessageKeepTime ? msgRecord?.showTimestamp : false;
       const prevTag = prevElUid + prevNickName;
-      const messageEl = document.querySelector(`[id="${el.id}"]`);
+      const messageEl = document.querySelector(`[id="${el.id}"] .message`);
       if (messageEl) {
         if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
           messageEl.classList.remove("merge-main");
           messageEl.classList.add("merge", "merge-child");
           curMsgs[index].height = messageEl.offsetHeight;
           childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + messageEl.offsetHeight);
+          msgElMergeType.set(curMsgs[index].id, "merge-child");
         } else {
           messageEl.classList.remove("merge-child");
           messageEl.classList.add("merge", "merge-main");
           const avatarEl = messageEl.querySelector(".avatar-span");
           avatarEl.style.height = `${childElHeight.get(mapTag) + messageEl.querySelector(".message-container").offsetHeight - 4}px`;
           childElHeight.delete(mapTag);
+          msgElMergeType.set(curMsgs[index].id, "merge-main");
         }
       }
     }
@@ -581,11 +586,12 @@ window.__VUE_MOUNT__.push((component) => {
         }
         // 连续消息合并
         if (!isForward && options.message.avatarSticky.enabled && options.message.mergeMessage) {
-          if (true) {
-            debounceMsgMerge();
-          } else {
-            mergeMessage();
+          const oldType = msgElMergeType.get(elProps?.msgRecord?.msgId);
+          if (oldType) {
+            messageEl.classList.add("merge", oldType);
+            console.log("找到历史保存数据")
           }
+          debounceMsgMerge();
         }
       }
     }
