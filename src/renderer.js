@@ -10,7 +10,6 @@ const log = new Logs("主渲染进程模块");
 
 function onLoad() {
   hookVue3();
-  initStyle();
   if (location.hash === "#/blank") {
     navigation.addEventListener("navigatesuccess", updateHash, { once: true });
   } else {
@@ -24,18 +23,22 @@ function onLoad() {
     }
     if (hash.includes("#/chat")) {
       app.classList.add("lite-tools-chat");
+      initStyle();
       import("./pages/chatMessage.js");
       log("进入独立聊天窗口");
     } else if (hash.includes("#/forward")) {
       app.classList.add("lite-tools-forward");
+      initStyle();
       import("./pages/forward.js");
       log("进入转发窗口");
     } else if (hash.includes("#/main/message")) {
       app.classList.add("lite-tools-main");
+      initStyle();
       import("./pages/mainMessage.js");
       log("进入主窗口");
     } else if (hash.includes("#/image-viewer")) {
       app.classList.add("lite-tools-image-viewer");
+      initStyle();
       import("./pages/imageViewer.js");
       log("进入媒体预览窗口");
     }
