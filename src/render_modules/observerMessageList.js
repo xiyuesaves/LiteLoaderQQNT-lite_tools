@@ -19,7 +19,6 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
 const msgElMergeType = new Map();
 
 const mergeMessage = async () => {
-  console.log("更新消息合并");
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
   for (let index = 0; index < curMsgs.length; index++) {
@@ -58,12 +57,15 @@ const mergeMessage = async () => {
 const debounceMsgMerge = debounce(mergeMessage);
 
 window.__VUE_MOUNT__.push((component) => {
+  messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+});
+
+function messageProcessing(target, msgRecord) {
   // 处理消息列表
-  if (component?.vnode?.el?.classList && component?.vnode?.el?.classList?.contains("message")) {
-    const messageEl = component?.vnode?.el;
+  if (target?.classList && target?.classList?.contains("message") && msgRecord) {
+    const messageEl = target;
     if (messageEl) {
-      const elProps = component.props;
-      if (chatTypes.includes(elProps?.msgRecord?.chatType)) {
+      if (chatTypes.includes(msgRecord?.chatType)) {
         // 消息靠左
         if (options.message.selfMsgToLeft) {
           messageEl.querySelector(".message-container")?.classList?.remove("message-container--self");
@@ -71,9 +73,7 @@ window.__VUE_MOUNT__.push((component) => {
           messageEl.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
         }
         // 图片自适应宽度
-        const findImageElement = elProps?.msgRecord?.elements?.find(
-          (element) => element?.picElement && element?.picElement?.picSubType === 0,
-        );
+        const findImageElement = msgRecord?.elements?.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
         if (options.message.imageAutoWidth && findImageElement) {
           messageEl.classList.add("image-auto-width");
           messageEl
@@ -119,9 +119,7 @@ window.__VUE_MOUNT__.push((component) => {
           } else if (bubbleInside) {
             // 如果是图片则额外判断一次
             if (bubbleInside.classList.contains("mix-message__container--pic")) {
-              const picEl = bubbleInside.querySelector(".pic-element");
-              console.log("图片消息", component);
-              const elements = component?.props?.msgRecord?.elements;
+              const elements = msgRecord?.elements;
               if (
                 elements.length === 1 &&
                 elements[0].picElement &&
@@ -156,7 +154,7 @@ window.__VUE_MOUNT__.push((component) => {
         // 插入消息时间
         if (slotEl && options.message.showMsgTime) {
           if (!messageEl.querySelector(".lite-tools-time")) {
-            const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
+            const find = (msgRecord?.msgTime ?? 0) * 1000;
             if (find) {
               const newTimeEl = document.createElement("div");
               const showTime = new Date(find).toLocaleTimeString("zh-CN", {
@@ -205,7 +203,7 @@ window.__VUE_MOUNT__.push((component) => {
         if (slotEl && options.preventMessageRecall.enabled) {
           // 撤回插入元素
           if (!messageEl.querySelector(".lite-tools-recall")) {
-            const find = elProps?.msgRecord?.lite_tools_recall;
+            const find = msgRecord?.lite_tools_recall;
             if (find) {
               // 通用消息撤回处理方法
               messageRecall(messageEl, find);
@@ -218,7 +216,7 @@ window.__VUE_MOUNT__.push((component) => {
           if (messageEl.querySelector(filterClass) && !messageEl.querySelector(".message-content-replace")) {
             const msgEl = messageEl.querySelector(".message-content__wrapper");
             const newReplaceEl = document.createElement("div");
-            const msgId = elProps?.msgRecord?.msgId;
+            const msgId = msgRecord?.msgId;
             let doubleClick = false;
             newReplaceEl.classList.add("message-content-replace");
             newReplaceEl.innerText = "+1";
@@ -262,7 +260,7 @@ window.__VUE_MOUNT__.push((component) => {
         }
         // 连续消息合并
         if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
-          const oldType = msgElMergeType.get(elProps?.msgRecord?.msgId);
+          const oldType = msgElMergeType.get(msgRecord?.msgId);
           if (oldType) {
             messageEl.classList.add("merge", oldType);
           }
@@ -271,4 +269,13 @@ window.__VUE_MOUNT__.push((component) => {
       }
     }
   }
-});
+}
+
+function initMessageList() {
+  const msgList = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
+  for (let index = 0; index < msgList.length; index++) {
+    const el = msgList[index];
+    messageProcessing(document.querySelector(`[id="${el.id}"]`), el.data);
+  }
+}
+initMessageList();
