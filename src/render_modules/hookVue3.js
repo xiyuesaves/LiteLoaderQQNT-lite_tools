@@ -1,5 +1,3 @@
-import { Logs } from "./logs.js";
-const log = new Logs("hookVue3");
 // hookVue3 功能来自 LLAPI
 const elements = new WeakMap();
 window.__VUE_ELEMENTS__ = elements;
