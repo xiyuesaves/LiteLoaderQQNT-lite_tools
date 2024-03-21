@@ -212,7 +212,7 @@ function messageProcessing(target, msgRecord) {
           }
         }
         // 插入+1按钮
-        if (slotEl && options.message.replaceBtn) {
+        if (slotEl && options.message.replaceBtn && !msgRecord?.lite_tools_recall) {
           // +1插入元素
           if (messageEl.querySelector(filterClass) && !messageEl.querySelector(".message-content-replace")) {
             const msgEl = messageEl.querySelector(".message-content__wrapper");
