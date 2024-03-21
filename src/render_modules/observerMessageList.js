@@ -271,17 +271,21 @@ function messageProcessing(target, msgRecord) {
   }
 }
 
-function initMessageList() {
+const initMessageList = () => {
   const msgList = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
+  console.log("初始化")
+  if (!msgList.length) {
+    debounceInitMessageList();
+  }
   for (let index = 0; index < msgList.length; index++) {
     const el = msgList[index];
-    messageProcessing(document.querySelector(`[id="${el.id}"]`), el.data);
+    const messageEl = document.querySelector(`[id="${el.id}"] .message`);
+    if (messageEl) {
+      messageProcessing(messageEl, el.data);
+    } else {
+      debounceInitMessageList();
+    }
   }
-  if (!msgList.length) {
-    setTimeout(initMessageList, 1000);
-  }
-}
-// 避免异步数据没有加载
+};
+const debounceInitMessageList = debounce(initMessageList, 100);
 initMessageList();
-setTimeout(initMessageList, 500);
-setTimeout(initMessageList, 1000);
