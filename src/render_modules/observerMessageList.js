@@ -18,7 +18,7 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
  */
 const msgElMergeType = new Map();
 
-const mergeMessage = async () => {
+const processingMsgList = async () => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
   for (let index = 0; index < curMsgs.length; index++) {
@@ -58,7 +58,7 @@ const mergeMessage = async () => {
     }
   }
 };
-const debounceMsgMerge = debounce(mergeMessage);
+const debounceProcessingMsgList = debounce(processingMsgList);
 
 window.__VUE_MOUNT__.push((component) => {
   messageToleft(component);
@@ -268,7 +268,8 @@ function messageProcessing(target, msgRecord) {
           if (oldType) {
             messageEl.classList.add("merge", oldType);
           }
-          debounceMsgMerge();
+          // 传统处理流传
+          debounceProcessingMsgList();
         }
       }
     }
