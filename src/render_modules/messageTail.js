@@ -64,6 +64,8 @@ function messageTail() {
     } else {
       document.querySelector(".lite-tools-tail-tips")?.remove();
     }
+  } else {
+    document.querySelector(".lite-tools-tail-tips")?.remove();
   }
 }
 function updateTail() {
