@@ -46,7 +46,7 @@ const mergeMessage = async () => {
           messageEl.classList.remove("merge-child");
           messageEl.classList.add("merge", "merge-main");
           const avatarEl = messageEl.querySelector(".avatar-span");
-          avatarEl.style.height = `${childElHeight.get(mapTag) + messageEl.querySelector(".message-container").offsetHeight - 4}px`;
+          avatarEl.style.height = `${(childElHeight.get(mapTag) ?? 0) + messageEl.offsetHeight - 15 - 4}px`;
           childElHeight.delete(mapTag);
           msgElMergeType.set(curMsgs[index].id, "merge-main");
         }
