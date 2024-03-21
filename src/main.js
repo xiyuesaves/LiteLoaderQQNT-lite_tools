@@ -845,7 +845,8 @@ function onBrowserWindowCreated(window, plugin) {
               }
             });
             // 必须含有peerUid且匹配到后缀数据
-            if (peerUid && tail) {
+            log(tail);
+            if (peerUid && tail && !tail.disabled) {
               const tailContext = tail.content;
               const newLine = tail.newLine;
               args[3][1][1].msgElements.forEach((el) => {
@@ -1187,7 +1188,7 @@ function addCommonlyEmoticons(event, src) {
 
 // 判断chatType是否为需要处理的类型
 function checkChatType(peer) {
-  return [1, 2].includes(peer?.chatType);
+  return [1, 2, 100].includes(peer?.chatType);
 }
 
 module.exports = {

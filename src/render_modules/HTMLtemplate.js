@@ -11,6 +11,12 @@ const tailElement = `<div class="ruls-item">
     </div>
   </div>
   <div class="tail-opt">
+    临时禁用：
+    <div class="msg-tail-disabled q-switch">
+      <span class="q-switch__handle"></span>
+    </div>
+  </div>
+  <div class="tail-opt">
     匹配群组：
     <input placeholder="留空为全局匹配，多个匹配项用“,”隔开" spellcheck="false" class="input-text-active-show rule-group-list" />
   </div>

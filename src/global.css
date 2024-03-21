@@ -801,9 +801,19 @@
 }
 
 .lite-tools-tail-tips {
+  border-radius: 4px;
+  border: solid 1px var(--emoticons-folder-name-color);
+  height: 26px;
+  box-sizing: border-box;
+  padding: 0 6px;
+  line-height: 24px;
+  cursor: pointer;
   font-size: 12px;
   margin-right: 8px;
   opacity: 0.6;
+}
+.lite-tools-tail-tips.disabled-tail {
+  text-decoration: line-through;
 }
 
 .message-panel .two-col-layout__aside.only-avatar {

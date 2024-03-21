@@ -495,6 +495,7 @@ async function onConfigView(view) {
     view.querySelector(".select-background-wallpaper-clear").value = opt.background.url;
     view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
     view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
+    tailList?.updateOptions();
     customTextColorEl.value = options.preventMessageRecall.textColor;
   });
 }

@@ -15,10 +15,19 @@ class TailList {
     this.parser = new DOMParser();
     this.init();
   }
+  updateOptions() {
+    options.tail.list.forEach((tail) => {
+      this.list.find((el) => el.id === tail.id).disabled = tail.disabled;
+      this.ElementList.find((el) => el.getAttribute("data-id") === tail.id)
+        .querySelector(".msg-tail-disabled")
+        .classList.toggle("is-active", tail.disabled);
+    });
+  }
   createNewTail() {
     this.list.unshift({
       id: crypto.randomUUID(),
       newLine: false,
+      disabled: false,
       filter: [""],
       content: "",
     });
@@ -44,12 +53,14 @@ class TailList {
   }
   newTail(tail) {
     const tailEl = this.parser.parseFromString(tailElement, "text/html").querySelector(".ruls-item");
+    tailEl.setAttribute("data-id", tail.id);
     const deleteEl = tailEl.querySelector(".delete");
     const toUpEl = tailEl.querySelector(".to-up");
     const toDownEl = tailEl.querySelector(".to-down");
     const tailContext = tailEl.querySelector(".tail-context");
     const ruleGroupList = tailEl.querySelector(".rule-group-list");
     const msgTailNewline = tailEl.querySelector(".msg-tail-newline");
+    const msgTailDisabled = tailEl.querySelector(".msg-tail-disabled");
 
     deleteEl.innerHTML = deleteIcon;
     toUpEl.innerHTML = foldIcon;
@@ -61,11 +72,18 @@ class TailList {
     tailContext.value = tail.content;
     ruleGroupList.value = tail.filter.join(",");
     msgTailNewline.classList.toggle("is-active", tail.newLine);
+    msgTailDisabled.classList.toggle("is-active", tail.disabled);
 
     // 监听换行开关
     msgTailNewline.addEventListener("click", () => {
       tail.newLine = !tail.newLine;
       msgTailNewline.classList.toggle("is-active", tail.newLine);
+      this.updateOption();
+    });
+    // 监听临时禁用开关
+    msgTailDisabled.addEventListener("click", () => {
+      tail.disabled = !tail.disabled;
+      msgTailDisabled.classList.toggle("is-active", tail.disabled);
       this.updateOption();
     });
     // 监听后缀内容修改
@@ -96,6 +114,7 @@ class TailList {
   rearrangeItem(id, offset) {
     const moveIndex = this.list.findIndex((tail) => tail.id === id);
     const targetIndex = moveIndex + offset;
+    log(moveIndex, targetIndex);
     if (targetIndex >= 0) {
       [this.list[moveIndex], this.list[targetIndex]] = [this.list[targetIndex], this.list[moveIndex]];
       [this.ElementList[moveIndex], this.ElementList[targetIndex]] = [this.ElementList[targetIndex], this.ElementList[moveIndex]];
