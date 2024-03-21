@@ -61,18 +61,14 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
-    srcset="
-      https://api.star-history.com/svg?repos=xiyuesaves/LiteLoaderQQNT-lite_tools&type=Date&theme=dark
-    "
+    srcset="https://starchart.cc/xiyuesaves/LiteLoaderQQNT-lite_tools.svg?background=%23ffffff00&axis=%23e6edf3&line=%2321acec"
   />
   <source
     media="(prefers-color-scheme: light)"
-    srcset="
-      https://api.star-history.com/svg?repos=xiyuesaves/LiteLoaderQQNT-lite_tools&type=Date
-    "
+    srcset="https://starchart.cc/xiyuesaves/LiteLoaderQQNT-lite_tools.svg?background=%23ffffff00&axis=%231a1a1a&line=%2321acec"
   />
   <img
     alt="Star History Chart"
-    src="https://api.star-history.com/svg?repos=xiyuesaves/LiteLoaderQQNT-lite_tools&type=Date"
+    src="https://starchart.cc/xiyuesaves/LiteLoaderQQNT-lite_tools.svg?background=%23ffffff00&axis=%231a1a1a&line=%2321acec"
   />
 </picture>
