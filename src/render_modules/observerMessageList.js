@@ -36,6 +36,10 @@ const mergeMessage = async () => {
       const prevTag = prevElUid + prevNickName;
       const messageEl = document.querySelector(`[id="${el.id}"] .message`);
       if (messageEl) {
+        // 额外处理下历史撤回数据
+        if (msgRecord?.lite_tools_recall) {
+          messageRecall(messageEl, msgRecord?.lite_tools_recall);
+        }
         if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
           messageEl.classList.remove("merge-main");
           messageEl.classList.add("merge", "merge-child");
@@ -204,10 +208,9 @@ function messageProcessing(target, msgRecord) {
         if (slotEl && options.preventMessageRecall.enabled) {
           // 撤回插入元素
           if (!messageEl.querySelector(".lite-tools-recall")) {
-            const find = msgRecord?.lite_tools_recall;
-            if (find) {
+            if (msgRecord?.lite_tools_recall) {
               // 通用消息撤回处理方法
-              messageRecall(messageEl, find);
+              messageRecall(messageEl, msgRecord?.lite_tools_recall);
             }
           }
         }
