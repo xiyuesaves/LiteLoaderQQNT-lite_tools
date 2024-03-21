@@ -307,3 +307,16 @@ const initMessageList = () => {
 };
 const debounceInitMessageList = debounce(initMessageList, 100);
 initMessageList();
+
+function initObserver() {
+  const mlList = document.querySelector(".ml-area.v-list-area .virtual-scroll-area .ml-list.list");
+  if (mlList) {
+    new MutationObserver(debounceProcessingMsgList).observe(mlList, {
+      childList: true,
+      subtree: true,
+    });
+  } else {
+    setTimeout(initObserver, 500);
+  }
+}
+initObserver();
