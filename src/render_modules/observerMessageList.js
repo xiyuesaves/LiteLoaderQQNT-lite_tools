@@ -57,6 +57,7 @@ const mergeMessage = async () => {
 const debounceMsgMerge = debounce(mergeMessage);
 
 window.__VUE_MOUNT__.push((component) => {
+  messageToleft(component);
   messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
 });
 
@@ -271,9 +272,22 @@ function messageProcessing(target, msgRecord) {
   }
 }
 
+function messageToleft(component) {
+  if (options.message.selfMsgToLeft && component?.vnode?.el?.classList?.contains("message-container")) {
+    Object.defineProperty(component.proxy, "isSelfAlignRight", {
+      enumerable: true,
+      configurable: true,
+      get() {
+        return false;
+      },
+      set() {},
+    });
+  }
+}
+
 const initMessageList = () => {
   const msgList = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
-  console.log("初始化")
+  console.log("初始化");
   if (!msgList.length) {
     debounceInitMessageList();
   }
