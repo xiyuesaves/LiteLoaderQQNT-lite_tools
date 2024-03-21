@@ -21,6 +21,8 @@ function messageRecall(el, find) {
     messageRecallEl.title = `消息于 ${new Date(find.recallTime * 1000).toLocaleString()} 被 ${
       find.operatorMemRemark || find.operatorRemark || find.operatorNick
     } 撤回`;
+    // 移除可能的+1按钮
+    slot.querySelector(".message-content-replace")?.remove();
     // 添加自定义样式
     if (options.preventMessageRecall.customColor) {
       messageRecallEl.classList.add("custom-color");
@@ -29,7 +31,7 @@ function messageRecall(el, find) {
     // 计算偏移量
     messageRecallEl.classList.add("lite-tools-recall");
     const offsetRight = slot.offsetWidth;
-    messageRecallEl.style["--offsetRight"] = `${offsetRight}px`
+    messageRecallEl.style["--offsetRight"] = `${offsetRight}px`;
     slot.classList.add("recall-tag");
     slot.insertBefore(messageRecallEl, slot.firstChild);
   }
