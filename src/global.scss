@@ -60,11 +60,14 @@
 .image-auto-width {
   .message-content__wrapper {
     .msg-content-container {
-      max-width: var(--img-max-width-2) !important;
       .image.pic-element.max-width {
+        max-width: var(--img-max-width-2) !important;
         width: unset !important;
         height: unset !important;
       }
+    }
+    .mix-message__container--pic{
+      max-width: var(--img-max-width-2) !important;
     }
   }
 }

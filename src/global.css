@@ -47,12 +47,13 @@
   color: unset !important;
 }
 
-.image-auto-width .message-content__wrapper .msg-content-container {
-  max-width: var(--img-max-width-2) !important;
-}
 .image-auto-width .message-content__wrapper .msg-content-container .image.pic-element.max-width {
+  max-width: var(--img-max-width-2) !important;
   width: unset !important;
   height: unset !important;
+}
+.image-auto-width .message-content__wrapper .mix-message__container--pic {
+  max-width: var(--img-max-width-2) !important;
 }
 
 /* 修复图片预览窗口悬浮窗文本模糊 */
