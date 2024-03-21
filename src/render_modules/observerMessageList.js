@@ -45,13 +45,13 @@ const processingMsgList = async () => {
           messageEl.classList.remove("merge-main");
           messageEl.classList.add("merge", "merge-child");
           curMsgs[index].height = messageEl.offsetHeight;
-          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + messageEl.offsetHeight);
+          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight);
           msgElMergeType.set(curMsgs[index].id, "merge-child");
         } else {
           messageEl.classList.remove("merge-child");
           messageEl.classList.add("merge", "merge-main");
           const avatarEl = messageEl.querySelector(".avatar-span");
-          avatarEl.style.height = `${(childElHeight.get(mapTag) ?? 0) + messageEl.offsetHeight - 15 - 4}px`;
+          avatarEl.style.height = `${(childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight - 4}px`;
           childElHeight.delete(mapTag);
           msgElMergeType.set(curMsgs[index].id, "merge-main");
         }
@@ -62,8 +62,12 @@ const processingMsgList = async () => {
 const debounceProcessingMsgList = debounce(processingMsgList);
 
 window.__VUE_MOUNT__.push((component) => {
-  messageToleft(component);
-  messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+  try {
+    messageToleft(component);
+    messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+  } catch (err) {
+    log("出现错误", err);
+  }
 });
 
 function messageProcessing(target, msgRecord) {
