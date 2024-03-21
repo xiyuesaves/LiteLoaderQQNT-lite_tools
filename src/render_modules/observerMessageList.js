@@ -23,8 +23,14 @@ const processingMsgList = async () => {
   const childElHeight = new Map();
   for (let index = 0; index < curMsgs.length; index++) {
     const el = curMsgs[index];
+    const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     const msgRecord = curMsgs[index].data;
-    if (msgRecord?.elements?.[0]?.grayTipElement === null) {
+    // 额外处理下历史撤回数据
+    if (msgRecord?.lite_tools_recall) {
+      messageRecall(messageEl, msgRecord?.lite_tools_recall);
+    }
+    // 消息合并逻辑
+    if (msgRecord?.elements?.[0]?.grayTipElement === null && options.message.avatarSticky.enabled && options.message.mergeMessage) {
       const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
       const senderUid = msgRecord?.senderUid;
       const sendNickName = msgRecord?.anonymousExtInfo?.anonymousNick ?? msgRecord?.sendNickName;
@@ -34,12 +40,7 @@ const processingMsgList = async () => {
       const prevNickName = nextMsgRecord?.anonymousExtInfo?.anonymousNick ?? nextMsgRecord?.sendNickName;
       const hasShowTimestamp = options.message.mergeMessageKeepTime ? msgRecord?.showTimestamp : false;
       const prevTag = prevElUid + prevNickName;
-      const messageEl = document.querySelector(`[id="${el.id}"] .message`);
       if (messageEl) {
-        // 额外处理下历史撤回数据
-        if (msgRecord?.lite_tools_recall) {
-          messageRecall(messageEl, msgRecord?.lite_tools_recall);
-        }
         if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
           messageEl.classList.remove("merge-main");
           messageEl.classList.add("merge", "merge-child");
@@ -268,9 +269,9 @@ function messageProcessing(target, msgRecord) {
           if (oldType) {
             messageEl.classList.add("merge", oldType);
           }
-          // 传统处理流传
-          debounceProcessingMsgList();
         }
+        // 传统处理流传
+        debounceProcessingMsgList();
       }
     }
   }
