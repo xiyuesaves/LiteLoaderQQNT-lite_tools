@@ -12,7 +12,7 @@ import { options, updateOptions } from "../render_modules/options.js";
 import { TailList } from "../render_modules/tailList.js";
 // 引入图标
 import { pluginIcon } from "../render_modules/svg.js";
-
+// 鸡蛋
 import "../render_modules/eggs.js";
 
 // 配置界面日志
@@ -64,9 +64,6 @@ async function onConfigView(view) {
   });
   // 显示插件版本信息
   view.querySelector(".version .link").innerText = LiteLoader.plugins.lite_tools.manifest.version;
-
-  // 获取侧边栏按钮列表
-  // options.sidebar = await lite_tools.getSidebar({ type: "get" });
 
   const sidebar = view.querySelector(".sidebar ul");
   const textArea = view.querySelector(".textArea ul");

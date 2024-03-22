@@ -14,7 +14,7 @@ function showToast(content, type, duration) {
   setTimeout(() => {
     toast.classList.add("lite-tools-toast-show");
   });
-  setTimeout(() => {
+  const timeout = setTimeout(() => {
     toast.addEventListener(
       "transitionend",
       () => {
@@ -24,6 +24,7 @@ function showToast(content, type, duration) {
     );
     toast.classList.remove("lite-tools-toast-show");
   }, duration);
+  toast.timeout = timeout;
 }
 
 function createToastEl(content, type) {
@@ -37,8 +38,19 @@ function getIcon(type) {
       return successIcon;
     case "error":
       return errorIcon;
+    case "none":
+      return "";
+    case "default":
     default:
       return defaultIcon;
   }
 }
-export { showToast };
+
+function clearToast() {
+  document.querySelectorAll(".lite-tools-toast-item").forEach((toast) => {
+    clearTimeout(toast.timeout);
+    toast.addEventListener("transitionend", () => {}, { once: true });
+    toast.classList.remove("lite-tools-toast-show");
+  });
+}
+export { showToast, clearToast };

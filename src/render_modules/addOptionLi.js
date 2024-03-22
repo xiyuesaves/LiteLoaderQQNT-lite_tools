@@ -1,4 +1,5 @@
 import { options } from "./options.js";
+import { switchButtons } from "./eggs.js";
 
 /**
  * 向设置界面插入动态选项
@@ -23,6 +24,7 @@ function addOptionLi(list, element, objKey, key) {
       Function("options", `options.${objKey}[${index}].${key} = ${this.classList.contains("is-active")}`)(options);
       this.classList.toggle("is-active");
       lite_tools.setOptions(options);
+      switchButtons();
     });
     const span = document.createElement("span");
     span.classList.add("q-switch__handle");

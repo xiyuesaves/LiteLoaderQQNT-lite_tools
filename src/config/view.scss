@@ -1,4 +1,33 @@
 .lite-tools-settings {
+  &.eggs {
+    animation: eggs 1s infinite linear;
+    .wrap {
+      h2 {
+        filter: hue-rotate(90deg);
+      }
+      * {
+        color: var(--brand_standard, var(--fill_standard_primary)) !important;
+      }
+    }
+  }
+  @keyframes eggs {
+    0% {
+      filter: drop-shadow(-4px -4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(0deg) grayscale(10%);
+    }
+    25% {
+      filter: drop-shadow(4px -4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(90deg) grayscale(10%);
+    }
+    50% {
+      filter: drop-shadow(4px 4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(180deg) grayscale(10%);
+    }
+    75% {
+      filter: drop-shadow(-4px 4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(270deg) grayscale(10%);
+    }
+    100% {
+      filter: drop-shadow(-4px -4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(360deg) grayscale(10%);
+    }
+  }
+
   .select-default-save-file-input-clear,
   .select-local-emoticons-folder-clear,
   .select-background-wallpaper-clear {

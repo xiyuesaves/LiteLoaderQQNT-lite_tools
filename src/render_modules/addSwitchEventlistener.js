@@ -1,4 +1,5 @@
 import { options } from "./options.js";
+import { switchButtons } from "./eggs.js";
 
 /**
  * 初始化设置界面监听方法
@@ -35,6 +36,7 @@ function SwitchEventlistener(viewEl) {
       if (callback) {
         callback(event, this.classList.contains("is-active"));
       }
+      switchButtons();
     });
   }
   return addSwitchEventlistener;

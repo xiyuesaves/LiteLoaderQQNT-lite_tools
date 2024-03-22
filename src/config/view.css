@@ -17,6 +17,32 @@
   /* 选择框选项菜单-图标 */
   /* 选择框选项菜单-选择后图标 */
 }
+.lite-tools-settings.eggs {
+  animation: eggs 1s infinite linear;
+}
+.lite-tools-settings.eggs .wrap h2 {
+  filter: hue-rotate(90deg);
+}
+.lite-tools-settings.eggs .wrap * {
+  color: var(--brand_standard, var(--fill_standard_primary)) !important;
+}
+@keyframes eggs {
+  0% {
+    filter: drop-shadow(-4px -4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(0deg) grayscale(10%);
+  }
+  25% {
+    filter: drop-shadow(4px -4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(90deg) grayscale(10%);
+  }
+  50% {
+    filter: drop-shadow(4px 4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(180deg) grayscale(10%);
+  }
+  75% {
+    filter: drop-shadow(-4px 4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(270deg) grayscale(10%);
+  }
+  100% {
+    filter: drop-shadow(-4px -4px 0 var(--brand_standard, var(--fill_standard_primary))) hue-rotate(360deg) grayscale(10%);
+  }
+}
 .lite-tools-settings .select-default-save-file-input-clear,
 .lite-tools-settings .select-local-emoticons-folder-clear,
 .lite-tools-settings .select-background-wallpaper-clear {
