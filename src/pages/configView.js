@@ -12,8 +12,6 @@ import { options, updateOptions } from "../render_modules/options.js";
 import { TailList } from "../render_modules/tailList.js";
 // 引入图标
 import { pluginIcon } from "../render_modules/svg.js";
-// 鸡蛋
-import "../render_modules/eggs.js";
 
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
