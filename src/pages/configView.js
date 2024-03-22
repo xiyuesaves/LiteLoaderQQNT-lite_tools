@@ -13,6 +13,8 @@ import { TailList } from "../render_modules/tailList.js";
 // 引入图标
 import { pluginIcon } from "../render_modules/svg.js";
 
+import "../render_modules/eggs.js";
+
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("配置界面");
