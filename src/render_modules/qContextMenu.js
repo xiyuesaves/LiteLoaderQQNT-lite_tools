@@ -363,6 +363,15 @@ async function createSticker(config) {
     zoom = 2;
   }
 
+  let userNameColor = "#999999";
+  let msgBoxColor = "#ffffff";
+  let contextColor = "#333333";
+  if (app.__vue_app__.config.globalProperties.$store.state.common_AppearanceModeSetting.isDark) {
+    userNameColor = "#808080";
+    msgBoxColor = "#262626";
+    contextColor = "#f2f2f2";
+  }
+
   // 测量用户id长度
   ctx.save();
   ctx.font = 12 + "px " + config.fontFamily;
@@ -387,20 +396,20 @@ async function createSticker(config) {
   // 绘制用户名
   ctx.save();
   ctx.font = 12 * zoom + "px " + config.fontFamily;
-  ctx.fillStyle = "#999999";
+  ctx.fillStyle = userNameColor;
   ctx.fillText(config.userName, 42 * zoom, 14 * zoom);
   ctx.restore();
   // 绘制气泡框
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(42 * zoom, 20 * zoom, (config.width + 20) * zoom, (config.height + 16) * zoom, 8 * zoom);
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = msgBoxColor;
   ctx.fill();
   ctx.restore();
   // 绘制文本
   ctx.save();
   ctx.font = 14 * zoom + "px " + config.fontFamily;
-  ctx.fillStyle = "#333333";
+  ctx.fillStyle = contextColor;
   ctx.wrapText(config.content, 52 * zoom, 41 * zoom, (config.width + 2) * zoom, 22 * zoom);
   ctx.restore();
   const base64 = canvasEl.toDataURL("image/png", 1);
