@@ -21,7 +21,8 @@ const msgElMergeType = new Map();
 const processingMsgList = async () => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
-  for (let index = 0; index < curMsgs.length; index++) {
+  const curMsgsLength = curMsgs.length;
+  for (let index = 0; index < curMsgsLength; index++) {
     const el = curMsgs[index];
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     const msgRecord = curMsgs[index].data;
@@ -63,8 +64,10 @@ const debounceProcessingMsgList = debounce(processingMsgList);
 
 window.__VUE_MOUNT__.push((component) => {
   try {
-    messageToleft(component);
-    messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+    if (!options.compatibleLLAPI) {
+      messageToleft(component);
+      messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+    }
   } catch (err) {
     log("出现错误", err);
   }
@@ -294,29 +297,35 @@ function messageToleft(component) {
   }
 }
 
-const initMessageList = () => {
-  const msgList = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
-  console.log("初始化");
-  if (!msgList.length) {
+const initMessageList = (compatibleLLAPI = false) => {
+  const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
+  const curMsgsLength = curMsgs.length;
+  if (!curMsgs.length && !compatibleLLAPI) {
     debounceInitMessageList();
   }
-  for (let index = 0; index < msgList.length; index++) {
-    const el = msgList[index];
+  for (let index = 0; index < curMsgsLength; index++) {
+    const el = curMsgs[index];
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     if (messageEl) {
       messageProcessing(messageEl, el.data);
-    } else {
+    } else if (!compatibleLLAPI) {
       debounceInitMessageList();
     }
   }
 };
-const debounceInitMessageList = debounce(initMessageList, 100);
+const debounceInitMessageList = debounce(initMessageList, 10);
 initMessageList();
 
+// 初始化监听器
 function initObserver() {
   const mlList = document.querySelector(".ml-area.v-list-area .virtual-scroll-area .ml-list.list");
   if (mlList) {
-    new MutationObserver(debounceProcessingMsgList).observe(mlList, {
+    new MutationObserver(() => {
+      if (options.compatibleLLAPI) {
+        initMessageList(true);
+      }
+      debounceProcessingMsgList();
+    }).observe(mlList, {
       childList: true,
       subtree: true,
     });

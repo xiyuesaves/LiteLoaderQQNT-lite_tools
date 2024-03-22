@@ -5,6 +5,7 @@
     "showWeb": false,
     "showChannedCommunication": false
   },
+  "compatibleLLAPI": false,
   "keywordReminder": {
     "enabled": false,
     "keyList": []

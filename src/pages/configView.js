@@ -365,6 +365,9 @@ async function onConfigView(view) {
   // 保存到本地表情
   addSwitchEventlistener("localEmoticons.copyFileTolocalEmoticons", ".copyFileTolocalEmoticons");
 
+  // 兼容LLAPI
+  addSwitchEventlistener("compatibleLLAPI", ".compatibleLLAPI");
+
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage");
   // 磨砂效果
