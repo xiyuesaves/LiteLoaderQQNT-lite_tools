@@ -27,7 +27,7 @@ function showRealName() {
             "transitionend",
             () => {
               startPhysics();
-              toast = showToast("超重啦！！！(再次点击图标关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
+              toast = showToast("超重啦！(再次点击图标关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
             },
             { once: true },
           );
@@ -85,7 +85,7 @@ export async function switchButtons() {
       msgIndex = -1;
       // clearToast();
       document.querySelector(".lite-tools-settings").classList.add("eggs");
-      eggsToast = showToast("开始蹦迪！！！(再次切换任意开关关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
+      eggsToast = showToast("坏掉啦！(再次切换任意开关关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
     }
   } else {
     isActive = activeEggs();
@@ -132,12 +132,16 @@ function physics() {
   }
   const screenTop = window.screenTop;
   const outerHeight = window.outerHeight;
-  const windowTop = availHeight - (screenTop + outerHeight);
+  const windowBottom = availHeight - (screenTop + outerHeight);
   if (vector.y < maxVector) {
     vector.y += offset;
   }
-  if (windowTop <= 0) {
+  if (windowBottom <= 0) {
     vector.y = vector.y * -0.6;
+    if (Math.abs(vector.y) < offset) {
+      vector.y = 0;
+      return;
+    }
   }
   window.moveBy(vector.x, vector.y);
 }
@@ -175,7 +179,7 @@ function replaceMoveBar() {
   drag.insertAdjacentElement("beforebegin", tempdrag);
   document.body.addEventListener("mousedown", mdn);
   document.body.addEventListener("mouseup", mup);
-  document.body.addEventListener("mouseleave", mle);
+  // document.body.addEventListener("mouseleave", mle);
   document.addEventListener("mousemove", mmo);
 }
 
@@ -184,7 +188,7 @@ function reductionMoveBar() {
   tempdrag.remove();
   document.body.removeEventListener("mousedown", mdn);
   document.body.removeEventListener("mouseup", mup);
-  document.body.removeEventListener("mouseleave", mle);
+  // document.body.removeEventListener("mouseleave", mle);
   document.removeEventListener("mousemove", mmo);
 }
 
