@@ -13,7 +13,7 @@ function showToast(content, type, duration) {
   toastContent.appendChild(toast);
   setTimeout(() => {
     toast.classList.add("lite-tools-toast-show");
-  });
+  }, 10);
   toast.close = function () {
     clearTimeout(this.timeout);
     toast.addEventListener(
