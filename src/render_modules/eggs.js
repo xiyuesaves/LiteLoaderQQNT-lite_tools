@@ -27,7 +27,7 @@ function showRealName() {
             "transitionend",
             () => {
               startPhysics();
-              toast = showToast("超重啦！！！(再次点击图标关闭)", "success", Number.MAX_SAFE_INTEGER / 1000);
+              toast = showToast("超重啦！！！(再次点击图标关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
             },
             { once: true },
           );
@@ -51,6 +51,7 @@ document.querySelectorAll(".nav-item.liteloader").forEach((node) => {
       () => {
         showToast("被你发现啦 XD", "success", 3000);
         node.querySelector(".name").classList.remove("lt-eggs-title");
+        node.removeAttribute("title");
         showRealName();
       },
       { once: true },
@@ -84,7 +85,7 @@ export async function switchButtons() {
       msgIndex = -1;
       // clearToast();
       document.querySelector(".lite-tools-settings").classList.add("eggs");
-      eggsToast = showToast("开始蹦迪！！！(再次切换任意开关关闭)", "success", Number.MAX_SAFE_INTEGER / 1000);
+      eggsToast = showToast("开始蹦迪！！！(再次切换任意开关关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
     }
   } else {
     isActive = activeEggs();
@@ -114,7 +115,7 @@ const timeout = debounce(() => {
 
 const availHeight = window.screen.availHeight;
 const vector = { x: 0, y: 0 };
-const offset = 0.2;
+const offset = 0.25;
 const maxVector = 20;
 let dragMouseDown = false;
 let activePhysics = false;
@@ -136,7 +137,7 @@ function physics() {
     vector.y += offset;
   }
   if (windowTop <= 0) {
-    vector.y = vector.y * -0.55;
+    vector.y = vector.y * -0.6;
   }
   window.moveBy(vector.x, vector.y);
 }
