@@ -14,17 +14,22 @@ function showToast(content, type, duration) {
   setTimeout(() => {
     toast.classList.add("lite-tools-toast-show");
   });
-  const timeout = setTimeout(() => {
+  toast.close = function () {
+    clearTimeout(this.timeout);
     toast.addEventListener(
       "transitionend",
       () => {
-        toast.remove();
+        this.remove();
       },
       { once: true },
     );
-    toast.classList.remove("lite-tools-toast-show");
+    this.classList.remove("lite-tools-toast-show");
+  };
+  const timeout = setTimeout(() => {
+    toast.close();
   }, duration);
   toast.timeout = timeout;
+  return toast;
 }
 
 function createToastEl(content, type) {
