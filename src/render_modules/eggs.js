@@ -83,9 +83,8 @@ export async function switchButtons() {
     } else {
       isActive = false;
       msgIndex = -1;
-      // clearToast();
       document.querySelector(".lite-tools-settings").classList.add("eggs");
-      eggsToast = showToast("坏掉啦！(再次切换任意开关关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
+      eggsToast = showToast("坏掉啦！(切换任意开关关闭)", "default", Number.MAX_SAFE_INTEGER / 1000);
     }
   } else {
     isActive = activeEggs();
