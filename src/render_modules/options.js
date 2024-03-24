@@ -79,7 +79,7 @@
 /**
  * @type {Options} 配置信息
  */
-const options = await lite_tools.getOptions();
+const options = lite_tools.getOptions();
 const updateFunctions = [];
 // import { Logs } from "./logs.js";
 // const log = new Logs("配置模块");
@@ -109,5 +109,4 @@ function updateOptions(callback) {
   updateFunctions.push(callback);
 }
 
-// 重命名options兼容旧代码
 export { options, updateOptions };

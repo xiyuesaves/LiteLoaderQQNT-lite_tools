@@ -26,7 +26,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
   // 获取配置文件
-  getOptions: () => ipcRenderer.invoke("LiteLoader.lite_tools.getOptions"),
+  getOptions: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getOptions"),
   // 更新配置文件
   setOptions: (options) => ipcRenderer.send("LiteLoader.lite_tools.setOptions", options),
   // 获取当前窗口peer
