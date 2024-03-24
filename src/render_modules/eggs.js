@@ -156,7 +156,8 @@ const mup = (e) => {
 };
 const mle = (e) => {
   if (dragMouseDown) {
-    mouseleave = true;
+    dragMouseDown = false;
+    // mouseleave = true;
   }
 };
 const mmo = (e) => {
@@ -178,7 +179,7 @@ function replaceMoveBar() {
   drag.insertAdjacentElement("beforebegin", tempdrag);
   document.body.addEventListener("mousedown", mdn);
   document.body.addEventListener("mouseup", mup);
-  // document.body.addEventListener("mouseleave", mle);
+  document.body.addEventListener("mouseleave", mle);
   document.addEventListener("mousemove", mmo);
 }
 
@@ -187,7 +188,7 @@ function reductionMoveBar() {
   tempdrag.remove();
   document.body.removeEventListener("mousedown", mdn);
   document.body.removeEventListener("mouseup", mup);
-  // document.body.removeEventListener("mouseleave", mle);
+  document.body.removeEventListener("mouseleave", mle);
   document.removeEventListener("mousemove", mmo);
 }
 

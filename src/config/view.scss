@@ -302,7 +302,8 @@
       z-index: 100;
       backdrop-filter: blur(28px);
       box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
-      background-color: var(--background-color-008);
+      background-color: var(--background-color);
+      mix-blend-mode: multiply;
       transition: 150ms;
       opacity: 0;
       transform: translateY(-6px);
@@ -635,6 +636,8 @@
 }
 @media (prefers-color-scheme: light) {
   :root {
+    --background-color: #ffffff;
+
     --background-color-008: rgba(255, 255, 255, 0.08);
     --hover-background: rgba(0, 0, 0, 0.08);
 
@@ -656,6 +659,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
+    --background-color: rgb(14, 14, 14);
+
     --background-color-008: rgba(0, 0, 0, 0.08);
     --hover-background: rgba(255, 255, 255, 0.08);
 
