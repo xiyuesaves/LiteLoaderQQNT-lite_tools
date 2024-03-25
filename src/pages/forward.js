@@ -146,6 +146,5 @@ function chatMessage() {
   });
 }
 
-console.log("执行");
 chatMessage();
 setTimeout(chatMessage, 500);

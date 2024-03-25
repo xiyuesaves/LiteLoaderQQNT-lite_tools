@@ -8,7 +8,7 @@ function updateFont() {
 /**
  * 注入全局样式
  */
-async function initStyle() {
+function initStyle() {
   // 加载通用样式
   const globalStyle = document.createElement("link");
   globalStyle.id = "liteToolsGlobalStyle";
@@ -42,4 +42,4 @@ async function initStyle() {
   updateFont();
   log("模块已加载");
 }
-export { initStyle };
+initStyle();
