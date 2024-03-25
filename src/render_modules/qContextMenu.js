@@ -229,7 +229,16 @@ function addEventqContextMenu() {
         }
         // 发送图片检测
         if (event.target.classList.contains("image-content") && elements.some((ele) => ele.picElement)) {
-          imagePath = searchImagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
+          imagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
+          event.target.parentElement.__VUE__.forEach((el) => {
+            const originImageUrl = el?.ctx?.picData?.originImageUrl;
+            const md5 = el?.ctx?.picData?.md5HexStr?.toUpperCase();
+            if (originImageUrl) {
+              searchImagePath = encodeURIComponent(`https://multimedia.nt.qq.com.cn${originImageUrl}`);
+            } else if (md5) {
+              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn/gchatpic_new/0/0-0-${md5}/0`);
+            }
+          });
         }
         // 发送表情包检测
         if (elements.some((ele) => ele.marketFaceElement)) {
@@ -283,10 +292,7 @@ function addEventqContextMenu() {
     if (searchImagePath && options.imageSearch.enabled) {
       const _searchImagePath = searchImagePath;
       addQContextMenu(qContextMenu, searchIcon, "搜索图片", () => {
-        const filePathArr = _searchImagePath.split("/");
-        const fileName = filePathArr[filePathArr.length - 1].split(".")[0].toUpperCase().replace("_0", "");
-        const picSrc = `https://gchat.qpic.cn/gchatpic_new/0/0-0-${fileName}/0`;
-        const openUrl = options.imageSearch.searchUrl.replace("%search%", picSrc);
+        const openUrl = options.imageSearch.searchUrl.replace("%search%", _searchImagePath);
         lite_tools.openWeb(openUrl);
       });
     }
