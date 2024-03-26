@@ -34,7 +34,7 @@ function betterImageViewer() {
     (event) => {
       const rightMenu = document.querySelector(".q-context-menu");
       const video = document.querySelector("embed");
-      if (offset < 2 && event.buttons === 0 && !rightMenu && !video && options.imageViewer.quickClose) {
+      if (options.imageViewer.quickClose && offset < 2 && event.buttons === 0 && !rightMenu && !video) {
         if (event.target.closest(".main-area__content")) {
           document.querySelector(`div[aria-label="关闭"]`).click();
         }

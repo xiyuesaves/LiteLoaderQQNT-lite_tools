@@ -5,6 +5,7 @@ import { Logs } from "./logs.js";
 import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
+import { getPeer } from "./curAioData.js";
 const log = new Logs("本地表情包模块");
 /**
  * 图标元素
@@ -406,7 +407,7 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
     }
     if (altKey) {
       log("直接发送图片");
-      const peer = lite_tools.getPeer();
+      const peer = getPeer();
       sendMessage(peer, [{ type: "image", path: src, picSubType }]);
     } else {
       const selection = ckeditEditorModel.document.selection;

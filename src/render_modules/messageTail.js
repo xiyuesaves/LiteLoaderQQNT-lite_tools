@@ -3,23 +3,25 @@ import { Logs } from "./logs.js";
 import { messageTailTips } from "./HTMLtemplate.js";
 import { options, updateOptions } from "./options.js";
 import { debounce } from "./debounce.js";
+import { getPeer, addEventPeerChange } from "./curAioData.js";
 const log = new Logs("消息后缀");
-
-log("模块加载", options);
-let peer = lite_tools.getPeer();
+log("模块加载");
+let peer = null;
 let tail, tailIndex;
 
 const debounceSetOptions = debounce(() => {
   lite_tools.setOptions(options);
 }, 10);
 
-// 增加防抖避免文本闪烁
-const debounceUpdatePeer = debounce((_, newPeer) => {
-  // log("peer更新");
-  peer = newPeer;
+addEventPeerChange((curAioData) => {
+  peer = {
+    chatType: curAioData?.chatType,
+    guildId: "",
+    uid: curAioData?.header?.uid,
+  };
+  log("peer更新", peer);
   messageTail();
-}, 10);
-lite_tools.updatePeer(debounceUpdatePeer);
+});
 
 updateOptions(() => {
   // log("配置文件更新", options.tail);
@@ -31,6 +33,13 @@ updateOptions(() => {
  */
 function messageTail() {
   const container = document.querySelector(".chat-input-area .operation");
+  if (!container) {
+    setTimeout(messageTail, 100);
+    log("等待加载完成");
+    return;
+  }
+  peer = getPeer();
+  log("加载完成", peer);
   let tailTipsEl = document.querySelector(".lite-tools-tail-tips");
   if (container && peer?.uid && options.tail.tips) {
     tailIndex = options.tail.list.findIndex((tail) => {
@@ -42,8 +51,10 @@ function messageTail() {
       }
     });
     tail = options.tail.list[tailIndex];
+    log("初始化", tail, tailIndex);
     if (tail && options.tail.enabled) {
       if (!tailTipsEl) {
+        log("插入html");
         container.insertAdjacentHTML(
           "afterbegin",
           messageTailTips
@@ -68,6 +79,7 @@ function messageTail() {
     document.querySelector(".lite-tools-tail-tips")?.remove();
   }
 }
+messageTail();
 function updateTail() {
   if (tail && options.tail.enabled && tailIndex >= 0) {
     tail.disabled = !tail.disabled;
@@ -75,4 +87,3 @@ function updateTail() {
     debounceSetOptions();
   }
 }
-export { messageTail };

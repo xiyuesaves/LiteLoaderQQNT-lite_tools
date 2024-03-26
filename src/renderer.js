@@ -5,6 +5,7 @@
 
 import "./render_modules/hookVue3.js";
 import "./render_modules/initStyle.js";
+import { initCurAioData } from "./render_modules/curAioData.js";
 import { Logs } from "./render_modules/logs.js";
 const log = new Logs("主渲染进程模块");
 
@@ -22,6 +23,7 @@ function onLoad() {
     }
     if (hash.includes("#/chat")) {
       app.classList.add("lite-tools-chat");
+      initCurAioData();
       import("./pages/chatMessage.js");
       log("进入独立聊天窗口");
     } else if (hash.includes("#/forward")) {
@@ -30,6 +32,7 @@ function onLoad() {
       log("进入转发窗口");
     } else if (hash.includes("#/main/message")) {
       app.classList.add("lite-tools-main");
+      initCurAioData();
       import("./pages/mainMessage.js");
       log("进入主窗口");
     } else if (hash.includes("#/image-viewer")) {

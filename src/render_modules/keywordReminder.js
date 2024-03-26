@@ -1,13 +1,15 @@
 import { reminderEl } from "./HTMLtemplate.js";
 import { options } from "./options.js";
+import { getPeer } from "./curAioData.js";
 import { Logs } from "./logs.js";
-import { curUid } from "../pages/mainMessage.js";
 export const log = new Logs("提醒词模块");
 
 lite_tools.onKeywordReminder((_, peerUid, msgId) => {
   if (!window.keywordReminder) {
     window.keywordReminder = new Map();
   }
+  const peer = getPeer();
+  const curUid = peer?.peerUid;
   if (peerUid === curUid) {
     log("是当前群聊，跳过记录");
     return;

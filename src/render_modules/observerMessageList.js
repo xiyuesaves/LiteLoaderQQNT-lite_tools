@@ -2,6 +2,7 @@ import { options } from "./options.js";
 import { messageRecall } from "./messageRecall.js";
 import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
+import { getPeer } from "./curAioData.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
@@ -32,7 +33,6 @@ const processingMsgList = async () => {
     }
     // 消息合并逻辑
     if (msgRecord?.elements?.[0]?.grayTipElement === null && options.message.avatarSticky.enabled && options.message.mergeMessage) {
-      const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
       const senderUid = msgRecord?.senderUid;
       const sendNickName = msgRecord?.anonymousExtInfo?.anonymousNick ?? msgRecord?.sendNickName;
       const mapTag = senderUid + sendNickName;
@@ -238,13 +238,13 @@ function messageProcessing(target, msgRecord) {
                   doubleClick = false;
                 }, 500);
                 if (doubleClick) {
-                  const peer = lite_tools.getPeer();
+                  const peer = getPeer();
                   forwardMessage(peer, peer, [msgId]);
                   doubleClick = false;
                 }
                 doubleClick = true;
               } else {
-                const peer = lite_tools.getPeer();
+                const peer = getPeer();
                 forwardMessage(peer, peer, [msgId]);
               }
             });
@@ -300,8 +300,10 @@ function messageToleft(component) {
 const initMessageList = (compatibleLLAPI = false) => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const curMsgsLength = curMsgs.length;
+  // 没有找到消息列表数组且兼容选项未启用时，调用自身防抖函数并直接退出
   if (!curMsgs.length && !compatibleLLAPI) {
     debounceInitMessageList();
+    return;
   }
   for (let index = 0; index < curMsgsLength; index++) {
     const el = curMsgs[index];
@@ -309,6 +311,7 @@ const initMessageList = (compatibleLLAPI = false) => {
     if (messageEl) {
       messageProcessing(messageEl, el.data);
     } else if (!compatibleLLAPI) {
+      // 如果指定id的消息还没有被渲染出来，则调用自身防抖函数重新处理
       debounceInitMessageList();
     }
   }
@@ -324,6 +327,7 @@ function initObserver() {
       if (options.compatibleLLAPI) {
         initMessageList(true);
       }
+      // 在消息列表发生变化时触发更新消息列表更新逻辑
       debounceProcessingMsgList();
     }).observe(mlList, {
       childList: true,

@@ -32,6 +32,8 @@ import { first } from "../render_modules/first.js";
 import { injectReminder, hookUpdate } from "../render_modules/keywordReminder.js";
 // 更新侧边栏功能列表
 import { updateSiderbarNavFuncList } from "../render_modules/updateSiderbarNavFuncList.js";
+// 监听聊天对象变动
+import { addEventPeerChange } from "../render_modules/curAioData.js";
 // log
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("主窗口");
@@ -57,7 +59,7 @@ let curAioData = undefined;
 /**
  * 当前聊天对象的uid
  */
-export let curUid = undefined;
+let curUid = undefined;
 
 /**
  * 侧边栏数据
@@ -76,30 +78,20 @@ const updateVisibleItem = debounce(() => {
   }
 }, 100);
 
-// 监听聊天对象变动
-Object.defineProperty(app.__vue_app__.config.globalProperties.$store.state.common_Aio, "curAioData", {
-  enumerable: true,
-  configurable: true,
-  get() {
-    return curAioData;
-  },
-  set(newVal) {
-    log("uin更新", newVal);
-    curAioData = newVal;
-    curUid = newVal?.header?.uid;
-    injectReminder(curUid);
-    if (options.message.currentLocation && newVal?.header?.uid) {
-      const messageId = uidToMessageId.get(newVal.header.uid);
-      if (messageId && messageId != "0") {
-        // log("有记录历史位置，执行跳转", messageId);
-        document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
-      } else {
-        // log("没有记录历史位置，不执行跳转");
-        updateVisibleItem();
-      }
+addEventPeerChange((newVal) => {
+  log("uin更新", newVal);
+  curAioData = newVal;
+  curUid = newVal?.header?.uid;
+  injectReminder(curUid);
+  if (options.message.currentLocation && newVal?.header?.uid) {
+    const messageId = uidToMessageId.get(newVal.header.uid);
+    if (messageId && messageId != "0") {
+      document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
+    } else {
+      updateVisibleItem();
     }
-  },
-});
+  }
+})
 
 chatMessage();
 const observe = new MutationObserver(chatMessage);
