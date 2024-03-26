@@ -1,6 +1,10 @@
 .lite-tools-settings {
   &.eggs {
     animation: eggs 1s infinite linear;
+    h1 {
+      color: var(--brand_standard, var(--fill_standard_primary)) !important;
+      filter: hue-rotate(45deg);
+    }
     .wrap {
       h2 {
         filter: hue-rotate(90deg);

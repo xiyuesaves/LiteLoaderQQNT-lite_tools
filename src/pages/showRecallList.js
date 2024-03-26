@@ -53,7 +53,6 @@ lite_tools.onReacllMsgData((_, map) => {
           res();
         });
       }
-
       groupItemEl.querySelector(".chat-type").innerText = `[${chatType}]`;
       groupItemEl.querySelector(".peer-name").innerText = peerName;
       groupItemEl.querySelector(".peer-name").title = peerName;

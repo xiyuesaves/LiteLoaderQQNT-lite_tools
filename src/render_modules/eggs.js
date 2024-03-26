@@ -114,14 +114,20 @@ const timeout = debounce(() => {
 
 const availHeight = window.screen.availHeight;
 const vector = { x: 0, y: 0 };
-const offset = 0.25;
+const offset = 40;
 const maxVector = 20;
 let dragMouseDown = false;
 let activePhysics = false;
 let tempdrag = null;
 let mouseleave = false;
+let lastTime = 0;
 
-function physics() {
+function physics(time) {
+  if (!lastTime) {
+    lastTime = time;
+  }
+  const delta = time - lastTime;
+  lastTime = time;
   if (!activePhysics) {
     return;
   }
@@ -132,15 +138,16 @@ function physics() {
   const screenTop = window.screenTop;
   const outerHeight = window.outerHeight;
   const windowBottom = availHeight - (screenTop + outerHeight);
-  if (vector.y < maxVector) {
-    vector.y += offset;
-  }
+  const vectors = (offset / 1000) * delta;
   if (windowBottom <= 0) {
     vector.y = vector.y * -0.6;
-    if (Math.abs(vector.y) < offset) {
+    if (Math.abs(vector.y) < vectors) {
       vector.y = 0;
       return;
     }
+  }
+  if (vector.y < maxVector) {
+    vector.y += vectors;
   }
   window.moveBy(vector.x, vector.y);
 }
@@ -194,7 +201,8 @@ function reductionMoveBar() {
 
 function startPhysics() {
   activePhysics = true;
-  physics();
+  lastTime = 0;
+  requestAnimationFrame(physics);
   replaceMoveBar();
 }
 function stopPhysics() {
