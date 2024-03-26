@@ -9,6 +9,9 @@ const log = new Logs("消息列表处理");
 // 过滤消息类型
 const chatTypes = [1, 2, 100];
 
+// 临时记录元素
+const elementMap = new WeakMap();
+
 /**
  * 过滤消息元素
  */
@@ -19,12 +22,21 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
  */
 const msgElMergeType = new Map();
 
+// 批量处理当前可见的消息列表
 const processingMsgList = async () => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
   const curMsgsLength = curMsgs.length;
   for (let index = 0; index < curMsgsLength; index++) {
     const el = curMsgs[index];
+    // 不知道为啥使用缓存会更卡...
+    // let messageEl = elementMap.get(el);
+    // if (!messageEl) {
+    //   messageEl = document.querySelector(`[id="${el.id}"] .message`);
+    //   if (messageEl) {
+    //     elementMap.set(el, messageEl);
+    //   }
+    // }
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     const msgRecord = curMsgs[index].data;
     // 额外处理下历史撤回数据
@@ -60,8 +72,13 @@ const processingMsgList = async () => {
     }
   }
 };
-const debounceProcessingMsgList = debounce(processingMsgList);
 
+// 防抖批量处理当前可见的消息列表
+const debounceProcessingMsgList = debounce(processingMsgList, 10);
+// 元素尺寸变化监听器
+const resizeObserver = new ResizeObserver(debounceProcessingMsgList);
+
+// 向 hookVue3 模块添加功能
 window.__VUE_MOUNT__.push((component) => {
   try {
     if (!options.compatibleLLAPI) {
@@ -73,12 +90,15 @@ window.__VUE_MOUNT__.push((component) => {
   }
 });
 
+// 单条消息处理函数
 function messageProcessing(target, msgRecord) {
   // 处理消息列表
   if (target?.classList && target?.classList?.contains("message") && msgRecord) {
     const messageEl = target;
     if (messageEl) {
       if (chatTypes.includes(msgRecord?.chatType)) {
+        // 尺寸监听器
+        resizeObserver.observe(messageEl);
         // 消息靠左
         if (options.message.selfMsgToLeft) {
           messageEl.querySelector(".message-container")?.classList?.remove("message-container--self");
@@ -284,6 +304,7 @@ function messageProcessing(target, msgRecord) {
   }
 }
 
+// 消息靠右额外处理函数
 function messageToleft(component) {
   if (options.message.selfMsgToLeft && component?.vnode?.el?.classList?.contains("message-container")) {
     Object.defineProperty(component.proxy, "isSelfAlignRight", {
@@ -297,6 +318,7 @@ function messageToleft(component) {
   }
 }
 
+// 初始化当前已加载的消息元素
 const initMessageList = (compatibleLLAPI = false) => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const curMsgsLength = curMsgs.length;
@@ -316,6 +338,8 @@ const initMessageList = (compatibleLLAPI = false) => {
     }
   }
 };
+
+// 防抖处理已加载的消息元素
 const debounceInitMessageList = debounce(initMessageList, 10);
 initMessageList();
 
