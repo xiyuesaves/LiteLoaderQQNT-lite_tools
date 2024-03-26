@@ -49,8 +49,8 @@ function watchComponentMount(component) {
       return value;
     },
     set(newValue) {
-      value = newValue;
-      if (value) {
+      if (value !== newValue) {
+        value = newValue;
         recordComponent(component);
       }
     },
