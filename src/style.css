@@ -34,10 +34,9 @@
     --lt-link-url-color: rgb(45, 119, 229);
   }
 }
-.ark-view-message_not-support {
+#app .ark-view-message_not-support {
   background-color: unset;
 }
-
 #app.lite-tools-main .tab-container {
   background-color: unset;
 }
@@ -119,24 +118,24 @@
   background: var(--brand_standard) !important;
 }
 
-/* 消息内容块 */
-.forward-msg:focus .image:after, .forward-msg:focus:before,
-.forward-msg .image:focus:after,
-.msg-content-container:focus .image:after,
-.msg-content-container:focus:before,
-.msg-content-container .image:focus:after,
-.file-element:focus .image:after,
-.file-element:focus:before,
-.file-element .image:focus:after,
-.mix-message__container:focus .image:after,
-.mix-message__container:focus:before,
-.mix-message__container .image:focus:after {
+/* 消息内容块，阻止匹配聊天记录中的元素 */
+:not(.record-msg-detail) > .message .forward-msg:focus .image:after, :not(.record-msg-detail) > .message .forward-msg:focus:before,
+:not(.record-msg-detail) > .message .forward-msg .image:focus:after,
+:not(.record-msg-detail) > .message .msg-content-container:focus .image:after,
+:not(.record-msg-detail) > .message .msg-content-container:focus:before,
+:not(.record-msg-detail) > .message .msg-content-container .image:focus:after,
+:not(.record-msg-detail) > .message .file-element:focus .image:after,
+:not(.record-msg-detail) > .message .file-element:focus:before,
+:not(.record-msg-detail) > .message .file-element .image:focus:after,
+:not(.record-msg-detail) > .message .mix-message__container:focus .image:after,
+:not(.record-msg-detail) > .message .mix-message__container:focus:before,
+:not(.record-msg-detail) > .message .mix-message__container .image:focus:after {
   background: unset !important;
 }
-.forward-msg:not(.wallet-message__container, .hidden-background),
-.msg-content-container:not(.wallet-message__container, .hidden-background),
-.file-element:not(.wallet-message__container, .hidden-background),
-.mix-message__container:not(.wallet-message__container, .hidden-background) {
+:not(.record-msg-detail) > .message .forward-msg:not(.wallet-message__container, .hidden-background),
+:not(.record-msg-detail) > .message .msg-content-container:not(.wallet-message__container, .hidden-background),
+:not(.record-msg-detail) > .message .file-element:not(.wallet-message__container, .hidden-background),
+:not(.record-msg-detail) > .message .mix-message__container:not(.wallet-message__container, .hidden-background) {
   background: unset !important;
   color: var(--lt-text-color);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
@@ -146,10 +145,10 @@
   /* 我的消息 */
   /* 别人的消息 */
 }
-.forward-msg:not(.wallet-message__container, .hidden-background)::after,
-.msg-content-container:not(.wallet-message__container, .hidden-background)::after,
-.file-element:not(.wallet-message__container, .hidden-background)::after,
-.mix-message__container:not(.wallet-message__container, .hidden-background)::after {
+:not(.record-msg-detail) > .message .forward-msg:not(.wallet-message__container, .hidden-background)::after,
+:not(.record-msg-detail) > .message .msg-content-container:not(.wallet-message__container, .hidden-background)::after,
+:not(.record-msg-detail) > .message .file-element:not(.wallet-message__container, .hidden-background)::after,
+:not(.record-msg-detail) > .message .mix-message__container:not(.wallet-message__container, .hidden-background)::after {
   content: "";
   display: block;
   width: 100%;
@@ -161,16 +160,16 @@
   background-color: var(--lt-background-color-05);
   z-index: -1;
 }
-.forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
-.msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
-.file-element:not(.wallet-message__container, .hidden-background) .text-link,
-.mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
+:not(.record-msg-detail) > .message .forward-msg:not(.wallet-message__container, .hidden-background) .text-link,
+:not(.record-msg-detail) > .message .msg-content-container:not(.wallet-message__container, .hidden-background) .text-link,
+:not(.record-msg-detail) > .message .file-element:not(.wallet-message__container, .hidden-background) .text-link,
+:not(.record-msg-detail) > .message .mix-message__container:not(.wallet-message__container, .hidden-background) .text-link {
   color: var(--lt-link-url-color);
 }
-.forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
-.msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
-.file-element:not(.wallet-message__container, .hidden-background) .reply-element,
-.mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
+:not(.record-msg-detail) > .message .forward-msg:not(.wallet-message__container, .hidden-background) .reply-element,
+:not(.record-msg-detail) > .message .msg-content-container:not(.wallet-message__container, .hidden-background) .reply-element,
+:not(.record-msg-detail) > .message .file-element:not(.wallet-message__container, .hidden-background) .reply-element,
+:not(.record-msg-detail) > .message .mix-message__container:not(.wallet-message__container, .hidden-background) .reply-element {
   color: var(--lt-text-color);
 }
 
