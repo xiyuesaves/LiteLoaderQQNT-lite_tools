@@ -81,10 +81,8 @@ const resizeObserver = new ResizeObserver(debounceProcessingMsgList);
 // 向 hookVue3 模块添加功能
 window.__VUE_MOUNT__.push((component) => {
   try {
-    if (!options.compatibleLLAPI) {
-      messageToleft(component);
-      messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
-    }
+    messageToleft(component);
+    messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
   } catch (err) {
     log("出现错误", err);
   }
@@ -92,6 +90,9 @@ window.__VUE_MOUNT__.push((component) => {
 
 // 单条消息处理函数
 function messageProcessing(target, msgRecord) {
+  if (options.compatibleLLAPI) {
+    return;
+  }
   // 处理消息列表
   if (target?.classList && target?.classList?.contains("message") && msgRecord) {
     const messageEl = target;
@@ -306,6 +307,9 @@ function messageProcessing(target, msgRecord) {
 
 // 消息靠右额外处理函数
 function messageToleft(component) {
+  if (options.compatibleLLAPI) {
+    return;
+  }
   if (options.message.selfMsgToLeft && component?.vnode?.el?.classList?.contains("message-container")) {
     Object.defineProperty(component.proxy, "isSelfAlignRight", {
       enumerable: true,
@@ -319,11 +323,11 @@ function messageToleft(component) {
 }
 
 // 初始化当前已加载的消息元素
-const initMessageList = (compatibleLLAPI = false) => {
+const initMessageList = (recursion = true) => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const curMsgsLength = curMsgs.length;
   // 没有找到消息列表数组且兼容选项未启用时，调用自身防抖函数并直接退出
-  if (!curMsgs.length && !compatibleLLAPI) {
+  if (!curMsgs.length && recursion) {
     debounceInitMessageList();
     return;
   }
@@ -332,7 +336,7 @@ const initMessageList = (compatibleLLAPI = false) => {
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     if (messageEl) {
       messageProcessing(messageEl, el.data);
-    } else if (!compatibleLLAPI) {
+    } else if (recursion) {
       // 如果指定id的消息还没有被渲染出来，则调用自身防抖函数重新处理
       debounceInitMessageList();
     }
@@ -349,7 +353,7 @@ function initObserver() {
   if (mlList) {
     new MutationObserver(() => {
       if (options.compatibleLLAPI) {
-        initMessageList(true);
+        initMessageList(false);
       }
       // 在消息列表发生变化时触发更新消息列表更新逻辑
       debounceProcessingMsgList();
