@@ -234,7 +234,7 @@ function addEventqContextMenu() {
             const originImageUrl = el?.ctx?.picData?.originImageUrl;
             const md5 = el?.ctx?.picData?.md5HexStr?.toUpperCase();
             if (originImageUrl) {
-              searchImagePath = encodeURIComponent(`https://multimedia.nt.qq.com.cn${originImageUrl}`);
+              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn${originImageUrl}`);
             } else if (md5) {
               searchImagePath = encodeURIComponent(`https://gchat.qpic.cn/gchatpic_new/0/0-0-${md5}/0`);
             }
