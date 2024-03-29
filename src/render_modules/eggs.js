@@ -184,18 +184,18 @@ function replaceMoveBar() {
   tempdrag.style.top = "0";
   tempdrag.style.left = "0";
   drag.insertAdjacentElement("beforebegin", tempdrag);
-  document.body.addEventListener("mousedown", mdn);
-  document.body.addEventListener("mouseup", mup);
-  document.body.addEventListener("mouseleave", mle);
+  document.addEventListener("mousedown", mdn);
+  document.addEventListener("mouseup", mup);
+  // document.addEventListener("mouseleave", mle);
   document.addEventListener("mousemove", mmo);
 }
 
 function reductionMoveBar() {
   document.querySelector(".draggable-view__container").classList.add("window-draggable-area");
   tempdrag.remove();
-  document.body.removeEventListener("mousedown", mdn);
-  document.body.removeEventListener("mouseup", mup);
-  document.body.removeEventListener("mouseleave", mle);
+  document.removeEventListener("mousedown", mdn);
+  document.removeEventListener("mouseup", mup);
+  // document.removeEventListener("mouseleave", mle);
   document.removeEventListener("mousemove", mmo);
 }
 
