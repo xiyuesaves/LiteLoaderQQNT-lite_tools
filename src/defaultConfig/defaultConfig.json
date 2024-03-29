@@ -38,7 +38,8 @@
     "bottom": []
   },
   "imageViewer": {
-    "quickClose": false
+    "quickClose": false,
+    "touchMove": false
   },
   "message": {
     "goBackMainList": false,

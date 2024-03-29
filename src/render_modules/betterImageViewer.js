@@ -5,6 +5,11 @@ const log = new Logs("快速关闭图片");
  * 媒体预览增强
  */
 function betterImageViewer() {
+  // 判断图片是否超过窗口大小
+  let overflow = false;
+  let mainImageWrap = null;
+  let outerEl = null;
+  let canvas = null;
   log("模块加载");
   // 修复弹窗字体模糊
   document.body.classList.add("image-viewer");
@@ -25,6 +30,11 @@ function betterImageViewer() {
     (event) => {
       if (event.buttons === 1) {
         offset += Math.abs(event.movementX) + Math.abs(event.movementY);
+        if (options.imageViewer.touchMove && !overflow) {
+          window.moveBy(event.movementX, event.movementY);
+          event.preventDefault();
+          event.stopPropagation();
+        }
       }
     },
     true,
@@ -42,6 +52,32 @@ function betterImageViewer() {
     },
     true,
   );
+  function addEventImageContainer() {
+    outerEl = document.querySelector(".main-area__image-rotate-wrap");
+    mainImageWrap = document.querySelector(".main-area__image-wrap"); // main-area__image-wrap
+    canvas = document.querySelector("canvas");
+    if (canvas) {
+      loopCanvas();
+    } else if (mainImageWrap && outerEl) {
+      mainImageWrap.addEventListener("transitionend", () => {
+        if (mainImageWrap) {
+          const rect = mainImageWrap.getBoundingClientRect();
+          overflow = rect.width > outerEl.offsetWidth || rect.height > outerEl.offsetHeight;
+          log(rect.width, rect.height, overflow);
+        }
+      });
+    } else {
+      setTimeout(addEventImageContainer, 10);
+    }
+  }
+  // addEventImageContainer();
+}
+
+function loopCanvas() {
+  setTimeout(loopCanvas, 100);
+  canvas.toBlob((res) => {
+    log(res);
+  });
 }
 
 export { betterImageViewer };
