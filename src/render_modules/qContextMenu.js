@@ -234,8 +234,8 @@ function addEventqContextMenu() {
             const originImageUrl = el?.ctx?.picData?.originImageUrl;
             const originMd5 = el?.ctx?.picData?.originImageMd5;
             const md5 = el?.ctx?.picData?.md5HexStr?.toUpperCase();
-            if (originImageUrl && originImageUrl.includes("rkey=")) {
-              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn${originImageUrl}`);
+            if (originImageUrl) {
+              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn${originImageUrl}&rkey=CAMSKLgthq-6lGU_w8qRmii91Wd89eUjW4Rg44v_zM9qUrjZjrZd-CfXFtI`);
             } else if (originMd5 && originMd5 !== "undefined") {
               searchImagePath = encodeURIComponent(`https://gchat.qpic.cn/gchatpic_new/0/0-0-${originMd5}/0`);
             } else if (md5) {
