@@ -64,7 +64,11 @@ const processingMsgList = async () => {
           messageEl.classList.remove("merge-child");
           messageEl.classList.add("merge", "merge-main");
           const avatarEl = messageEl.querySelector(".avatar-span");
-          avatarEl.style.height = `${(childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight - 4}px`;
+          if (avatarEl) {
+            avatarEl.style.height = `${
+              (childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight - 4
+            }px`;
+          }
           childElHeight.delete(mapTag);
           msgElMergeType.set(curMsgs[index].id, "merge-main");
         }
