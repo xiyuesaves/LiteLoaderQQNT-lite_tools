@@ -85,6 +85,10 @@ const resizeObserver = new ResizeObserver(debounceProcessingMsgList);
 // 向 hookVue3 模块添加功能
 window.__VUE_MOUNT__.push((component) => {
   try {
+    // 兼容模式直接返回
+    if (options.compatibleLLAPI) {
+      return;
+    }
     messageToleft(component);
     messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
   } catch (err) {
@@ -94,9 +98,6 @@ window.__VUE_MOUNT__.push((component) => {
 
 // 单条消息处理函数
 function messageProcessing(target, msgRecord) {
-  if (options.compatibleLLAPI) {
-    return;
-  }
   // 处理消息列表
   if (target?.classList && target?.classList?.contains("message") && msgRecord) {
     const messageEl = target;
@@ -311,9 +312,6 @@ function messageProcessing(target, msgRecord) {
 
 // 消息靠右额外处理函数
 function messageToleft(component) {
-  if (options.compatibleLLAPI) {
-    return;
-  }
   if (options.message.selfMsgToLeft && component?.vnode?.el?.classList?.contains("message-container")) {
     Object.defineProperty(component.proxy, "isSelfAlignRight", {
       enumerable: true,
@@ -339,6 +337,7 @@ const initMessageList = (recursion = true) => {
     const el = curMsgs[index];
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     if (messageEl) {
+      log("处理可见消息数据");
       messageProcessing(messageEl, el.data);
     } else if (recursion) {
       // 如果指定id的消息还没有被渲染出来，则调用自身防抖函数重新处理
@@ -346,7 +345,6 @@ const initMessageList = (recursion = true) => {
     }
   }
 };
-
 // 防抖处理已加载的消息元素
 const debounceInitMessageList = debounce(initMessageList, 10);
 initMessageList();
@@ -357,7 +355,8 @@ function initObserver() {
   if (mlList) {
     new MutationObserver(() => {
       if (options.compatibleLLAPI) {
-        initMessageList(false);
+        log("兼容模式更新");
+        debounceInitMessageList(false);
       }
       // 在消息列表发生变化时触发更新消息列表更新逻辑
       debounceProcessingMsgList();
