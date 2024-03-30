@@ -9,7 +9,6 @@ function betterImageViewer() {
   let overflow = false;
   let mainImageWrap = null;
   let outerEl = null;
-  let canvas = null;
   log("模块加载");
   // 修复弹窗字体模糊
   document.body.classList.add("image-viewer");
@@ -54,30 +53,19 @@ function betterImageViewer() {
   );
   function addEventImageContainer() {
     outerEl = document.querySelector(".main-area__image-rotate-wrap");
-    mainImageWrap = document.querySelector(".main-area__image-wrap"); // main-area__image-wrap
-    canvas = document.querySelector("canvas");
-    if (canvas) {
-      loopCanvas();
-    } else if (mainImageWrap && outerEl) {
+    mainImageWrap = document.querySelector(".main-area__image-wrap");
+    if (mainImageWrap && outerEl) {
       mainImageWrap.addEventListener("transitionend", () => {
         if (mainImageWrap) {
           const rect = mainImageWrap.getBoundingClientRect();
           overflow = rect.width > outerEl.offsetWidth || rect.height > outerEl.offsetHeight;
-          log(rect.width, rect.height, overflow);
         }
       });
     } else {
       setTimeout(addEventImageContainer, 10);
     }
   }
-  // addEventImageContainer();
-}
-
-function loopCanvas() {
-  setTimeout(loopCanvas, 100);
-  canvas.toBlob((res) => {
-    log(res);
-  });
+  addEventImageContainer();
 }
 
 export { betterImageViewer };
