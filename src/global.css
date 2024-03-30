@@ -46,6 +46,11 @@
 .remove-vip-name .vip-name {
   color: unset !important;
 }
+.remove-vip-name .text-ellipsis[style*=vip] {
+  color: var(--text_primary) !important;
+  text-shadow: unset !important;
+  filter: unset !important;
+}
 
 .image-auto-width .message-content__wrapper .msg-content-container .image.pic-element.max-width {
   max-width: var(--img-max-width-2) !important;

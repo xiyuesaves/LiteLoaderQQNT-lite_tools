@@ -55,6 +55,11 @@
   .vip-name {
     color: unset !important;
   }
+  .text-ellipsis[style*="vip"] {
+    color: var(--text_primary) !important;
+    text-shadow: unset !important;
+    filter: unset !important;
+  }
 }
 // 图片自适应大小
 .image-auto-width {
@@ -66,7 +71,7 @@
         height: unset !important;
       }
     }
-    .mix-message__container--pic{
+    .mix-message__container--pic {
       max-width: var(--img-max-width-2) !important;
     }
   }
