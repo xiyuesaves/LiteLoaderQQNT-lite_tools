@@ -21,7 +21,7 @@ function messageRecall(el, find) {
     const messageRecallEl = document.createElement("div");
     messageRecallEl.innerText = "已撤回";
     messageRecallEl.setAttribute("data-recall", "已撤回");
-    messageRecallEl.title = `消息于 ${new Date(find.recallTime * 1000).toLocaleString()} 被 ${
+    messageRecallEl.title = `${new Date(find.recallTime * 1000).toLocaleString()} 被 ${
       find.operatorMemRemark || find.operatorRemark || find.operatorNick
     } 撤回`;
     // 移除可能的+1按钮

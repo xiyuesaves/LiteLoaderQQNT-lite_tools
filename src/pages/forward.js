@@ -117,7 +117,7 @@ function chatMessage() {
               newTimeEl.setAttribute("time", fullTime);
             } else {
               newTimeEl.innerText = showTime;
-              newTimeEl.title = `发送于 ${fullTime}`;
+              newTimeEl.title = `${fullTime}`;
               newTimeEl.setAttribute("time", showTime);
             }
             newTimeEl.classList.add("lite-tools-time");
