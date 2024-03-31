@@ -45,25 +45,23 @@ function messageRecall(el, find) {
  */
 function newMessageRecall() {
   lite_tools.onMessageRecall((_, message) => {
-    const el = document.querySelector(`[id="${message.msgId}"]`);
+    const el = document.querySelector(`[id="${message.msgId}"] .message`);
     if (!el.querySelector(".lite-tools-recall")) {
       messageRecall(el, message.recallData);
     }
     // 延迟一段时间后将撤回标记写入消息缓存
-    setTimeout(() => {
-      try {
-        app?.__vue_app__?.config?.globalProperties?.$store?.state?.aio_chatMsgArea?.msgListRef?.curMsgs?.forEach((msg) => {
-          if (msg.msgId === message.msgId) {
-            msg.data.lite_tools_recall = message.recallData;
-          }
-        });
-        app?.__vue_app__?.config?.globalProperties?.$store?.state?.aio_chatMsgArea?.msgListRef?.msgs?.forEach((msg) => {
-          if (msg.msgId === message.msgId) {
-            msg.data.lite_tools_recall = message.recallData;
-          }
-        });
-      } catch {}
-    }, 500);
+    try {
+      app?.__vue_app__?.config?.globalProperties?.$store?.state?.aio_chatMsgArea?.msgListRef?.curMsgs?.forEach((msg) => {
+        if (msg.msgId === message.msgId) {
+          msg.data.lite_tools_recall = message.recallData;
+        }
+      });
+      app?.__vue_app__?.config?.globalProperties?.$store?.state?.aio_chatMsgArea?.msgListRef?.msgs?.forEach((msg) => {
+        if (msg.msgId === message.msgId) {
+          msg.data.lite_tools_recall = message.recallData;
+        }
+      });
+    } catch {}
   });
 }
 

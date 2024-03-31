@@ -243,11 +243,9 @@ function messageProcessing(target, msgRecord) {
         // 插入撤回提示
         if (slotEl && options.preventMessageRecall.enabled) {
           // 撤回插入元素
-          if (!messageEl.querySelector(".lite-tools-recall")) {
-            if (msgRecord?.lite_tools_recall) {
-              // 通用消息撤回处理方法
-              messageRecall(messageEl, msgRecord?.lite_tools_recall);
-            }
+          if (msgRecord?.lite_tools_recall) {
+            // 通用消息撤回处理方法
+            messageRecall(messageEl, msgRecord?.lite_tools_recall);
           }
         }
         // 插入+1按钮
