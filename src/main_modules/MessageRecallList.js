@@ -21,6 +21,9 @@ class MessageRecallList {
   }
   set(key, value) {
     if (this.messageRecallPath) {
+      if (key.msgAttrs && key.msgAttrs instanceof Map) {
+        key.msgAttrs = Array.from(key.msgAttrs);
+      }
       this.map.set(key, value);
       if (this.map.size >= this.limit) {
         log("缓存撤回消息超过阈值，开始切片");
@@ -62,7 +65,11 @@ class MessageRecallList {
     }
   }
   get(key) {
-    return this.map.get(key);
+    const value = this.map.get(key);
+    if (value && value.msgAttrs && value.msgAttrs instanceof Array) {
+      value.msgAttrs = new Map(value.msgAttrs);
+    }
+    return value;
   }
   has(key) {
     return this.map.has(key);
