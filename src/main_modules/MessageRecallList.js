@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const logs = require("./logs");
-const log = logs("撤回管理");
+const log = logs("撤回实例");
 
 // 撤回消息切片管理
 class MessageRecallList {
@@ -21,8 +21,8 @@ class MessageRecallList {
   }
   set(key, value) {
     if (this.messageRecallPath) {
-      if (key.msgAttrs && key.msgAttrs instanceof Map) {
-        key.msgAttrs = Array.from(key.msgAttrs);
+      if (value.msgAttrs && value.msgAttrs instanceof Map) {
+        value.msgAttrs = Array.from(value.msgAttrs);
       }
       this.map.set(key, value);
       if (this.map.size >= this.limit) {
@@ -66,10 +66,11 @@ class MessageRecallList {
   }
   get(key) {
     const value = this.map.get(key);
-    if (value && value.msgAttrs && value.msgAttrs instanceof Array) {
-      value.msgAttrs = new Map(value.msgAttrs);
+    const copyMsg = structuredClone(value);
+    if (copyMsg && copyMsg.msgAttrs && copyMsg.msgAttrs instanceof Array) {
+      copyMsg.msgAttrs = new Map(copyMsg.msgAttrs);
     }
-    return value;
+    return copyMsg;
   }
   has(key) {
     return this.map.has(key);

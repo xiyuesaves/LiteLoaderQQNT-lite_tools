@@ -932,6 +932,7 @@ function onBrowserWindowCreated(window, plugin) {
                     findInCatch &&
                     (!msgElements?.grayTipElement?.revokeElement?.isSelfOperate || options.preventMessageRecall.preventSelfMsg)
                   ) {
+                    catchMsgList.delete(msgItem.msgId);
                     log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
                     // 在消息对象上补充撤回信息
                     findInCatch.lite_tools_recall = {
@@ -956,7 +957,7 @@ function onBrowserWindowCreated(window, plugin) {
                       options.preventMessageRecall.localStorage ? recordMessageRecallIdList : tempRecordMessageRecallIdList
                     ).get(msgItem.msgId); // 从常驻历史撤回记录中查找消息id
                     if (findInRecord) {
-                      log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord.peerName, findInRecord.sendNickName);
+                      log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord);
                       processPic(findInRecord);
                       msgList[index] = findInRecord; // 替换撤回标记
                       // 只有在开启持久化保存选项时，才读取本地已保存的撤回数据
@@ -1089,6 +1090,8 @@ function onBrowserWindowCreated(window, plugin) {
               log("捕获到实时撤回事件，已被阻止", msgItem);
               const findInCatch = catchMsgList.get(msgItem.msgId);
               if (findInCatch) {
+                // 从消息列表缓存移除
+                catchMsgList.delete(msgItem.msgId);
                 // 广播实时撤回消息参数
                 const recallData = {
                   operatorNick: revokeElement.operatorNick, // 执行撤回昵称
@@ -1111,8 +1114,6 @@ function onBrowserWindowCreated(window, plugin) {
                 } else {
                   tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
                 }
-                // 从消息列表缓存移除
-                // catchMsgList.delete(msgItem.msgId);
                 processPic(findInCatch);
                 msgItem = findInCatch; // 替换撤回标记
               } else {
