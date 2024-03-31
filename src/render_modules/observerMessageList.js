@@ -3,6 +3,7 @@ import { messageRecall } from "./messageRecall.js";
 import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
 import { getPeer } from "./curAioData.js";
+import { showToast } from "./toast.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
@@ -110,6 +111,7 @@ function messageProcessing(target, msgRecord) {
           messageEl.querySelector(".message-container")?.classList?.remove("message-container--self");
           messageEl.querySelector(".message-container")?.classList?.remove("message-container--align-right");
           messageEl.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
+          messageEl.querySelector(".user-name")?.classList?.remove("user-name--selfReverse");
         }
         // 图片自适应宽度
         const findImageElement = msgRecord?.elements?.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
@@ -369,3 +371,22 @@ function initObserver() {
   }
 }
 initObserver();
+
+// 双击Ctrl重载消息列表
+if (options.debug.console) {
+  let isDoubleClick = false;
+  document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey) {
+      if (isDoubleClick) {
+        debounceInitMessageList(false);
+        showToast("重载消息列表", "success", 3000);
+        isDoubleClick = false;
+      } else {
+        isDoubleClick = true;
+        setTimeout(() => {
+          isDoubleClick = false;
+        }, 500);
+      }
+    }
+  });
+}
