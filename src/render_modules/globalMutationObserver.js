@@ -1,5 +1,8 @@
 const eventList = {};
 
+/**
+ * 监听 body 上的变化
+ */
 new MutationObserver((mutationsList) => {
   let runFunc = new Map();
   mutationsList.forEach((mutations) => {

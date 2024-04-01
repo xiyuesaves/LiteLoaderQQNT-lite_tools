@@ -2,6 +2,10 @@ import { options } from "./options.js";
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("侧边栏功能按钮模块");
 
+/**
+ * 更新侧边栏功能列表
+ * @param {Object} navStore 侧边栏数据
+ */
 export function updateSiderbarNavFuncList(navStore) {
   // 获取侧边栏顶部的功能入口
   let top = navStore.finalTabConfig.map((tabIcon) => ({

@@ -1,7 +1,10 @@
 let curAioData = null;
 const eventList = [];
 
-// 监听聊天对象变动
+/**
+ * 监听聊天对象变动
+ * @returns {void}
+ */
 function initCurAioData() {
   if (!app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData) {
     setTimeout(initCurAioData, 500);
@@ -23,9 +26,17 @@ function initCurAioData() {
   });
 }
 
+/**
+ * 添加peer监听函数
+ * @param {Function} func 监听函数
+ */
 function addEventPeerChange(func) {
   eventList.push(func);
 }
+/**
+ * 获取Peer
+ * @returns {Object}
+ */
 function getPeer() {
   return {
     chatType: curAioData?.chatType === 1 ? "friend" : "group",

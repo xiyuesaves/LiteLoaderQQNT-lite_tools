@@ -2,6 +2,9 @@ import { options } from "./options.js";
 
 const logList = [];
 
+/**
+ * 暴露日志打印方法
+ */
 window.LT_logs = () => {
   if (options.debug.console) {
     logList.forEach((el) => {

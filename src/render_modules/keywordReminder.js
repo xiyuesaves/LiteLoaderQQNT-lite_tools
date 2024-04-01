@@ -74,7 +74,6 @@ function hookUpdate() {
       }
       vue.update = () => {
         const value = window?.keywordReminder?.get(peerUid);
-        // // log("消息更新", value);
         if (value?.length) {
           if (vue?.ctx?.abstracts?.[0]?.content !== "关键词提醒") {
             vue.ctx.abstracts.unshift({

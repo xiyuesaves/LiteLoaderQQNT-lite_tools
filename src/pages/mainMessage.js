@@ -66,7 +66,9 @@ let curUid = undefined;
  */
 let navStore = undefined;
 
-// 更新可见消息id
+/**
+ * 更新可见消息id
+ */
 const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
     const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();

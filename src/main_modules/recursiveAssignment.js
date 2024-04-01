@@ -2,7 +2,7 @@
  * 递归赋值模块-用于合并配置文件避免错误
  * @param {Object} fileOptions 从文件加载的配置
  * @param {Object} defaultOptions 默认配置
- * @returns Object 两个配置合并后的实际配置文件
+ * @returns {Object} 两个配置合并后的实际配置文件
  */
 function recursiveAssignment(fileOptions, defaultOptions) {
   if (!fileOptions) {

@@ -10,6 +10,9 @@ if (!existsSync(pluginDataPath)) {
 }
 const options = loadOptions(defaultConfig, settingsPath);
 
+/**
+ * 配置管理类
+ */
 class Options extends EventEmitter {
   constructor(options) {
     super();

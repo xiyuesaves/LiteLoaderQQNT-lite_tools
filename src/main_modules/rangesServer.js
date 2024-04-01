@@ -7,6 +7,9 @@ const { extname } = require("path");
 const logs = require("./logs");
 const log = logs("视频背景服务模块");
 
+/**
+ * 视频背景http服务类
+ */
 class RangesServer {
   constructor() {
     this.videoPath = "";

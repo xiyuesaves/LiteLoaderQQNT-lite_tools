@@ -8,6 +8,13 @@ function createToastContentEl(HTMLtemplate) {
   document.body.insertAdjacentHTML("beforeend", HTMLtemplate);
   return document.querySelector(".lite-tools-toast");
 }
+/**
+ * 显示提示内容
+ * @param {String} content 提示内容
+ * @param {String} type 提示类型
+ * @param {Number} duration 延迟时间
+ * @returns {Element} 提示元素
+ */
 function showToast(content, type, duration) {
   const toast = createToastEl(content, type);
   toastContent.appendChild(toast);
@@ -32,11 +39,22 @@ function showToast(content, type, duration) {
   return toast;
 }
 
+/**
+ * 创建提示元素
+ * @param {String} content 提示内容
+ * @param {String} type 提示类型
+ * @returns {Element} 提示元素
+ */
 function createToastEl(content, type) {
   const newToastEl = toastEl.replace("{{content}}", content).replace("{{icon}}", getIcon(type));
   return domparser.parseFromString(newToastEl, "text/html").querySelector(".lite-tools-toast-item");
 }
 
+/**
+ * 获取指定类型的图标html字符串
+ * @param {String} type 提示类型
+ * @returns {String} 图标html字符串
+ */
 function getIcon(type) {
   switch (type) {
     case "success":
@@ -51,6 +69,9 @@ function getIcon(type) {
   }
 }
 
+/**
+ * 清除所有提示
+ */
 function clearToast() {
   document.querySelectorAll(".lite-tools-toast-item").forEach((toast) => {
     clearTimeout(toast.timeout);

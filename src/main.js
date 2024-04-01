@@ -8,21 +8,68 @@ class MainEvent extends EventEmitter {}
 const mainEvent = new MainEvent();
 
 // 本地模块
-const Opt = require("./main_modules/option"); // 配置管理模块
-const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json"); // 默认本地表情配置文件
+/**
+ * 配置管理模块
+ */
+const Opt = require("./main_modules/option");
+/**
+ * 本地表情默认配置
+ */
+const defalutLocalEmoticonsConfig = require("./defaultConfig/defalutLocalEmoticonsConfig.json");
+/**
+ * 合并配置模块
+ */
 const loadOptions = require("./main_modules/loadOptions");
+/**
+ * 可控数量Map模块
+ */
 const LimitedMap = require("./main_modules/LimitedMap");
+/**
+ * 撤回消息加载模块
+ */
 const MessageRecallList = require("./main_modules/MessageRecallList");
+/**
+ * 全局广播模块
+ */
 const globalBroadcast = require("./main_modules/globalBroadcast");
+/**
+ * 图片处理模块
+ */
 const processPic = require("./main_modules/processPic");
+/**
+ * 重写卡片模块
+ */
 const replaceArk = require("./main_modules/replaceArk");
+/**
+ * 防抖模块
+ */
 const debounce = require("./main_modules/debounce");
+/**
+ * 视频背景模块
+ */
 const RangesServer = require("./main_modules/rangesServer");
+/**
+ * 视频服务实例
+ */
 const videoServer = new RangesServer();
+/**
+ * 日志模块
+ */
 const logs = require("./main_modules/logs");
+/**
+ * 获取系统字体
+ */
 const { winGetFonts, linuxGetFonts, macGetFonts } = require("./main_modules/getFonts");
+/**
+ * 本地表情模块
+ */
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
 
+// 声明变量
+
+/**
+ * 日志实例
+ */
 let log = logs("主进程");
 
 /**
@@ -71,7 +118,7 @@ let messageRecallJson;
  */
 let localEmoticonsPath;
 /**
- * 内存缓存消息记录-用于根据消息id获取撤回原始内容
+ * 内存缓存消息记录实例-用于根据消息id获取撤回原始内容
  */
 const catchMsgList = new LimitedMap(20000);
 /**
@@ -177,7 +224,10 @@ const debounceUpdateOptions = debounce((newOptions) => {
 }, 10);
 Opt.on("update", debounceUpdateOptions);
 
-// 加载插件时触发
+/**
+ * 初始化函数
+ * @param {Object} plugin 插件对象
+ */
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
   const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
@@ -225,6 +275,7 @@ function onLoad(plugin) {
   // 使用配置加载模块解决插件不同版本配置文件差异
   localEmoticonsConfig = loadOptions(defalutLocalEmoticonsConfig, localEmoticonsPath);
 
+  // 调试功能
   if (options.debug.mainConsole) {
     try {
       // 调试工具
@@ -328,7 +379,7 @@ function onLoad(plugin) {
   }
 
   // 初始化阻止撤回功能
-  // 初始化常驻撤回消息历史记录-每100条记录切片为一个json文件
+  // 初始化常驻撤回消息历史记录实例-每100条记录切片为一个json文件
   recordMessageRecallIdList = new MessageRecallList(messageRecallJson, messageRecallPath, 100);
   tempRecordMessageRecallIdList = new Map();
   // 监听常驻历史撤回记录实例创建新的文件切片
@@ -786,7 +837,11 @@ function deleteFilesInDirectory(directoryPath, fileToPreserve) {
   });
 }
 
-// 创建窗口时触发
+/**
+ * 窗口创建时触发
+ * @param {Object} window window对象
+ * @param {Object} plugin 插件对象
+ */
 function onBrowserWindowCreated(window, plugin) {
   window.webContents.on("before-input-event", async (event, input) => {
     // 阻止按下 ESC 键时关闭窗口
@@ -836,6 +891,10 @@ function onBrowserWindowCreated(window, plugin) {
     },
   });
 
+  /**
+   * 监听 ipc 通信内容
+   * @param {Array} args ipc参数
+   */
   function ipc_message(args) {
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
       log("消息发送事件", args);
@@ -905,8 +964,13 @@ function onBrowserWindowCreated(window, plugin) {
   // 复写并监听ipc通信内容
   const original_send = window.webContents.send;
 
-  // 主进程发送消息方法
-  const patched_send = function (channel, ...args) {
+  /**
+   * 重写并监听 send 方法
+   * @param {String} channel 通信频道
+   * @param  {...any} args 通信参数
+   * @returns {void}
+   */
+  function patched_send(channel, ...args) {
     mainEvent.emit("send", channel, ...args);
     if (options.debug.showChannedCommunication) {
       log("send", channel, args?.[0]?.callbackId, args);
@@ -1149,11 +1213,15 @@ function onBrowserWindowCreated(window, plugin) {
 
     // 继续原有逻辑
     return original_send.call(window.webContents, channel, ...args);
-  };
+  }
 
   window.webContents.send = patched_send;
 }
 
+/**
+ * 插件主进程报错捕获函数
+ * @param  {...any} args 启动参数
+ */
 function tryOnBrowserWindowCreated(...args) {
   try {
     onBrowserWindowCreated(...args);
@@ -1162,19 +1230,31 @@ function tryOnBrowserWindowCreated(...args) {
   }
 }
 
-// 判断事件名称
+/**
+ * 判断事件名称
+ * @param {Array} args 目标数组
+ * @param {String} eventName 目标字符串
+ * @returns {Boolean}
+ */
 function findEventIndex(args, eventName) {
   return args[1] ? (Array.isArray(args[1]) ? args[1].findIndex((item) => item.cmdName === eventName) : -1) : -1;
 }
 
-// 重置常用表情列表
+/**
+ * 重置常用表情列表
+ */
 function resetCommonlyEmoticons() {
   localEmoticonsConfig.commonlyEmoticons = [];
   globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
-// 增加常用表情
+/**
+ * 增加常用表情
+ * @param {Event} event 事件对象
+ * @param {String} src 图片路径
+ * @returns {void}
+ */
 function addCommonlyEmoticons(event, src) {
   if (!options.localEmoticons.commonlyEmoticons) {
     return;
@@ -1194,7 +1274,11 @@ function addCommonlyEmoticons(event, src) {
   fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
-// 判断chatType是否为需要处理的类型
+/**
+ * 判断聊天对象类型
+ * @param {Object} peer 聊天对象 Peer
+ * @returns {Boolean}
+ */
 function checkChatType(peer) {
   return [1, 2, 100].includes(peer?.chatType);
 }

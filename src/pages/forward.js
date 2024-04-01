@@ -3,6 +3,9 @@ import { options, updateOptions } from "../render_modules/options.js";
 
 updateOptions(chatMessage);
 
+/**
+ * 合并转发页面
+ */
 function chatMessage() {
   // 过滤消息类型
   const chatTypes = [1, 2, 100];

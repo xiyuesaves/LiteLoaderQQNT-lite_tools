@@ -47,6 +47,9 @@ async function observerChatArea() {
   }
 }
 
+/**
+ * 禁用指定功能
+ */
 function disabledFunctions() {
   document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
     const id = el.querySelector(".icon-item").id;

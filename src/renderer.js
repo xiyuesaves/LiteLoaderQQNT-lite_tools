@@ -9,6 +9,10 @@ import { initCurAioData } from "./render_modules/curAioData.js";
 import { Logs } from "./render_modules/logs.js";
 const log = new Logs("主渲染进程模块");
 
+/**
+ * 根据页面哈希决定加载页面模块
+ * @return {void}
+ */
 function onLoad() {
   if (location.hash === "#/blank") {
     navigation.addEventListener("navigatesuccess", updateHash, { once: true });
@@ -16,6 +20,10 @@ function onLoad() {
     updateHash();
   }
 
+  /**
+   * 根据页面哈希值决定加载页面模块
+   * @returns {void}
+   */
   function updateHash() {
     let hash = location.hash;
     if (hash === "#/blank") {
@@ -44,7 +52,10 @@ function onLoad() {
 }
 onLoad();
 
-// 设置界面函数
+/**
+ * 设置页面入口
+ * @param {Element} view 设置页面容器
+ */
 function onSettingWindowCreated(view) {
   log("进入配置界面");
   import("./pages/configView.js").then((module) => {

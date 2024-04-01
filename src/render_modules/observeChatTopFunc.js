@@ -49,6 +49,9 @@ function observeChatTopFunc() {
   }
 }
 
+/**
+ * 禁用指定功能
+ */
 function disabledFunctions() {
   document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
     const id = el.querySelector(".icon-item").id;

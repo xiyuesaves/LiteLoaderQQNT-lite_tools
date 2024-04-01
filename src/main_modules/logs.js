@@ -19,6 +19,9 @@ const debounceUpdateOptions = debounce((newOptions) => {
   }
 }, 10);
 
+/**
+ * 日志类
+ */
 class Logs {
   constructor() {
     this.logMsg = [];

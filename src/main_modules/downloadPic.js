@@ -3,7 +3,11 @@ const https = require("https");
 const logs = require("./logs");
 const log = logs("图片下载");
 
-// 下载方法
+/**
+ * 图片下载函数
+ * @param {String} url 图片url
+ * @returns {Promise}
+ */
 function downloadPic(url) {
   const protocolModule = url.startsWith("https") ? https : http;
   return new Promise((resolve, reject) => {

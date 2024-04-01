@@ -1,4 +1,6 @@
-// 自定义limitMap，在达到指定数量后清空最后一条记录
+/**
+ * 自定义limitMap，在达到指定数量后清空最后一条记录
+ */
 class LimitedMap {
   constructor(limit) {
     this.limit = limit;

@@ -1,4 +1,8 @@
 const { exec } = require("node:child_process");
+/**
+ * windows系统获取字体列表
+ * @returns {Promise}
+ */
 function winGetFonts() {
   return new Promise((res, rej) => {
     exec(
@@ -25,7 +29,10 @@ function winGetFonts() {
     );
   });
 }
-
+/**
+ * Linux获取字体列表
+ * @returns {Promise}
+ */
 function linuxGetFonts() {
   return new Promise((res, rej) => {
     exec(
@@ -56,7 +63,10 @@ function linuxGetFonts() {
   });
 }
 
-// 等待有缘人提pr
+/**
+ * Mac系统获取字体列表
+ * @returns {Promise}
+ */
 function macGetFonts() {
   return new Promise((res, rej) => {
     exec(

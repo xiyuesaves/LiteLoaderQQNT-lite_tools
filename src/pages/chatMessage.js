@@ -35,7 +35,10 @@ observe.observe(document.body, {
 updateOptions(chatMessage);
 chatMessage();
 
-function chatMessage(mutationList) {
+/**
+ * 聊天页面函数
+ */
+function chatMessage() {
   // 禁用贴纸
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
 
