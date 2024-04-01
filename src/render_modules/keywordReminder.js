@@ -65,7 +65,7 @@ function hookUpdate() {
     window.keywordReminder = null;
   }
   document.querySelectorAll(".two-col-layout__aside .viewport-list__inner .list-item").forEach((el) => {
-    if (!el?.__VUE__?.[1]?.update?.isHooked) {
+    if (el?.__VUE__?.[1] && !el?.__VUE__?.[1]?.update?.isHooked) {
       const vue = el.__VUE__[1];
       const peerUid = vue.ctx.peerUid;
       const tempUpdate = vue.update;
