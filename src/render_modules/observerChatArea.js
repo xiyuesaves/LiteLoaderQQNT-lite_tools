@@ -12,8 +12,8 @@ async function observerChatArea() {
     observe = new MutationObserver((mutations, observe) => {
       // 禁用指定功能
       document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
-        const name = el.querySelector(".icon-item").getAttribute("aria-label");
-        const find = options.textAreaFuncList.find((el) => el.name === name);
+        const id = el.querySelector(".icon-item").id;
+        const find = options.textAreaFuncList.find((el) => el.id === id);
         if (find) {
           el.classList.toggle("LT-disabled", find.disabled);
         }
@@ -26,7 +26,7 @@ async function observerChatArea() {
             disabled: el.classList.contains(".disabled"),
           };
         })
-        .filter((el) => !options.textAreaFuncList.find((_el) => _el.name === el.name));
+        .filter((el) => !options.textAreaFuncList.find((_el) => _el.id === el.id));
       if (textAreaList.length) {
         log("发送聊天窗口功能列表");
         lite_tools.sendTextAreaList(textAreaList);
@@ -49,8 +49,8 @@ async function observerChatArea() {
 
 function disabledFunctions() {
   document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
-    const name = el.querySelector(".icon-item").getAttribute("aria-label");
-    const find = options.textAreaFuncList.find((el) => el.name === name);
+    const id = el.querySelector(".icon-item").id;
+    const find = options.textAreaFuncList.find((el) => el.id === id);
     if (find) {
       el.classList.toggle("LT-disabled", find.disabled);
     }

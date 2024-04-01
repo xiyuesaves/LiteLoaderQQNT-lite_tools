@@ -418,7 +418,11 @@ function onLoad(plugin) {
   // 更新输入框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
     list.forEach((item) => {
-      if (!options.textAreaFuncList.find((el) => el.name === item.name)) {
+      const find = options.textAreaFuncList.find((el) => el.id === item.id);
+      if (find) {
+        find.name === item.name;
+      }
+      if (!find) {
         options.textAreaFuncList.push(item);
       }
     });
@@ -427,7 +431,11 @@ function onLoad(plugin) {
   // 更新聊天框上方功能列表
   ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (event, list) => {
     list.forEach((item) => {
-      if (!options.chatAreaFuncList.find((el) => el.name === item.name)) {
+      const find = options.chatAreaFuncList.find((el) => el.id === item.id);
+      if (find) {
+        find.name = item.name;
+      }
+      if (!find) {
         options.chatAreaFuncList.push(item);
       }
     });
