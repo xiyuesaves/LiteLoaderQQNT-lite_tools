@@ -49,7 +49,6 @@ function newMessageRecall() {
     if (!el.querySelector(".lite-tools-recall")) {
       messageRecall(el, message.recallData);
     }
-    // 延迟一段时间后将撤回标记写入消息缓存
     try {
       app?.__vue_app__?.config?.globalProperties?.$store?.state?.aio_chatMsgArea?.msgListRef?.curMsgs?.forEach((msg) => {
         if (msg.msgId === message.msgId) {
