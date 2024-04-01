@@ -18,9 +18,8 @@ function createToastContentEl(HTMLtemplate) {
 function showToast(content, type, duration) {
   const toast = createToastEl(content, type);
   toastContent.appendChild(toast);
-  setTimeout(() => {
-    toast.classList.add("lite-tools-toast-show");
-  }, 10);
+  toast.offsetHeight;
+  toast.classList.add("lite-tools-toast-show");
   toast.close = function () {
     clearTimeout(this.timeout);
     toast.addEventListener(
