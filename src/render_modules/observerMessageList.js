@@ -23,8 +23,10 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
  */
 const msgElMergeType = new Map();
 
-// 批量处理当前可见的消息列表
-const processingMsgList = async () => {
+/**
+ * 处理当前可见的消息列表
+ */
+function processingMsgList() {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
   const curMsgsLength = curMsgs.length;
@@ -76,14 +78,21 @@ const processingMsgList = async () => {
       }
     }
   }
-};
+}
 
-// 防抖批量处理当前可见的消息列表
-const debounceProcessingMsgList = debounce(processingMsgList, 10);
-// 元素尺寸变化监听器
+/**
+ * 防抖批量处理当前可见的消息列表
+ */
+const debounceProcessingMsgList = debounce(processingMsgList);
+
+/**
+ * 元素尺寸变化监听器
+ */
 const resizeObserver = new ResizeObserver(debounceProcessingMsgList);
 
-// 向 hookVue3 模块添加功能
+/**
+ * 向 hookVue3 模块添加功能
+ */
 window.__VUE_MOUNT__.push((component) => {
   try {
     // 兼容模式直接返回
@@ -91,14 +100,18 @@ window.__VUE_MOUNT__.push((component) => {
       return;
     }
     messageToleft(component);
-    messageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+    singleMessageProcessing(component?.vnode?.el, component?.props?.msgRecord);
   } catch (err) {
     log("出现错误", err);
   }
 });
 
-// 单条消息处理函数
-function messageProcessing(target, msgRecord) {
+/**
+ * 单条消息处理流程
+ * @param {Element} target 目标消息元素
+ * @param {Object} msgRecord 目标消息对象
+ */
+function singleMessageProcessing(target, msgRecord) {
   // 处理消息列表
   if (target?.classList && target?.classList?.contains("message") && msgRecord) {
     const messageEl = target;
@@ -310,7 +323,10 @@ function messageProcessing(target, msgRecord) {
   }
 }
 
-// 消息靠右额外处理函数
+/**
+ * 消息靠右额外处理函数
+ * @param {Object} component 目标消息对象
+ */
 function messageToleft(component) {
   if (options.message.selfMsgToLeft && component?.vnode?.el?.classList?.contains("message-container")) {
     Object.defineProperty(component.proxy, "isSelfAlignRight", {
@@ -324,7 +340,10 @@ function messageToleft(component) {
   }
 }
 
-// 初始化当前已加载的消息元素
+/**
+ * 初始化当前已加载的消息元素
+ * @param {Boolean} recursion 是否递归检测 
+ */
 const initMessageList = (recursion = true) => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const curMsgsLength = curMsgs.length;
@@ -338,18 +357,23 @@ const initMessageList = (recursion = true) => {
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     if (messageEl) {
       log("处理可见消息数据");
-      messageProcessing(messageEl, el.data);
+      singleMessageProcessing(messageEl, el.data);
     } else if (recursion) {
       // 如果指定id的消息还没有被渲染出来，则调用自身防抖函数重新处理
       debounceInitMessageList();
     }
   }
 };
-// 防抖处理已加载的消息元素
-const debounceInitMessageList = debounce(initMessageList, 10);
+
+/**
+ * 防抖处理已加载的消息元素
+ */
+const debounceInitMessageList = debounce(initMessageList);
 initMessageList();
 
-// 初始化监听器
+/**
+ * 初始化监听器
+ */
 function initObserver() {
   const mlList = document.querySelector(".ml-area.v-list-area .virtual-scroll-area .ml-list.list");
   if (mlList) {
@@ -369,22 +393,3 @@ function initObserver() {
   }
 }
 initObserver();
-
-// 双击Ctrl重载消息列表
-if (options.debug.console) {
-  let isDoubleClick = false;
-  document.addEventListener("keydown", (event) => {
-    if (event.ctrlKey) {
-      if (isDoubleClick) {
-        debounceInitMessageList(false);
-        showToast("重载消息列表", "success", 3000);
-        isDoubleClick = false;
-      } else {
-        isDoubleClick = true;
-        setTimeout(() => {
-          isDoubleClick = false;
-        }, 500);
-      }
-    }
-  });
-}
