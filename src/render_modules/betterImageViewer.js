@@ -29,7 +29,7 @@ function betterImageViewer() {
     (event) => {
       if (event.buttons === 1) {
         offset += Math.abs(event.movementX) + Math.abs(event.movementY);
-        if (options.imageViewer.touchMove && !overflow && !document.querySelector("embed")) {
+        if (options.imageViewer.touchMove && !overflow && !document.querySelector("embed") && !document.querySelector("canvas")) {
           window.moveBy(event.movementX, event.movementY);
           event.preventDefault();
           event.stopPropagation();
