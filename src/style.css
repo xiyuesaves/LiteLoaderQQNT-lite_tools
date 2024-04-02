@@ -296,3 +296,9 @@
 .file-status .q-svg-icon svg {
   transform: scale(0.8);
 }
+
+.lite-tools-slot.outside-slot::after,
+.message-content-replace.single::after {
+  box-shadow: var(--lt-box-shadow);
+  backdrop-filter: blur(28px);
+}

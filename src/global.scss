@@ -267,9 +267,7 @@
       top: 0;
       left: 0;
       border-radius: 50px;
-      box-shadow: var(--box-shadow, unset);
-      background-color: var(--background-color-05, var(--background-color-cb));
-      backdrop-filter: blur(28px);
+      background-color: var(--lt-background-color-05, var(--background-color-cb));
     }
     .lite-tools-time {
       text-align: center;
@@ -415,9 +413,7 @@
     top: 0;
     left: 0;
     border-radius: 50px;
-    box-shadow: var(--box-shadow, unset);
-    background-color: var(--background-color-05, var(--background-color-cb));
-    backdrop-filter: blur(28px);
+    background-color: var(--lt-background-color-05, var(--background-color-cb));
   }
 }
 

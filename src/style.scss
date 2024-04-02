@@ -336,14 +336,21 @@
   }
 }
 
-// 插入气泡
+// 优化文件图标样式
 .file-status {
   .q-svg-icon {
     background-color: var(--lt-background-color-05) !important;
     backdrop-filter: blur(28px);
     cursor: pointer;
-    svg{
+    svg {
       transform: scale(0.8);
     }
   }
+}
+
+// 给外部插槽添加半透明背景和磨砂效果
+.lite-tools-slot.outside-slot::after,
+.message-content-replace.single::after {
+  box-shadow: var(--lt-box-shadow);
+  backdrop-filter: blur(28px);
 }
