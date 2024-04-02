@@ -62,11 +62,6 @@ let curAioData = undefined;
 let curUid = undefined;
 
 /**
- * 侧边栏数据
- */
-let navStore = undefined;
-
-/**
  * 更新可见消息id
  */
 const updateVisibleItem = debounce(() => {
@@ -93,7 +88,7 @@ addEventPeerChange((newVal) => {
       updateVisibleItem();
     }
   }
-})
+});
 
 chatMessage();
 const observe = new MutationObserver(chatMessage);
@@ -106,11 +101,9 @@ updateOptions(chatMessage);
 /**
  * 监听鼠标侧键返回事件
  */
-
-// 返回没有选中聊天时的状态
 document.addEventListener("mouseup", (event) => {
   if (event.button === 3 && options.message.goBackMainList) {
-    document.querySelector(".two-col-layout__aside .recent-contact .list-toggler").__VUE__[1].proxy.goBackMainList();
+    document.querySelector(".two-col-layout__aside .recent-contact .list-toggler")?.__VUE__?.[1]?.proxy?.goBackMainList();
   }
 });
 
@@ -125,8 +118,10 @@ function chatMessage() {
   }
   updateVisibleItem();
 
-  // 精简侧边栏
-  navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
+  /**
+   * 侧边栏数据
+   */
+  const navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
   navStore?.finalTabConfig?.forEach((tabIcon) => {
     const find = options.sidebar.top.find((el) => el?.id == tabIcon?.id);
     if (find && find.id !== undefined) {
