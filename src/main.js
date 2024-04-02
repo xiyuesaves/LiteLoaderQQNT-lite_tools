@@ -73,9 +73,9 @@ const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmotic
 let log = logs("主进程");
 
 /**
- * 第一次关闭频道窗口检测
+ * 渲染进程 hookVue3 模块
  */
-let isFirstCloseGuidMainWindow = true;
+let hookVue3 = fs.readFileSync(path.join(LiteLoader.plugins.lite_tools.path.plugin, "src/render_modules/hookVue3.js"), "utf-8");
 
 /**
  * 配置数据
@@ -850,28 +850,20 @@ function onBrowserWindowCreated(window, plugin) {
     }
   });
 
+  if (options.advanceHookVue) {
+    window.webContents.executeJavaScript(hookVue3);
+  }
+
   // 监听页面加载完成事件
   window.webContents.on("did-stop-loading", () => {
-    // 如果打开的是频道窗口且启用了临时修复方法，则直接关闭窗口
-    if (window.webContents.getURL().indexOf("#/index/2") !== -1 && isFirstCloseGuidMainWindow) {
-      if (options.fixAbnormalResourceUsage && isFirstCloseGuidMainWindow) {
-        // 检测到后直接最小化频道窗口
-        window.minimize();
-        setTimeout(() => {
-          window.close();
-        }, 500);
-      }
-      isFirstCloseGuidMainWindow = false;
-    }
-
     if (window.webContents.getURL().indexOf("#/main/message") !== -1) {
       log("捕获到主窗口");
       mainMessage = window;
     }
-    if (window.webContents.getURL().indexOf("#/chat") !== -1) {
-      log("捕获到聊天窗口");
-      // chatMessage = window;
-    }
+    // if (window.webContents.getURL().indexOf("#/chat") !== -1) {
+    //   log("捕获到聊天窗口");
+    //   chatMessage = window;
+    // }
     if (window.webContents.getURL().indexOf("#/setting/settings/common") !== -1) {
       log("捕获到设置口");
       settingWindow = window;
@@ -1161,7 +1153,7 @@ function onBrowserWindowCreated(window, plugin) {
             if (!revokeElement.isSelfOperate || options.preventMessageRecall.preventSelfMsg) {
               log("捕获到实时撤回事件", msgItem);
               let findInCatch = catchMsgList.get(msgItem.msgId);
-              
+
               // 在持久化撤回数据中查找
               if (options.preventMessageRecall.localStorage) {
                 // 常驻内存撤回数据

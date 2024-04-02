@@ -88,8 +88,8 @@
   },
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
-  "fixAbnormalResourceUsage": false,
   "preventEscape": false,
+  "advanceHookVue": false,
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,

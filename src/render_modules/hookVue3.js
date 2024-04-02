@@ -1,8 +1,5 @@
 // hookVue3 功能来自 LLAPI
 const elements = new WeakMap();
-window.__VUE_ELEMENTS__ = elements;
-window.__VUE_MOUNT__ = []; // Functions to call when component found ((component) => {})
-window.__VUE_UNMOUNT__ = []; // Functions to call when component unmounts ((component) => {})
 
 /**
  *
@@ -97,17 +94,25 @@ function recordComponent(component) {
 /**
  * 将Vue组件实例挂载到对应元素上
  */
-window.Proxy = new Proxy(window.Proxy, {
-  construct(target, [proxyTarget, proxyHandler]) {
-    const component = proxyTarget?._;
-    if (component?.uid >= 0) {
-      const element = component.vnode.el;
-      if (element) {
-        recordComponent(component);
-      } else {
-        watchComponentMount(component);
+if (!window.isProxyProxy) {
+  window.Proxy = new Proxy(window.Proxy, {
+    construct(target, [proxyTarget, proxyHandler]) {
+      const component = proxyTarget?._;
+      if (component?.uid >= 0) {
+        const element = component.vnode.el;
+        if (element) {
+          recordComponent(component);
+        } else {
+          watchComponentMount(component);
+        }
       }
-    }
-    return new target(proxyTarget, proxyHandler);
-  },
-});
+      return new target(proxyTarget, proxyHandler);
+    },
+  });
+
+  // 初始化全局变量
+  window.__VUE_ELEMENTS__ = elements;
+  window.__VUE_MOUNT__ = []; // Functions to call when component found ((component) => {})
+  window.__VUE_UNMOUNT__ = []; // Functions to call when component unmounts ((component) => {})
+  window.isProxyProxy = true;
+}

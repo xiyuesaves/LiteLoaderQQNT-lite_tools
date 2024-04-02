@@ -397,7 +397,12 @@
       </li>
       <div class="keywordReminder-keyword disabled-input">
         <div class="vertical-list-item">
-          <input placeholder="使用','分隔关键词" class="keywordReminder-keyword-input input-text text_color" type="text" spellcheck="false" />
+          <input
+            placeholder="使用','分隔关键词"
+            class="keywordReminder-keyword-input input-text text_color"
+            type="text"
+            spellcheck="false"
+          />
         </div>
       </div>
     </ul>
@@ -820,7 +825,7 @@
   <h1>其他</h1>
   <setting-panel class="wrap temp-fix">
     <div class="vertical-list-item title">
-      <h2>临时功能</h2>
+      <h2>插件配置</h2>
       <svg class="icon is-fold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M21 8L12 17L3 8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
       </svg>
@@ -829,26 +834,20 @@
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
-          <h2>此菜单内的功能是为了某个特定版本的问题或错误而存在，不保证其稳定性和可用性</h2>
+          <h2>回退逻辑实现</h2>
+          <span class="secondary-text">回退部分功能实现方式，请在安装了 LLAPI 或功能出现问题时开启</span>
         </div>
-      </li>
-      <hr class="horizontal-dividing-line" />
-      <li class="vertical-list-item">
-        <div>
-          <h2>修复cpu占用过高的问题</h2>
-          <span class="secondary-text">启动QQ时自动打开关闭频道一次，以解决cpu占用过高的问题</span>
-        </div>
-        <div class="fixAbnormalResourceUsage q-switch">
+        <div class="compatibleLLAPI q-switch">
           <span class="q-switch__handle"></span>
         </div>
       </li>
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
-          <h2>回退逻辑实现</h2>
-          <span class="secondary-text">回退部分功能实现方式，请在安装了 LLAPI 或功能出现问题时开启</span>
+          <h2>预载hookVue模块</h2>
+          <span class="secondary-text">在页面加载前启用hookVue模块，增加插件运行稳定性，可解决部分功能有概率失效的问题 - 重启生效</span>
         </div>
-        <div class="compatibleLLAPI q-switch">
+        <div class="advanceHookVue q-switch">
           <span class="q-switch__handle"></span>
         </div>
       </li>

@@ -147,10 +147,6 @@ async function onConfigView(view) {
     });
   });
 
-  // 临时功能
-  // 修复cpu占用过高的问题
-  addSwitchEventlistener("fixAbnormalResourceUsage", ".fixAbnormalResourceUsage");
-
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
@@ -223,6 +219,9 @@ async function onConfigView(view) {
     log("查看撤回数据");
     lite_tools.openRecallMsgList();
   });
+
+  // 提前执行
+  addSwitchEventlistener("advanceHookVue", ".advanceHookVue");
 
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");

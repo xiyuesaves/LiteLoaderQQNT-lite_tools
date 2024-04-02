@@ -22,8 +22,6 @@ import { touchMoveSelectin } from "../render_modules/touchMoveSelectin.js";
 import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
 import { localEmoticons } from "../render_modules/localEmoticons.js";
-// 打开频道事件
-import { openGuidMainWindow } from "../render_modules/nativeCall.js";
 // 防抖函数
 import { debounce } from "../render_modules/debounce.js";
 // 首次执行检测
@@ -42,11 +40,6 @@ addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
 chatMessageList();
 newMessageRecall();
-
-// 修复占用过高的一个临时解决办法
-if (options.fixAbnormalResourceUsage) {
-  openGuidMainWindow();
-}
 
 /**
  * 记录的聊天对象对应离开时的消息id
