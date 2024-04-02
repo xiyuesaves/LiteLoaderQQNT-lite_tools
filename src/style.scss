@@ -335,3 +335,15 @@
     background-color: var(--lt-background-color-03) !important;
   }
 }
+
+// 插入气泡
+.file-status {
+  .q-svg-icon {
+    background-color: var(--lt-background-color-05) !important;
+    backdrop-filter: blur(28px);
+    cursor: pointer;
+    svg{
+      transform: scale(0.8);
+    }
+  }
+}

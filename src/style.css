@@ -287,3 +287,12 @@
 .lite-tools-background-visible .recent-contact {
   background-color: var(--lt-background-color-03) !important;
 }
+
+.file-status .q-svg-icon {
+  background-color: var(--lt-background-color-05) !important;
+  backdrop-filter: blur(28px);
+  cursor: pointer;
+}
+.file-status .q-svg-icon svg {
+  transform: scale(0.8);
+}
