@@ -239,7 +239,7 @@
   top: 0;
   left: 0;
   border-radius: 50px;
-  background-color: var(--lt-background-color-05, var(--background-color-cb));
+  background-color: var(--lt-background-color-05, var(--bubble_guest, var(--background-color-cb)));
 }
 .lite-tools-slot.outside-slot .lite-tools-time {
   text-align: center;
@@ -337,7 +337,7 @@
   top: 0;
   left: 0;
   border-radius: 50px;
-  background-color: var(--lt-background-color-05, var(--background-color-cb));
+  background-color: var(--lt-background-color-05, var(--bubble_guest, var(--background-color-cb)));
 }
 
 .avatar-sticky.avatar-end .avatar-span {
