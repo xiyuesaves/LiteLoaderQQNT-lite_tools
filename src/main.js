@@ -1159,9 +1159,29 @@ function onBrowserWindowCreated(window, plugin) {
             const revokeElement = msgItem.elements[0].grayTipElement.revokeElement;
             // 如果开启了拦截自己的撤回事件，则始终为true
             if (!revokeElement.isSelfOperate || options.preventMessageRecall.preventSelfMsg) {
-              log("捕获到实时撤回事件，已被阻止", msgItem);
-              const findInCatch = catchMsgList.get(msgItem.msgId);
+              log("捕获到实时撤回事件", msgItem);
+              let findInCatch = catchMsgList.get(msgItem.msgId);
+              
+              // 在持久化撤回数据中查找
+              if (options.preventMessageRecall.localStorage) {
+                // 常驻内存撤回数据
+                findInCatch ??= recordMessageRecallIdList.get(msgItem.msgId);
+                // 本地文件撤回数据
+                if (!findInCatch) {
+                  const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
+                  const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
+                  if (historyFile) {
+                    // 读取文件内的撤回数据
+                    const messageRecallList = new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`));
+                    historyFile = messageRecallList.get(msgItem.msgId);
+                  }
+                }
+              } else {
+                findInCatch ??= tempRecordMessageRecallIdList.get(msgItem.msgId);
+              }
+
               if (findInCatch) {
+                log("成功找到被撤回消息");
                 // 从消息列表缓存移除
                 catchMsgList.delete(msgItem.msgId);
                 // 广播实时撤回消息参数
