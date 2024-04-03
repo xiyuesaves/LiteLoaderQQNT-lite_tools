@@ -996,7 +996,6 @@ function onBrowserWindowCreated(window, plugin) {
                     findInCatch &&
                     (!msgElements?.grayTipElement?.revokeElement?.isSelfOperate || options.preventMessageRecall.preventSelfMsg)
                   ) {
-                    catchMsgList.delete(msgItem.msgId);
                     log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
                     // 在消息对象上补充撤回信息
                     findInCatch.lite_tools_recall = {
@@ -1145,70 +1144,58 @@ function onBrowserWindowCreated(window, plugin) {
       const events = onMsgInfoListUpdate !== -1 ? onMsgInfoListUpdate : onActiveMsgInfoUpdate;
       log("更新消息信息列表", args[1]);
       if (checkChatType(args?.[1]?.[events]?.payload?.msgList?.[0])) {
-        const msgItem = args[1][events]?.payload?.msgList[0];
-        if (options.preventMessageRecall.enabled) {
-          if (msgItem.elements[0]?.grayTipElement?.revokeElement) {
-            const revokeElement = msgItem.elements[0].grayTipElement.revokeElement;
-            // 如果开启了拦截自己的撤回事件，则始终为true
-            if (!revokeElement.isSelfOperate || options.preventMessageRecall.preventSelfMsg) {
-              log("捕获到实时撤回事件", msgItem);
-              let findInCatch = catchMsgList.get(msgItem.msgId);
+        if (options.preventMessageRecall.enabled && args[1][events]?.payload?.msgList) {
+          const msgList = args[1][events].payload.msgList;
+          const msgListLength = msgList.length;
+          for (let i = 0; i < msgListLength; i++) {
+            const msgItem = msgList[i];
+            // 判断这条消息是否含有撤回标记
+            const findRevokeElement = msgItem.elements.find((element) => element.grayTipElement?.revokeElement);
+            if (findRevokeElement) {
+              const revokeElement = findRevokeElement.grayTipElement.revokeElement;
+              // 如果开启了拦截自己的撤回事件，则始终为true
+              if (!revokeElement.isSelfOperate || options.preventMessageRecall.preventSelfMsg) {
+                log("捕获到实时撤回事件", msgItem);
+                const findInCatch = catchMsgList.get(msgItem.msgId);
+                if (findInCatch) {
+                  // 广播实时撤回消息参数
+                  const recallData = {
+                    operatorNick: revokeElement.operatorNick, // 执行撤回昵称
+                    operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
+                    operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
 
-              // 在持久化撤回数据中查找
-              if (options.preventMessageRecall.localStorage) {
-                // 常驻内存撤回数据
-                findInCatch ??= recordMessageRecallIdList.get(msgItem.msgId);
-                // 本地文件撤回数据
-                if (!findInCatch) {
-                  const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
-                  const historyFile = messageRecallFileList.find((fileName) => parseInt(fileName) >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
-                  if (historyFile) {
-                    // 读取文件内的撤回数据
-                    const messageRecallList = new MessageRecallList(path.join(messageRecallPath, `${historyFile}.json`));
-                    historyFile = messageRecallList.get(msgItem.msgId);
+                    origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
+                    origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
+                    origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
+                    recallTime: msgItem.recallTime, // 撤回时间
+                  };
+                  findInCatch.lite_tools_recall = recallData;
+                  log("广播实时撤回事件", recallData);
+                  globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
+                    msgId: findInCatch.msgId,
+                    recallData,
+                  });
+                  // 写入常驻内存缓存
+                  if (options.preventMessageRecall.localStorage) {
+                    recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                  } else {
+                    tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
                   }
-                }
-              } else {
-                findInCatch ??= tempRecordMessageRecallIdList.get(msgItem.msgId);
-              }
-
-              if (findInCatch) {
-                log("成功找到被撤回消息");
-                // 从消息列表缓存移除
-                catchMsgList.delete(msgItem.msgId);
-                // 广播实时撤回消息参数
-                const recallData = {
-                  operatorNick: revokeElement.operatorNick, // 执行撤回昵称
-                  operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
-                  operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
-
-                  origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
-                  origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
-                  origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
-                  recallTime: msgItem.recallTime, // 撤回时间
-                };
-                findInCatch.lite_tools_recall = recallData;
-                globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
-                  msgId: findInCatch.msgId,
-                  recallData,
-                });
-                // 写入常驻内存缓存
-                if (options.preventMessageRecall.localStorage) {
-                  recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
+                  // 下载消息含有的媒体文件
+                  processPic(findInCatch);
+                  // 移除这条数据
+                  args[1][events].payload.msgList.splice(i, 1);
+                  log("成功阻止撤回");
                 } else {
-                  tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+                  log("被撤回消息没有在缓存中，反撤回失败");
                 }
-                processPic(findInCatch);
-                msgItem = findInCatch; // 替换撤回标记
               } else {
-                log("被撤回消息没有在缓存中，反撤回失败");
+                log("本人发起的撤回，放行");
               }
             } else {
-              log("本人发起的撤回，放行");
+              // 将消息存入map
+              catchMsgList.set(msgItem.msgId, msgItem);
             }
-          } else {
-            // 将消息存入map
-            catchMsgList.set(msgItem.msgId, msgItem);
           }
         }
       } else {
