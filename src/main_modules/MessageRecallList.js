@@ -23,10 +23,11 @@ class MessageRecallList {
   }
   set(key, value) {
     if (this.messageRecallPath) {
-      if (value.msgAttrs && value.msgAttrs instanceof Map) {
-        value.msgAttrs = Array.from(value.msgAttrs);
+      const copyMsg = structuredClone(value);
+      if (copyMsg.msgAttrs && copyMsg.msgAttrs instanceof Map) {
+        copyMsg.msgAttrs = Array.from(copyMsg.msgAttrs);
       }
-      this.map.set(key, value);
+      this.map.set(key, copyMsg);
       if (this.map.size >= this.limit) {
         log("缓存撤回消息超过阈值，开始切片");
         const newFileName = `${new Date().getTime()}.json`;
@@ -34,11 +35,11 @@ class MessageRecallList {
           path.join(this.messageRecallPath, newFileName),
           Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"),
         );
-        this.newFileEvent.forEach((callback) => callback(newFileName));
+        this.newFileEvent.forEach((callback) => callback(value));
         this.map = new Map();
       }
       this.saveFile();
-      this.newRecallMsgEvent.forEach((callback) => callback(value));
+      this.newRecallMsgEvent.forEach((callback) => callback(copyMsg));
     } else {
       console.error("该实例工作在只读模式");
     }
