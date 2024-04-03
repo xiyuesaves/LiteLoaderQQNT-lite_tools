@@ -48,16 +48,16 @@ function processingMsgList() {
     }
     // 消息合并逻辑
     if (msgRecord?.elements?.[0]?.grayTipElement === null && options.message.avatarSticky.enabled && options.message.mergeMessage) {
+      // 发送者uid
       const senderUid = msgRecord?.senderUid;
-      const sendNickName = msgRecord?.anonymousExtInfo?.anonymousNick ?? msgRecord?.sendNickName;
-      const mapTag = senderUid + sendNickName;
+      // 用户显示昵称
+      const anonymousNick = msgRecord?.anonymousExtInfo?.anonymousNick ?? "";
+      // 记录消息高度tag
+      const mapTag = senderUid + anonymousNick;
+      // 下一条消息元素
       const nextMsgRecord = curMsgs[index + 1]?.data;
-      const prevElUid = nextMsgRecord?.senderUid;
-      const prevNickName = nextMsgRecord?.anonymousExtInfo?.anonymousNick ?? nextMsgRecord?.sendNickName;
-      const hasShowTimestamp = options.message.mergeMessageKeepTime ? msgRecord?.showTimestamp : false;
-      const prevTag = prevElUid + prevNickName;
       if (messageEl) {
-        if (!hasShowTimestamp && nextMsgRecord?.elements?.[0]?.grayTipElement === null && mapTag === prevTag) {
+        if (isChildMessage(msgRecord, nextMsgRecord)) {
           messageEl.classList.remove("merge-main");
           messageEl.classList.add("merge", "merge-child");
           curMsgs[index].height = messageEl.offsetHeight;
@@ -342,7 +342,7 @@ function messageToleft(component) {
 
 /**
  * 初始化当前已加载的消息元素
- * @param {Boolean} recursion 是否递归检测 
+ * @param {Boolean} recursion 是否递归检测
  */
 const initMessageList = (recursion = true) => {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
@@ -370,6 +370,27 @@ const initMessageList = (recursion = true) => {
  */
 const debounceInitMessageList = debounce(initMessageList);
 initMessageList();
+
+/**
+ * 判断当前消息是不是子消息
+ * @return {Boolean}
+ */
+function isChildMessage(msgRecord, nextMsgRecord) {
+  // 如果其中一个参数为空则直接返回false
+  if (!(msgRecord && nextMsgRecord)) {
+    return false;
+  }
+  // uni是否一致
+  const uniEqual = msgRecord?.senderUid === nextMsgRecord?.senderUid;
+  // 匿名昵称是否一致
+  const anonymousEqual = msgRecord?.anonymousExtInfo?.anonymousNick === nextMsgRecord?.anonymousExtInfo?.anonymousNick;
+  // 下一条消息不是灰色提示
+  const notGrayTip = nextMsgRecord?.elements?.[0]?.grayTipElement === null;
+  // 当前消息没有显示时间
+  const notShowTime = options.message.mergeMessageKeepTime ? !msgRecord?.showTimestamp : true;
+  // 返回是不是子消息
+  return uniEqual && anonymousEqual && notGrayTip && notShowTime;
+}
 
 /**
  * 初始化监听器
