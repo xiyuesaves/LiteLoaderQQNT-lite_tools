@@ -80,7 +80,7 @@ async function updateWallpaper(enabled, wallpaperData) {
     if (app.classList.contains("lite-tools-main")) {
       app.classList.toggle("lite-tools-full-wallpaper", options.background.overlaySiderBar);
       if (options.background.overlaySiderBar) {
-        document.querySelector(".container").appendChild(wallpaper);
+        document.querySelector("#app").appendChild(wallpaper);
       } else {
         document.querySelector(".container .tab-container").appendChild(wallpaper);
       }
