@@ -3,7 +3,8 @@ import { messageRecall } from "./messageRecall.js";
 import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
 import { getPeer } from "./curAioData.js";
-import { showToast } from "./toast.js";
+import { createHtmlCard } from "./createHtmlCard.js";
+// import { showToast } from "./toast.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
@@ -119,6 +120,28 @@ function singleMessageProcessing(target, msgRecord) {
       if (chatTypes.includes(msgRecord?.chatType)) {
         // 尺寸监听器
         resizeObserver.observe(messageEl);
+
+        // 重写卡片消息
+        const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
+        if (options.background.enabled && findArkMsg) {
+          try {
+            const arkData = JSON.parse(findArkMsg.arkElement.bytesData);
+            const htmlCard = createHtmlCard(arkData);
+            if (htmlCard) {
+              const arkMsgContentContainer = messageEl.querySelector(
+                ".message-content__wrapper .ark-msg-content-container:not(.lite-tools-cover-canvas)",
+              );
+              if (arkMsgContentContainer) {
+                arkMsgContentContainer.classList.add("lite-tools-cover-canvas");
+                arkMsgContentContainer.insertAdjacentHTML("beforeend", htmlCard);
+                arkMsgContentContainer.querySelector(".lite-tools-ark-card").addEventListener("click", () => {
+                  arkMsgContentContainer.querySelector("canvas").click();
+                });
+              }
+            }
+          } catch {}
+        }
+
         // 消息靠左
         if (options.message.selfMsgToLeft) {
           messageEl.querySelector(".message-container")?.classList?.remove("message-container--self");

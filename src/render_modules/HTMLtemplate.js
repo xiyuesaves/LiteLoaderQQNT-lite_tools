@@ -96,6 +96,35 @@ const errorIcon = `<i style="width:20px;height:20px; color:#FF5967;"><svg viewBo
 
 const reminderEl = `<div class="lite-tools-keywordReminder">{{nums}} 条消息有提醒词</div>`;
 
+const miniappArkCard = `<div class="lite-tools-miniapp-ark-card lite-tools-ark-card">
+<div class="title">
+  <img class="app-icon" src="{{appIcon}}" />
+  <span class="app-name text-ellipsis">{{appName}}</span>
+</div>
+<div class="share-title text-ellipsis" title="{{shareDesc}}">{{shareDesc}}</div>
+<div class="share-pic">
+  <img src="{{previewImg}}"/>
+</div>
+<div class="bottom-info">
+  <i class="miniapp-icon">{{miniappIcon}}</i>
+  <span class="miniapp-name">QQ小程序</span>
+</div>
+</div>`;
+
+const urlArkCard = `<div class="lite-tools-url-ark-card lite-tools-ark-card">
+<span class="title text-ellipsis" title="{{title}}">{{title}}</span>
+<div class="desc">
+  <div class="desc-text" title="{{desc}}">{{desc}}</div>
+  <div class="desc-img">
+    <img src="{{descImg}}" />
+  </div>
+</div>
+<div class="bottom">
+  <img class="icon" src="{{appIcon}}" />
+  <span class="title">{{title}}</span>
+</div>
+</div>`;
+
 export {
   tailElement,
   recallGroupItem,
@@ -111,4 +140,6 @@ export {
   successIcon,
   errorIcon,
   reminderEl,
+  miniappArkCard,
+  urlArkCard,
 };

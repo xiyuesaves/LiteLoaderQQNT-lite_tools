@@ -916,3 +916,7 @@
 .lite-tools-compatible-AntiRecall .message-content-replace {
   display: none !important;
 }
+
+.lite-tools-cover-canvas .lite-tools-ark-card {
+  display: none;
+}

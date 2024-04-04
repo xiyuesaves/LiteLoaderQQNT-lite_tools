@@ -17,6 +17,12 @@
     --lt-voice-play-icon: rgba(255, 255, 255, 1);
     --lt-text-color: rgba(0, 0, 0, 0.8);
     --lt-link-url-color: rgb(45, 119, 229);
+    --lt-ark-title-text-color: rgb(178, 178, 178);
+    --lt-ark-desc-text-color: rgb(34, 34, 34);
+    --lt-ark-info-text-color: rgb(178, 178, 178);
+    --lt-ark-border-color: rgb(229, 229, 229);
+    --lt-ark-title-color: rgb(3, 8, 26);
+    --lt-ark-info-colo: rgb(135, 139, 153);
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -32,6 +38,12 @@
     --lt-voice-play-icon: rgba(255, 255, 255, 0.6);
     --lt-text-color: rgba(255, 255, 255, 0.8);
     --lt-link-url-color: rgb(45, 119, 229);
+    --lt-ark-title-text-color: rgb(143, 143, 143);
+    --lt-ark-desc-text-color: rgb(255, 255, 255);
+    --lt-ark-info-text-color: rgb(102, 102, 102);
+    --lt-ark-border-color: rgb(73, 73, 73);
+    --lt-ark-title-color: rgb(255, 255, 255);
+    --lt-ark-info-colo: rgb(170, 170, 180);
   }
 }
 #app .ark-view-message_not-support {
@@ -301,4 +313,142 @@
 .message-content-replace.single::after {
   box-shadow: var(--lt-box-shadow);
   backdrop-filter: blur(28px);
+}
+
+.lite-tools-cover-canvas * {
+  user-select: none;
+}
+.lite-tools-cover-canvas .lite-tools-ark-card {
+  display: block;
+}
+.lite-tools-cover-canvas .ark-item-container {
+  height: 0px !important;
+  width: 0px !important;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card {
+  width: 280px;
+  height: 296px;
+  border-radius: 8px;
+  padding-top: 12px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .title {
+  width: 100%;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 0 12px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .title .app-icon {
+  height: 16px;
+  width: 16px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .title .app-name {
+  font-size: 12px;
+  margin-left: 4px;
+  color: var(--lt-ark-title-text-color);
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .share-title {
+  padding: 0 12px;
+  font-size: 14px;
+  text-indent: -1px;
+  color: var(--lt-ark-desc-text-color);
+  margin-bottom: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .share-pic {
+  padding: 0 8px;
+  width: 100%;
+  height: 195px;
+  margin-bottom: 9px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .share-pic img {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .bottom-info {
+  width: calc(100% - 20px);
+  height: 30px;
+  margin: 0 12px;
+  font-size: 12px;
+  color: var(--lt-ark-title-text-color);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  border-top: solid 1px var(--lt-ark-border-color);
+  padding: 0 3px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .bottom-info .miniapp-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .bottom-info .miniapp-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card {
+  width: 251px;
+  height: 136px;
+  border-radius: 8px;
+  padding: 13px 12px 0;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card > .title {
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  color: var(--lt-ark-title-color);
+  margin-bottom: 10px;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card .desc {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  font-size: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card .desc .desc-text {
+  color: var(--lt-ark-info-colo);
+  word-break: break-all;
+  line-height: 19px;
+  width: 168px;
+  height: 40px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card .desc .desc-img {
+  width: 52px;
+  height: 52px;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card .desc .desc-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card .bottom {
+  width: 100%;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-top: solid 1px var(--lt-ark-border-color);
+  box-sizing: border-box;
+  font-size: 12px;
+  color: var(--lt-ark-title-text-color);
+}
+.lite-tools-cover-canvas .lite-tools-url-ark-card .bottom .icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
 }
