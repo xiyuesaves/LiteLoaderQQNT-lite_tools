@@ -39,7 +39,7 @@ async function checkUpdate(view) {
       if (compareVersions(LiteLoader.plugins.lite_tools.manifest.version, json.tag_name)) {
         const newVersionEl = document.createElement("span");
         const aLink = document.createElement("a");
-        aLink.innerText = json.tag_name;
+        aLink.innerText = json.tag_name.replace("v", "");
         aLink.classList.add("link");
         aLink.addEventListener("click", () => {
           lite_tools.openWeb("https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest");
