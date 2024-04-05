@@ -94,7 +94,7 @@ const resizeObserver = new ResizeObserver(debounceProcessingMsgList);
 /**
  * 向 hookVue3 模块添加功能
  */
-window.__VUE_MOUNT__.push((component) => {
+window?.__VUE_MOUNT__?.push((component) => {
   try {
     // 兼容模式直接返回
     if (options.compatibleLLAPI) {
