@@ -11,13 +11,13 @@ export function createHtmlCard(arkData) {
       const newMiniappCard = miniappArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
           case "appIcon":
-            return arkData.meta.detail_1.icon;
+            return arkData.meta.detail_1.icon.replace(/^(http:\/\/|https:\/\/)?/,"https://");
           case "appName":
             return arkData.meta.detail_1.title;
           case "shareDesc":
             return arkData.meta.detail_1.desc;
           case "previewImg":
-            return arkData.meta.detail_1.preview;
+            return arkData.meta.detail_1.preview.replace(/^(http:\/\/|https:\/\/)?/,"https://");
           case "miniappIcon":
             return miniappIcon;
           default:
@@ -35,7 +35,7 @@ export function createHtmlCard(arkData) {
           case "desc":
             return arkData.meta.news.desc;
           case "descImg":
-            return arkData.meta.news.preview;
+            return arkData.meta.news.preview.replace(/^(http:\/\/|https:\/\/)?/,"https://");
           default:
             return name;
         }

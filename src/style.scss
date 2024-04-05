@@ -374,6 +374,9 @@
   * {
     user-select: none;
   }
+  img{
+    pointer-events: none;
+  }
   .lite-tools-ark-card {
     display: block;
   }

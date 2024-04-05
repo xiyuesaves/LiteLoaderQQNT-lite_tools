@@ -318,6 +318,9 @@
 .lite-tools-cover-canvas * {
   user-select: none;
 }
+.lite-tools-cover-canvas img {
+  pointer-events: none;
+}
 .lite-tools-cover-canvas .lite-tools-ark-card {
   display: block;
 }
