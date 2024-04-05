@@ -2,6 +2,7 @@ import { options } from "./options.js";
 import { localEmoticonsIcon, searchIcon, copyIcon, imageIcon } from "./svg.js";
 import { subMenuIconEl } from "./HTMLtemplate.js";
 import { emoticonsList } from "./localEmoticons.js";
+import { getPicUrl } from "./getPicUrl.js";
 import "./wrapText.js";
 import { getMembersAvatar } from "./nativeCall.js";
 import { showToast } from "./toast.js";
@@ -231,18 +232,11 @@ function addEventqContextMenu() {
         if (event.target.classList.contains("image-content") && elements.some((ele) => ele.picElement)) {
           imagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
           event.target.parentElement.__VUE__.forEach((el) => {
-            const originImageUrl = el?.ctx?.picData?.originImageUrl;
-            const originMd5 = el?.ctx?.picData?.originImageMd5;
-            const md5 = el?.ctx?.picData?.md5HexStr?.toUpperCase();
-            if (originImageUrl) {
-              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn${originImageUrl}&rkey=CAMSKLgthq-6lGU_w8qRmii91Wd89eUjW4Rg44v_zM9qUrjZjrZd-CfXFtI`);
-            } else if (originMd5 && originMd5 !== "undefined") {
-              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn/gchatpic_new/0/0-0-${originMd5}/0`);
-            } else if (md5) {
-              searchImagePath = encodeURIComponent(`https://gchat.qpic.cn/gchatpic_new/0/0-0-${md5}/0`);
+            if (el?.ctx?.picData) {
+              searchImagePath = getPicUrl(el.ctx.picData);
             }
           });
-          log(decodeURIComponent(searchImagePath))
+          log(decodeURIComponent(searchImagePath));
         }
         // 发送表情包检测
         if (elements.some((ele) => ele.marketFaceElement)) {
