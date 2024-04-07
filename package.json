@@ -4,12 +4,16 @@
   "description": "<div align=center>\r   <img src=\"./icon.png\" />\r </div>",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild ./src/main.js --bundle --target=node16 --platform=node --outfile=./dist/main.js --charset=utf8 --external:electron --external:sass"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "sass": "^1.64.1"
+  },
+  "dependencies": {
+    "esbuild": "^0.20.2"
   }
 }

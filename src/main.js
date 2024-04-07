@@ -1206,6 +1206,13 @@ function onBrowserWindowCreated(window, plugin) {
         log("更新消息信息列表-拒绝处理");
       }
     }
+
+    // 获取消息列表
+    const findRecentListIndex = findEventIndex(args, "nodeIKernelRecentContactListener/onRecentContactListChangedVer2");
+    if (findRecentListIndex !== -1) {
+      const recentContactList = args?.[1]?.[findRecentListIndex];
+    }
+
     // 记录下可能会用到的事件名称
 
     // 视频加载完成事件
