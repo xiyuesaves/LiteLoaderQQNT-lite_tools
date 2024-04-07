@@ -1,4 +1,5 @@
 let curAioData = null;
+let peer = null;
 const eventList = [];
 
 /**
@@ -19,8 +20,14 @@ function initCurAioData() {
     },
     set(newVal) {
       curAioData = newVal;
+      // 打个标记，这个模块的返回内容被改了
+      peer = {
+        chatType: newVal.chatType,
+        peerUid: newVal?.header?.uid,
+        guildId: "",
+      };
       eventList.forEach((func) => {
-        func(newVal);
+        func(peer);
       });
     },
   });
@@ -38,11 +45,7 @@ function addEventPeerChange(func) {
  * @returns {Object}
  */
 function getPeer() {
-  return {
-    chatType: curAioData?.chatType === 1 ? "friend" : "group",
-    guildId: "",
-    uid: curAioData?.header?.uid,
-  };
+  return peer;
 }
 
 export { getPeer, addEventPeerChange, initCurAioData };

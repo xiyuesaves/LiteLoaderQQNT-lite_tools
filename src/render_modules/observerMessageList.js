@@ -4,15 +4,11 @@ import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
 import { getPeer } from "./curAioData.js";
 import { createHtmlCard } from "./createHtmlCard.js";
-// import { showToast } from "./toast.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
 // 过滤消息类型
 const chatTypes = [1, 2, 100];
-
-// 临时记录元素
-const elementMap = new WeakMap();
 
 /**
  * 过滤消息元素
@@ -33,14 +29,6 @@ function processingMsgList() {
   const curMsgsLength = curMsgs.length;
   for (let index = 0; index < curMsgsLength; index++) {
     const el = curMsgs[index];
-    // 不知道为啥使用缓存会更卡...
-    // let messageEl = elementMap.get(el);
-    // if (!messageEl) {
-    //   messageEl = document.querySelector(`[id="${el.id}"] .message`);
-    //   if (messageEl) {
-    //     elementMap.set(el, messageEl);
-    //   }
-    // }
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     const msgRecord = curMsgs[index].data;
     // 额外处理下历史撤回数据

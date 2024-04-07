@@ -10,19 +10,6 @@ log("获取到当前窗口Id", webContentId);
 
 /**
  *
- * @param {Peer} peer 转换Peer对象
- * @returns Contact
- */
-function convertPeer(peer) {
-  return {
-    chatType: peer.chatType == "friend" ? 1 : peer.chatType == "group" ? 2 : 1,
-    peerUid: peer.uid,
-    guildId: "",
-  };
-}
-
-/**
- *
  * @param {Array} message 消息链
  * @returns
  */
@@ -115,7 +102,7 @@ async function sendMessage(peer, messages) {
     [
       {
         msgId: "0",
-        peer: convertPeer(peer),
+        peer: peer,
         msgElements: await Promise.all(messages.map((message) => convertMessage(message))),
         msgAttributeInfos: new Map(),
       },
@@ -140,7 +127,7 @@ function sendRawMessage(peer, messages) {
     [
       {
         msgId: "0",
-        peer: convertPeer(peer),
+        peer: peer,
         msgElements: messages,
         msgAttributeInfos: new Map(),
       },
@@ -167,8 +154,8 @@ function forwardMessage(srcpeer, dstpeer, msgIds) {
       {
         msgIds,
         msgAttributeInfos: new Map(),
-        srcContact: convertPeer(srcpeer),
-        dstContacts: [convertPeer(dstpeer)],
+        srcContact: srcpeer,
+        dstContacts: [dstpeer],
         commentElements: [],
       },
       null,
@@ -328,7 +315,6 @@ function openGuidMainWindow() {
   );
 }
 
-
 export {
   sendMessage,
   sendRawMessage,
@@ -340,5 +326,5 @@ export {
   openGuidMainWindow,
   getGroupInfo,
   getGroupsList,
-  openExternalWindow
+  openExternalWindow,
 };

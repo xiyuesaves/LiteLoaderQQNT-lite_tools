@@ -13,12 +13,8 @@ const debounceSetOptions = debounce(() => {
   lite_tools.setOptions(options);
 }, 10);
 
-addEventPeerChange((curAioData) => {
-  peer = {
-    chatType: curAioData?.chatType,
-    guildId: "",
-    uid: curAioData?.header?.uid,
-  };
+addEventPeerChange((newPeer) => {
+  peer = newPeer;
   log("peer更新", peer);
   messageTail();
 });
@@ -41,12 +37,12 @@ function messageTail() {
   peer = getPeer();
   log("加载完成", peer);
   let tailTipsEl = document.querySelector(".lite-tools-tail-tips");
-  if (container && peer?.uid && options.tail.tips) {
+  if (container && peer?.peerUid && options.tail.tips) {
     tailIndex = options.tail.list.findIndex((tail) => {
       if (tail.filter.length === 1 && tail.filter[0] === "") {
         return true;
       }
-      if (tail.filter.includes(peer?.uid)) {
+      if (tail.filter.includes(peer?.peerUid)) {
         return true;
       }
     });

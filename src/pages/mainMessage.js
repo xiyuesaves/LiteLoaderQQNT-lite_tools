@@ -46,10 +46,6 @@ newMessageRecall();
  */
 let uidToMessageId = new Map();
 /**
- * 代理数据
- */
-let curAioData = undefined;
-/**
  * 当前聊天对象的uid
  */
 let curUid = undefined;
@@ -68,13 +64,12 @@ const updateVisibleItem = debounce(() => {
   }
 }, 100);
 
-addEventPeerChange((newVal) => {
-  log("uin更新", newVal);
-  curAioData = newVal;
-  curUid = newVal?.header?.uid;
+addEventPeerChange((newPeer) => {
+  log("peer更新", newPeer);
+  curUid = newPeer?.peerUid;
   injectReminder(curUid);
-  if (options.message.currentLocation && newVal?.header?.uid) {
-    const messageId = uidToMessageId.get(newVal.header.uid);
+  if (options.message.currentLocation && curUid) {
+    const messageId = uidToMessageId.get(curUid);
     if (messageId && messageId != "0") {
       document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
     } else {

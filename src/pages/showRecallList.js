@@ -29,7 +29,7 @@ lite_tools.onReacllMsgData((_, map) => {
   document.querySelector(".logs").innerText += `整理结束，共有 ${groupList.size} 个独立群组或私聊，输出到dom\n`;
   try {
     groupList.forEach((msgArr) => {
-      const chatType = msgArr[0].chatType === 1 ? "私聊" : "群组";
+      const chatTypeName = msgArr[0].chatType === 1 ? "私聊" : "群组";
       const peerName = getPeerName(msgArr);
       const peerUid = msgArr[0].peerUid;
       const groupItemEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
@@ -53,7 +53,7 @@ lite_tools.onReacllMsgData((_, map) => {
           res();
         });
       }
-      groupItemEl.querySelector(".chat-type").innerText = `[${chatType}]`;
+      groupItemEl.querySelector(".chat-type").innerText = `[${chatTypeName}]`;
       groupItemEl.querySelector(".peer-name").innerText = peerName;
       groupItemEl.querySelector(".peer-name").title = peerName;
       groupItemEl.querySelector(".peer-uid").innerText = `(${peerUid})`;

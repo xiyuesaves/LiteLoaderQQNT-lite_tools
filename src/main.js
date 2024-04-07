@@ -125,8 +125,16 @@ const catchMsgList = new LimitedMap(20000);
  * 所有撤回消息本地切片列表
  */
 let messageRecallFileList = [];
+
 /**
- * 当前激活的聊天窗口数据
+ * @typedef PeerObject
+ * @property {Number} chatType 聊天对象类型，1为私聊，2为群组，100为临时会话
+ * @property {String} peerUid 聊天对象 Uid
+ * @property {String} guildId 大概是频道 id 一般用不到
+ */
+
+/**
+ * @type {PeerObject} 当前激活的聊天窗口数据
  */
 let peer = null;
 /**
@@ -924,22 +932,18 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
     if (args[3]?.[1]?.[0] === "changeRecentContacPeerUid") {
-      log("切换聊天对象", args[3]?.[1]?.[1]);
-      peer = {
-        chatType: args[3]?.[1]?.[1]?.peerUid[0] === "u" ? "friend" : "group",
-        uid: args[3]?.[1]?.[1]?.peerUid,
-        guildId: args[3]?.[1]?.[1]?.peer?.guildId,
-      };
-      globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
+      if (checkChatType(args[3]?.[1]?.[1].peer)) {
+        log("切换聊天对象", args[3]?.[1]?.[1]);
+        peer = args[3]?.[1]?.[1].peer;
+        globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
+      } else {
+        log("切换聚焦窗口-拒绝处理");
+      }
     }
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
-      log("切换聚焦窗口", args[3]?.[1]?.[1]);
       if (checkChatType(args[3]?.[1]?.[1].peer)) {
-        peer = {
-          chatType: args[3]?.[1]?.[1].peer.peerUid[0] === "u" ? "friend" : "group",
-          uid: args[3]?.[1]?.[1].peer.peerUid,
-          guildId: args[3]?.[1]?.[1]?.peer.guildId,
-        };
+        log("切换聚焦窗口", args[3]?.[1]?.[1]);
+        peer = args[3]?.[1]?.[1].peer;
         globalBroadcast("LiteLoader.lite_tools.updatePeer", peer);
       } else {
         log("切换聚焦窗口-拒绝处理");
