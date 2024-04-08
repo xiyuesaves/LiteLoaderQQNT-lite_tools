@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild ./src/main.js --bundle --target=node16 --platform=node --outfile=./dist/main.js --charset=utf8 --external:electron --external:sass"
+    "build": "node esbuild.config.js"
   },
   "keywords": [],
   "author": "",
