@@ -10,6 +10,9 @@ const log = new Logs("消息列表处理");
 // 过滤消息类型
 const chatTypes = [1, 2, 100];
 
+// 最大缓存10w条消息合并对应关系
+const MAX_CACHE_SIZE = 100000;
+
 /**
  * 过滤消息元素
  */
@@ -18,7 +21,7 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
 /**
  * 历史消息合并状态
  */
-const msgElMergeType = new Map();
+let msgElMergeType = new Map();
 
 /**
  * 处理当前可见的消息列表
@@ -63,6 +66,12 @@ function processingMsgList() {
           }
           childElHeight.delete(mapTag);
           msgElMergeType.set(curMsgs[index].id, "merge-main");
+        }
+        // 如果缓存消息大于100000，则移除10%最早的数据
+        if (msgElMergeType.size >= MAX_CACHE_SIZE) {
+          const array = Array.from(msgElMergeType);
+          const arrayLength = array.length;
+          msgElMergeType = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
         }
       }
     }
