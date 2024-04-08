@@ -3,6 +3,8 @@ const fs = require("fs");
 const http = require("http");
 const net = require("net");
 
+import superjson from "superjson";
+
 const Opt = require("./option");
 const debounce = require("./debounce");
 let options = Opt.value;
@@ -69,13 +71,17 @@ class Logs {
     if (req.url === "/" && req.method === "GET") {
       // 读取日志文件内容
       res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8", "Access-Control-Allow-Origin": "*" });
-      const log = JSON.stringify(this.logMsg);
+      const log = superjson.stringify(this.logMsg);
       this.logMsg = [];
       res.end(log);
     } else if (req.url === "/debug" && req.method === "GET") {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Access-Control-Allow-Origin": "*" });
       const html = fs.readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/src/config/debug.html`, { encoding: "utf-8" });
       res.end(html);
+    } else if (req.url === "/debug.js" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Access-Control-Allow-Origin": "*" });
+      const js = fs.readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/dist/debug.js`, { encoding: "utf-8" });
+      res.end(js);
     } else if (req.url === "/step" && req.method === "GET") {
       const res_ = this.res.shift();
       if (res_) {

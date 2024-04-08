@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const EventEmitter = require("events");
 class MainEvent extends EventEmitter {}
 const mainEvent = new MainEvent();
+import superjson from 'superjson';
 
 // 本地模块
 /**
@@ -1141,12 +1142,12 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
 
-    // 更新消息信息列表
+    // 消息列表更新
     const onMsgInfoListUpdate = findEventIndex(args, "nodeIKernelMsgListener/onMsgInfoListUpdate");
     const onActiveMsgInfoUpdate = findEventIndex(args, "nodeIKernelMsgListener/onActiveMsgInfoUpdate");
     if (onMsgInfoListUpdate !== -1 || onActiveMsgInfoUpdate !== -1) {
       const events = onMsgInfoListUpdate !== -1 ? onMsgInfoListUpdate : onActiveMsgInfoUpdate;
-      log("更新消息信息列表", args[1]);
+      log("消息列表更新", args[1]);
       if (checkChatType(args?.[1]?.[events]?.payload?.msgList?.[0])) {
         if (options.preventMessageRecall.enabled && args[1][events]?.payload?.msgList) {
           const msgList = args[1][events].payload.msgList;
