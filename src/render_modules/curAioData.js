@@ -1,3 +1,6 @@
+import { Logs } from "./logs.js";
+const log = new Logs("peer管理模块");
+
 let curAioData = null;
 let peer = null;
 const eventList = [];
@@ -9,6 +12,7 @@ const eventList = [];
 function initCurAioData() {
   if (!app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData) {
     setTimeout(initCurAioData, 500);
+    log("等待数据初始化");
     return;
   }
   curAioData = app.__vue_app__.config.globalProperties.$store.state.common_Aio.curAioData;
@@ -19,17 +23,23 @@ function initCurAioData() {
       return curAioData;
     },
     set(newVal) {
+      log("peer更新", newVal);
       curAioData = newVal;
-      // 打个标记，这个模块的返回内容被改了
-      peer = {
-        chatType: newVal.chatType,
-        peerUid: newVal?.header?.uid,
-        guildId: "",
-      };
-      eventList.forEach((func) => {
-        func(peer);
-      });
+      emitEvent();
     },
+  });
+  log("捕获到 curAioData 对象，触发一次更新事件");
+  emitEvent();
+}
+
+function emitEvent() {
+  peer = {
+    chatType: curAioData.chatType,
+    peerUid: curAioData?.header?.uid,
+    guildId: "",
+  };
+  eventList.forEach((func) => {
+    func(peer);
   });
 }
 
@@ -45,6 +55,7 @@ function addEventPeerChange(func) {
  * @returns {Object}
  */
 function getPeer() {
+  log("返回peer", peer);
   return peer;
 }
 
