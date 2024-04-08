@@ -79,6 +79,7 @@
     "localStorage": false,
     "customColor": false,
     "preventSelfMsg": false,
+    "blockAllRetractions": false,
     "textColor": "#ff6666"
   },
   "tail": {

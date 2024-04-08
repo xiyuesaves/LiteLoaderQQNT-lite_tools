@@ -891,8 +891,9 @@ function onBrowserWindowCreated(window, plugin) {
       if (options.debug.showChannedCommunication) {
         log("get", args[2], args[3]?.[1]?.[0], args);
       }
-      ipc_message(args);
-      return target.apply(thisArg, args);
+      if (ipc_message(args)) {
+        return target.apply(thisArg, args);
+      }
     },
   });
 
@@ -901,6 +902,7 @@ function onBrowserWindowCreated(window, plugin) {
    * @param {Array} args ipc参数
    */
   function ipc_message(args) {
+    // 消息发送事件
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
       log("消息发送事件", args);
       if (checkChatType(args[3][1][1].peer)) {
@@ -936,6 +938,7 @@ function onBrowserWindowCreated(window, plugin) {
         log("消息发送事件-拒绝处理");
       }
     }
+    // 切换聊天对象
     if (args[3]?.[1]?.[0] === "changeRecentContacPeerUid") {
       if (checkChatType(args[3]?.[1]?.[1].peer)) {
         log("切换聊天对象", args[3]?.[1]?.[1]);
@@ -945,6 +948,7 @@ function onBrowserWindowCreated(window, plugin) {
         log("切换聚焦窗口-拒绝处理");
       }
     }
+    // 切换聚焦窗口
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/setMsgRead") {
       if (checkChatType(args[3]?.[1]?.[1].peer)) {
         log("切换聚焦窗口", args[3]?.[1]?.[1]);
@@ -954,6 +958,13 @@ function onBrowserWindowCreated(window, plugin) {
         log("切换聚焦窗口-拒绝处理");
       }
     }
+    // 删除窗口激活
+    if (options.preventMessageRecall.blockAllRetractions && args[3]?.[1]?.[0] === "nodeIKernelMsgService/deleteActiveChatByUid") {
+      log("丢弃删除激活窗口参数");
+      // 丢弃这条事件
+      return false;
+    }
+    return true;
   }
 
   if (window.webContents._events["-ipc-message"]?.[0]) {
@@ -1212,9 +1223,9 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
 
-    // 最近联系人列表更新事件
+    // 最近联系人列表更新事件 - 选项>阻止撤回>拦截所有撤回
     const findRecentListIndex = findEventIndex(args, "nodeIKernelRecentContactListener/onRecentContactListChangedVer2");
-    if (findRecentListIndex !== -1) {
+    if (options.preventMessageRecall.blockAllRetractions && findRecentListIndex !== -1) {
       const recentContactList = args?.[1]?.[findRecentListIndex];
       log("检测到联系人列表更新", recentContactList);
       const recentContactLists = recentContactList?.payload?.changedRecentContactLists;
@@ -1235,30 +1246,15 @@ function onBrowserWindowCreated(window, plugin) {
                   continue;
                 }
                 log("激活聊天", activeMessageList.size, peer);
-                if (false) {
-                  activeMessageList.add(peer.peerUid);
-                  ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
-                    "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat",
-                    {
-                      peer,
-                      cnt: 10,
-                    },
-                    null,
-                  ]);
-                }
-                if (true) {
-                  activeMessageList.add(peer.peerUid);
-                  ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
-                    "nodeIKernelMsgService/getMsgsIncludeSelfAndAddActiveChat",
-                    {
-                      peer,
-                      msgId: "0",
-                      cnt: 10,
-                      queryOrder: false,
-                    },
-                    null,
-                  ]);
-                }
+                activeMessageList.add(peer.peerUid);
+                ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
+                  "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat",
+                  {
+                    peer,
+                    cnt: 10,
+                  },
+                  null,
+                ]);
               }
             }
           }

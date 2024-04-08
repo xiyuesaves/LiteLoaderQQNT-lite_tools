@@ -1,4 +1,4 @@
-import superjson from 'superjson';
+import superjson from "superjson";
 
 // 导出到window对象便于调试
 window.superjson = superjson;
@@ -6,8 +6,8 @@ window.superjson = superjson;
 const port = location.port;
 console.log("通信端口", port);
 (async () => {
-  try {
-    while (true) {
+  while (true) {
+    try {
       let log = superjson.parse(await (await fetch(`http://localhost:${port}/`)).text());
       if (log && log.length) {
         for (let i = 0; i < log.length; i++) {
@@ -17,8 +17,8 @@ console.log("通信端口", port);
           }
         }
       }
+    } catch (err) {
+      // console.log("=========已断开连接=========", err);
     }
-  } catch (err) {
-    console.log("=========已断开连接=========");
   }
 })();

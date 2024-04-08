@@ -193,6 +193,7 @@ async function onConfigView(view) {
   addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");
   addSwitchEventlistener("preventMessageRecall.preventSelfMsg", ".preventSelfMsg");
   addSwitchEventlistener("preventMessageRecall.customColor", ".custom-color");
+  addSwitchEventlistener("preventMessageRecall.blockAllRetractions", ".blockAllRetractions");
 
   // 初始化自定义撤回样式
   const customTextColorEl = view.querySelector(".custom-text-color");
