@@ -6,7 +6,6 @@ const crypto = require("crypto");
 const EventEmitter = require("events");
 class MainEvent extends EventEmitter {}
 const mainEvent = new MainEvent();
-import superjson from 'superjson';
 
 // 本地模块
 /**
@@ -163,6 +162,11 @@ let backgroundData = {
   href: "",
   type: "",
 };
+
+/**
+ * 被主动激活的消息列表
+ */
+const activeMessageList = new Set();
 
 // 配置文件更新后保存到本地并广播更新事件
 const settingsPath = path.join(LiteLoader.plugins.lite_tools.path.data, "settings.json");
@@ -1208,11 +1212,72 @@ function onBrowserWindowCreated(window, plugin) {
       }
     }
 
-    // 获取消息列表
+    // 最近联系人列表更新事件
     const findRecentListIndex = findEventIndex(args, "nodeIKernelRecentContactListener/onRecentContactListChangedVer2");
     if (findRecentListIndex !== -1) {
       const recentContactList = args?.[1]?.[findRecentListIndex];
+      log("检测到联系人列表更新", recentContactList);
+      const recentContactLists = recentContactList?.payload?.changedRecentContactLists;
+      if (recentContactLists instanceof Array) {
+        for (let i = 0; i < recentContactLists.length; i++) {
+          const list = recentContactLists[i];
+          if (list.changedList instanceof Array) {
+            for (let i = 0; i < list.changedList.length; i++) {
+              const item = list.changedList[i];
+              // 过滤好友，群组，临时会话的消息
+              if (checkChatType(item)) {
+                const peer = {
+                  chatType: item.chatType,
+                  peerUid: item.peerUid,
+                  guildId: "",
+                };
+                if (activeMessageList.has(peer.peerUid)) {
+                  continue;
+                }
+                log("激活聊天", activeMessageList.size, peer);
+                if (false) {
+                  activeMessageList.add(peer.peerUid);
+                  ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
+                    "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat",
+                    {
+                      peer,
+                      cnt: 10,
+                    },
+                    null,
+                  ]);
+                }
+                if (true) {
+                  activeMessageList.add(peer.peerUid);
+                  ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
+                    "nodeIKernelMsgService/getMsgsIncludeSelfAndAddActiveChat",
+                    {
+                      peer,
+                      msgId: "0",
+                      cnt: 10,
+                      queryOrder: false,
+                    },
+                    null,
+                  ]);
+                }
+              }
+            }
+          }
+        }
+      }
+      // ACTIVE_CHAT_PREVIEW = "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat",  // 激活聊天窗口，有时候必须这样才能收到消息，并返回最新预览消息
+      // ACTIVE_CHAT_HISTORY = "nodeIKernelMsgService/getMsgsIncludeSelfAndAddActiveChat", // 激活聊天窗口，有时候必须这样才能收到消息，并返回历史消息
     }
+
+    // const getAioViewLatest = findEventIndex(args, "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat");
+    // if (getAioViewLatest !== -1) {
+    //   const msg = args[1][getAioViewLatest];
+    //   log("激活聊天窗口，返回最新预览消息", msg);
+    // }
+    // const getMsgsIncludeSelfAndAddActiveChat = findEventIndex(args, "nodeIKernelMsgService/getMsgsIncludeSelfAndAddActiveChat");
+    // if (getMsgsIncludeSelfAndAddActiveChat !== -1) {
+    //   const msg = args[1][getMsgsIncludeSelfAndAddActiveChat];
+    //   log("激活聊天窗口，返回历史消息", msg);
+    // }
 
     // 记录下可能会用到的事件名称
 
