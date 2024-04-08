@@ -9,6 +9,7 @@ lite_tools.onKeywordReminder((_, peerUid, msgId) => {
     window.keywordReminder = new Map();
   }
   const peer = getPeer();
+  log("获取 peer ", peer);
   const curUid = peer?.peerUid;
   if (peerUid === curUid) {
     log("是当前群聊，跳过记录");

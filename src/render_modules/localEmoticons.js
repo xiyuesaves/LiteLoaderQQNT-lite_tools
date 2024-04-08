@@ -6,6 +6,7 @@ import { localEmoticonsIcon } from "./svg.js";
 import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
 import { getPeer } from "./curAioData.js";
+import { showToast } from "./toast.js";
 const log = new Logs("本地表情包模块");
 /**
  * 图标元素
@@ -406,9 +407,13 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
       picSubType = 0;
     }
     if (altKey) {
-      log("直接发送图片");
       const peer = getPeer();
-      sendMessage(peer, [{ type: "image", path: src, picSubType }]);
+      log("直接发送图片", peer);
+      if (peer) {
+        sendMessage(peer, [{ type: "image", path: src, picSubType }]);
+      } else {
+        showToast("发送失败", "error");
+      }
     } else {
       const selection = ckeditEditorModel.document.selection;
       const position = selection.getFirstPosition();

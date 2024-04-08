@@ -91,7 +91,7 @@ async function convertMessage(message) {
 
 /**
  *
- * @param {Peer} peer peer对象，通过lite_tools.getPeer()获取
+ * @param {Peer} peer peer对象
  * @param {Array} messages 消息链
  */
 async function sendMessage(peer, messages) {
@@ -116,7 +116,7 @@ async function sendMessage(peer, messages) {
 
 /**
  *
- * @param {Peer} peer peer对象，通过lite_tools.getPeer()获取
+ * @param {Peer} peer peer对象
  * @param {msgElements[]} message 原始消息数组
  */
 function sendRawMessage(peer, messages) {

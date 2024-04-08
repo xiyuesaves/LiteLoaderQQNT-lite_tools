@@ -289,12 +289,14 @@ function singleMessageProcessing(target, msgRecord) {
                 }, 500);
                 if (doubleClick) {
                   const peer = getPeer();
+                  log("复读消息", peer);
                   forwardMessage(peer, peer, [msgId]);
                   doubleClick = false;
                 }
                 doubleClick = true;
               } else {
                 const peer = getPeer();
+                log("复读消息", peer);
                 forwardMessage(peer, peer, [msgId]);
               }
             });
