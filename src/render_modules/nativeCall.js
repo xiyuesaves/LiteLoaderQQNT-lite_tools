@@ -315,6 +315,47 @@ function openGuidMainWindow() {
   );
 }
 
+/**
+ * 激活聊天窗口，并返回最新预览消息
+ */
+function activeChatAndReturnPreview(peer) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat",
+    [
+      {
+        peer,
+        cnt: 10,
+      },
+      null,
+    ],
+    webContentId,
+    false,
+    false,
+  );
+}
+
+/**
+ * 激活聊天窗口，并返回历史消息
+ */
+function activeChatAndReturnHistory(peer) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelMsgService/getMsgsIncludeSelfAndAddActiveChat",
+    [
+      {
+        peer,
+        msgId: "0",
+        cnt: 10,
+        queryOrder: false,
+      },
+    ],
+    webContentId,
+    false,
+    false,
+  );
+}
+
 export {
   sendMessage,
   sendRawMessage,
@@ -327,4 +368,6 @@ export {
   getGroupInfo,
   getGroupsList,
   openExternalWindow,
+  activeChatAndReturnPreview,
+  activeChatAndReturnHistory,
 };
