@@ -54,7 +54,7 @@ async function processPic(msgItem) {
           fs.writeFileSync(pic.sourcePath, body);
         }
         // 修复本地数据中的错误
-        if (pic?.thumbPath && (pic.thumbPath instanceof Array || pic.thumbPath instanceof Object)) {
+        if (pic?.thumbPath) {
           pic.thumbPath = new Map([
             [0, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_0")],
             [198, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_198")],
@@ -63,23 +63,21 @@ async function processPic(msgItem) {
         }
         // log("缩略图", typeof pic?.thumbPath, pic?.thumbPath instanceof Map);
         if (pic?.thumbPath) {
-          if (pic.thumbPath instanceof Map) {
-            const toArray = Array.from(pic.thumbPath);
-            // log("开始下载缩略图", toArray);
-            for (let i = 0; i < toArray.length; i++) {
-              const el = toArray[i][1];
-              if (!fs.existsSync(el)) {
-                try {
-                  // log("尝试下载", el, picUrls[i]);
-                  const body = await downloadPic(picUrls[i]);
-                  fs.mkdirSync(path.dirname(el), { recursive: true });
-                  fs.writeFileSync(el, body);
-                } catch (err) {
-                  // log("缩略图下载失败", el, err?.message);
-                }
-              } else {
-                // log("缩略图已存在", el);
+          const toArray = Array.from(pic.thumbPath);
+          log("开始下载缩略图", toArray);
+          for (let i = 0; i < toArray.length; i++) {
+            const picPath = toArray[i][1];
+            if (!fs.existsSync(picPath)) {
+              try {
+                log("尝试下载", picPath, picUrls[i]);
+                const body = await downloadPic(picUrls[i]);
+                fs.mkdirSync(path.dirname(picPath), { recursive: true });
+                fs.writeFileSync(picPath, body);
+              } catch (err) {
+                log("缩略图下载失败", picPath, err?.message);
               }
+            } else {
+              log("缩略图已存在", picPath);
             }
           }
         }
