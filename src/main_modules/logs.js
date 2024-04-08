@@ -2,11 +2,9 @@ const { shell } = require("electron");
 const fs = require("fs");
 const http = require("http");
 const net = require("net");
-
-import superjson from "superjson";
-
 const Opt = require("./option");
 const debounce = require("./debounce");
+import superjson from "superjson";
 let options = Opt.value;
 
 const debounceUpdateOptions = debounce((newOptions) => {

@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const logs = require("./logs");
 const log = logs("撤回实例");
+import superjson from "superjson";
 
 /**
  * 撤回消息切片管理
@@ -14,32 +15,45 @@ class MessageRecallList {
     this.latestPath = messageRecallJson;
     this.newFileEvent = new Set();
     this.newRecallMsgEvent = new Set();
+
+    // 针对不同版本的本地撤回文件进行统一化处理
+    const stringData = fs.readFileSync(this.latestPath, { encoding: "utf-8" });
     try {
-      this.map = new Map(JSON.parse(Buffer.from(fs.readFileSync(this.latestPath, { encoding: "utf-8" }), "base64").toString("utf-8"))); // 从文件中初始化撤回信息
-    } catch (_) {
-      this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
+      // 判断字符串是否为base64格式
+      const rawData = Buffer.from(stringData, "base64").toString("utf-8");
+      const jsonParse = JSON.parse(rawData);
+      if (jsonParse.json) {
+        // 当前的 base64 superjson
+        this.map = superjson.parse(rawData);
+        log("文件格式为 base64 superjson", this.map);
+      } else {
+        // this.map = new Map(JSON.parse(Buffer.from(fs.readFileSync(this.latestPath, { encoding: "utf-8" }), "base64").toString("utf-8"))); // 从文件中初始化撤回信息
+        // 第二版的 base64 jsonString
+        this.map = new Map(jsonParse);
+        log("文件格式为 base64 jsonString", this.map);
+        this.saveFile();
+      }
+    } catch {
+      // this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
+      // 最早的明文 jsonString
+      this.map = new Map(JSON.parse(stringData));
+      log("文件格式为 jsonString", this.map);
       this.saveFile();
     }
   }
   set(key, value) {
     if (this.messageRecallPath) {
-      const copyMsg = structuredClone(value);
-      if (copyMsg.msgAttrs && copyMsg.msgAttrs instanceof Map) {
-        copyMsg.msgAttrs = Array.from(copyMsg.msgAttrs);
-      }
-      this.map.set(key, copyMsg);
+      this.map.set(key, value);
       if (this.map.size >= this.limit) {
         log("缓存撤回消息超过阈值，开始切片");
         const newFileName = `${new Date().getTime()}.json`;
-        fs.writeFileSync(
-          path.join(this.messageRecallPath, newFileName),
-          Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"),
-        );
+        const filePath = path.join(this.messageRecallPath, newFileName);
+        fs.writeFileSync(filePath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
         this.newFileEvent.forEach((callback) => callback(value));
         this.map = new Map();
       }
       this.saveFile();
-      this.newRecallMsgEvent.forEach((callback) => callback(copyMsg));
+      this.newRecallMsgEvent.forEach((callback) => callback(value));
     } else {
       console.error("该实例工作在只读模式");
     }
@@ -47,7 +61,7 @@ class MessageRecallList {
   saveFile() {
     console.log("保存到本地");
     try {
-      fs.writeFileSync(this.latestPath, Buffer.from(JSON.stringify(Array.from(this.map)), "utf-8").toString("base64"));
+      fs.writeFileSync(this.latestPath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
     } catch (err) {
       console.log("保存出错", err);
     }
@@ -68,12 +82,7 @@ class MessageRecallList {
     }
   }
   get(key) {
-    const value = this.map.get(key);
-    const copyMsg = structuredClone(value);
-    if (copyMsg && copyMsg.msgAttrs && copyMsg.msgAttrs instanceof Array) {
-      copyMsg.msgAttrs = new Map(copyMsg.msgAttrs);
-    }
-    return copyMsg;
+    return this.map.get(key);
   }
   has(key) {
     return this.map.has(key);

@@ -18,12 +18,12 @@ buildSync({
   platform: "browser",
   charset: "utf8",
 });
-// 渲染进程
-buildSync({
-  entryPoints: ["./src/renderer.js"],
-  bundle: true,
-  outfile: "./dist/render.js",
-  target: "es2020",
-  platform: "browser",
-  charset: "utf8",
-});
+// 渲染进程 - 不需要被打包
+// buildSync({
+//   entryPoints: ["./src/renderer.js"],
+//   bundle: true,
+//   outfile: "./dist/render.js",
+//   target: "es2020",
+//   platform: "neutral",
+//   charset: "utf8",
+// });

@@ -15,7 +15,6 @@ function recursiveAssignment(fileOptions, defaultOptions) {
       if (Object.prototype.toString.call(defaultOptions[key]) === "[object Object]") {
         obj[key] = recursiveAssignment(fileOptions[key], defaultOptions[key]);
       }
-
       // 判断两者同一个键的数据类型是否一致
       else if (Object.prototype.toString.call(fileOptions[key]) === Object.prototype.toString.call(defaultOptions[key])) {
         obj[key] = fileOptions[key];

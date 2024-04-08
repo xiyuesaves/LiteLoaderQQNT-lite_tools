@@ -1,5 +1,8 @@
 import superjson from 'superjson';
 
+// 导出到window对象便于调试
+window.superjson = superjson;
+
 const port = location.port;
 console.log("通信端口", port);
 (async () => {
