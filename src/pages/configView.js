@@ -391,7 +391,7 @@ async function onConfigView(view) {
   view.querySelector(".background-opacity").value = options.background.opacity * 100;
   view.querySelector(".background-opacity").addEventListener("blur", (e) => {
     const inputValue = parseInt(e.target.value) / 100;
-    if (inputValue !== NaN && inputValue >= 0 && inputValue <= 1) {
+    if (!Number.isNaN(inputValue) && inputValue >= 0 && inputValue <= 1) {
       options.background.opacity = inputValue;
     } else {
       options.background.opacity = 0.5;
