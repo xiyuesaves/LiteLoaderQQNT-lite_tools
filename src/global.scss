@@ -60,6 +60,14 @@
     text-shadow: unset !important;
     filter: unset !important;
   }
+  .main-info.text-ellipsis,
+  .chat-header__contact-name {
+    .text-ellipsis {
+      color: var(--text_primary) !important;
+      text-shadow: unset !important;
+      filter: unset !important;
+    }
+  }
 }
 // 图片自适应大小
 .image-auto-width {

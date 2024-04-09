@@ -51,6 +51,12 @@
   text-shadow: unset !important;
   filter: unset !important;
 }
+.remove-vip-name .main-info.text-ellipsis .text-ellipsis,
+.remove-vip-name .chat-header__contact-name .text-ellipsis {
+  color: var(--text_primary) !important;
+  text-shadow: unset !important;
+  filter: unset !important;
+}
 
 .image-auto-width .message-content__wrapper .msg-content-container .image.pic-element.max-width {
   max-width: var(--img-max-width-2) !important;
