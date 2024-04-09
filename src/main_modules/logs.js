@@ -7,18 +7,6 @@ const debounce = require("./debounce");
 import superjson from "superjson";
 let options = Opt.value;
 
-const debounceUpdateOptions = debounce((newOptions) => {
-  options = newOptions;
-  if (options.debug.showWeb) {
-    logs.startLogServer();
-  } else {
-    logs.stopLogServer();
-  }
-  if (!options.debug.mainConsole) {
-    logs.logMsg = [];
-  }
-}, 10);
-
 /**
  * 日志类
  */
@@ -34,7 +22,6 @@ class Logs {
   createLog(logname) {
     const name = logname;
     const fn = (...args) => this.log(name, ...args);
-    fn.step = this.step.bind(this);
     return fn;
   }
   log = (moduleName, ...args) => {
@@ -43,11 +30,6 @@ class Logs {
       this.logMsg.push(logArr);
       console.log(...logArr);
     }
-  };
-  step = () => {
-    return new Promise((res) => {
-      this.res.push(res);
-    });
   };
   startLogServer() {
     // 获取空闲端口号
@@ -80,12 +62,6 @@ class Logs {
       res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Access-Control-Allow-Origin": "*" });
       const js = fs.readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/dist/debug.js`, { encoding: "utf-8" });
       res.end(js);
-    } else if (req.url === "/step" && req.method === "GET") {
-      const res_ = this.res.shift();
-      if (res_) {
-        res_();
-      }
-      res.end(`${new Date().toDateString()}-${this.res.length}`);
     } else {
       // 处理其他请求
       res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8", "Access-Control-Allow-Origin": "*" });
@@ -102,6 +78,18 @@ class Logs {
 }
 
 const logs = new Logs();
+
+const debounceUpdateOptions = debounce((newOptions) => {
+  options = newOptions;
+  if (options.debug.showWeb) {
+    logs.startLogServer();
+  } else {
+    logs.stopLogServer();
+  }
+  if (!options.debug.mainConsole) {
+    logs.logMsg = [];
+  }
+}, 10);
 
 Opt.on("update", debounceUpdateOptions);
 
