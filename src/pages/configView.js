@@ -378,6 +378,8 @@ async function onConfigView(view) {
   addSwitchEventlistener("background.overlaySiderBar", ".overlaySiderBar");
   // 移除背景遮罩
   addSwitchEventlistener("background.removeMask", ".removeMask");
+  // 重绘卡片消息
+  addSwitchEventlistener("background.redrawCard", ".redrawCard");
   // 初始化背景路径选择监听和值
   view.querySelector(".select-background-wallpaper-clear").value = options.background.url;
   view.querySelector(".select-background-wallpaper").addEventListener("click", () => {

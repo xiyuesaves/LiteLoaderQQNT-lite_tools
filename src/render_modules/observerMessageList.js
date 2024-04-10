@@ -120,11 +120,12 @@ function singleMessageProcessing(target, msgRecord) {
 
         // 重写卡片消息
         const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
-        if (options.background.enabled && findArkMsg) {
+        if (options.background.enabled && options.background.redrawCard && findArkMsg) {
           try {
             const arkData = JSON.parse(findArkMsg.arkElement.bytesData);
             const htmlCard = createHtmlCard(arkData);
             if (htmlCard) {
+              log("重写卡片");
               const arkMsgContentContainer = messageEl.querySelector(
                 ".message-content__wrapper .ark-msg-content-container:not(.lite-tools-cover-canvas)",
               );
@@ -132,11 +133,15 @@ function singleMessageProcessing(target, msgRecord) {
                 arkMsgContentContainer.classList.add("lite-tools-cover-canvas");
                 arkMsgContentContainer.insertAdjacentHTML("beforeend", htmlCard);
                 arkMsgContentContainer.querySelector(".lite-tools-ark-card").addEventListener("click", () => {
-                  arkMsgContentContainer.querySelector("canvas").click();
+                  arkMsgContentContainer.querySelector("canvas").dispatchEvent(new Event("click"));
                 });
               }
+            } else {
+              log("没有对应卡片");
             }
-          } catch {}
+          } catch (err) {
+            log("重写卡片出错", err);
+          }
         }
 
         // 消息靠左

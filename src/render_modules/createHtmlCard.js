@@ -1,5 +1,5 @@
-import { miniappArkCard, urlArkCard } from "./HTMLtemplate.js";
-import { miniappIcon } from "./svg.js";
+import { miniappArkCard, urlArkCard, contactArkCard, troopshareArkCard } from "./HTMLtemplate.js";
+import { miniappIcon, contactIcon } from "./svg.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
@@ -11,13 +11,13 @@ export function createHtmlCard(arkData) {
       const newMiniappCard = miniappArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
           case "appIcon":
-            return arkData.meta.detail_1.icon.replace(/^(http:\/\/|https:\/\/)?/,"https://");
+            return arkData.meta.detail_1.icon.replace(/^(http:\/\/|https:\/\/)?/, "https://");
           case "appName":
             return arkData.meta.detail_1.title;
           case "shareDesc":
             return arkData.meta.detail_1.desc;
           case "previewImg":
-            return arkData.meta.detail_1.preview.replace(/^(http:\/\/|https:\/\/)?/,"https://");
+            return arkData.meta.detail_1.preview.replace(/^(http:\/\/|https:\/\/)?/, "https://");
           case "miniappIcon":
             return miniappIcon;
           default:
@@ -35,12 +35,50 @@ export function createHtmlCard(arkData) {
           case "desc":
             return arkData.meta.news.desc;
           case "descImg":
-            return arkData.meta.news.preview.replace(/^(http:\/\/|https:\/\/)?/,"https://");
+            return arkData.meta.news.preview.replace(/^(http:\/\/|https:\/\/)?/, "https://");
           default:
             return name;
         }
       });
       return newUrlCard;
+    // 推荐联系人
+    case "com.tencent.contact.lua":
+      const newContactCard = contactArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
+        switch (name) {
+          case "avatarSrc":
+            return arkData.meta.contact.avatar.replace(/^(http:\/\/|https:\/\/)?/, "https://");
+          case "username":
+            return arkData.meta.contact.nickname;
+          case "useruid":
+            return arkData.meta.contact.contact;
+          case "appIcon":
+            return contactIcon;
+          case "title":
+            return arkData.meta.contact.tag;
+          default:
+            return name;
+        }
+      });
+      return newContactCard;
+    // 推荐群
+    case "com.tencent.troopsharecard":
+      const newTroopCard = troopshareArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
+        switch (name) {
+          case "troopSrc":
+            return arkData.meta.contact.avatar.replace(/^(http:\/\/|https:\/\/)?/, "https://");
+          case "troopname":
+            return arkData.meta.contact.nickname;
+          case "troopuid":
+            return arkData.meta.contact.contact || "推荐群聊";
+          case "appIcon":
+            return contactIcon;
+          case "title":
+            return arkData.meta.contact.tag;
+          default:
+            return name;
+        }
+      });
+      return newTroopCard;
     default:
       return undefined;
   }

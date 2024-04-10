@@ -125,6 +125,38 @@ const urlArkCard = `<div class="lite-tools-url-ark-card lite-tools-ark-card">
 </div>
 </div>`;
 
+const contactArkCard = `<div class="lite-tools-contact-ark-card lite-tools-ark-card">
+<div class="desc">
+  <div class="user-avatar">
+    <img src="{{avatarSrc}}" />
+  </div>
+  <div class="user-detail">
+    <span class="lt-user-name">{{username}}</span>
+    <span class="lt-user-uid">{{useruid}}</span>
+  </div>
+</div>
+<div class="bottom">
+  <i class="user-icon">{{appIcon}}</i>
+  <span class="title">{{title}}</span>
+</div>
+</div>`;
+
+const troopshareArkCard = `<div class="lite-tools-troopshare-ark-card lite-tools-ark-card">
+<div class="desc">
+  <div class="troop-avatar">
+    <img src="{{troopSrc}}" />
+  </div>
+  <div class="troop-detail">
+    <span class="troop-name">{{troopname}}</span>
+    <span class="troop-uid"> {{troopuid}}</span>
+  </div>
+</div>
+<div class="bottom">
+  <i class="user-icon">{{appIcon}}</i>
+  <span class="title">{{title}}</span>
+</div>
+</div>`;
+
 export {
   tailElement,
   recallGroupItem,
@@ -142,4 +174,6 @@ export {
   reminderEl,
   miniappArkCard,
   urlArkCard,
+  contactArkCard,
+  troopshareArkCard,
 };

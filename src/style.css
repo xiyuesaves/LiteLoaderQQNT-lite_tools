@@ -17,10 +17,10 @@
     --lt-voice-play-icon: rgba(255, 255, 255, 1);
     --lt-text-color: rgba(0, 0, 0, 0.8);
     --lt-link-url-color: rgb(45, 119, 229);
-    --lt-ark-title-text-color: rgb(178, 178, 178);
+    --lt-ark-title-text-color: rgba(0, 0, 0, 0.2);
     --lt-ark-desc-text-color: rgb(34, 34, 34);
     --lt-ark-info-text-color: rgb(178, 178, 178);
-    --lt-ark-border-color: rgb(229, 229, 229);
+    --lt-ark-border-color: rgba(0, 0, 0, 0.2);
     --lt-ark-title-color: rgb(3, 8, 26);
     --lt-ark-info-colo: rgb(135, 139, 153);
   }
@@ -38,10 +38,10 @@
     --lt-voice-play-icon: rgba(255, 255, 255, 0.6);
     --lt-text-color: rgba(255, 255, 255, 0.8);
     --lt-link-url-color: rgb(45, 119, 229);
-    --lt-ark-title-text-color: rgb(143, 143, 143);
+    --lt-ark-title-text-color: rgba(255, 255, 255, 0.4);
     --lt-ark-desc-text-color: rgb(255, 255, 255);
     --lt-ark-info-text-color: rgb(102, 102, 102);
-    --lt-ark-border-color: rgb(73, 73, 73);
+    --lt-ark-border-color: rgba(255, 255, 255, 0.2);
     --lt-ark-title-color: rgb(255, 255, 255);
     --lt-ark-info-colo: rgb(170, 170, 180);
   }
@@ -315,6 +315,9 @@
   backdrop-filter: blur(28px);
 }
 
+.lite-tools-cover-canvas {
+  margin: unset !important;
+}
 .lite-tools-cover-canvas * {
   user-select: none;
 }
@@ -325,6 +328,8 @@
   display: block;
 }
 .lite-tools-cover-canvas .ark-item-container {
+  min-height: unset !important;
+  min-width: unset !important;
   height: 0px !important;
   width: 0px !important;
 }
@@ -454,4 +459,120 @@
   width: 14px;
   height: 14px;
   margin-right: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card {
+  cursor: pointer;
+  width: 240px;
+  height: 92px;
+  border-radius: 8px;
+  padding: 10px 12px 0;
+  box-sizing: border-box;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .desc {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-avatar {
+  width: 48px;
+  height: 48px;
+  margin-right: 8px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-detail {
+  width: auto;
+  height: auto;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-detail .lt-user-name {
+  color: var(--lt-ark-desc-text-color);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-detail .lt-user-uid {
+  color: var(--lt-ark-title-text-color);
+  display: block;
+  font-size: 12px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .bottom {
+  width: 100%;
+  border-top: solid 1px var(--lt-ark-border-color);
+  height: 26px;
+  color: var(--lt-ark-title-text-color);
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .bottom .user-icon {
+  width: 13px;
+  height: 13px;
+  margin-right: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .bottom .user-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card {
+  cursor: pointer;
+  width: 240px;
+  height: 92px;
+  border-radius: 8px;
+  padding: 10px 12px 0;
+  box-sizing: border-box;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-avatar {
+  width: 48px;
+  height: 48px;
+  margin-right: 8px;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-detail {
+  width: auto;
+  height: auto;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-detail .troop-name {
+  color: var(--lt-ark-desc-text-color);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-detail .troop-uid {
+  color: var(--lt-ark-title-text-color);
+  display: block;
+  font-size: 12px;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .bottom {
+  width: 100%;
+  border-top: solid 1px var(--lt-ark-border-color);
+  height: 26px;
+  color: var(--lt-ark-title-text-color);
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .bottom .user-icon {
+  width: 13px;
+  height: 13px;
+  margin-right: 4px;
+}
+.lite-tools-cover-canvas .lite-tools-troopshare-ark-card .bottom .user-icon svg {
+  width: 100%;
+  height: 100%;
 }
