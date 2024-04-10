@@ -60,8 +60,11 @@ function watchComponentMount(component) {
  */
 function recordComponent(component) {
   let element = component.vnode.el;
-  while (!(element instanceof HTMLElement)) {
-    element = element.parentElement;
+  while (!(element instanceof HTMLElement) && element) {
+    element = element?.parentElement;
+  }
+  if (!element) {
+    return;
   }
   //将组件公开给元素的 __VUE__ 属性
   if (element.__VUE__) {
