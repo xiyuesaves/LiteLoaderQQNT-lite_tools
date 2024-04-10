@@ -382,10 +382,15 @@
     display: block;
   }
   .ark-item-container {
+    position: absolute;
+    top: 0;
+    left: 0;
     min-height: unset !important;
     min-width: unset !important;
-    height: 0px !important;
-    width: 0px !important;
+    height: 100% !important;
+    width: 100% !important;
+    opacity: 0;
+    cursor: pointer;
   }
   .lite-tools-miniapp-ark-card {
     width: 280px;
@@ -513,6 +518,10 @@
         height: 14px;
         margin-right: 4px;
       }
+      .title{
+        display: block;
+        width: 210px;
+      }
     }
   }
   .lite-tools-contact-ark-card {
@@ -539,9 +548,8 @@
         }
       }
       .user-detail {
-        width: auto;
+        width: 140px;
         height: auto;
-        // background-color: red;
         .lt-user-name {
           color: var(--lt-ark-desc-text-color);
           display: block;
@@ -572,6 +580,10 @@
           height: 100%;
         }
       }
+      .title{
+        display: block;
+        width: 210px;
+      }
     }
   }
   .lite-tools-troopshare-ark-card {
@@ -598,9 +610,11 @@
         }
       }
       .troop-detail {
-        width: auto;
+        width: 140px;
         height: auto;
         .troop-name {
+          display: block;
+          width: 100%;
           color: var(--lt-ark-desc-text-color);
           display: block;
           font-size: 14px;

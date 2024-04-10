@@ -328,10 +328,15 @@
   display: block;
 }
 .lite-tools-cover-canvas .ark-item-container {
+  position: absolute;
+  top: 0;
+  left: 0;
   min-height: unset !important;
   min-width: unset !important;
-  height: 0px !important;
-  width: 0px !important;
+  height: 100% !important;
+  width: 100% !important;
+  opacity: 0;
+  cursor: pointer;
 }
 .lite-tools-cover-canvas .lite-tools-miniapp-ark-card {
   width: 280px;
@@ -460,6 +465,10 @@
   height: 14px;
   margin-right: 4px;
 }
+.lite-tools-cover-canvas .lite-tools-url-ark-card .bottom .title {
+  display: block;
+  width: 210px;
+}
 .lite-tools-cover-canvas .lite-tools-contact-ark-card {
   cursor: pointer;
   width: 240px;
@@ -486,7 +495,7 @@
   border-radius: 50%;
 }
 .lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-detail {
-  width: auto;
+  width: 140px;
   height: auto;
 }
 .lite-tools-cover-canvas .lite-tools-contact-ark-card .desc .user-detail .lt-user-name {
@@ -518,6 +527,10 @@
   width: 100%;
   height: 100%;
 }
+.lite-tools-cover-canvas .lite-tools-contact-ark-card .bottom .title {
+  display: block;
+  width: 210px;
+}
 .lite-tools-cover-canvas .lite-tools-troopshare-ark-card {
   cursor: pointer;
   width: 240px;
@@ -544,10 +557,12 @@
   border-radius: 50%;
 }
 .lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-detail {
-  width: auto;
+  width: 140px;
   height: auto;
 }
 .lite-tools-cover-canvas .lite-tools-troopshare-ark-card .desc .troop-detail .troop-name {
+  display: block;
+  width: 100%;
   color: var(--lt-ark-desc-text-color);
   display: block;
   font-size: 14px;

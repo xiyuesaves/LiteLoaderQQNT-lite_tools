@@ -131,13 +131,13 @@ const contactArkCard = `<div class="lite-tools-contact-ark-card lite-tools-ark-c
     <img src="{{avatarSrc}}" />
   </div>
   <div class="user-detail">
-    <span class="lt-user-name">{{username}}</span>
-    <span class="lt-user-uid">{{useruid}}</span>
+    <span class="lt-user-name text-ellipsis">{{username}}</span>
+    <span class="lt-user-uid text-ellipsis">{{useruid}}</span>
   </div>
 </div>
 <div class="bottom">
   <i class="user-icon">{{appIcon}}</i>
-  <span class="title">{{title}}</span>
+  <span class="title text-ellipsis">{{title}}</span>
 </div>
 </div>`;
 
@@ -147,8 +147,8 @@ const troopshareArkCard = `<div class="lite-tools-troopshare-ark-card lite-tools
     <img src="{{troopSrc}}" />
   </div>
   <div class="troop-detail">
-    <span class="troop-name">{{troopname}}</span>
-    <span class="troop-uid"> {{troopuid}}</span>
+    <span class="troop-name text-ellipsis">{{troopname}}</span>
+    <span class="troop-uid text-ellipsis">{{troopuid}}</span>
   </div>
 </div>
 <div class="bottom">
