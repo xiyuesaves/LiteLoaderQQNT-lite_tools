@@ -49,7 +49,7 @@ class MessageRecallList {
         const newFileName = `${new Date().getTime()}.json`;
         const filePath = path.join(this.messageRecallPath, newFileName);
         fs.writeFileSync(filePath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
-        this.newFileEvent.forEach((callback) => callback(value));
+        this.newFileEvent.forEach((callback) => callback(newFileName));
         this.map = new Map();
       }
       this.saveFile();
