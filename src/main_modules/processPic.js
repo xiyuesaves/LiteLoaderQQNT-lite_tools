@@ -4,7 +4,7 @@ const { downloadPic } = require("./downloadPic");
 const logs = require("./logs");
 const log = logs("图片处理模块");
 const BASE_URL = "https://gchat.qpic.cn";
-const TEMP_RKEY = "&rkey=CAMSKLgthq-6lGU_w8qRmii91Wd89eUjW4Rg44v_zM9qUrjZjrZd-CfXFtI";
+const TEMP_RKEY = "&rkey=CAQSKAB6JWENi5LMk0kc62l8Pm3Jn1dsLZHyRLAnNmHGoZ3y_gDZPqZt-64";
 
 // 获取图片链接
 function getPicUrl(picData) {

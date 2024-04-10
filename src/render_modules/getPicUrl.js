@@ -1,5 +1,5 @@
 const BASE_URL = "https://gchat.qpic.cn";
-const TEMP_RKEY = "&rkey=CAMSKLgthq-6lGU_w8qRmii91Wd89eUjW4Rg44v_zM9qUrjZjrZd-CfXFtI";
+const TEMP_RKEY = "&rkey=CAQSKAB6JWENi5LMk0kc62l8Pm3Jn1dsLZHyRLAnNmHGoZ3y_gDZPqZt-64";
 export function getPicUrl(picData) {
   console.log(picData);
   if (!picData.original) {
