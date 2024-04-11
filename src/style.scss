@@ -19,7 +19,7 @@
     --lt-text-color: rgba(0, 0, 0, 0.8);
     --lt-link-url-color: rgb(45, 119, 229);
 
-    --lt-ark-title-text-color: rgba(0, 0, 0, 0.2);
+    --lt-ark-title-text-color: rgba(0, 0, 0, 0.4);
     --lt-ark-desc-text-color: rgb(34, 34, 34);
     --lt-ark-info-text-color: rgb(178, 178, 178);
     --lt-ark-border-color: rgba(0, 0, 0, 0.2);
@@ -518,7 +518,7 @@
         height: 14px;
         margin-right: 4px;
       }
-      .title{
+      .title {
         display: block;
         width: 210px;
       }
@@ -526,19 +526,19 @@
   }
   .lite-tools-contact-ark-card {
     cursor: pointer;
-    width: 240px;
-    height: 92px;
+    width: 260px;
+    height: auto;
     border-radius: 8px;
-    padding: 10px 12px 0;
+    padding: 12px 12px 0;
     box-sizing: border-box;
     .desc {
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       .user-avatar {
-        width: 48px;
-        height: 48px;
+        width: 56px;
+        height: 56px;
         margin-right: 8px;
         img {
           width: 100%;
@@ -570,17 +570,18 @@
       color: var(--lt-ark-title-text-color);
       display: flex;
       align-items: center;
-      font-size: 11px;
+      box-sizing: border-box;
+      font-size: 12px;
       .user-icon {
-        width: 13px;
-        height: 13px;
+        width: 14px;
+        height: 14px;
         margin-right: 4px;
         svg {
           width: 100%;
           height: 100%;
         }
       }
-      .title{
+      .title {
         display: block;
         width: 210px;
       }

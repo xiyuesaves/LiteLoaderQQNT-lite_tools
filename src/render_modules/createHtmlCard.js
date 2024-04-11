@@ -1,5 +1,5 @@
-import { miniappArkCard, urlArkCard, contactArkCard, troopshareArkCard } from "./HTMLtemplate.js";
-import { miniappIcon, contactIcon } from "./svg.js";
+import { miniappArkCard, urlArkCard, contactArkCard } from "./HTMLtemplate.js";
+import { miniappIcon, contactIcon, groupIcon } from "./svg.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
@@ -62,16 +62,16 @@ export function createHtmlCard(arkData) {
       return newContactCard;
     // 推荐群
     case "com.tencent.troopsharecard":
-      const newTroopCard = troopshareArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
+      const newTroopCard = contactArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
-          case "troopSrc":
+          case "avatarSrc":
             return arkData.meta.contact.avatar.replace(/^(http:\/\/|https:\/\/)?/, "https://");
-          case "troopname":
+          case "username":
             return arkData.meta.contact.nickname;
-          case "troopuid":
+          case "useruid":
             return arkData.meta.contact.contact || "推荐群聊";
           case "appIcon":
-            return contactIcon;
+            return groupIcon;
           case "title":
             return arkData.meta.contact.tag;
           default:
