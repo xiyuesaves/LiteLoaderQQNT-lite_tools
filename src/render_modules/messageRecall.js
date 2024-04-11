@@ -8,7 +8,7 @@ import { options } from "./options.js";
  * @param {Object} find 被撤回消息数据
  */
 function messageRecall(el, find) {
-  if (el.classList.contains("lite-tools-recall-msg")) {
+  if (!el || !find || el.classList.contains("lite-tools-recall-msg")) {
     return;
   }
   // 标记为已撤回消息

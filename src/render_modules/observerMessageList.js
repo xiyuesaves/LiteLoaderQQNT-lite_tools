@@ -35,7 +35,7 @@ function processingMsgList() {
     const messageEl = document.querySelector(`[id="${el.id}"] .message`);
     const msgRecord = curMsgs[index].data;
     // 额外处理下历史撤回数据
-    if (msgRecord?.lite_tools_recall) {
+    if (messageEl && msgRecord?.lite_tools_recall) {
       messageRecall(messageEl, msgRecord?.lite_tools_recall);
     }
     // 消息合并逻辑
