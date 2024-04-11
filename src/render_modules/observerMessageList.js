@@ -132,14 +132,6 @@ function singleMessageProcessing(target, msgRecord) {
               if (arkMsgContentContainer) {
                 arkMsgContentContainer.classList.add("lite-tools-cover-canvas");
                 arkMsgContentContainer.insertAdjacentHTML("beforeend", htmlCard);
-                // arkMsgContentContainer.querySelector(".lite-tools-ark-card").addEventListener("click", (event) => {
-                //   const custEvent = new CustomEvent("click", {
-                //     ...event,
-                //     target: arkMsgContentContainer.querySelector("canvas"),
-                //   });
-                //   console.log(event, custEvent);
-                //   arkMsgContentContainer.querySelector("canvas").dispatchEvent(new Event("click"));
-                // });
               }
             } else {
               log("没有对应卡片");

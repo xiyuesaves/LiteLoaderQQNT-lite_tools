@@ -14,6 +14,7 @@ class BackgroundWallpaper {
     this.imgEl = document.createElement("img");
     this.imgEl.setAttribute("src", "");
     this.videoEl = document.createElement("video");
+    this.videoEl.volume = 0;
     this.videoEl.setAttribute("muted", "");
     this.videoEl.setAttribute("autoplay", "");
     this.videoEl.setAttribute("loop", "true");
@@ -29,6 +30,8 @@ class BackgroundWallpaper {
       if (type === "video") {
         this.imgEl.remove();
         if (this.videoEl.getAttribute("src") !== href) {
+          this.videoEl.setAttribute("muted", "");
+          this.videoEl.volume = 0;
           this.videoEl.src = href;
         }
         this.el.appendChild(this.videoEl);
