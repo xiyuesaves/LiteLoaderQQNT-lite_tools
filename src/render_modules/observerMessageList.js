@@ -386,11 +386,13 @@ const initMessageList = (recursion = true) => {
   }
   for (let index = 0; index < curMsgsLength; index++) {
     const el = curMsgs[index];
-    const messageEl = document.querySelector(`[id="${el.id}"] .message`);
+    const msgItemEl = document.querySelector(`[id="${el.id}"]`);
+    const messageEl = msgItemEl.querySelector(".message");
     if (messageEl) {
       log("处理可见消息数据");
       singleMessageProcessing(messageEl, el.data);
-    } else if (recursion) {
+    } else if (!msgItemEl && recursion) {
+      log("消息元素不存在，重新检测可见消息数据", el.id);
       // 如果指定id的消息还没有被渲染出来，则调用自身防抖函数重新处理
       debounceInitMessageList();
     }
