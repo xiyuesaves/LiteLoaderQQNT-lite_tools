@@ -14,7 +14,7 @@ console.log("通信端口", port);
       if (log && log.length) {
         for (let i = 0; i < log.length; i++) {
           const singLog = log[i];
-          if (singLog[3] !== "info" && singLog[3]?.[0]?.eventName !== "ns-LoggerApi-2") {
+          if (singLog[3] !== "info" && (singLog?.[1] === "send" ? singLog?.[4]?.[1] : true)) {
             console.log(...singLog);
           }
         }
