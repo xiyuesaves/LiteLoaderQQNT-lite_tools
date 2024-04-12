@@ -83,7 +83,8 @@
       filter: unset !important;
     }
   }
-  .buddy-profile__info-name {
+  .buddy-profile__info-name,
+  .buddy-profile__header-name {
     -webkit-text-fill-color: unset !important;
     background: unset !important;
     color: var(--text_primary) !important;

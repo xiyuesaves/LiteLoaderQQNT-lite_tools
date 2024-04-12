@@ -70,7 +70,8 @@
   text-shadow: unset !important;
   filter: unset !important;
 }
-.remove-vip-name .buddy-profile__info-name {
+.remove-vip-name .buddy-profile__info-name,
+.remove-vip-name .buddy-profile__header-name {
   -webkit-text-fill-color: unset !important;
   background: unset !important;
   color: var(--text_primary) !important;
