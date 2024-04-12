@@ -1078,8 +1078,10 @@ function onBrowserWindowCreated(window, plugin) {
                   };
                 } else if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate) {
                   log("本人发起的撤回，放行");
-                } else {
+                } else if (msgItem?.elements?.length) {
                   catchMsgList.set(msgItem.msgId, msgItem); // 消息数据存入缓存
+                } else {
+                  log("目标对象内不存在消息数组 - 捕获到消息数据", msgItem);
                 }
               }
             });
@@ -1121,28 +1123,30 @@ function onBrowserWindowCreated(window, plugin) {
       const events = onRecvMsg !== -1 ? onRecvMsg : onRecvActiveMsg;
       log("收到新消息", args[1]);
       if (checkChatType(args?.[1]?.[events]?.payload?.msgList?.[0])) {
-        args[1][events].payload.msgList.forEach((arrs) => {
+        args[1][events].payload.msgList.forEach((msgData) => {
           // 检测关键字
           if (options.keywordReminder.enabled) {
-            arrs.elements.forEach((msgElements) => {
+            msgData.elements.forEach((msgElements) => {
               if (msgElements.textElement) {
                 if (options.keywordReminder.keyList.some((key) => msgElements.textElement.content.includes(key))) {
-                  mainMessage.webContents.send("LiteLoader.lite_tools.onKeywordReminder", arrs.peerUid, arrs.msgId);
+                  mainMessage.webContents.send("LiteLoader.lite_tools.onKeywordReminder", msgData.peerUid, msgData.msgId);
                 }
               }
             });
           }
 
-          // 阻止撤回
-          if (options.preventMessageRecall.enabled) {
+          // 存入阻止撤回缓存
+          if (options.preventMessageRecall.enabled && msgData?.elements?.length) {
             // 将消息存入map
-            catchMsgList.set(arrs.msgId, arrs);
+            catchMsgList.set(msgData.msgId, msgData);
+          } else {
+            log("目标对象内不存在消息数组 - 接收到的新消息", msgData);
           }
 
           // 处理小程序卡片
           if (options.message.convertMiniPrgmArk) {
-            const msg_seq = arrs.msgSeq;
-            arrs.elements.forEach((msgElements) => {
+            const msg_seq = msgData.msgSeq;
+            msgData.elements.forEach((msgElements) => {
               if (msgElements.arkElement && msgElements.arkElement.bytesData) {
                 const json = JSON.parse(msgElements.arkElement.bytesData);
                 if (json?.prompt.includes("[QQ小程序]")) {
@@ -1212,9 +1216,11 @@ function onBrowserWindowCreated(window, plugin) {
               } else {
                 log("本人发起的撤回，放行");
               }
-            } else {
+            } else if (msgItem.elements.length) {
               // 将消息存入map
               catchMsgList.set(msgItem.msgId, msgItem);
+            } else {
+              log("目标对象内不存在消息数组 - 消息列表更新", msgItem);
             }
           }
         }
