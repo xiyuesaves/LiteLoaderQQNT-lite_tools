@@ -43,19 +43,34 @@
   transform: translateY(0);
 }
 
-.remove-vip-name .vip-name {
+.remove-vip-name .recent-contact-item:not(.recent-contact-item--selected) .vip-name,
+.remove-vip-name .contact-buddy-item:not(.list-item--selected) .vip-name {
   color: unset !important;
 }
-.remove-vip-name .buddy-profile__info-name,
-.remove-vip-name .text-ellipsis[style*=vip] {
+.remove-vip-name .recent-contact-item:not(.recent-contact-item--selected) .text-ellipsis[style*=vip],
+.remove-vip-name .contact-buddy-item:not(.list-item--selected) .text-ellipsis[style*=vip] {
   -webkit-text-fill-color: unset !important;
   background: unset !important;
   color: var(--text_primary) !important;
   text-shadow: unset !important;
   filter: unset !important;
 }
-.remove-vip-name .main-info.text-ellipsis .text-ellipsis,
+.remove-vip-name .recent-contact-item:not(.recent-contact-item--selected) .main-info.text-ellipsis .text-ellipsis,
+.remove-vip-name .contact-buddy-item:not(.list-item--selected) .main-info.text-ellipsis .text-ellipsis {
+  -webkit-text-fill-color: unset !important;
+  background: unset !important;
+  color: var(--text_primary) !important;
+  text-shadow: unset !important;
+  filter: unset !important;
+}
 .remove-vip-name .chat-header__contact-name .text-ellipsis {
+  -webkit-text-fill-color: unset !important;
+  background: unset !important;
+  color: var(--text_primary) !important;
+  text-shadow: unset !important;
+  filter: unset !important;
+}
+.remove-vip-name .buddy-profile__info-name {
   -webkit-text-fill-color: unset !important;
   background: unset !important;
   color: var(--text_primary) !important;

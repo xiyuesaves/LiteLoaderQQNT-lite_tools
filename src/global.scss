@@ -52,18 +52,28 @@
 
 // 移除vip红名
 .remove-vip-name {
-  .vip-name {
-    color: unset !important;
+  .recent-contact-item:not(.recent-contact-item--selected),
+  .contact-buddy-item:not(.list-item--selected) {
+    .vip-name {
+      color: unset !important;
+    }
+    .text-ellipsis[style*="vip"] {
+      -webkit-text-fill-color: unset !important;
+      background: unset !important;
+      color: var(--text_primary) !important;
+      text-shadow: unset !important;
+      filter: unset !important;
+    }
+    .main-info.text-ellipsis {
+      .text-ellipsis {
+        -webkit-text-fill-color: unset !important;
+        background: unset !important;
+        color: var(--text_primary) !important;
+        text-shadow: unset !important;
+        filter: unset !important;
+      }
+    }
   }
-  .buddy-profile__info-name,
-  .text-ellipsis[style*="vip"] {
-    -webkit-text-fill-color: unset !important;
-    background: unset !important;
-    color: var(--text_primary) !important;
-    text-shadow: unset !important;
-    filter: unset !important;
-  }
-  .main-info.text-ellipsis,
   .chat-header__contact-name {
     .text-ellipsis {
       -webkit-text-fill-color: unset !important;
@@ -72,6 +82,13 @@
       text-shadow: unset !important;
       filter: unset !important;
     }
+  }
+  .buddy-profile__info-name {
+    -webkit-text-fill-color: unset !important;
+    background: unset !important;
+    color: var(--text_primary) !important;
+    text-shadow: unset !important;
+    filter: unset !important;
   }
 }
 // 图片自适应大小
