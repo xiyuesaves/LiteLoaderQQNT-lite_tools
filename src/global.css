@@ -46,13 +46,18 @@
 .remove-vip-name .vip-name {
   color: unset !important;
 }
+.remove-vip-name .buddy-profile__info-name,
 .remove-vip-name .text-ellipsis[style*=vip] {
+  -webkit-text-fill-color: unset !important;
+  background: unset !important;
   color: var(--text_primary) !important;
   text-shadow: unset !important;
   filter: unset !important;
 }
 .remove-vip-name .main-info.text-ellipsis .text-ellipsis,
 .remove-vip-name .chat-header__contact-name .text-ellipsis {
+  -webkit-text-fill-color: unset !important;
+  background: unset !important;
   color: var(--text_primary) !important;
   text-shadow: unset !important;
   filter: unset !important;

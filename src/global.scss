@@ -55,7 +55,10 @@
   .vip-name {
     color: unset !important;
   }
+  .buddy-profile__info-name,
   .text-ellipsis[style*="vip"] {
+    -webkit-text-fill-color: unset !important;
+    background: unset !important;
     color: var(--text_primary) !important;
     text-shadow: unset !important;
     filter: unset !important;
@@ -63,6 +66,8 @@
   .main-info.text-ellipsis,
   .chat-header__contact-name {
     .text-ellipsis {
+      -webkit-text-fill-color: unset !important;
+      background: unset !important;
       color: var(--text_primary) !important;
       text-shadow: unset !important;
       filter: unset !important;
