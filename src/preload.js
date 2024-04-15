@@ -23,6 +23,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getLocalEmoticonsConfig: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsConfig"),
   // 打开选择本地表情文件夹窗口
   openSelectLocalEmoticonsFolder: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectLocalEmoticonsFolder"),
+  // 删除本地表情文件
+  deleteEmoticonsFile: (path) => ipcRenderer.invoke("LiteLoader.lite_tools.deleteEmoticonsFile", path),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
   getSidebar: (msg) => ipcRenderer.invoke("LiteLoader.lite_tools.getSidebar", msg),
   // 获取配置文件

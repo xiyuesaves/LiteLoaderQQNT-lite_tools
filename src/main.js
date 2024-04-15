@@ -584,7 +584,6 @@ function onLoad(plugin) {
 
   // 更新常用表情列表
   ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", addCommonlyEmoticons);
-
   // 打开文件夹
   ipcMain.on("LiteLoader.lite_tools.openFolder", (event, localPath) => {
     const openPath = path.normalize(localPath);
@@ -603,6 +602,36 @@ function onLoad(plugin) {
     localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
+  });
+  ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", (event, path) => {
+    log("删除表情文件", path);
+    if (fs.existsSync(path)) {
+      // 验证要删除的文件目录是否在本地表情指定目录中
+      if (path.startsWith(options.localEmoticons.localPath)) {
+        try {
+          fs.unlinkSync(path);
+          return {
+            success: true,
+            msg: "删除成功",
+          };
+        } catch (err) {
+          return {
+            success: false,
+            msg: "删除失败",
+          };
+        }
+      } else {
+        return {
+          success: false,
+          msg: "路径错误",
+        };
+      }
+    } else {
+      return {
+        success: false,
+        msg: "文件不存在",
+      };
+    }
   });
 
   // 获取用户信息事件

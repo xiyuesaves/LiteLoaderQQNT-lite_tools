@@ -52,13 +52,16 @@ const localEmoticonsHTML = `<div class="full-screen-preview">
 <div class="lite-tools-local-emoticons-main">
   <div class="context-menu">
     <a class="context-menu-item delete-from-commonly">
-      <span class="context-menu-item__text">历史表情中删除</span>
+      <span class="context-menu-item__text">从历史表情移除</span>
     </a>
     <a class="context-menu-item open-folder">
       <span class="context-menu-item__text">打开表情文件夹</span>
     </a>
     <a class="context-menu-item open-file">
       <span class="context-menu-item__text">图片查看器打开</span>
+    </a>
+    <a class="context-menu-item context-danger delete-file">
+      <span class="context-menu-item__text">从文件夹中删除</span>
     </a>
   </div>
   <div class="folder-list"></div>

@@ -138,6 +138,9 @@
     --context-menu-bg: #ffffff;
     --context-menu-hover: #f5f5f5;
     --context-menu-active: #e0e0e0;
+    --context-menu-danger: #f44336;
+    --context-menu-danger-hover: #ef535018;
+    --context-menu-danger-active: #ef53502a;
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -155,6 +158,9 @@
     --context-menu-bg: #303030;
     --context-menu-hover: #404040;
     --context-menu-active: #282828;
+    --context-menu-danger: #f44336;
+    --context-menu-danger-hover: #ef53501f;
+    --context-menu-danger-active: #ef535038;
   }
 }
 
@@ -699,6 +705,15 @@
       }
       &:active {
         background-color: var(--context-menu-active);
+      }
+      &.context-danger {
+        color: var(--context-menu-danger);
+        &:hover {
+          background-color: var(--context-menu-danger-hover);
+        }
+        &:active {
+          background-color: var(--context-menu-danger-active);
+        }
       }
       .context-menu-item__text {
         font-size: 14px;

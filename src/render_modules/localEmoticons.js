@@ -579,7 +579,7 @@ function loadDom() {
     if (event.target.closest(".category-item")) {
       if (event.button === 0) {
         mouseDown(event);
-      } else if (event.button === 2) {
+      } else if (event.button === 2 && event.target.closest(".lite-tools-local-emoticons-main")) {
         contextMenu(event);
       }
     }
@@ -616,6 +616,17 @@ function loadDom() {
   contextMenuEl.querySelector(".delete-from-commonly").addEventListener("click", (event) => {
     log("从历史记录中移除", targetElement.path);
     lite_tools.deleteCommonlyEmoticons(targetElement.path);
+    closeContextMenu();
+  });
+  contextMenuEl.querySelector(".delete-file").addEventListener("click", async (event) => {
+    log("从文件中删除", targetElement.path);
+    const res = await lite_tools.deleteEmoticonsFile(targetElement.path);
+    log("删除结果", res);
+    if (res.success) {
+      showToast(res.msg, "success", 3000);
+    } else {
+      showToast(res.msg, "error", 3000);
+    }
     closeContextMenu();
   });
 
@@ -689,8 +700,8 @@ function initQuickPreview() {
  */
 function closeContextMenu() {
   showContextMenu = false;
-  barIcon.querySelector(".sticker-preview.active").classList.remove("active");
-  barIcon.querySelector(".lite-tools-local-emoticons-main").classList.remove("show-menu");
+  barIcon.querySelector(".sticker-preview.active")?.classList?.remove("active");
+  barIcon.querySelector(".lite-tools-local-emoticons-main")?.classList?.remove("show-menu");
 }
 
 /**
