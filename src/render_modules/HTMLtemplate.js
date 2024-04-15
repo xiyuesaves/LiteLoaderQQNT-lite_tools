@@ -167,9 +167,9 @@ const webPreview = `<div class="lite-tools-web-preview">
     <strong class="lite-tools-web-preview-title">{{title}}</strong>
     <span class="lite-tools-web-preview-desc">{{desc}}</span>
   </div>
-  <div class="lite-tools-web-preview-img small-img LT-disable"></div>
+  <div class="lite-tools-web-preview-img small-img LT-disabled"></div>
 </div>
-<div class="lite-tools-web-preview-img max-img LT-disable"></div>
+<div class="lite-tools-web-preview-img max-img LT-disabled"></div>
 </div>`;
 
 export {
