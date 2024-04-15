@@ -394,6 +394,12 @@
   border-top: solid 1px var(--lt-ark-border-color);
   padding: 0 3px;
 }
+.lite-tools-cover-canvas .lite-tools-miniapp-ark-card .bottom-info .miniapp-name {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .lite-tools-cover-canvas .lite-tools-miniapp-ark-card .bottom-info .miniapp-icon {
   width: 16px;
   height: 16px;
@@ -467,7 +473,10 @@
 }
 .lite-tools-cover-canvas .lite-tools-url-ark-card .bottom .title {
   display: block;
-  width: 210px;
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .lite-tools-cover-canvas .lite-tools-contact-ark-card {
   cursor: pointer;

@@ -447,6 +447,12 @@
       box-sizing: border-box;
       border-top: solid 1px var(--lt-ark-border-color);
       padding: 0 3px;
+      .miniapp-name{
+        width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       .miniapp-icon {
         width: 16px;
         height: 16px;
@@ -520,7 +526,10 @@
       }
       .title {
         display: block;
-        width: 210px;
+        width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
