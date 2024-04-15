@@ -617,7 +617,7 @@ function onLoad(plugin) {
         } catch (err) {
           return {
             success: false,
-            msg: "删除失败",
+            msg: "没有权限",
           };
         }
       } else {
