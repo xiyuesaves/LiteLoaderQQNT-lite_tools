@@ -31,7 +31,7 @@ export async function showWebPreview(context, element) {
     log("获取预览数据失败", findUrl[0], previewData);
     return;
   }
-  if (!previewData.data.title && !previewData.data.description) {
+  if (!previewData.data.title || !previewData.data.description || !previewData.data.title) {
     log("数据不足", findUrl[0], previewData);
     return;
   }
@@ -45,13 +45,13 @@ export async function showWebPreview(context, element) {
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "alt":
-        return previewData.data.alt;
+        return previewData.data.alt || "";
       case "title":
-        return previewData.data.title;
+        return previewData.data.title || "";
       case "desc":
-        return previewData.data.description;
+        return previewData.data.description || "";
       case "siteName":
-        return previewData.data.site_name;
+        return previewData.data.site_name || "";
       default:
         return name;
     }
@@ -83,13 +83,11 @@ export async function showWebPreview(context, element) {
     const img = document.createElement("img");
     img.addEventListener("error", () => {
       log("图片加载失败", findUrl[0], img);
-      msgContainer.querySelector(`.lite-tools-web-preview-img.max-img`).classList.add("LT-disabled");
-      msgContainer.querySelector(`.lite-tools-web-preview-img.small-img`).classList.add("LT-disabled");
     });
     img.addEventListener("load", () => {
       const showMaxImg = img.width > MAX_IMG_WIDTH;
       msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`).appendChild(img);
-      msgContainer.querySelector(`.lite-tools-web-preview-img${!showMaxImg ? ".max-img" : ".small-img"}`).classList.add("LT-disabled");
+      msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`).classList.remove("LT-disabled");
     });
     img.src = previewData.data.image.replace(/^(http:\/\/|https:\/\/|\/\/)?/, "https://");
   }
