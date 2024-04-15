@@ -224,6 +224,9 @@ async function onConfigView(view) {
   // 提前执行
   addSwitchEventlistener("advanceHookVue", ".advanceHookVue");
 
+  // url预览
+  addSwitchEventlistener("message.previreUrl", ".previreUrl");
+
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
 

@@ -4,6 +4,7 @@ import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
 import { getPeer } from "./curAioData.js";
 import { createHtmlCard } from "./createHtmlCard.js";
+import { showWebPreview } from "./showWebPreview.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
@@ -22,6 +23,11 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
  * 历史消息合并状态
  */
 let msgElMergeType = new Map();
+
+/**
+ * 匹配链接正则
+ */
+const urlMatch = /https?:\/\/[\w\-_]+\.[\w]{1,10}[\S]+/i;
 
 /**
  * 处理当前可见的消息列表
@@ -119,25 +125,27 @@ function singleMessageProcessing(target, msgRecord) {
         resizeObserver.observe(messageEl);
 
         // 重写卡片消息
-        const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
-        if (options.background.enabled && options.background.redrawCard && findArkMsg) {
-          try {
-            const arkData = JSON.parse(findArkMsg.arkElement.bytesData);
-            const htmlCard = createHtmlCard(arkData);
-            if (htmlCard) {
-              log("重写卡片");
-              const arkMsgContentContainer = messageEl.querySelector(
-                ".message-content__wrapper .ark-msg-content-container:not(.lite-tools-cover-canvas)",
-              );
-              if (arkMsgContentContainer) {
-                arkMsgContentContainer.classList.add("lite-tools-cover-canvas");
-                arkMsgContentContainer.insertAdjacentHTML("beforeend", htmlCard);
+        if (options.background.enabled && options.background.redrawCard) {
+          const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
+          if (findArkMsg) {
+            try {
+              const arkData = JSON.parse(findArkMsg.arkElement.bytesData);
+              const htmlCard = createHtmlCard(arkData);
+              if (htmlCard) {
+                log("重写卡片");
+                const arkMsgContentContainer = messageEl.querySelector(
+                  ".message-content__wrapper .ark-msg-content-container:not(.lite-tools-cover-canvas)",
+                );
+                if (arkMsgContentContainer) {
+                  arkMsgContentContainer.classList.add("lite-tools-cover-canvas");
+                  arkMsgContentContainer.insertAdjacentHTML("beforeend", htmlCard);
+                }
+              } else {
+                log("没有对应卡片");
               }
-            } else {
-              log("没有对应卡片");
+            } catch (err) {
+              log("重写卡片出错", err);
             }
-          } catch (err) {
-            log("重写卡片出错", err);
           }
         }
 
@@ -148,19 +156,23 @@ function singleMessageProcessing(target, msgRecord) {
           messageEl.querySelector(".user-name")?.classList?.remove("user-name--selfRole");
           messageEl.querySelector(".user-name")?.classList?.remove("user-name--selfReverse");
         }
+
         // 图片自适应宽度
-        const findImageElement = msgRecord?.elements?.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
-        if (options.message.imageAutoWidth && findImageElement) {
-          messageEl.classList.add("image-auto-width");
-          messageEl
-            .querySelector(".msg-content-container")
-            .style.setProperty("--img-max-width-2", `${findImageElement.picElement.picWidth}px`);
-          messageEl.querySelectorAll(".image.pic-element").forEach((imgEl) => {
-            if (imgEl?.__VUE__?.[0]?.props?.picSubType === 0) {
-              imgEl.classList.add("max-width");
-            }
-          });
+        if (options.message.imageAutoWidth) {
+          const findImageElement = msgRecord?.elements?.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
+          if (findImageElement) {
+            messageEl.classList.add("image-auto-width");
+            messageEl
+              .querySelector(".msg-content-container")
+              .style.setProperty("--img-max-width-2", `${findImageElement.picElement.picWidth}px`);
+            messageEl.querySelectorAll(".image.pic-element").forEach((imgEl) => {
+              if (imgEl?.__VUE__?.[0]?.props?.picSubType === 0) {
+                imgEl.classList.add("max-width");
+              }
+            });
+          }
         }
+
         // 开启背景时优化小图展示
         if (options.background.enabled) {
           // 过小尺寸的图片移除气泡效果
@@ -172,6 +184,7 @@ function singleMessageProcessing(target, msgRecord) {
             }
           }
         }
+
         // 消息添加插槽
         let slotEl = null;
         if (!messageEl.querySelector(".lite-tools-slot")) {
@@ -227,6 +240,7 @@ function singleMessageProcessing(target, msgRecord) {
             slotEl = null;
           }
         }
+
         // 插入消息时间
         if (slotEl && options.message.showMsgTime) {
           if (!messageEl.querySelector(".lite-tools-time")) {
@@ -275,6 +289,7 @@ function singleMessageProcessing(target, msgRecord) {
             }
           }
         }
+
         // 插入撤回提示
         if (slotEl && options.preventMessageRecall.enabled) {
           // 撤回插入元素
@@ -283,6 +298,7 @@ function singleMessageProcessing(target, msgRecord) {
             messageRecall(messageEl, msgRecord?.lite_tools_recall);
           }
         }
+
         // 插入+1按钮
         if (slotEl && options.message.replaceBtn && !msgRecord?.lite_tools_recall) {
           // +1插入元素
@@ -333,6 +349,7 @@ function singleMessageProcessing(target, msgRecord) {
             }
           }
         }
+
         // 连续消息合并
         if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
           const oldType = msgElMergeType.get(msgRecord?.msgId);
@@ -340,6 +357,13 @@ function singleMessageProcessing(target, msgRecord) {
             messageEl.classList.add("merge", oldType);
           }
         }
+
+        // 添加url预览信息
+        if (options.message.previreUrl) {
+          const findURL = msgRecord?.elements?.find((element) => urlMatch.test(element?.textElement?.content));
+          showWebPreview(findURL?.textElement?.content, messageEl);
+        }
+
         // 传统处理流传
         debounceProcessingMsgList();
       }

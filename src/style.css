@@ -1,6 +1,6 @@
 @charset "UTF-8";
 :root {
-  --lt-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08) !important;
+  --lt-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08) !important;
   --lt-box-radius: 8px;
 }
 

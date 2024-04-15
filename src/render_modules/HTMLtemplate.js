@@ -161,19 +161,16 @@ const troopshareArkCard = `<div class="lite-tools-troopshare-ark-card lite-tools
 </div>`;
 
 const webPreview = `<div class="lite-tools-web-preview">
-<div class="lite-tools-web-preview-img {{maxImg}}">
-  <img alt="{{alt}}" src="{{img}}" />
-</div>
 <div class="lite-tools-web-preview-box">
   <div class="lite-tools-web-preview-detail">
-    <h1 class="lite-tools-web-preview-title" title="{{title}}">{{title}}</h1>
-    <span class="lite-tools-web-preview-desc" title="{{desc}}">{{desc}}</span>
+    <strong class="lite-tools-web-preview-site-name">{{siteName}}</strong>
+    <strong class="lite-tools-web-preview-title">{{title}}</strong>
+    <span class="lite-tools-web-preview-desc">{{desc}}</span>
   </div>
-  <div class="lite-tools-web-preview-img {{smallImg}}">
-    <img alt="{{alt}}" src="{{img}}" />
-  </div>
+  <div class="lite-tools-web-preview-img small-img"></div>
 </div>
-</div>`
+<div class="lite-tools-web-preview-img max-img"></div>
+</div>`;
 
 export {
   tailElement,
@@ -194,5 +191,5 @@ export {
   urlArkCard,
   contactArkCard,
   troopshareArkCard,
-  webPreview
+  webPreview,
 };

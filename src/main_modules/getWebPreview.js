@@ -38,7 +38,7 @@ async function getMeatData(url) {
     }
   });
   const urlObj = new URL(url);
-  meta.url = urlObj.host.replace(/^www\./, "");
+  meta.url = urlObj.host.replace(/^www\./, "").replace(/^.{1}/, (str) => str.toUpperCase());
   return {
     success: true,
     data: meta,
