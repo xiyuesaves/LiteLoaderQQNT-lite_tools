@@ -90,6 +90,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   onKeywordReminder: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onKeywordReminder", callback),
   // 复制文件
   copyFile: (...data) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...data),
+  // 获取链接预览数据
+  getWebPrevew: (...url) => ipcRenderer.invoke("LiteLoader.lite_tools.getWebPrevew", url),
   /**
    *
    * @param {String} sendEventName 发送事件名称

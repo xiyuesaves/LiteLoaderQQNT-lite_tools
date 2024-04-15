@@ -160,6 +160,21 @@ const troopshareArkCard = `<div class="lite-tools-troopshare-ark-card lite-tools
 </div>
 </div>`;
 
+const webPreview = `<div class="lite-tools-web-preview">
+<div class="lite-tools-web-preview-img {{maxImg}}">
+  <img alt="{{alt}}" src="{{img}}" />
+</div>
+<div class="lite-tools-web-preview-box">
+  <div class="lite-tools-web-preview-detail">
+    <h1 class="lite-tools-web-preview-title" title="{{title}}">{{title}}</h1>
+    <span class="lite-tools-web-preview-desc" title="{{desc}}">{{desc}}</span>
+  </div>
+  <div class="lite-tools-web-preview-img {{smallImg}}">
+    <img alt="{{alt}}" src="{{img}}" />
+  </div>
+</div>
+</div>`
+
 export {
   tailElement,
   recallGroupItem,
@@ -179,4 +194,5 @@ export {
   urlArkCard,
   contactArkCard,
   troopshareArkCard,
+  webPreview
 };

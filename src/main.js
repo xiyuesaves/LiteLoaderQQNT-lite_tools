@@ -64,6 +64,10 @@ const { winGetFonts, linuxGetFonts, macGetFonts } = require("./main_modules/getF
  * 本地表情模块
  */
 const { loadEmoticons, onUpdateEmoticons } = require("./main_modules/localEmoticons");
+/**
+ * 链接预览模块
+ */
+const getWebPrevew = require("./main_modules/getWebPreview");
 
 // 声明变量
 
@@ -778,6 +782,13 @@ function onLoad(plugin) {
       globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
       log("清空本地消息记录");
     }
+  });
+
+  /**
+   * 获取链接预览信息
+   */
+  ipcMain.handle("LiteLoader.lite_tools.getWebPrevew", async (event, url) => {
+    return await getWebPrevew(url);
   });
 
   // 查看本地撤回数据
