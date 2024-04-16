@@ -887,6 +887,9 @@
   padding: 0 !important;
   gap: 0 !important;
 }
+.message-panel .two-col-layout__aside.only-avatar .list-toggler .group-assistent-list .group-assistent-list__top .list-back + span {
+  display: none !important;
+}
 .message-panel .two-col-layout__aside.only-avatar .list-toggler .viewport-list .list-item {
   border-radius: 0 !important;
   position: relative;

@@ -949,6 +949,9 @@
         padding: 0 !important;
         gap: 0 !important;
       }
+      .group-assistent-list .group-assistent-list__top .list-back + span {
+        display: none !important;
+      }
       .viewport-list {
         .list-item {
           border-radius: 0 !important;
