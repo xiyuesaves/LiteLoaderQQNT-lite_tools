@@ -18,7 +18,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 > [!NOTE]\
 > 新版仅支持 LiteLoaderQQNT 1.0.0，旧版本在[v3 分支](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/tree/v3) \
 > 该插件在 Windows 环境下测试开发，理论全平台兼容，但没有条件对另外两个平台进行测试 \
-> 当前版本不兼容 [LLAPI](https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/tree/main) 和 [QQ增强](https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-QQPromote/tree/master)
+> 当前版本不兼容 [LLAPI](https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-LLAPI/tree/main) 和 [QQ 增强](https://github.com/Night-stars-1/LiteLoaderQQNT-Plugin-QQPromote/tree/master)
 
 > [!TIP]\
 > macOS 用户如果需要使用本地表情功能，请将表情文件夹选择在沙盒里，否则每次重启 QQ 都需要重新选择一次表情目录
@@ -46,7 +46,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 消息靠左显示                                                                        | 消息转图片         | 消息列表只显示头像       | 自定义字体       |
 | 移除 VIP 彩色昵称                                                                   | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 | 图片窗口全局拖拽 |
 | [右键菜单选项高亮](https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies) | 记录离开时的位置   | 侧键返回                 | 关键词提醒       |
-| 阻止 ESC 关闭窗口                                                                   |                    |                          |                  |
+| 阻止 ESC 关闭窗口                                                                   | 链接预览           |                          |                  |
 
 ## 声明
 
