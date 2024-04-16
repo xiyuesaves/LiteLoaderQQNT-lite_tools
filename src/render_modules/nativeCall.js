@@ -1,10 +1,6 @@
 import { Logs } from "./logs.js";
 const log = new Logs("QQ通信模块");
-let webContentId = lite_tools.getWebContentId();
-
-if (!webContentId) {
-  webContentId = 2;
-}
+const webContentId = lite_tools.getWebContentId() || 2;
 
 log("获取到当前窗口Id", webContentId);
 

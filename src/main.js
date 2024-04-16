@@ -826,6 +826,16 @@ function onLoad(plugin) {
       ],
     );
   });
+
+  // 设置窗口图标
+  ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (event, path, webContentId) => {
+    try {
+      const webContent = BrowserWindow.fromId(parseInt(webContentId));
+      webContent.setIcon(path);
+    } catch (err) {
+      log("设置窗口图标失败", err.message);
+    }
+  });
 }
 try {
   onLoad(LiteLoader.plugins.lite_tools);

@@ -21,6 +21,10 @@ import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 import { localEmoticons } from "../render_modules/localEmoticons.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
+// 更新窗口图标
+import "../render_modules/setAppIcon.js";
+import { Logs } from "../render_modules/logs.js";
+const log = new Logs("聊天窗口");
 
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");
@@ -39,6 +43,7 @@ chatMessage();
  * 聊天页面函数
  */
 function chatMessage() {
+  log("更新聊天页面配置");
   // 禁用贴纸
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
 

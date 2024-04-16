@@ -92,6 +92,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   copyFile: (...data) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...data),
   // 获取链接预览数据
   getWebPrevew: (...url) => ipcRenderer.invoke("LiteLoader.lite_tools.getWebPrevew", url),
+  // 设置窗口图标
+  setWindowIcon: (...args) => ipcRenderer.send("LiteLoader.lite_tools.setWindowIcon", ...args),
   /**
    *
    * @param {String} sendEventName 发送事件名称

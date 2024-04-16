@@ -35,6 +35,8 @@ import { addEventPeerChange } from "../render_modules/curAioData.js";
 // log
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("主窗口");
+// 更新窗口图标
+import "../render_modules/setAppIcon.js";
 
 addEventqContextMenu();
 touchMoveSelectin("chat-msg-area");

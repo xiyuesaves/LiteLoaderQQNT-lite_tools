@@ -368,8 +368,11 @@ async function onConfigView(view) {
   // 保存到本地表情
   addSwitchEventlistener("localEmoticons.copyFileTolocalEmoticons", ".copyFileTolocalEmoticons");
 
-  // 兼容LLAPI
+  // 兼容模式
   addSwitchEventlistener("compatibleLLAPI", ".compatibleLLAPI");
+
+  // 窗口图标改为聊天头像
+  addSwitchEventlistener("setWindowIcon", ".setWindowIcon");
 
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage");

@@ -92,6 +92,7 @@
   "chatAreaFuncList": [],
   "preventEscape": false,
   "advanceHookVue": false,
+  "setWindowIcon":false,
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,
