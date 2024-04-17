@@ -25,19 +25,19 @@ class MessageRecallList {
       if (jsonParse.json) {
         // 当前的 base64 superjson
         this.map = superjson.parse(rawData);
-        log("文件格式为 base64 superjson", this.map);
+        // log("文件格式为 base64 superjson");
       } else {
         // this.map = new Map(JSON.parse(Buffer.from(fs.readFileSync(this.latestPath, { encoding: "utf-8" }), "base64").toString("utf-8"))); // 从文件中初始化撤回信息
         // 第二版的 base64 jsonString
         this.map = new Map(jsonParse);
-        log("文件格式为 base64 jsonString", this.map);
+        // log("文件格式为 base64 jsonString");
         this.saveFile();
       }
     } catch {
       // this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
       // 最早的明文 jsonString
       this.map = new Map(JSON.parse(stringData));
-      log("文件格式为 jsonString", this.map);
+      // log("文件格式为 jsonString");
       this.saveFile();
     }
   }
