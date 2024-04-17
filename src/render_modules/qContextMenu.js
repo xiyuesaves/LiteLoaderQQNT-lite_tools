@@ -28,13 +28,23 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
   if (args[1] instanceof Function) {
     callback = args[1];
   }
-  if (!document.querySelector(`.q-context-menu :not([disabled="true"])`)) {
+  if (
+    !document.querySelector(`.q-context-menu>:not(.menu-stickers-wrapper,[disabled="true"])`) &&
+    !document.querySelector(`.q-context-menu-item:not([disabled="true"])`)
+  ) {
     return;
   }
   /**
    * @type {Element}
    */
-  const contextItem = document.querySelector(`.q-context-menu :not([disabled="true"])`).cloneNode(true);
+  const contextItem =
+    document.querySelector(`.q-context-menu>:not(.menu-stickers-wrapper,[disabled="true"])`)?.cloneNode(true) ??
+    document.querySelector(`.q-context-menu-item:not([disabled="true"])`)?.cloneNode(true);
+  if (!contextItem) {
+    log("克隆右键菜单选项失败");
+    return;
+  }
+  log("创建右键菜单项");
   if (subMenu && subMenu.length && contextItem.querySelector(".q-context-menu-item__text")) {
     contextItem.insertAdjacentHTML("beforeend", subMenuIconEl);
     const subMenuEl = document.createElement("div");
@@ -233,7 +243,7 @@ function addEventqContextMenu() {
           imagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
           event.target.parentElement.__VUE__.forEach((el) => {
             if (el?.ctx?.picData) {
-              searchImagePath = getPicUrl(el.ctx.picData);
+              searchImagePath = encodeURIComponent(getPicUrl(el.ctx.picData));
             }
           });
           log(decodeURIComponent(searchImagePath));
@@ -259,7 +269,7 @@ function addEventqContextMenu() {
       return;
     }
     qContextMenu.classList.add("lite-toos-context-menu");
-    log("右键菜单", document.querySelectorAll(".q-context-menu"));
+    log("右键菜单", document.querySelector(".q-context-menu").outerHTML);
 
     if (options.message.HighlightReplies) {
       const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
