@@ -4,9 +4,6 @@ import { webPreview } from "./HTMLtemplate.js";
 const urlMatch = /https?:\/\/[\w\-_]+\.[\w]{1,10}[\S]+/i;
 // 超过这个尺寸的图片将被放到消息下方展示
 const MAX_IMG_WIDTH = 800;
-// 缓存10000条url预览数据
-const MAX_CACHE_SIZE = 10000;
-let previewCatch = new Map();
 /**
  * 获取页面预览数据
  * @param {String} context 含有链接的文本
@@ -22,26 +19,17 @@ export async function showWebPreview(context, element) {
   if (!findUrl) {
     return;
   }
-  log("获取到链接", findUrl);
-  let previewData = previewCatch.get(findUrl[0]);
-  if (!previewData) {
-    previewData = await lite_tools.getWebPrevew(findUrl[0]);
-  }
+  log("获取到链接", findUrl[0]);
+  const previewData = await lite_tools.getWebPrevew(findUrl[0]);
   if (!previewData.success) {
     log("获取预览数据失败", findUrl[0], previewData);
     return;
   }
-  if (!previewData.data.title || !previewData.data.description || !previewData.data.title) {
+  if (!previewData.data.description) {
     log("数据不足", findUrl[0], previewData);
     return;
   }
   log("获取到预览数据", findUrl[0], previewData);
-  previewCatch.set(findUrl[0], previewData);
-  if (previewCatch.size >= MAX_CACHE_SIZE) {
-    const array = Array.from(previewCatch);
-    const arrayLength = array.length;
-    previewCatch = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
-  }
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "alt":
