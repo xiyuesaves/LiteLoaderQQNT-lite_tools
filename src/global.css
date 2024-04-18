@@ -420,6 +420,9 @@
   background-color: #8199c1;
 }
 
+.merge-message .ml-root.q-scroll-view .ml-item .merge .message-tips.reaction-panel .reaction-content {
+  margin-bottom: 0;
+}
 .merge-message .ml-root.q-scroll-view .ml-item .merge.merge-main.message {
   padding-top: 15px;
 }

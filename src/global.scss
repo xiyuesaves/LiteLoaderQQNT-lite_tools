@@ -499,6 +499,13 @@
   .ml-root.q-scroll-view {
     .ml-item {
       .merge {
+        .message-tips {
+          &.reaction-panel {
+            .reaction-content {
+              margin-bottom: 0;
+            }
+          }
+        }
         &.merge-main {
           &.message {
             padding-top: 15px;
