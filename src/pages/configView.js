@@ -90,6 +90,7 @@ async function onConfigView(view) {
       debounceSetOptions();
     }
   });
+  log("初始化字体列表完成");
   function updateFilterFontList(event) {
     if (event.type === "focus") {
       event.target.select();
@@ -138,6 +139,8 @@ async function onConfigView(view) {
   // 添加聊天框上方功能列表
   addOptionLi(options.chatAreaFuncList, chatArea, "chatAreaFuncList", "disabled");
 
+  log("精简功能添加完成");
+
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
     el.addEventListener("click", function (event) {
@@ -146,6 +149,8 @@ async function onConfigView(view) {
       wrap.querySelector("ul").classList.toggle("hidden");
     });
   });
+
+  log("页面功能初始化完成");
 
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
@@ -415,6 +420,7 @@ async function onConfigView(view) {
       lite_tools.openWeb(event.target.getAttribute("data-href"));
     });
   });
+  log("完成所有选项初始化");
 
   // 自定义历史表情数量
   view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
@@ -509,6 +515,7 @@ async function onConfigView(view) {
     tailList?.updateOptions();
     customTextColorEl.value = options.preventMessageRecall.textColor;
   });
+  log("完成初始化");
 }
 
 export { onConfigView };

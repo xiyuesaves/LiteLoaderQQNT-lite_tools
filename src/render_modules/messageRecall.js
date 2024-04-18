@@ -25,7 +25,7 @@ function messageRecall(el, find) {
       find.operatorMemRemark || find.operatorRemark || find.operatorNick
     } 撤回`;
     // 移除可能的+1按钮
-    slot.querySelector(".message-content-replace")?.remove();
+    el.querySelector(".message-content-replace")?.remove();
     // 添加自定义样式
     if (options.preventMessageRecall.customColor) {
       messageRecallEl.classList.add("custom-color");

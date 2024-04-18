@@ -206,14 +206,15 @@ function singleMessageProcessing(target, msgRecord) {
             slotEl.classList.add("embed-slot");
             bubbleEmbed.appendChild(slotEl);
           } else if (bubbleInside) {
-            // 如果是图片则额外判断一次
-            if (bubbleInside.classList.contains("mix-message__container--pic")) {
+            // 如果是图片或表情则额外判断一次
+            const classList = ["mix-message__container--pic", "mix-message__container--market-face"];
+            if (classList.some((className) => bubbleInside.classList.contains(className))) {
               const elements = msgRecord?.elements;
+              const minWidth =
+                options.message.showMsgTime && options.message.showMsgTimeFullDate && !options.message.showMsgTimeToSenderName ? 200 : 120;
               if (
                 elements.length === 1 &&
-                elements[0].picElement &&
-                elements[0].picElement.picHeight >= 50 &&
-                elements[0].picElement.picWidth >= 120
+                ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || elements[0]?.picElement?.picWidth >= minWidth)
               ) {
                 slotEl.classList.add("inside-slot");
                 bubbleInside.appendChild(slotEl);
@@ -290,15 +291,6 @@ function singleMessageProcessing(target, msgRecord) {
           }
         }
 
-        // 插入撤回提示
-        if (slotEl && options.preventMessageRecall.enabled) {
-          // 撤回插入元素
-          if (msgRecord?.lite_tools_recall) {
-            // 通用消息撤回处理方法
-            messageRecall(messageEl, msgRecord?.lite_tools_recall);
-          }
-        }
-
         // 插入+1按钮
         if (slotEl && options.message.replaceBtn && !msgRecord?.lite_tools_recall) {
           // +1插入元素
@@ -347,6 +339,15 @@ function singleMessageProcessing(target, msgRecord) {
                 msgEl.appendChild(newReplaceEl);
               }
             }
+          }
+        }
+
+        // 插入撤回提示
+        if (slotEl && options.preventMessageRecall.enabled) {
+          // 撤回插入元素
+          if (msgRecord?.lite_tools_recall) {
+            // 通用消息撤回处理方法
+            messageRecall(messageEl, msgRecord?.lite_tools_recall);
           }
         }
 
