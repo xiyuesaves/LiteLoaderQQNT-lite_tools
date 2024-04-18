@@ -1074,6 +1074,17 @@
 
 // 链接预览卡片
 .lite-tools-web-preview-added {
+  // 修复默认主题激活样式错位的问题
+  .mix-message__container {
+    &::before,
+    &::after {
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   .msg-content-container {
     max-width: 380px;
     display: block;

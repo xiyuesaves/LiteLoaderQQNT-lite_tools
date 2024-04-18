@@ -989,6 +989,12 @@
   display: none;
 }
 
+.lite-tools-web-preview-added .mix-message__container::before, .lite-tools-web-preview-added .mix-message__container::after {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
 .lite-tools-web-preview-added .msg-content-container {
   max-width: 380px;
   display: block;
