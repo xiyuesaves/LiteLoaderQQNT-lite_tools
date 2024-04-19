@@ -201,10 +201,16 @@ async function onConfigView(view) {
   addSwitchEventlistener("preventMessageRecall.blockAllRetractions", ".blockAllRetractions");
 
   // 初始化自定义撤回样式
-  const customTextColorEl = view.querySelector(".custom-text-color");
-  customTextColorEl.value = options.preventMessageRecall.textColor;
-  customTextColorEl.addEventListener("change", (event) => {
-    options.preventMessageRecall.textColor = event.target.value;
+  const customTextColorLight = view.querySelector(".custom-text-color-lite");
+  customTextColorLight.value = options.preventMessageRecall.textColor.light;
+  customTextColorLight.addEventListener("change", (event) => {
+    options.preventMessageRecall.textColor.light = event.target.value;
+    lite_tools.setOptions(options);
+  });
+  const customTextColorDark = view.querySelector(".custom-text-color-dark");
+  customTextColorDark.value = options.preventMessageRecall.textColor.dark;
+  customTextColorDark.addEventListener("change", (event) => {
+    options.preventMessageRecall.textColor.dark = event.target.value;
     lite_tools.setOptions(options);
   });
 

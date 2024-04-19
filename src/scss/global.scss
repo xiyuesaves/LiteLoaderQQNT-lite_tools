@@ -180,6 +180,16 @@
   justify-content: flex-start;
 
   // 自定义撤回提示颜色辅助样式
+  @media (prefers-color-scheme: light) {
+    .lite-tools-recall.custom-color {
+      color: var(--color-light) !important;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    .lite-tools-recall.custom-color {
+      color: var(--color-dark) !important;
+    }
+  }
   .lite-tools-recall.custom-color {
     opacity: 1 !important;
     &::after {

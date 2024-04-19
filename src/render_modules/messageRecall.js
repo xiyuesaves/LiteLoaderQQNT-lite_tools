@@ -29,7 +29,8 @@ function messageRecall(el, find) {
     // 添加自定义样式
     if (options.preventMessageRecall.customColor) {
       messageRecallEl.classList.add("custom-color");
-      messageRecallEl.style.color = options.preventMessageRecall.textColor;
+      messageRecallEl.style.setProperty("--color-light", options.preventMessageRecall.textColor.light);
+      messageRecallEl.style.setProperty("--color-dark", options.preventMessageRecall.textColor.dark);
     }
     // 计算偏移量
     messageRecallEl.classList.add("lite-tools-recall");

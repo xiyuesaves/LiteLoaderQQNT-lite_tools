@@ -81,7 +81,10 @@
     "customColor": false,
     "preventSelfMsg": false,
     "blockAllRetractions": false,
-    "textColor": "#ff6666"
+    "textColor": {
+      "light": "#ff6666",
+      "dark": "#c70000"
+    }
   },
   "tail": {
     "enabled": false,
