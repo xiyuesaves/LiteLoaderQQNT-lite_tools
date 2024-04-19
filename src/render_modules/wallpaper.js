@@ -75,7 +75,7 @@ async function updateWallpaper(enabled, wallpaperData) {
   if (enabled) {
     liteToolsBackgroundStyle.setAttribute(
       "href",
-      `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`,
+      `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`,
     );
     document.body.classList.toggle("lite-tools-blur-filter", options.background.blurFilter);
     document.body.classList.toggle("lite-tools-background-visible", options.background.backgroundVisible);

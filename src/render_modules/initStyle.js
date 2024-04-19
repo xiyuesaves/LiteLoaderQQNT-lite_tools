@@ -12,7 +12,7 @@ function initStyle() {
   // 加载通用样式
   const globalStyle = document.createElement("link");
   globalStyle.id = "liteToolsGlobalStyle";
-  globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/global.css?r=${new Date().getTime()}`);
+  globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/global.css?r=${new Date().getTime()}`);
   globalStyle.setAttribute("rel", "stylesheet");
   document.body.append(globalStyle);
 
@@ -20,7 +20,7 @@ function initStyle() {
   const backgroundStyle = document.createElement("link");
   backgroundStyle.id = "liteToolsBackgroundStyle";
   if (options.background.enabled) {
-    backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+    backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`);
   }
   backgroundStyle.setAttribute("rel", "stylesheet");
   document.body.appendChild(backgroundStyle);
@@ -29,14 +29,14 @@ function initStyle() {
   lite_tools.updateStyle(() => {
     log("更新styleCss");
     if (options.background.enabled) {
-      backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/style.css?r=${new Date().getTime()}`);
+      backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`);
     }
   });
 
   // 调试用-globalCss刷新
   lite_tools.updateGlobalStyle(() => {
     log("更新globalCss");
-    globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/global.css?r=${new Date().getTime()}`);
+    globalStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/global.css?r=${new Date().getTime()}`);
   });
 
   updateFont();

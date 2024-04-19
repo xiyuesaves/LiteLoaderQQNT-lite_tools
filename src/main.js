@@ -247,12 +247,12 @@ Opt.on("update", debounceUpdateOptions);
  */
 function onLoad(plugin) {
   const pluginDataPath = plugin.path.data;
-  const styleSassPath = path.join(plugin.path.plugin, "src/style.scss");
-  const stylePath = path.join(plugin.path.plugin, "src/style.css");
-  const globalScssPath = path.join(plugin.path.plugin, "src/global.scss");
-  const globalPath = path.join(plugin.path.plugin, "src/global.css");
-  const settingScssPath = path.join(plugin.path.plugin, "src/config/view.scss");
-  const settingPath = path.join(plugin.path.plugin, "src/config/view.css");
+  const styleSassPath = path.join(plugin.path.plugin, "src/scss/style.scss");
+  const stylePath = path.join(plugin.path.plugin, "src/css/style.css");
+  const globalScssPath = path.join(plugin.path.plugin, "src/scss/global.scss");
+  const globalPath = path.join(plugin.path.plugin, "src/css/global.css");
+  const settingScssPath = path.join(plugin.path.plugin, "src/scss/view.scss");
+  const settingPath = path.join(plugin.path.plugin, "src/css/view.css");
   messageRecallPath = path.join(pluginDataPath, "/messageRecall");
   messageRecallJson = path.join(pluginDataPath, "/messageRecall/latestRecallMessage.json");
   localEmoticonsPath = path.join(pluginDataPath, "localEmoticonsConfig.json");
@@ -311,9 +311,8 @@ function onLoad(plugin) {
         styleSassPath,
         "utf-8",
         debounce(() => {
-          const cssText = sass.compile(styleSassPath).css;
-          fs.writeFileSync(stylePath, cssText);
-          globalBroadcast("LiteLoader.lite_tools.updateStyle", cssText);
+          fs.writeFileSync(stylePath, sass.compile(styleSassPath).css);
+          globalBroadcast("LiteLoader.lite_tools.updateStyle");
         }, 100),
       );
       // 监听并编译global.scss
@@ -321,8 +320,7 @@ function onLoad(plugin) {
         globalScssPath,
         "utf-8",
         debounce(() => {
-          const cssText = sass.compile(globalScssPath).css;
-          fs.writeFileSync(globalPath, cssText);
+          fs.writeFileSync(globalPath, sass.compile(globalScssPath).css);
           globalBroadcast("LiteLoader.lite_tools.updateGlobalStyle");
         }, 100),
       );
@@ -331,8 +329,7 @@ function onLoad(plugin) {
         settingScssPath,
         "utf-8",
         debounce(() => {
-          const cssText = sass.compile(settingScssPath).css;
-          fs.writeFileSync(settingPath, cssText);
+          fs.writeFileSync(settingPath, sass.compile(settingScssPath).css);
           globalBroadcast("LiteLoader.lite_tools.updateSettingStyle");
         }, 100),
       );

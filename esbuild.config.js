@@ -1,4 +1,6 @@
 const { buildSync } = require("esbuild");
+const sass = require("sass");
+const fs = require("fs");
 let thisTime = new Date().getTime();
 // 主进程
 buildSync({
@@ -11,8 +13,8 @@ buildSync({
   external: ["electron", "sass"],
 });
 console.log(`主进程打包耗时：${(new Date().getTime() - thisTime) / 1000} s`);
-thisTime = new Date().getTime();
 // debug页面
+thisTime = new Date().getTime();
 buildSync({
   entryPoints: ["./src/render_modules/debug.js"],
   bundle: true,
@@ -22,12 +24,11 @@ buildSync({
   charset: "utf8",
 });
 console.log(`debug页面打包耗时：${(new Date().getTime() - thisTime) / 1000} s`);
-// 渲染进程 - 不需要被打包
-// buildSync({
-//   entryPoints: ["./src/renderer.js"],
-//   bundle: true,
-//   outfile: "./dist/render.js",
-//   target: "es2020",
-//   platform: "neutral",
-//   charset: "utf8",
-// });
+// 处理scss
+thisTime = new Date().getTime();
+fs.mkdirSync("./src/css", { recursive: true });
+fs.writeFileSync("./src/css/global.css", sass.compile("./src/scss/global.scss").css);
+fs.writeFileSync("./src/css/style.css", sass.compile("./src/scss/style.scss").css);
+fs.writeFileSync("./src/css/view.css", sass.compile("./src/scss/view.scss").css);
+console.log(`编译scss耗时：${(new Date().getTime() - thisTime) / 1000} s`);
+console.log("构建完成");
