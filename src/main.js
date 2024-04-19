@@ -414,12 +414,12 @@ function onLoad(plugin) {
   // 进程通信相关
 
   ipcMain.on("LiteLoader.lite_tools.updatePlugins", updatePlugins);
-  let isUpdating = false;
+  let isUpdating = "no";
   async function updatePlugins(event, url) {
-    if (!isUpdating) {
+    if (isUpdating === "no") {
       try {
         log("尝试下载", url);
-        isUpdating = true;
+        isUpdating = "yes";
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
           toast: { content: "开始更新，请不要关闭本窗口和退出QQ", type: "info", duration: "10000000" },
           status: "note",
@@ -446,16 +446,22 @@ function onLoad(plugin) {
           toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "10000" },
           status: "end",
         });
+        isUpdating = "waitingRestart";
       } catch (err) {
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
           toast: { content: `更新失败，错误原因：\n${err?.message}`, type: "error", duration: "10000" },
           status: "end",
         });
-        isUpdating = false;
+        isUpdating = "no";
       }
-    } else {
+    } else if (isUpdating === "yes") {
       settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
         toast: { content: "更新中，请勿重复点击", type: "error", duration: "3000" },
+        status: "note",
+      });
+    } else if (isUpdating === "waitingRestart") {
+      settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+        toast: { content: "请先完成重启", type: "error", duration: "3000" },
         status: "note",
       });
     }
