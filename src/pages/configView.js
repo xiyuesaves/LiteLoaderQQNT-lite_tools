@@ -18,7 +18,7 @@ import { simpleMarkdownToHTML } from "../render_modules/simpleMarkdownToHTML.js"
 import { openChangeLog } from "../render_modules/openChangeLog.js";
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
-import { showToast } from "../render_modules/toast.js";
+import { showToast, clearToast } from "../render_modules/toast.js";
 const log = new Logs("配置界面");
 
 // 打开设置界面时触发
@@ -539,6 +539,9 @@ async function onConfigView(view) {
       if (data.status === "processing" || data.status === "end") {
         if (prevToast) {
           prevToast.close();
+        }
+        if (data.status === "end") {
+          clearToast();
         }
         prevToast = showToast(data.toast.content, data.toast.type, data.toast.duration);
       } else {

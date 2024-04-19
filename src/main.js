@@ -421,8 +421,8 @@ function onLoad(plugin) {
         log("尝试下载", url);
         isUpdating = true;
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-          toast: { content: "开始更新", type: "info", duration: "10000000" },
-          status: "processing",
+          toast: { content: "开始更新，请不要关闭本窗口和退出QQ", type: "info", duration: "10000000" },
+          status: "note",
         });
         const res = await fetch(url);
         const fileStream = fs.createWriteStream(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`, { flags: "w" });
@@ -432,18 +432,18 @@ function onLoad(plugin) {
           status: "processing",
         });
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-          toast: { content: `解压中`, type: "info", duration: "3000" },
-          status: "note",
+          toast: { content: `解压中`, type: "info", duration: "10000000" },
+          status: "processing",
         });
         const zip = new AdmZip(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`);
-        zip.extractAllTo(`${LiteLoader.plugins.lite_tools.path.plugin}/test-extract`, true);
+        zip.extractAllTo(`${LiteLoader.plugins.lite_tools.path.plugin}/`, true);
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-          toast: { content: `解压完成，删除压缩包`, type: "success", duration: "3000" },
-          status: "note",
+          toast: { content: `解压完成，删除压缩包`, type: "success", duration: "10000000" },
+          status: "processing",
         });
         fs.unlinkSync(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`);
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-          toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "30000" },
+          toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "10000" },
           status: "end",
         });
       } catch (err) {
