@@ -4,7 +4,7 @@ import { updateMsgBox } from "./HTMLtemplate.js";
  * @param {String} html html字符串
  * @param {Boolean} showDownloadBtn 是否显示下载按钮
  */
-function openChangeLog(html, showDownloadBtn) {
+function openChangeLog(html, updateUrl = false, detailUrl) {
   const newMsgBox = updateMsgBox.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "title":
@@ -12,19 +12,17 @@ function openChangeLog(html, showDownloadBtn) {
       case "context":
         return html;
       case "hiddenUpdate":
-        return showDownloadBtn ? "LT-disabled" : "";
+        return updateUrl ? "" : "LT-disabled";
       default:
         return name;
     }
   });
   document.querySelector(".tab-view.lite_tools").insertAdjacentHTML("beforeend", newMsgBox);
-  document.querySelector(".tab-view.lite_tools").classList.add("lite-tools-overflow-hidden");
   const showMsgBox = document.querySelector(".lite-tools-mask");
   showMsgBox.offsetHeight;
   showMsgBox.classList.add("show");
   showMsgBox.querySelector(".quite-btn").addEventListener("click", () => {
     console.log("关闭");
-    document.querySelector(".tab-view.lite_tools").classList.remove("lite-tools-overflow-hidden");
     showMsgBox.addEventListener("transitionend", () => {
       showMsgBox.remove();
     });
@@ -32,9 +30,10 @@ function openChangeLog(html, showDownloadBtn) {
   });
   showMsgBox.querySelector(".update-btn").addEventListener("click", () => {
     console.log("更新");
+    lite_tools.updatePlugins(updateUrl);
+  });
+  showMsgBox.querySelector(".detail-btn").addEventListener("click", () => {
+    lite_tools.openWeb(detailUrl);
   });
 }
-window.test = () => {
-  openChangeLog("<p>测试测试123</p>", false);
-};
 export { openChangeLog };

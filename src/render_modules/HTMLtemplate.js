@@ -174,12 +174,13 @@ const webPreview = `<div class="lite-tools-web-preview">
 
 const updateMsgBox = `<div class="lite-tools-mask">
   <div class="lite-tools-update-msg-box">
-  <div class="title" title="{{title}}">{{title}}</div>
-  <div class="context">{{context}}</div>
-  <div class="bottom-solt">
-    <button class="update-btn btn {{hiddenUpdate}}">更新</button>
-    <button class="quite-btn btn">确定</button>
-  </div>
+    <div class="title" title="{{title}}">{{title}}</div>
+    <div class="context">{{context}}</div>
+    <div class="bottom-solt">
+      <button class="update-btn btn {{hiddenUpdate}}">更新</button>
+      <button class="detail-btn btn">详情</button>
+      <button class="quite-btn btn">返回</button>
+    </div>
   </div>
 </div>`;
 

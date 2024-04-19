@@ -1,5 +1,8 @@
 // 运行在 Electron 主进程 下的插件入口
 const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
+const AdmZip = require("adm-zip");
+const { Readable } = require("stream");
+const { finished } = require("stream/promises");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
@@ -409,6 +412,54 @@ function onLoad(plugin) {
   });
 
   // 进程通信相关
+
+  ipcMain.on("LiteLoader.lite_tools.updatePlugins", updatePlugins);
+  let isUpdating = false;
+  async function updatePlugins(event, url) {
+    if (!isUpdating) {
+      try {
+        log("尝试下载", url);
+        isUpdating = true;
+        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+          toast: { content: "开始更新", type: "info", duration: "10000000" },
+          status: "processing",
+        });
+        const res = await fetch(url);
+        const fileStream = fs.createWriteStream(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`, { flags: "w" });
+        await finished(Readable.fromWeb(res.body).pipe(fileStream));
+        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+          toast: { content: `下载压缩包成功`, type: "info", duration: "10000000" },
+          status: "processing",
+        });
+        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+          toast: { content: `解压中`, type: "info", duration: "3000" },
+          status: "note",
+        });
+        const zip = new AdmZip(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`);
+        zip.extractAllTo(`${LiteLoader.plugins.lite_tools.path.plugin}/test-extract`, true);
+        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+          toast: { content: `解压完成，删除压缩包`, type: "success", duration: "3000" },
+          status: "note",
+        });
+        fs.unlinkSync(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`);
+        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+          toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "30000" },
+          status: "end",
+        });
+      } catch (err) {
+        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+          toast: { content: `更新失败，错误原因：\n${err?.message}`, type: "error", duration: "10000" },
+          status: "end",
+        });
+        isUpdating = false;
+      }
+    } else {
+      settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+        toast: { content: "更新中，请勿重复点击", type: "error", duration: "3000" },
+        status: "note",
+      });
+    }
+  }
 
   // 获取背景数据
   ipcMain.handle("LiteLoader.lite_tools.getWallpaper", () => {

@@ -38,14 +38,14 @@ async function checkUpdate(view) {
       return res.json();
     })
     .then((json) => {
-      if (compareVersions(LiteLoader.plugins.lite_tools.manifest.version, json.tag_name)) {
+      if (compareVersions(LiteLoader.plugins.lite_tools.manifest.version, json.tag_name) || true) {
         const newVersionEl = document.createElement("span");
         const aLink = document.createElement("a");
         aLink.innerText = json.tag_name.replace("v", "");
         aLink.classList.add("link");
         aLink.addEventListener("click", () => {
           // lite_tools.openWeb("https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest");
-          openChangeLog(simpleMarkdownToHTML(json.body), false);
+          openChangeLog(simpleMarkdownToHTML(json.body), json.assets[0].browser_download_url, "https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest");
         });
         newVersionEl.innerText = ` 已发布新版本`;
         newVersionEl.appendChild(aLink);

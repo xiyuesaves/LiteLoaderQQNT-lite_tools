@@ -94,6 +94,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getWebPrevew: (url) => ipcRenderer.invoke("LiteLoader.lite_tools.getWebPrevew", url),
   // 设置窗口图标
   setWindowIcon: (...args) => ipcRenderer.send("LiteLoader.lite_tools.setWindowIcon", ...args),
+  // 发送更新请求到主进程
+  updatePlugins: (url) => ipcRenderer.send("LiteLoader.lite_tools.updatePlugins", url),
+  // 监听更新事件
+  updateEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEvent", callback),
   /**
    *
    * @param {String} sendEventName 发送事件名称

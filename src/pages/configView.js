@@ -12,9 +12,13 @@ import { options, updateOptions } from "../render_modules/options.js";
 import { TailList } from "../render_modules/tailList.js";
 // 引入图标
 import { pluginIcon } from "../render_modules/svg.js";
-
+// 简单markdown转html
+import { simpleMarkdownToHTML } from "../render_modules/simpleMarkdownToHTML.js";
+// 更新日志弹窗
+import { openChangeLog } from "../render_modules/openChangeLog.js";
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
+import { showToast } from "../render_modules/toast.js";
 const log = new Logs("配置界面");
 
 // 打开设置界面时触发
@@ -510,6 +514,37 @@ async function onConfigView(view) {
   const tailList = new TailList(listView, options.tail.list);
   view.querySelector(".create-new-tail-item").addEventListener("click", () => {
     tailList.createNewTail();
+  });
+
+  // 打开当前版本的更新日志
+  view.querySelector(".tag-version").addEventListener("click", () => {
+    fetch(`local:///${LiteLoader.plugins.lite_tools.path.plugin}/changeLog.md`)
+      .then((res) => res.text())
+      .then((text) => {
+        log("打开更新日志", text);
+        const updateLogs = simpleMarkdownToHTML(text);
+        openChangeLog(
+          updateLogs,
+          false,
+          `https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/tag/${LiteLoader.plugins.lite_tools.manifest.repository.release.tag}`,
+        );
+      });
+  });
+
+  // 监听更新进度
+  let prevToast = null;
+  lite_tools.updateEvent((event, data) => {
+    log("更新进度", data);
+    if (data.toast) {
+      if (data.status === "processing" || data.status === "end") {
+        if (prevToast) {
+          prevToast.close();
+        }
+        prevToast = showToast(data.toast.content, data.toast.type, data.toast.duration);
+      } else {
+        showToast(data.toast.content, data.toast.type, data.toast.duration);
+      }
+    }
   });
 
   // 监听设置文件变动
