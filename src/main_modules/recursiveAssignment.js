@@ -5,7 +5,7 @@
  * @returns {Object} 两个配置合并后的实际配置文件
  */
 function recursiveAssignment(fileOptions, defaultOptions) {
-  if (!fileOptions) {
+  if (!fileOptions || Object.prototype.toString.call(fileOptions) !== "[object Object]") {
     return defaultOptions;
   }
   let obj = {};
