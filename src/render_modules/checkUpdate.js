@@ -1,4 +1,6 @@
 const projectLatestUrl = "https://api.github.com/repos/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest";
+import { simpleMarkdownToHTML } from "./simpleMarkdownToHTML.js";
+import { openChangeLog } from "./openChangeLog.js";
 import { Logs } from "./logs.js";
 const log = new Logs("检查更新模块");
 /**
@@ -42,7 +44,8 @@ async function checkUpdate(view) {
         aLink.innerText = json.tag_name.replace("v", "");
         aLink.classList.add("link");
         aLink.addEventListener("click", () => {
-          lite_tools.openWeb("https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest");
+          // lite_tools.openWeb("https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest");
+          openChangeLog(simpleMarkdownToHTML(json.body), false);
         });
         newVersionEl.innerText = ` 已发布新版本`;
         newVersionEl.appendChild(aLink);
