@@ -1011,8 +1011,7 @@
 }
 .lite-tools-web-preview-added .lite-tools-web-preview .lite-tools-web-preview-img.max-img {
   width: 100%;
-  height: auto;
-  max-height: 240px;
+  max-height: 220px;
   margin-top: 4px;
   overflow: hidden;
   border-radius: 6px;
@@ -1021,6 +1020,7 @@
 .lite-tools-web-preview-added .lite-tools-web-preview .lite-tools-web-preview-img.max-img img {
   width: 100%;
   height: 100%;
+  max-height: inherit;
   object-fit: cover;
 }
 .lite-tools-web-preview-added .lite-tools-web-preview .lite-tools-web-preview-box {
