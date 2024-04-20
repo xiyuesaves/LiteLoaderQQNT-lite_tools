@@ -177,9 +177,9 @@ const updateMsgBox = `<div class="lite-tools-mask">
     <div class="title" title="{{title}}">{{title}}</div>
     <div class="context">{{context}}</div>
     <div class="bottom-solt">
-      <button class="update-btn btn {{hiddenUpdate}}">更新</button>
-      <button class="detail-btn btn">详情</button>
-      <button class="quite-btn btn">返回</button>
+      <button class="q-button q-button--small q-button--primary update-btn {{hiddenUpdate}}">更新</button>
+      <button class="q-button q-button--small q-button--secondary detail-btn">详情</button>
+      <button class="q-button q-button--small q-button--secondary  quite-btn">返回</button>
     </div>
   </div>
 </div>`;

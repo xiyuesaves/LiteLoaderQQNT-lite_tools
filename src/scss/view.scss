@@ -696,10 +696,8 @@
     --text_secondary_2: rgba(0, 0, 0, 0.85);
     --text: #000000;
     --placeholder-color: rgba(0, 0, 0, 0.75);
-    --mask-bg: rgba(0, 0, 0, 0.08);
+    --mask-bg: rgba(0, 0, 0, 0.3);
     --msgbox-bg: rgba(255, 255, 255, 1);
-    --msgbox-btn-p: rgba(0, 147, 245, 1);
-    --msgbox-btn-border: rgba(0, 0, 0, 0.4);
     --msgbox-shadow: 0 15px 20px rgba(0, 0, 0, 0.15);
   }
 }
@@ -727,8 +725,6 @@
     --placeholder-color: rgba(255, 255, 255, 0.75);
     --mask-bg: rgba(0, 0, 0, 0.3);
     --msgbox-bg: rgb(36, 36, 36);
-    --msgbox-btn-p: rgba(0, 102, 204, 1);
-    --msgbox-btn-border: rgba(255, 255, 255, 0.2);
     --btn-bg: rgba(38, 38, 38, 1);
     --msgbox-shadow: 0 15px 40px 25px rgba(0, 0, 0, 0.3);
   }
@@ -894,7 +890,7 @@
   }
   .lite-tools-update-msg-box {
     transition: 300ms;
-    background-color: var(--msgbox-bg);
+    background-color: var(--fill_light_primary, var(--fg_white));
     border-radius: 8px;
     padding: 6px 24px;
     min-width: 260px;
@@ -915,6 +911,9 @@
       padding: 8px;
       max-height: calc(100vh - 300px);
       overflow: auto;
+      & > *:first-child {
+        margin-top: 6px;
+      }
     }
     .bottom-solt {
       position: absolute;
@@ -926,22 +925,6 @@
       align-items: center;
       justify-content: flex-end;
       padding: 10px;
-      .btn {
-        background-color: var(--btn-bg);
-        border: solid 1px var(--msgbox-btn-border);
-        margin-left: 8px;
-        width: 64px;
-        height: 26px;
-        cursor: pointer;
-        border-radius: 4px;
-        color: var(--text);
-        line-height: 26px;
-        &.update-btn {
-          border-color: var(--msgbox-btn-p);
-          background-color: var(--msgbox-btn-p);
-          color: #ffffff;
-        }
-      }
     }
   }
 }
