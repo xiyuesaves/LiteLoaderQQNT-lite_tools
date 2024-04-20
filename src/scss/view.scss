@@ -911,9 +911,6 @@
       padding: 8px;
       max-height: calc(100vh - 300px);
       overflow: auto;
-      & > *:first-child {
-        margin-top: 6px;
-      }
     }
     .bottom-solt {
       position: absolute;
