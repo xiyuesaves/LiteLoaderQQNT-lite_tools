@@ -1,33 +1,39 @@
 const { exec } = require("node:child_process");
+const os = require("os");
+const release = os.release();
 /**
  * windows系统获取字体列表
  * @returns {Promise}
  */
 function winGetFonts() {
-  return new Promise((res, rej) => {
-    exec(
-      `[Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
+  if (parseInt(release) >= 10) {
+    return new Promise((res, rej) => {
+      exec(
+        `[Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
       [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing");
       (New-Object System.Drawing.Text.InstalledFontCollection).Families;`,
-      {
-        shell: "powershell.exe",
-        encoding: "utf8",
-      },
-      (err, stdout, stderr) => {
-        if (err) {
-          rej(err);
-        }
-        if (stderr) {
-          rej(stderr);
-        }
-        const fontList = stdout
-          .split("\n")
-          .filter((line) => line.startsWith("Name"))
-          .map((line) => line.substring(7, line.length - 1));
-        res(fontList);
-      },
-    );
-  });
+        {
+          shell: "powershell.exe",
+          encoding: "utf8",
+        },
+        (err, stdout, stderr) => {
+          if (err) {
+            rej(err);
+          }
+          if (stderr) {
+            rej(stderr);
+          }
+          const fontList = stdout
+            .split("\n")
+            .filter((line) => line.startsWith("Name"))
+            .map((line) => line.substring(7, line.length - 1));
+          res(fontList);
+        },
+      );
+    });
+  } else {
+    return Promise.reject("系统不支持");
+  }
 }
 /**
  * Linux获取字体列表
@@ -48,7 +54,7 @@ function linuxGetFonts() {
         if (stderr) {
           rej(stderr);
         }
-        const fontList = stdout.split("\n").filter(v => v.trim());
+        const fontList = stdout.split("\n").filter((v) => v.trim());
         const uniqueFontList = [];
         const seen = new Set();
         fontList.forEach((v) => {
@@ -56,7 +62,7 @@ function linuxGetFonts() {
             seen.add(v);
             uniqueFontList.push(v);
           }
-        })
+        });
         res(uniqueFontList);
       },
     );
@@ -70,7 +76,7 @@ function linuxGetFonts() {
 function macGetFonts() {
   return new Promise((res, rej) => {
     exec(
-      'atsutil fonts -list',
+      "atsutil fonts -list",
       {
         encoding: "utf8",
       },
@@ -81,11 +87,9 @@ function macGetFonts() {
         if (stderr) {
           rej(stderr);
         }
-        const fontsAndFamilies = stdout
-          .split("\n")
-          .map((s) => s.trim())
-        const familyStart = fontsAndFamilies.indexOf('System Families:')
-        const fontList = fontsAndFamilies.slice(familyStart + 1)
+        const fontsAndFamilies = stdout.split("\n").map((s) => s.trim());
+        const familyStart = fontsAndFamilies.indexOf("System Families:");
+        const fontList = fontsAndFamilies.slice(familyStart + 1);
         res(fontList);
       },
     );
