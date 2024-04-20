@@ -69,15 +69,13 @@ export async function showWebPreview(context, element) {
   });
   if (previewData.data.image) {
     const img = document.createElement("img");
-    img.addEventListener("error", () => {
-      log("图片加载失败", findUrl[0], img);
-    });
+    log("图片加载中", img);
     img.addEventListener("load", () => {
       const showMaxImg = img.width > MAX_IMG_WIDTH;
       msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`).appendChild(img);
       msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`).classList.remove("LT-disabled");
     });
-    img.src = previewData.data.image.replace(/^(http:\/\/|https:\/\/|\/\/)?/, "https://");
+    img.src = previewData.data.image;
   }
   const embedSolt = element.querySelector(".lite-tools-slot.embed-slot");
   if (embedSolt) {
