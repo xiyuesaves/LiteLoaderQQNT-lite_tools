@@ -960,9 +960,6 @@ function deleteFilesInDirectory(directoryPath, fileToPreserve) {
  * @param {Object} plugin 插件对象
  */
 function onBrowserWindowCreated(window, plugin) {
-  // window.webContents.on("ready-to-show", (event, url) => {
-  //   log("新窗口 ready-to-show", event, window.webContents.getURL());
-  // });
   window.webContents.on("before-input-event", async (event, input) => {
     // 阻止按下 ESC 键时关闭窗口
     if (input.key == "Escape" && options.preventEscape) {
