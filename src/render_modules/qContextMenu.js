@@ -269,7 +269,6 @@ function addEventqContextMenu() {
       return;
     }
     qContextMenu.classList.add("lite-toos-context-menu");
-    log("右键菜单", document.querySelector(".q-context-menu").outerHTML);
 
     if (options.message.HighlightReplies) {
       const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
