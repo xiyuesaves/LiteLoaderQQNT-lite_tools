@@ -97,7 +97,7 @@ function processingMsgList() {
       }
     }
     // 防剧透[NSFW]遮罩
-    if (options.message.preventNSFW.enabled) {
+    if (options.message.preventNSFW.enabled && false) {
       const picElements = msgRecord?.elements?.filter((element) => element?.picElement && element?.picElement?.picSubType === 0);
       const videoElement = msgRecord?.elements?.find((element) => element?.videoElement);
       const videoFileElement = msgRecord?.elements?.find((element) => element?.fileElement && element?.fileElement?.subElementType === 2);
@@ -147,6 +147,31 @@ function processingMsgList() {
 }
 
 /**
+ * 图片组件单独处理
+ */
+function imageComponent(component) {
+  const messageEl = component?.vnode?.el;
+  if (options.message.preventNSFW.enabled && component?.props?.tag && messageEl?.classList?.contains("image")) {
+    log("处理图片组件数据",component);
+    // 内有 msgRecord 对象路径
+    // component.provides.msgRecord
+    // log(component.provides);
+
+    // 图片组件内有 ctx.imageProps 对象内部含有 element-id
+    
+    // 其他类型的图片组件直接使用消息id即可
+
+    if (
+      options.message.preventNSFW.list.length === 0 ||
+      options.message.preventNSFW.list.includes(component.provides.msgRecord?.peerUin) ||
+      options.message.preventNSFW.list.includes(component.provides.msgRecord?.senderUin)
+    ) {
+      messageEl.classList.add("lite-tools-nsfw-mask", "show-mask");
+    }
+  }
+}
+
+/**
  * 防抖批量处理当前可见的消息列表
  */
 const debounceProcessingMsgList = debounce(processingMsgList);
@@ -165,7 +190,11 @@ window?.__VUE_MOUNT__?.push((component) => {
     if (options.compatibleLLAPI) {
       return;
     }
+    // 消息靠左单独处理函数
     messageToleft(component);
+    // 图片组件单独处理
+    imageComponent(component);
+    // 单条消息处理
     singleMessageProcessing(component?.vnode?.el, component?.props?.msgRecord);
   } catch (err) {
     log("出现错误", err);
