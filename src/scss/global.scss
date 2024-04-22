@@ -1171,3 +1171,11 @@
     }
   }
 }
+
+.lite-tools-nsfw-mask {
+  &.image {
+    img {
+      filter: blur(16px);
+    }
+  }
+}

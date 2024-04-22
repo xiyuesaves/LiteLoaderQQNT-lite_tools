@@ -2,32 +2,47 @@ import { options } from "./options.js";
 import { messageRecall } from "./messageRecall.js";
 import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
-import { getPeer } from "./curAioData.js";
+import { getPeer, addEventPeerChange } from "./curAioData.js";
 import { createHtmlCard } from "./createHtmlCard.js";
 import { showWebPreview } from "./showWebPreview.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
 
-// 过滤消息类型
+/**
+ * 过滤消息类型
+ * @type {number[]}
+ */
 const chatTypes = [1, 2, 100];
 
-// 最大缓存10w条消息合并对应关系
+/**
+ * 最大缓存10w条消息合并对应关系
+ * @type {number}
+ */
 const MAX_CACHE_SIZE = 100000;
 
 /**
  * 过滤消息元素
+ * @type {string}
  */
 const filterClass = ".msg-content-container:not(.ptt-message,.file-message--content,.wallet-message__container,.ark-msg-content-container)";
 
 /**
  * 历史消息合并状态
+ * @type {Map}
  */
 let msgElMergeType = new Map();
 
 /**
  * 匹配链接正则
+ * @type {RegExp}
  */
 const urlMatch = /https?:\/\/[\w\-_]+\.[\w]{1,10}[\S]+/i;
+
+/**
+ * 判断遮罩是否已经被点开了
+ * @type {Set}
+ */
+let checkNSFW = new Set();
 
 /**
  * 处理当前可见的消息列表
@@ -78,6 +93,37 @@ function processingMsgList() {
           const array = Array.from(msgElMergeType);
           const arrayLength = array.length;
           msgElMergeType = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
+        }
+      }
+    }
+    // 防剧透[NSFW]遮罩
+    if (options.message.preventNSFW.enabled) {
+      const picElements = msgRecord?.elements?.filter((element) => element?.picElement && element?.picElement?.picSubType === 0);
+      const findReply = msgRecord?.elements?.find((element) => element?.replyElement);
+      for (let i = 0; i < picElements.length; i++) {
+        const picElement = picElements[i];
+        // 判断普通图片消息是否需要遮罩
+        if (
+          !checkNSFW.has(picElement.elementId) &&
+          (options.message.preventNSFW.list.length === 0 ||
+            options.message.preventNSFW.list.includes(msgRecord?.peerUin) ||
+            options.message.preventNSFW.list.includes(msgRecord?.senderUin))
+        ) {
+          messageEl.querySelector(`[element-id="${picElement.elementId}"]`).classList.add("lite-tools-nsfw-mask");
+        }
+      }
+
+      // 判断回复消息是否需要遮罩
+      if (findReply && !checkNSFW.has(msgRecord.msgId)) {
+        const record = msgRecord?.records?.find((record) => record?.msgId === findReply.replyElement.sourceMsgIdInRecords);
+        const picElement = record?.elements?.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
+        if (
+          picElement &&
+          (options.message.preventNSFW.list.length === 0 ||
+            options.message.preventNSFW.list.includes(msgRecord?.peerUin) ||
+            options.message.preventNSFW.list.includes(msgRecord?.senderUin))
+        ) {
+          messageEl.querySelector(".image").classList.add("lite-tools-nsfw-mask");
         }
       }
     }
@@ -437,6 +483,29 @@ function isChildMessage(msgRecord, nextMsgRecord) {
   // 返回是不是子消息
   return uniEqual && anonymousEqual && notGrayTip && notShowTime;
 }
+
+// 一个全局点击监听器，用于处理防剧透图片点击事件
+document.addEventListener("click", (e) => {
+  const maskEl = e.target.closest(".image") && e.target.closest(".lite-tools-nsfw-mask");
+  if (maskEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    maskEl.classList.remove("lite-tools-nsfw-mask");
+    const msgId = maskEl.getAttribute("element-id") || maskEl.closest(".ml-item").getAttribute("id");
+    checkNSFW.add(msgId);
+    // 如果缓存消息大于MAX_CACHE_SIZE，则移除10%最早的数据
+    if (checkNSFW.size >= MAX_CACHE_SIZE) {
+      const array = Array.from(checkNSFW);
+      const arrayLength = array.length;
+      checkNSFW = new Set(array.splice(0, arrayLength - arrayLength * 0.1));
+    }
+  }
+});
+
+// 当peer变化时，清空缓存
+addEventPeerChange(() => {
+  checkNSFW = new Set();
+});
 
 /**
  * 初始化监听器

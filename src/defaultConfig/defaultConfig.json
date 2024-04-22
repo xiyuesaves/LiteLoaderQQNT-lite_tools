@@ -65,6 +65,10 @@
     "removeVipName": false,
     "imageAutoWidth": false,
     "currentLocation": false,
+    "preventNSFW": {
+      "enabled": false,
+      "list": []
+    },
     "avatarSticky": {
       "enabled": false,
       "toBottom": false
