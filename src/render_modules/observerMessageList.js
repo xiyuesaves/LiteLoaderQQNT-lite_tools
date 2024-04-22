@@ -173,15 +173,10 @@ function singleMessageProcessing(target, msgRecord) {
           }
         }
 
-        // 开启背景时优化小图展示
-        if (options.background.enabled) {
-          // 过小尺寸的图片移除气泡效果
-          const mixPicEl = messageEl.querySelector(".mix-message__container--pic");
-          if (mixPicEl) {
-            const picEl = mixPicEl.querySelector(".pic-element");
-            if (picEl && !picEl.classList.contains("hidden-background") && !(picEl.offsetWidth >= 80 && picEl.offsetHeight >= 50)) {
-              mixPicEl.classList.add("hidden-background");
-            }
+        // 移除超级表情的背景
+        if (options.background.enabled && msgRecord?.elements?.length === 1) {
+          if (msgRecord?.elements?.[0]?.elementType === 6) {
+            target.querySelector(".mix-message__container")?.classList?.add("hidden-background");
           }
         }
 
