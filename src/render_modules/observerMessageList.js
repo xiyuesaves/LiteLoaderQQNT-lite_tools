@@ -99,10 +99,11 @@ function processingMsgList() {
     // 防剧透[NSFW]遮罩
     if (options.message.preventNSFW.enabled) {
       const picElements = msgRecord?.elements?.filter((element) => element?.picElement && element?.picElement?.picSubType === 0);
+      const videoElement = msgRecord?.elements?.find((element) => element?.videoElement);
       const findReply = msgRecord?.elements?.find((element) => element?.replyElement);
+      // 判断普通图片消息是否需要遮罩
       for (let i = 0; i < picElements.length; i++) {
         const picElement = picElements[i];
-        // 判断普通图片消息是否需要遮罩
         if (
           !checkNSFW.has(picElement.elementId) &&
           (options.message.preventNSFW.list.length === 0 ||
@@ -111,6 +112,17 @@ function processingMsgList() {
         ) {
           messageEl.querySelector(`[element-id="${picElement.elementId}"]`).classList.add("lite-tools-nsfw-mask");
         }
+      }
+
+      // 判断视频是否需要遮罩
+      if (
+        videoElement &&
+        !checkNSFW.has(msgRecord.msgId) &&
+        (options.message.preventNSFW.list.length === 0 ||
+          options.message.preventNSFW.list.includes(msgRecord?.peerUin) ||
+          options.message.preventNSFW.list.includes(msgRecord?.senderUin))
+      ) {
+        messageEl.querySelector(".image").classList.add("lite-tools-nsfw-mask");
       }
 
       // 判断回复消息是否需要遮罩
