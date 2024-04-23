@@ -50,7 +50,6 @@ let dontLoadPic = options.message.previreUrl.dontLoadPic;
 updateOptions((newOptions) => {
   // 如果 dontLoadPic 配置变化则清空缓存
   if (dontLoadPic !== newOptions.message.previreUrl.dontLoadPic) {
-    log("清除预览缓存");
     cacheMap = new Map();
     dontLoadPic = newOptions.message.previreUrl.dontLoadPic;
   }
@@ -62,20 +61,20 @@ updateOptions((newOptions) => {
 lite_tools.onWebPreviewData((_, uuid, previewData) => {
   const data = awaitList.get(uuid);
   awaitList.delete(uuid);
-  log("获取到预览数据", uuid, previewData);
-  log("当前等待url预览列表长度", awaitList.size);
   if (!data) {
-    log("目标消息不存在", data);
+    // 预览数据不存在
     return;
   }
   if (!previewData.success) {
-    log("获取预览数据失败", previewData);
+    // 获取预览数据失败
     return;
   }
   if (!previewData.data.description) {
-    log("数据不足", previewData);
+    // 没有数据
     return;
   }
+  log("获取到预览数据", previewData.data.url, previewData);
+  log("当前等待url预览列表长度", awaitList.size);
   // 缓存预览数据
   cacheMap.set(previewData.data.url, previewData);
   // 超出阈值则移除10%最早的数据
@@ -103,15 +102,12 @@ export function showWebPreview(context, element) {
     return;
   }
   const url = findUrl[0];
-  log("获取到链接", url);
   const findCache = cacheMap.get(url);
   if (findCache) {
-    log("获取到缓存数据");
     setPreviewData(msgContainer, findCache);
     cacheMap.delete(url);
     cacheMap.set(url, findCache);
   } else {
-    log("将链接发送到主进程");
     const uuid = crypto.randomUUID();
     awaitList.set(uuid, {
       time: Date.now(),
@@ -127,7 +123,6 @@ export function showWebPreview(context, element) {
  * @param {Object} previewData 预览数据
  */
 function setPreviewData(msgContainer, previewData) {
-  log("获取到预览数据", previewData);
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "alt":
@@ -149,7 +144,6 @@ function setPreviewData(msgContainer, previewData) {
       const chosenImg = msgContainer.querySelector(`.lite-tools-web-preview-img${previewData.data.showMaxImg ? ".max-img" : ".small-img"}`);
       chosenImg.appendChild(img);
       chosenImg.classList.remove("LT-disabled");
-      log("从缓存读取图片位置");
     } else {
       img.addEventListener("load", () => {
         const showMaxImg = img.width > MAX_IMG_WIDTH;
@@ -157,7 +151,6 @@ function setPreviewData(msgContainer, previewData) {
         chosenImg.appendChild(img);
         chosenImg.classList.remove("LT-disabled");
         const findCache = cacheMap.get(previewData.data.url);
-        log("动态判断图片位置");
         if (findCache) {
           findCache.data.showMaxImg = showMaxImg;
         }
@@ -192,6 +185,5 @@ function setPreviewData(msgContainer, previewData) {
   if (embedSolt) {
     embedSolt.classList.add("outside-embed");
     msgContainer.appendChild(embedSolt);
-    log("移动插槽位置");
   }
 }
