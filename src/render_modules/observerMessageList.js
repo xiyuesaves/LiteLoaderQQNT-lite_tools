@@ -150,23 +150,56 @@ function processingMsgList() {
  * 图片组件单独处理
  */
 function imageComponent(component) {
-  const messageEl = component?.vnode?.el;
-  if (options.message.preventNSFW.enabled && component?.props?.tag && messageEl?.classList?.contains("image")) {
-    log("处理图片组件数据", component);
-    // 内有 msgRecord 对象路径
-    // component.provides.msgRecord
-    // log(component.provides);
-
-    // 图片组件内有 ctx.imageProps 对象内部含有 element-id
-
-    // 其他类型的图片组件直接使用消息id即可
+  if (options.message.preventNSFW.enabled) {
+    const vnode = component?.vnode?.el;
+    const elementType = vnode?.classList?.contains("reply-element") ? "reply" : vnode?.classList?.contains("image") && "image";
+    if (!elementType) {
+      return;
+    }
+    const msgRecord = component?.provides?.msgRecord?.value;
+    if (!msgRecord) {
+      // 目标没有有效数据
+      return;
+    }
+    const uuid = component?.attrs?.["element-id"] || msgRecord.msgId;
+    if (checkNSFW.has(uuid)) {
+      // 目标已被查看
+      return;
+    }
+    const findReply = msgRecord?.elements?.find((element) => element?.replyElement);
+    if (findReply) {
+      const record = msgRecord?.records?.find((record) => record?.msgId === findReply.replyElement.sourceMsgIdInRecords);
+      const picElement = record?.elements?.some((element) =>
+        element?.picElement && options.message.preventNSFW.includesAnimationEmoticons ? true : element?.picElement?.picSubType === 0,
+      );
+      const videoElement = record?.elements?.some((element) => element?.videoElement);
+      if (!picElement && !videoElement) {
+        return;
+      }
+    } else {
+      const picElements = msgRecord?.elements?.some((element) =>
+        element?.picElement && options.message.preventNSFW.includesAnimationEmoticons ? true : element?.picElement?.picSubType === 0,
+      );
+      const videoElement = msgRecord?.elements?.some((element) => element?.videoElement);
+      const videoFileElement = msgRecord?.elements?.some((element) => element?.fileElement && element?.fileElement?.subElementType === 2);
+      if (!picElements && !videoElement && !videoFileElement) {
+        return;
+      }
+      if (picElements && !component?.attrs?.["element-id"]) {
+        return;
+      }
+    }
 
     if (
       options.message.preventNSFW.list.length === 0 ||
-      options.message.preventNSFW.list.includes(component.provides.msgRecord?.peerUin) ||
-      options.message.preventNSFW.list.includes(component.provides.msgRecord?.senderUin)
+      options.message.preventNSFW.list.includes(msgRecord?.peerUin) ||
+      options.message.preventNSFW.list.includes(msgRecord?.senderUin)
     ) {
-      messageEl.classList.add("lite-tools-nsfw-mask", "show-mask");
+      if (elementType === "image") {
+        vnode?.classList?.add("lite-tools-nsfw-mask", "show-mask");
+      } else {
+        vnode.querySelector(".mixed-container")?.classList?.add("lite-tools-nsfw-mask", "show-mask");
+      }
     }
   }
 }
@@ -531,11 +564,11 @@ function isChildMessage(msgRecord, nextMsgRecord) {
 
 // 一个全局点击监听器，用于处理防剧透图片点击事件
 document.addEventListener("click", (e) => {
-  const maskEl = e.target.closest(".image.lite-tools-nsfw-mask") || e.target.closest(".video.lite-tools-nsfw-mask");
+  const maskEl = e.target.closest(".lite-tools-nsfw-mask.show-mask");
   if (maskEl) {
     e.preventDefault();
     e.stopPropagation();
-    maskEl.classList.remove("lite-tools-nsfw-mask");
+    maskEl.classList.remove("show-mask");
     const msgId = maskEl.getAttribute("element-id") || maskEl.closest(".ml-item").getAttribute("id");
     checkNSFW.add(msgId);
     // 如果缓存消息大于MAX_CACHE_SIZE，则移除10%最早的数据

@@ -244,6 +244,22 @@ async function onConfigView(view) {
   // 加载预览图片
   addSwitchEventlistener("message.previreUrl.dontLoadPic", ".loadPrevirePic");
 
+  // 图片遮罩
+  addSwitchEventlistener("message.preventNSFW.enabled", ".preventNSFW", (_, enabled) => {
+    view.querySelector(".preventNSFW-keyword").classList.toggle("disabled-input", !enabled);
+  });
+  addSwitchEventlistener("message.preventNSFW.includesAnimationEmoticons", ".includesAnimationEmoticons");
+  const preventNSFW = view.querySelector(".preventNSFW-list-input");
+  preventNSFW.value = options.message.preventNSFW.list.join(",");
+  preventNSFW.addEventListener("input", (e) => {
+    if (e.target.value.length) {
+      options.message.preventNSFW.list = e.target.value.split(",");
+    } else {
+      options.message.preventNSFW.list = [];
+    }
+    debounceSetOptions();
+  });
+
   // 快速关闭图片
   addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
 
