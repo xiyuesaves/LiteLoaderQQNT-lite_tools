@@ -107,6 +107,7 @@ module.exports = async function getWebPrevew(url) {
         return webMeta;
       }
       standardData = {
+        url,
         title: webMeta.data["og:title"] || webMeta.data["twitter:title"] || webMeta.data["title"],
         imageUrl: (webMeta.data["og:image"] || webMeta.data["twitter:image:src"] || webMeta.data["image"])?.replace(
           /^(http:\/\/|https:\/\/|\/\/)?/,

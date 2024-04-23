@@ -208,9 +208,12 @@
     user-select: none;
     &.outside-embed {
       margin-top: 6px;
-      *::after {
-        bottom: 8px !important;
-        right: 10px !important;
+      * {
+        font-size: 0 !important;
+        line-height: 0 !important;
+        &::after {
+          position: relative !important;
+        }
       }
     }
     .lite-tools-time {

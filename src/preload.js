@@ -53,7 +53,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 在浏览器打开页面
   openWeb: (url) => ipcRenderer.send("LiteLoader.lite_tools.openWeb", url),
   // 在主进程的终端打印渲染进程日志
-  log: (...msg) => ipcRenderer.send("LiteLoader.lite_tools.log", ...msg),
+  log: (...args) => ipcRenderer.send("LiteLoader.lite_tools.log", ...args),
   // 更新常用表情列表
   addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
   // 获取窗口Id
@@ -79,7 +79,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 通过Uid获取用户信息
   getUserInfo: (uid) => ipcRenderer.invoke("LiteLoader.lite_tools.getUserInfo", uid),
   // 保存blob到本地
-  saveBase64ToFile: (...data) => ipcRenderer.send("LiteLoader.lite_tools.saveBase64ToFile", ...data),
+  saveBase64ToFile: (...args) => ipcRenderer.send("LiteLoader.lite_tools.saveBase64ToFile", ...args),
   // 选择消息图片默认保存位置
   openSelectDefaultSaveFilePath: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectDefaultSaveFilePath"),
   // 从历史记录中移除指定文件
@@ -89,9 +89,9 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 关键字提醒
   onKeywordReminder: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onKeywordReminder", callback),
   // 复制文件
-  copyFile: (...data) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...data),
+  copyFile: (...args) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...args),
   // 获取链接预览数据
-  getWebPrevew: (url) => ipcRenderer.send("LiteLoader.lite_tools.getWebPrevew", url),
+  getWebPrevew: (...args) => ipcRenderer.send("LiteLoader.lite_tools.getWebPrevew", ...args),
   // 获取链接预览数据回调
   onWebPreviewData: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onWebPreviewData", callback),
   // 设置窗口图标

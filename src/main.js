@@ -841,8 +841,11 @@ function onLoad(plugin) {
   /**
    * 获取链接预览信息
    */
-  ipcMain.handle("LiteLoader.lite_tools.getWebPrevew", async (_, uuid, url) => {
-    globalBroadcast("LiteLoader.lite_tools.getWebPrevew", uuid, await getWebPrevew(url));
+  ipcMain.on("LiteLoader.lite_tools.getWebPrevew", async (_, uuid, url) => {
+    log("获取链接预览信息", _, uuid, url);
+    const resData = await getWebPrevew(url);
+    log("获取到预览信息", uuid, resData);
+    globalBroadcast("LiteLoader.lite_tools.onWebPreviewData", uuid, resData);
   });
 
   // 查看本地撤回数据

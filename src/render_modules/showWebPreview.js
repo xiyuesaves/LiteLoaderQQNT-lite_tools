@@ -18,19 +18,21 @@ const awaitList = new Map();
 lite_tools.onWebPreviewData((_, uuid, previewData) => {
   const msgContainer = awaitList.get(uuid);
   awaitList.delete(uuid);
+  log("获取到预览数据", uuid, previewData);
   log("当前等待url预览列表长度", awaitList.size);
-  if (!msgContainer && document.body.contains(msgContainer)) {
+  if (!msgContainer) {
+    log("目标消息不存在", msgContainer);
     return;
   }
   if (!previewData.success) {
-    log("获取预览数据失败", findUrl[0], previewData);
+    log("获取预览数据失败", previewData);
     return;
   }
   if (!previewData.data.description) {
-    log("数据不足", findUrl[0], previewData);
+    log("数据不足", previewData);
     return;
   }
-  log("获取到预览数据", findUrl[0], previewData);
+  log("获取到预览数据", previewData);
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "alt":
@@ -62,7 +64,7 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
   });
   webPreviewCard.addEventListener("pointerup", () => {
     if (hasMove <= 2) {
-      lite_tools.openWeb(findUrl[0]);
+      lite_tools.openWeb(previewData.data.url);
       hasMove = 3;
     }
   });
@@ -71,7 +73,6 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
   });
   if (previewData.data.image) {
     const img = document.createElement("img");
-    log("图片加载中", img);
     img.addEventListener("load", () => {
       const showMaxImg = img.width > MAX_IMG_WIDTH;
       const chosenImg = msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`);
@@ -80,7 +81,7 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
     });
     img.src = previewData.data.image;
   }
-  const embedSolt = element.querySelector(".lite-tools-slot.embed-slot");
+  const embedSolt = msgContainer.querySelector(".lite-tools-slot.embed-slot");
   if (embedSolt) {
     embedSolt.classList.add("outside-embed");
     msgContainer.appendChild(embedSolt);
@@ -105,6 +106,6 @@ export async function showWebPreview(context, element) {
   }
   log("获取到链接", findUrl[0]);
   const uuid = crypto.randomUUID();
-  lite_tools.getWebPrevew(uuid, findUrl[0]);
   awaitList.set(uuid, msgContainer);
+  lite_tools.getWebPrevew(uuid, findUrl[0]);
 }
