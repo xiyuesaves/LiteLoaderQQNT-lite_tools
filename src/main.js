@@ -415,7 +415,7 @@ function onLoad(plugin) {
 
   ipcMain.on("LiteLoader.lite_tools.updatePlugins", updatePlugins);
   let isUpdating = "no";
-  async function updatePlugins(event, url) {
+  async function updatePlugins(_, url) {
     if (isUpdating === "no") {
       try {
         log("尝试下载", url);
@@ -473,7 +473,7 @@ function onLoad(plugin) {
   });
 
   // 复制文件
-  ipcMain.handle("LiteLoader.lite_tools.copyFile", async (event, from, to) => {
+  ipcMain.handle("LiteLoader.lite_tools.copyFile", async (_, from, to) => {
     log("复制文件", from, to);
     return new Promise((res, rej) => {
       fs.copyFile(from, to, (err) => {
@@ -487,7 +487,7 @@ function onLoad(plugin) {
   });
 
   // 获取系统字体列表
-  ipcMain.handle("LiteLoader.lite_tools.getSystemFonts", async (event) => {
+  ipcMain.handle("LiteLoader.lite_tools.getSystemFonts", async (_) => {
     if (systemFontList.length <= 1) {
       try {
         switch (LiteLoader.os.platform) {
@@ -516,29 +516,29 @@ function onLoad(plugin) {
   });
 
   // 返回本地表情包数据
-  ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", (event) => {
+  ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", (_) => {
     log("返回本地表情包数据");
     return localEmoticonsList;
   });
 
   // 返回常用表情包数据
-  ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsConfig", (event) => {
+  ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsConfig", (_) => {
     log("返回本地表情包配置");
     return localEmoticonsConfig;
   });
 
   // 打开网址
-  ipcMain.on("LiteLoader.lite_tools.openWeb", (event, url) => {
+  ipcMain.on("LiteLoader.lite_tools.openWeb", (_, url) => {
     shell.openExternal(url);
   });
 
   // 更新侧边栏功能列表
-  ipcMain.on("LiteLoader.lite_tools.sendSidebar", (event, list) => {
+  ipcMain.on("LiteLoader.lite_tools.sendSidebar", (_, list) => {
     options.sidebar = list;
   });
 
   // 更新输入框上方功能列表
-  ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (event, list) => {
+  ipcMain.on("LiteLoader.lite_tools.sendTextAreaList", (_, list) => {
     list.forEach((item) => {
       const find = options.textAreaFuncList.find((el) => el.id === item.id);
       if (find) {
@@ -551,7 +551,7 @@ function onLoad(plugin) {
   });
 
   // 更新聊天框上方功能列表
-  ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (event, list) => {
+  ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (_, list) => {
     list.forEach((item) => {
       const find = options.chatAreaFuncList.find((el) => el.id === item.id);
       if (find) {
@@ -564,7 +564,7 @@ function onLoad(plugin) {
   });
 
   // 修改配置信息
-  ipcMain.on("LiteLoader.lite_tools.setOptions", (event, opt) => {
+  ipcMain.on("LiteLoader.lite_tools.setOptions", (_, opt) => {
     log("更新配置信息", opt);
     Opt.updateOptions(opt);
   });
@@ -588,7 +588,7 @@ function onLoad(plugin) {
   });
 
   // 保存图片消息到本地
-  ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (event, fileName, base64) => {
+  ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64) => {
     log("接收到保存为文件事件");
     const buffer = Buffer.from(base64.split(",")[1], "base64");
     if (options.messageToImage.path && fs.existsSync(options.messageToImage.path)) {
@@ -636,24 +636,24 @@ function onLoad(plugin) {
   });
 
   // 控制台日志打印
-  ipcMain.on("LiteLoader.lite_tools.log", (event, ...message) => {
+  ipcMain.on("LiteLoader.lite_tools.log", (_, ...message) => {
     // log("渲染进程>", ...message);
   });
 
   // 更新常用表情列表
   ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", addCommonlyEmoticons);
   // 打开文件夹
-  ipcMain.on("LiteLoader.lite_tools.openFolder", (event, localPath) => {
+  ipcMain.on("LiteLoader.lite_tools.openFolder", (_, localPath) => {
     const openPath = path.normalize(localPath);
     shell.showItemInFolder(openPath);
   });
   // 打开文件
-  ipcMain.on("LiteLoader.lite_tools.openFile", (event, localPath) => {
+  ipcMain.on("LiteLoader.lite_tools.openFile", (_, localPath) => {
     const openPath = path.normalize(localPath);
     shell.openPath(openPath);
   });
   // 从历史记录中移除指定文件
-  ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (event, localPath) => {
+  ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
     const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
     // 如果已经有这个表情了，则更新位置
     newSet.delete(localPath);
@@ -661,7 +661,7 @@ function onLoad(plugin) {
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
     fs.writeFileSync(localEmoticonsPath, JSON.stringify(localEmoticonsConfig, null, 4));
   });
-  ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", (event, path) => {
+  ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", (_, path) => {
     log("删除表情文件", path);
     if (fs.existsSync(path)) {
       // 验证要删除的文件目录是否在本地表情指定目录中
@@ -693,7 +693,7 @@ function onLoad(plugin) {
   });
 
   // 获取用户信息事件
-  ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (event, uid) => {
+  ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (_, uid) => {
     const userInfo = await new Promise((resolve) => {
       function onEvent(channel, ...args) {
         if (
@@ -855,7 +855,7 @@ function onLoad(plugin) {
   });
 
   // 跳转到指定聊天窗口的对应消息
-  ipcMain.on("LiteLoader.lite_tools.sendToMsg", (event, sceneData) => {
+  ipcMain.on("LiteLoader.lite_tools.sendToMsg", (_, sceneData) => {
     ipcMain.emit(
       "IPC_UP_2",
       {
@@ -882,7 +882,7 @@ function onLoad(plugin) {
   });
 
   // 设置窗口图标
-  ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (event, path, webContentId) => {
+  ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (_, path, webContentId) => {
     try {
       const webContent = BrowserWindow.fromId(parseInt(webContentId));
       webContent.setIcon(path);
@@ -913,7 +913,7 @@ function openRecallView() {
       },
     });
     recallViewWindow.loadFile(path.join(LiteLoader.plugins.lite_tools.path.plugin, `/src/config/showRecallList.html`));
-    recallViewWindow.webContents.on("before-input-event", (event, input) => {
+    recallViewWindow.webContents.on("before-input-event", (_, input) => {
       if (input.key == "F5" && input.type == "keyUp") {
         recallViewWindow.loadFile(path.join(LiteLoader.plugins.lite_tools.path.plugin, `/src/config/showRecallList.html`));
       }
