@@ -527,7 +527,9 @@
             position: absolute !important;
             display: grid;
             top: 0 !important;
+            pointer-events: none;
             .avatar {
+              pointer-events: auto;
               position: sticky !important;
               top: 10px !important;
               bottom: 10px !important;
