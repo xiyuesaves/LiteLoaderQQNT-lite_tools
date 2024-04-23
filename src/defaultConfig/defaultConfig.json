@@ -42,7 +42,10 @@
     "touchMove": false
   },
   "message": {
-    "previreUrl": false,
+    "previreUrl": {
+      "enabled": false,
+      "loadPic": false
+    },
     "goBackMainList": false,
     "HighlightReplies": false,
     "disabledSticker": false,

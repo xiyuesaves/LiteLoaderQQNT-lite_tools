@@ -9,6 +9,11 @@ const https = require("https");
 const MAX_CACHE_SIZE = 200;
 let previewCatch = new Map();
 
+Opt.on("update", (newOptions) => {
+  options = newOptions;
+  previewCatch = new Map();
+});
+
 /**
  * 从给定的 URL 获取文本内容。
  *
@@ -117,7 +122,7 @@ module.exports = async function getWebPrevew(url) {
         description: webMeta.data["og:description"] || webMeta.data["twitter:description"] || webMeta.data["description"],
         site_name: webMeta.data["og:site_name"] || webMeta.data["twitter:site"] || webMeta.data["url"],
       };
-      if (standardData.imageUrl) {
+      if (standardData.imageUrl && options.message.previreUrl.loadPic) {
         standardData.image = await imageUrlToBase64(standardData.imageUrl);
       }
       previewCatch.set(url, standardData);

@@ -152,13 +152,13 @@ function processingMsgList() {
 function imageComponent(component) {
   const messageEl = component?.vnode?.el;
   if (options.message.preventNSFW.enabled && component?.props?.tag && messageEl?.classList?.contains("image")) {
-    log("处理图片组件数据",component);
+    log("处理图片组件数据", component);
     // 内有 msgRecord 对象路径
     // component.provides.msgRecord
     // log(component.provides);
 
     // 图片组件内有 ctx.imageProps 对象内部含有 element-id
-    
+
     // 其他类型的图片组件直接使用消息id即可
 
     if (
@@ -446,7 +446,7 @@ function singleMessageProcessing(target, msgRecord) {
         }
 
         // 添加url预览信息
-        if (options.message.previreUrl) {
+        if (options.message.previreUrl.enabled) {
           const findURL = msgRecord?.elements?.find((element) => urlMatch.test(element?.textElement?.content));
           showWebPreview(findURL?.textElement?.content, messageEl);
         }
