@@ -10,8 +10,11 @@ const MAX_CACHE_SIZE = 200;
 let previewCatch = new Map();
 
 Opt.on("update", (newOptions) => {
+  // 只有当 dontLoadPic 配置变化时才清空缓存
+  if (options.message.previreUrl.dontLoadPic !== newOptions.message.previreUrl.dontLoadPic) {
+    previewCatch = new Map();
+  }
   options = newOptions;
-  previewCatch = new Map();
 });
 
 /**
@@ -122,7 +125,7 @@ module.exports = async function getWebPrevew(url) {
         description: webMeta.data["og:description"] || webMeta.data["twitter:description"] || webMeta.data["description"],
         site_name: webMeta.data["og:site_name"] || webMeta.data["twitter:site"] || webMeta.data["url"],
       };
-      if (standardData.imageUrl && options.message.previreUrl.loadPic) {
+      if (standardData.imageUrl && !options.message.previreUrl.dontLoadPic) {
         standardData.image = await imageUrlToBase64(standardData.imageUrl);
       }
       previewCatch.set(url, standardData);

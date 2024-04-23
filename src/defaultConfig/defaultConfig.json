@@ -44,7 +44,7 @@
   "message": {
     "previreUrl": {
       "enabled": false,
-      "loadPic": false
+      "dontLoadPic": false
     },
     "goBackMainList": false,
     "HighlightReplies": false,

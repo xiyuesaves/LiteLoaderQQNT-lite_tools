@@ -2,6 +2,7 @@ import { Logs } from "./logs.js";
 const log = new Logs("链接预览");
 import { webPreview } from "./HTMLtemplate.js";
 const urlMatch = /https?:\/\/[\w\-_]+\.[\w]{1,10}[\S]+/i;
+import { options, updateOptions } from "./options.js";
 
 /**
  * 超过这个尺寸的图片将被放到消息下方展示
@@ -15,13 +16,56 @@ const MAX_IMG_WIDTH = 800;
  */
 const awaitList = new Map();
 
+/**
+ * 定时清理超时数据
+ * @return {undefined} 此函数不返回任何内容。
+ */
+function removeTimeoutData() {
+  setTimeout(removeTimeoutData, 60000);
+  const now = Date.now();
+  awaitList.forEach((value, key) => {
+    if (now - value.time >= 60000) {
+      awaitList.delete(key);
+    }
+  });
+  log("清理超时数据", awaitList.size);
+}
+removeTimeoutData();
+
+/**
+ * 缓存200条预览数据
+ * @type {Map}
+ */
+let cacheMap = new Map();
+const MAX_CACHE_SIZE = 200;
+
+/**
+ * 是否加载图片
+ */
+let dontLoadPic = options.message.previreUrl.dontLoadPic;
+
+/**
+ * 监听配置更新
+ */
+updateOptions((newOptions) => {
+  // 如果 dontLoadPic 配置变化则清空缓存
+  if (dontLoadPic !== newOptions.message.previreUrl.dontLoadPic) {
+    log("清除预览缓存");
+    cacheMap = new Map();
+    dontLoadPic = newOptions.message.previreUrl.dontLoadPic;
+  }
+});
+
+/**
+ * 监听预览数据
+ */
 lite_tools.onWebPreviewData((_, uuid, previewData) => {
-  const msgContainer = awaitList.get(uuid);
+  const data = awaitList.get(uuid);
   awaitList.delete(uuid);
   log("获取到预览数据", uuid, previewData);
   log("当前等待url预览列表长度", awaitList.size);
-  if (!msgContainer) {
-    log("目标消息不存在", msgContainer);
+  if (!data) {
+    log("目标消息不存在", data);
     return;
   }
   if (!previewData.success) {
@@ -32,6 +76,57 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
     log("数据不足", previewData);
     return;
   }
+  // 缓存预览数据
+  cacheMap.set(previewData.data.url, previewData);
+  // 超出阈值则移除10%最早的数据
+  if (cacheMap.size > MAX_CACHE_SIZE) {
+    const array = Array.from(cacheMap);
+    const arrayLength = array.length;
+    cacheMap = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
+  }
+  setPreviewData(data.msgContainer, previewData);
+});
+
+/**
+ * 获取页面预览数据
+ * @param {String} context 含有链接的文本
+ * @param {Element} element 目标消息元素
+ */
+export function showWebPreview(context, element) {
+  const msgContainer = element.querySelector(".msg-content-container");
+  if (!context || !element || element.classList.contains("lite-tools-web-preview-added") || !msgContainer) {
+    return;
+  }
+  element.classList.add("lite-tools-web-preview-added");
+  const findUrl = context.match(urlMatch);
+  if (!findUrl) {
+    return;
+  }
+  const url = findUrl[0];
+  log("获取到链接", url);
+  const findCache = cacheMap.get(url);
+  if (findCache) {
+    log("获取到缓存数据");
+    setPreviewData(msgContainer, findCache);
+    cacheMap.delete(url);
+    cacheMap.set(url, findCache);
+  } else {
+    log("将链接发送到主进程");
+    const uuid = crypto.randomUUID();
+    awaitList.set(uuid, {
+      time: Date.now(),
+      msgContainer,
+    });
+    lite_tools.getWebPrevew(uuid, url);
+  }
+}
+
+/**
+ * 设置预览数据
+ * @param {Element} msgContainer 目标消息元素
+ * @param {Object} previewData 预览数据
+ */
+function setPreviewData(msgContainer, previewData) {
   log("获取到预览数据", previewData);
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
@@ -48,6 +143,28 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
     }
   });
   msgContainer.insertAdjacentHTML("beforeend", injectHTML);
+  if (previewData.data.image) {
+    const img = document.createElement("img");
+    if (previewData.data.showMaxImg !== undefined) {
+      const chosenImg = msgContainer.querySelector(`.lite-tools-web-preview-img${previewData.data.showMaxImg ? ".max-img" : ".small-img"}`);
+      chosenImg.appendChild(img);
+      chosenImg.classList.remove("LT-disabled");
+      log("从缓存读取图片位置");
+    } else {
+      img.addEventListener("load", () => {
+        const showMaxImg = img.width > MAX_IMG_WIDTH;
+        const chosenImg = msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`);
+        chosenImg.appendChild(img);
+        chosenImg.classList.remove("LT-disabled");
+        const findCache = cacheMap.get(previewData.data.url);
+        log("动态判断图片位置");
+        if (findCache) {
+          findCache.data.showMaxImg = showMaxImg;
+        }
+      });
+    }
+    img.src = previewData.data.image;
+  }
   let hasMove = 0;
   const webPreviewCard = msgContainer.querySelector(`.lite-tools-web-preview`);
   webPreviewCard.addEventListener("pointerdown", (event) => {
@@ -71,41 +188,10 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
   webPreviewCard.addEventListener("pointerout", () => {
     hasMove = 3;
   });
-  if (previewData.data.image) {
-    const img = document.createElement("img");
-    img.addEventListener("load", () => {
-      const showMaxImg = img.width > MAX_IMG_WIDTH;
-      const chosenImg = msgContainer.querySelector(`.lite-tools-web-preview-img${showMaxImg ? ".max-img" : ".small-img"}`);
-      chosenImg.appendChild(img);
-      chosenImg.classList.remove("LT-disabled");
-    });
-    img.src = previewData.data.image;
-  }
   const embedSolt = msgContainer.querySelector(".lite-tools-slot.embed-slot");
   if (embedSolt) {
     embedSolt.classList.add("outside-embed");
     msgContainer.appendChild(embedSolt);
     log("移动插槽位置");
   }
-});
-
-/**
- * 获取页面预览数据
- * @param {String} context 含有链接的文本
- * @param {Element} element 目标消息元素
- */
-export async function showWebPreview(context, element) {
-  const msgContainer = element.querySelector(".msg-content-container");
-  if (!context || !element || element.classList.contains("lite-tools-web-preview-added") || !msgContainer) {
-    return;
-  }
-  element.classList.add("lite-tools-web-preview-added");
-  const findUrl = context.match(urlMatch);
-  if (!findUrl) {
-    return;
-  }
-  log("获取到链接", findUrl[0]);
-  const uuid = crypto.randomUUID();
-  awaitList.set(uuid, msgContainer);
-  lite_tools.getWebPrevew(uuid, findUrl[0]);
 }
