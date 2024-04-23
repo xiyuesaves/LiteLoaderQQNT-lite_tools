@@ -841,8 +841,8 @@ function onLoad(plugin) {
   /**
    * 获取链接预览信息
    */
-  ipcMain.handle("LiteLoader.lite_tools.getWebPrevew", async (event, url) => {
-    return await getWebPrevew(url);
+  ipcMain.handle("LiteLoader.lite_tools.getWebPrevew", async (_, uuid, url) => {
+    globalBroadcast("LiteLoader.lite_tools.getWebPrevew", uuid, await getWebPrevew(url));
   });
 
   // 查看本地撤回数据

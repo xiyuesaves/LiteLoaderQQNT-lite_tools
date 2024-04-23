@@ -91,7 +91,9 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // 复制文件
   copyFile: (...data) => ipcRenderer.invoke("LiteLoader.lite_tools.copyFile", ...data),
   // 获取链接预览数据
-  getWebPrevew: (url) => ipcRenderer.invoke("LiteLoader.lite_tools.getWebPrevew", url),
+  getWebPrevew: (url) => ipcRenderer.send("LiteLoader.lite_tools.getWebPrevew", url),
+  // 获取链接预览数据回调
+  onWebPreviewData: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onWebPreviewData", callback),
   // 设置窗口图标
   setWindowIcon: (...args) => ipcRenderer.send("LiteLoader.lite_tools.setWindowIcon", ...args),
   // 发送更新请求到主进程
