@@ -414,12 +414,12 @@ function onLoad(plugin) {
   // 进程通信相关
 
   ipcMain.on("LiteLoader.lite_tools.updatePlugins", updatePlugins);
-  let isUpdating = "no";
+  let isUpdating = "false";
   async function updatePlugins(_, url) {
-    if (isUpdating === "no") {
+    if (isUpdating === "false") {
       try {
         log("尝试下载", url);
-        isUpdating = "yes";
+        isUpdating = "true";
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
           toast: { content: "开始更新，请不要关闭本窗口和退出QQ", type: "info", duration: "10000000" },
           status: "note",
@@ -452,9 +452,9 @@ function onLoad(plugin) {
           toast: { content: `更新失败，错误原因：\n${err?.message}`, type: "error", duration: "10000" },
           status: "end",
         });
-        isUpdating = "no";
+        isUpdating = "false";
       }
-    } else if (isUpdating === "yes") {
+    } else if (isUpdating === "true") {
       settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
         toast: { content: "更新中，请勿重复点击", type: "error", duration: "3000" },
         status: "note",
