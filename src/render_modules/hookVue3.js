@@ -1,4 +1,4 @@
-// hookVue3 功能来自 LLAPI
+// hookVue3
 const elements = new WeakMap();
 
 /**

@@ -250,9 +250,13 @@ function singleMessageProcessing(target, msgRecord) {
           }
         }
 
-        // 移除超级表情的背景
+        // 移除超级表情，收藏表情，商城表情的背景
         if (options.background.enabled && msgRecord?.elements?.length === 1) {
-          if (msgRecord?.elements?.[0]?.elementType === 6) {
+          if (
+            msgRecord?.elements?.[0]?.elementType === 6 ||
+            msgRecord?.elements?.[0]?.picElement?.picSubType === 1 ||
+            msgRecord?.elements?.[0]?.elementType === 11
+          ) {
             target.querySelector(".mix-message__container")?.classList?.add("hidden-background");
           }
         }
