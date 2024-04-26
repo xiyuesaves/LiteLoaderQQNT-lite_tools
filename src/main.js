@@ -1,5 +1,5 @@
 // 运行在 Electron 主进程 下的插件入口
-const { ipcMain, dialog, shell, BrowserWindow } = require("electron");
+const { app, ipcMain, dialog, shell, BrowserWindow } = require("electron");
 const AdmZip = require("adm-zip");
 const { Readable } = require("stream");
 const { finished } = require("stream/promises");
@@ -442,11 +442,23 @@ function onLoad(plugin) {
           status: "processing",
         });
         fs.unlinkSync(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`);
-        settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-          toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "10000" },
-          status: "end",
-        });
-        isUpdating = "waitingRestart";
+        if (options.autoRelanch) {
+          settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+            toast: { content: `更新完成，3秒后自动重启`, type: "success", duration: "10000" },
+            status: "end",
+          });
+          isUpdating = "waitingRestart";
+          setTimeout(() => {
+            app.relaunch();
+            app.exit();
+          }, 3000);
+        } else {
+          settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
+            toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "10000" },
+            status: "end",
+          });
+          isUpdating = "waitingRestart";
+        }
       } catch (err) {
         settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
           toast: { content: `更新失败，错误原因：\n${err?.message}`, type: "error", duration: "10000" },

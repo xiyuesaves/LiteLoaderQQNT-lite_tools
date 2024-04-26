@@ -407,6 +407,9 @@ async function onConfigView(view) {
   // 窗口图标改为聊天头像
   addSwitchEventlistener("setWindowIcon", ".setWindowIcon");
 
+  // 插件更新后自动重启
+  addSwitchEventlistener("autoRelanch", ".autoRelanch");
+
   // 自定义背景
   addSwitchEventlistener("background.enabled", ".switchBackgroundImage");
   // 磨砂效果
