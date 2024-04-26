@@ -124,7 +124,7 @@ function chatMessage() {
   });
 
   // 只执行一次
-  if (navStore && navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
+  if (navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
     updateSiderbarNavFuncList(navStore);
   }
 
