@@ -444,7 +444,7 @@ function onLoad(plugin) {
         fs.unlinkSync(`${LiteLoader.plugins.lite_tools.path.plugin}/lite_tools_v4.zip`);
         if (options.autoRelanch) {
           settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-            toast: { content: `更新完成，3秒后自动重启`, type: "success", duration: "10000" },
+            toast: { content: `更新完成，3 秒后自动重启`, type: "success", duration: "10000" },
             status: "end",
           });
           isUpdating = "waitingRestart";
@@ -454,7 +454,7 @@ function onLoad(plugin) {
           }, 3000);
         } else {
           settingWindow.webContents.send("LiteLoader.lite_tools.updateEvent", {
-            toast: { content: `更新完成，建议立即重启QQ`, type: "success", duration: "10000" },
+            toast: { content: `更新完成，建议立即重启`, type: "success", duration: "10000" },
             status: "end",
           });
           isUpdating = "waitingRestart";
