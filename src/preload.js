@@ -106,7 +106,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
    * @param {String} cmdName 命令名称
    * @param {Array} args 参数数组
    * @param {Null | Boolean | String | String[]} awaitCallback 是否需要等待回调，如果传入为字符串，则将回调监听事件改为该字符串
-   * @param {Boolean} register 注册（未知）
+   * @param {Boolean} register 注册事件监听回调用，只在启动QQ时使用，基本不会用到
    * @returns
    */
   nativeCall: (sendEventName, cmdName, args, webContentId = 2, awaitCallback = false, register = false) => {

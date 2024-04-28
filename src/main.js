@@ -175,6 +175,9 @@ let backgroundData = {
  */
 const activeMessageList = new Set();
 
+// 需要等待此事件完成后再加载配置文件 -send
+// "nodeIKernelSessionListener/onSessionInitComplete"
+
 // 配置文件更新后保存到本地并广播更新事件
 const settingsPath = path.join(LiteLoader.plugins.lite_tools.path.data, "settings.json");
 
@@ -248,8 +251,8 @@ Opt.on("update", debounceUpdateOptions);
  * 初始化函数
  * @param {Object} plugin 插件对象
  */
-function onLoad(plugin) {
-  const pluginDataPath = plugin.path.data;
+function onLoad(plugin, independentPath = "") {
+  const pluginDataPath = plugin.path.data + independentPath;
   const styleSassPath = path.join(plugin.path.plugin, "src/scss/style.scss");
   const stylePath = path.join(plugin.path.plugin, "src/css/style.css");
   const globalScssPath = path.join(plugin.path.plugin, "src/scss/global.scss");

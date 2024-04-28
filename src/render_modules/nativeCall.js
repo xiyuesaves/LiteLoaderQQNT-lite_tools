@@ -352,6 +352,15 @@ function activeChatAndReturnHistory(peer) {
   );
 }
 
+/**
+ * 获取记录的账号 - 登录界面选择账号列表
+ */
+function getLoginList() {
+  return lite_tools.nativeCall("ns-ntApi", "nodeIKernelLoginService/getLoginList", null, webContentId, true, false);
+}
+
+
+
 export {
   sendMessage,
   sendRawMessage,
