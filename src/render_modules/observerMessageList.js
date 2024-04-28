@@ -160,7 +160,7 @@ function imageComponent(component) {
 /**
  * 防抖批量处理当前可见的消息列表
  */
-const debounceProcessingMsgList = debounce(processingMsgList);
+const debounceProcessingMsgList = debounce(processingMsgList, 10);
 
 /**
  * 元素尺寸变化监听器

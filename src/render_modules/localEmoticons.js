@@ -219,7 +219,7 @@ async function localEmoticons() {
 
   if (document.querySelector(".expression-bar") && first("expression-bar")) {
     // 监听窗口宽度变化
-    const resizeObserver = new ResizeObserver(changeListSize);
+    const resizeObserver = new ResizeObserver(debounce(changeListSize, 10));
     resizeObserver.observe(document.querySelector(".expression-bar"));
   }
 }
