@@ -203,6 +203,7 @@ async function onConfigView(view) {
   addSwitchEventlistener("preventMessageRecall.preventSelfMsg", ".preventSelfMsg");
   addSwitchEventlistener("preventMessageRecall.customColor", ".custom-color");
   addSwitchEventlistener("preventMessageRecall.blockAllRetractions", ".blockAllRetractions");
+  addSwitchEventlistener("preventMessageRecall.stealthMode", ".stealthMode");
 
   // 初始化自定义撤回样式
   const customTextColorLight = view.querySelector(".custom-text-color-lite");

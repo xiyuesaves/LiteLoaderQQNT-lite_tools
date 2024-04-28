@@ -1128,11 +1128,12 @@ function onBrowserWindowCreated(window, plugin) {
                   msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
                 }
               }
-              // 替换被撤回的消息内容
+              // 阻止撤回逻辑
               if (options.preventMessageRecall.enabled) {
-                // 检测到消息里有撤回标记，且不是自己发送的消息
+                // 检测到消息里有撤回标记
                 if (msgElements?.grayTipElement?.revokeElement) {
-                  const findInCatch = catchMsgList.get(msgItem.msgId); // 尝试从内存中查找对应消息并替换元素
+                  // 尝试从内存中查找对应消息并替换元素
+                  const findInCatch = catchMsgList.get(msgItem.msgId);
                   // 如果在聊天缓存里找到了被撤回的内容，且是自己发起的撤回，那么需要额外判断是否开启了拦截自己的撤回事件
                   if (
                     findInCatch &&
@@ -1150,13 +1151,18 @@ function onBrowserWindowCreated(window, plugin) {
                       origMsgSenderMemRemark: msgElements.grayTipElement.revokeElement.origMsgSenderMemRemark, // 发送消息角色
                       recallTime: msgItem.recallTime, // 撤回时间
                     };
+                    // 根据用户配置选择是否将撤回数据保存到本地
                     if (options.preventMessageRecall.localStorage) {
                       recordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 存入常驻历史撤回记录
                     } else {
                       tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch); // 重启QQ后丢失
                     }
+                    // 处理图片数据
                     processPic(findInCatch);
-                    msgList[index] = findInCatch; // 替换撤回标记
+                    // 是否开启了隐蔽模式
+                    if (!options.preventMessageRecall.stealthMode) {
+                      msgList[index] = findInCatch; // 替换撤回标记
+                    }
                   } else {
                     const findInRecord = (
                       options.preventMessageRecall.localStorage ? recordMessageRecallIdList : tempRecordMessageRecallIdList
@@ -1164,7 +1170,10 @@ function onBrowserWindowCreated(window, plugin) {
                     if (findInRecord) {
                       log(`${msgItem.msgId} 从常驻缓存中找到消息记录`, findInRecord);
                       processPic(findInRecord);
-                      msgList[index] = findInRecord; // 替换撤回标记
+                      // 是否开启了隐蔽模式
+                      if (!options.preventMessageRecall.stealthMode) {
+                        msgList[index] = findInRecord; // 替换撤回标记
+                      }
                       // 只有在开启持久化保存选项时，才读取本地已保存的撤回数据
                     } else if (options.preventMessageRecall.localStorage) {
                       const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
@@ -1178,7 +1187,10 @@ function onBrowserWindowCreated(window, plugin) {
                         if (findInHistory) {
                           log(`${msgItem.msgId} 从历史缓存中找到消息记录`, findInHistory);
                           processPic(findInHistory);
-                          msgList[index] = findInHistory; // 替换撤回标记
+                          // 是否开启了隐蔽模式
+                          if (!options.preventMessageRecall.stealthMode) {
+                            msgList[index] = findInHistory; // 替换撤回标记
+                          }
                         } else {
                           log(`${msgItem.msgId} 没有撤回记录`);
                         }
@@ -1261,8 +1273,6 @@ function onBrowserWindowCreated(window, plugin) {
           if (options.preventMessageRecall.enabled && msgData?.elements?.length) {
             // 将消息存入map
             catchMsgList.set(msgData.msgId, msgData);
-          } else {
-            log("目标对象内不存在消息数组 - 接收到的新消息", msgData);
           }
 
           // 处理小程序卡片
@@ -1329,8 +1339,11 @@ function onBrowserWindowCreated(window, plugin) {
                   }
                   // 下载消息含有的媒体文件
                   processPic(findInCatch);
-                  // 移除这条数据
-                  args[1][events].payload.msgList.splice(i, 1);
+                  // 是否开启了隐蔽模式
+                  if (!options.preventMessageRecall.stealthMode) {
+                    // 移除这条数据
+                    args[1][events].payload.msgList.splice(i, 1);
+                  }
                   log("成功阻止撤回");
                 } else {
                   log("被撤回消息没有在缓存中，反撤回失败");
