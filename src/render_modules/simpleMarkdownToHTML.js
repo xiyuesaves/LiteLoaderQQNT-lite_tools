@@ -8,7 +8,6 @@ function simpleMarkdownToHTML(markdown) {
   let ulStack = 0;
   return strs
     .map((md) => {
-      // 处理标题
       md = md.replace(/^# (.*$)/gim, "<h1>$1</h1>");
       md = md.replace(/^## (.*$)/gim, "<h2>$1</h2>");
       md = md.replace(/^### (.*$)/gim, "<h3>$1</h3>");
