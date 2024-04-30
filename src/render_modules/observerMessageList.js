@@ -354,6 +354,7 @@ function singleMessageProcessing(target, msgRecord) {
                */
               const senderNameEl = messageEl.querySelector(".user-name");
               if (options.message.showMsgTimeToSenderName && senderNameEl) {
+                senderNameEl.classList.add("disabled-send-time");
                 if (messageEl.querySelector(".message-container--self")) {
                   if (messageEl.querySelector(".q-tag")) {
                     newTimeEl.classList.add("self-and-tag");
