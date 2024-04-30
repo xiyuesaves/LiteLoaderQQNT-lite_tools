@@ -32,6 +32,8 @@ import { injectReminder, hookUpdate } from "../render_modules/keywordReminder.js
 import { updateSiderbarNavFuncList } from "../render_modules/updateSiderbarNavFuncList.js";
 // 监听聊天对象变动
 import { addEventPeerChange } from "../render_modules/curAioData.js";
+// 禁用tag
+import { disableQtag } from "../render_modules/disabledQtag.js";
 // log
 import { Logs } from "../render_modules/logs.js";
 const log = new Logs("主窗口");
@@ -176,6 +178,7 @@ function chatMessage() {
   // 消息列表只显示头像
   document.querySelector(".two-col-layout__aside")?.classList?.toggle("only-avatar", options.message.onlyAvatar);
 
+  disableQtag();
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();

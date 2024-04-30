@@ -161,6 +161,11 @@ async function onConfigView(view) {
 
   log("页面功能初始化完成");
 
+  // 移除头衔
+  addSwitchEventlistener("disableQtag.level", ".disableQtag-level");
+  addSwitchEventlistener("disableQtag.title", ".disableQtag-title");
+  addSwitchEventlistener("disableQtag.all", ".disableQtag-all");
+
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);

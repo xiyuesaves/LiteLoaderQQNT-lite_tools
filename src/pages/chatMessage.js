@@ -19,6 +19,8 @@ import { touchMoveSelectin } from "../render_modules/touchMoveSelectin.js";
 import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 // 页面插入本地表情功能
 import { localEmoticons } from "../render_modules/localEmoticons.js";
+// 禁用tag
+import { disableQtag } from "../render_modules/disabledQtag.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
 // 更新窗口图标
@@ -53,6 +55,7 @@ function chatMessage() {
   // 移除vip红名
   document.body.classList.toggle("remove-vip-name", options.message.removeVipName);
 
+  disableQtag();
   localEmoticons();
   observeChatTopFunc();
   observerChatArea();
