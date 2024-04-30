@@ -125,7 +125,7 @@ function imageComponent(component) {
       const picElement = record?.elements?.some((element) =>
         element?.picElement && options.message.preventNSFW.includesAnimationEmoticons
           ? true
-          : element?.picElement?.picSubType === 0 && element?.picElement?.picType === 1000,
+          : element?.picElement?.picSubType === 0 && element?.picElement?.picType !== 2000,
       );
       const videoElement = record?.elements?.some((element) => element?.videoElement);
       if (!picElement && !videoElement) {
@@ -135,7 +135,7 @@ function imageComponent(component) {
       const picElements = msgRecord?.elements?.some((element) =>
         element?.picElement && options.message.preventNSFW.includesAnimationEmoticons
           ? true
-          : element?.picElement?.picSubType === 0 && element?.picElement?.picType === 1000,
+          : element?.picElement?.picSubType === 0 && element?.picElement?.picType !== 2000,
       );
       const videoElement = msgRecord?.elements?.some((element) => element?.videoElement);
       const videoFileElement = msgRecord?.elements?.some((element) => element?.fileElement && element?.fileElement?.subElementType === 2);
