@@ -355,8 +355,10 @@
 .user-name {
   .lite-tools-time {
     margin: 0 4px;
-    &.self-and-tag {
-      margin: 0;
+  }
+  &.self-and-tag {
+    .q-tag {
+      margin-left: 0;
     }
   }
 }
@@ -1236,5 +1238,38 @@
         }
       }
     }
+  }
+}
+
+// 移除等级 tag
+.disabled-level-tag {
+  .q-tag {
+    &.q-tag--grey,
+    .level {
+      display: none !important;
+    }
+  }
+}
+
+// 移除自定义 tag
+.disabled-title-tag {
+  .q-tag {
+    &.q-tag--purple {
+      display: none !important;
+    }
+  }
+}
+
+// 移除非管理 tag
+.disabled-level-tag.disabled-title-tag {
+  .q-tag:not(.q-tag--blue, .q-tag--orange) {
+    display: none !important;
+  }
+}
+
+// 移除所有 tag
+.disabled-all-tag {
+  .q-tag {
+    display: none !important;
   }
 }

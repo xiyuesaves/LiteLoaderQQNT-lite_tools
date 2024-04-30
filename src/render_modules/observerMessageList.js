@@ -357,7 +357,7 @@ function singleMessageProcessing(target, msgRecord) {
                 senderNameEl.classList.add("disabled-send-time");
                 if (messageEl.querySelector(".message-container--self")) {
                   if (messageEl.querySelector(".q-tag")) {
-                    newTimeEl.classList.add("self-and-tag");
+                    senderNameEl.classList.add("self-and-tag");
                     senderNameEl.insertAdjacentElement("beforeend", newTimeEl);
                   } else {
                     senderNameEl.insertAdjacentElement("afterbegin", newTimeEl);
