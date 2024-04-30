@@ -72,66 +72,71 @@ async function onConfigView(view) {
   const chatArea = view.querySelector(".chatArea ul");
 
   log("开始添加功能");
-  /**
-   * 获取系统字体列表
-   * @type {Array}
-   */
-  const systemFonts = await lite_tools.getSystemFonts();
-  const fontListEl = view.querySelector(".font-list");
-  const fontInputEl = view.querySelector(".font-input");
-  fontInputEl.value = options.message.overrideFont;
-  fontInputEl.addEventListener("focus", updateFilterFontList);
-  fontInputEl.addEventListener("input", updateFilterFontList);
-  fontInputEl.addEventListener("blur", () => {
-    fontListEl.classList.remove("show");
-  });
-  fontListEl.addEventListener("mousedown", (event) => {
-    if (event.target.classList.contains("font-item")) {
-      const selectFont = event.target.getAttribute("data-value");
-      log("选择了", selectFont);
-      options.message.overrideFont = selectFont;
-      fontInputEl.value = selectFont;
+
+  // 异步初始化自定义字体功能
+  initFontList();
+  async function initFontList() {
+    /**
+     * 获取系统字体列表
+     * @type {Array}
+     */
+    const systemFonts = await lite_tools.getSystemFonts();
+    const fontListEl = view.querySelector(".font-list");
+    const fontInputEl = view.querySelector(".font-input");
+    fontInputEl.value = options.message.overrideFont;
+    fontInputEl.addEventListener("focus", updateFilterFontList);
+    fontInputEl.addEventListener("input", updateFilterFontList);
+    fontInputEl.addEventListener("blur", () => {
+      fontListEl.classList.remove("show");
+    });
+    fontListEl.addEventListener("mousedown", (event) => {
+      if (event.target.classList.contains("font-item")) {
+        const selectFont = event.target.getAttribute("data-value");
+        log("选择了", selectFont);
+        options.message.overrideFont = selectFont;
+        fontInputEl.value = selectFont;
+        debounceSetOptions();
+      }
+    });
+    log("初始化字体列表完成");
+    function updateFilterFontList(event) {
+      if (event.type === "focus") {
+        event.target.select();
+      }
+      fontListEl.classList.add("show");
+      if (event.target.value.length && event.type !== "focus") {
+        const filterFontList = systemFonts.filter((fontName) =>
+          fontName.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()),
+        );
+        updateFontList(filterFontList);
+      } else {
+        updateFontList(systemFonts);
+      }
+      options.message.overrideFont = event.target.value;
       debounceSetOptions();
     }
-  });
-  log("初始化字体列表完成");
-  function updateFilterFontList(event) {
-    if (event.type === "focus") {
-      event.target.select();
-    }
-    fontListEl.classList.add("show");
-    if (event.target.value.length && event.type !== "focus") {
-      const filterFontList = systemFonts.filter((fontName) =>
-        fontName.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()),
-      );
-      updateFontList(filterFontList);
-    } else {
-      updateFontList(systemFonts);
-    }
-    options.message.overrideFont = event.target.value;
-    debounceSetOptions();
-  }
-  function updateFontList(fontList) {
-    fontListEl.innerHTML = "";
-    if (!fontList.length) {
-      const settingOptionEl = document.createElement("span");
-      settingOptionEl.setAttribute("title", "没有匹配字体");
-      settingOptionEl.classList.add("font-item");
-      settingOptionEl.classList.add("poe-none");
-      settingOptionEl.innerText = "没有匹配字体";
-      fontListEl.appendChild(settingOptionEl);
-    }
-    fontList.forEach((fontName) => {
-      const settingOptionEl = document.createElement("span");
-      settingOptionEl.setAttribute("data-value", fontName);
-      settingOptionEl.setAttribute("title", fontName);
-      settingOptionEl.classList.add("font-item");
-      if (["当前系统不受支持", "获取系统字体列表失败"].includes(fontName)) {
+    function updateFontList(fontList) {
+      fontListEl.innerHTML = "";
+      if (!fontList.length) {
+        const settingOptionEl = document.createElement("span");
+        settingOptionEl.setAttribute("title", "没有匹配字体");
+        settingOptionEl.classList.add("font-item");
         settingOptionEl.classList.add("poe-none");
+        settingOptionEl.innerText = "没有匹配字体";
+        fontListEl.appendChild(settingOptionEl);
       }
-      settingOptionEl.innerText = fontName;
-      fontListEl.appendChild(settingOptionEl);
-    });
+      fontList.forEach((fontName) => {
+        const settingOptionEl = document.createElement("span");
+        settingOptionEl.setAttribute("data-value", fontName);
+        settingOptionEl.setAttribute("title", fontName);
+        settingOptionEl.classList.add("font-item");
+        if (["当前系统不受支持", "获取系统字体列表失败"].includes(fontName)) {
+          settingOptionEl.classList.add("poe-none");
+        }
+        settingOptionEl.innerText = fontName;
+        fontListEl.appendChild(settingOptionEl);
+      });
+    }
   }
 
   addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
