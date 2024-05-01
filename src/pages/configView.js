@@ -37,7 +37,7 @@ async function onConfigView(view) {
   // 初始化常量
   const plugin_path = LiteLoader.plugins.lite_tools.path.plugin;
   const css_file_path = `local:///${plugin_path}/src/css/view.css`;
-  const html_file_path = `local:///${plugin_path}/src/config/view.html`;
+  const html_file_path = `local:///${plugin_path}/src/html/view.html`;
   log("css_file_path", css_file_path);
   log("html_file_path", html_file_path);
 
