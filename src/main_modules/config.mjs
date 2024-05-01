@@ -71,6 +71,9 @@ function loadUserConfig(configId) {
   const userConfigFile = user[configId];
   if (userConfigFile) {
     loadConfigPath = join(pluginDataPath, userConfigFile);
+    if (!existsSync(loadConfigPath)) {
+      writeFileSync(loadConfigPath, JSON.stringify(configTemplate, null, 2));
+    }
   } else {
     loadConfigPath = defaultConfigPath;
   }

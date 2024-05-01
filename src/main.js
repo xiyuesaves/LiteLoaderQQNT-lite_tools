@@ -4,6 +4,11 @@ import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.mj
 const { app, ipcMain, dialog, shell, BrowserWindow } = require("electron");
 
 /**
+ * 是否已经初始化
+ */
+let initConfig = false;
+
+/**
  * 窗口创建时触发
  * @param {BrowserWindow} window window对象
  */
@@ -29,7 +34,6 @@ function proxyIpcMessage(window) {
     window.webContents._events["-ipc-message"] = proxyIpcMsg;
   }
 }
-
 /**
  * 重写并监听ipc通信内容的函数。
  *
@@ -39,7 +43,12 @@ function proxySend(window) {
   // 复写并监听ipc通信内容
   const originalSend = window.webContents.send;
   window.webContents.send = (...args) => {
-    console.log(args);
+    if (!initConfig) {
+      if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
+        loadUserConfig(args?.[2]?.[0]?.payload?.uid);
+        initConfig = true;
+      }
+    }
     originalSend.call(window.webContents, ...args);
   };
 }

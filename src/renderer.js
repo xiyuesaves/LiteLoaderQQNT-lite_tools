@@ -2,18 +2,19 @@
  * @author xiyuesaves
  * @date 2024-01-22
  */
-
-import "./render_modules/hookVue3.js";
-import "./render_modules/initStyle.js";
-import { initCurAioData } from "./render_modules/curAioData.js";
-import { Logs } from "./render_modules/logs.js";
-const log = new Logs("主渲染进程模块");
+// 主进程重写，不加载渲染进程逻辑
+// import "./render_modules/hookVue3.js";
+// import "./render_modules/initStyle.js";
+// import { initCurAioData } from "./render_modules/curAioData.js";
+// import { Logs } from "./render_modules/logs.js";
+// const log = new Logs("主渲染进程模块");
 
 /**
  * 根据页面哈希决定加载页面模块
  * @return {void}
  */
 function onLoad() {
+  return
   if (location.hash === "#/blank") {
     navigation.addEventListener("navigatesuccess", updateHash, { once: true });
   } else {
