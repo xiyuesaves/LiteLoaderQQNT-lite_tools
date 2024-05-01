@@ -31,4 +31,5 @@ function recursiveAssignment(fileOptions, defaultOptions) {
   }
   return obj;
 }
-exports.recursiveAssignment = recursiveAssignment;
+
+export default recursiveAssignment;
