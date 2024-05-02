@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, renameSync, writeFileSync } from "fs";
 import { join } from "path";
+import { UserConfig } from "./userConfig.js";
 /**
  * 配置合并模块
  */
@@ -24,12 +25,23 @@ const oldConfigPath = join(pluginDataPath, "settings.json");
  * 前置配置文件路径
  */
 const userConfigPath = join(pluginDataPath, "user.json");
-
+/**
+ * 读取用户独立配置
+ */
+const userConfig = new UserConfig(userConfigPath);
+/**
+ * 配置文件更新回调函数列表
+ */
+const addEventListenderList = new Set();
 /**
  * 当前读取的配置文件路径
  */
 let loadConfigPath;
-
+/**
+ * 用户配置
+ * @type {Object} 配置数据
+ */
+let config = null;
 /**
  * 初始化配置文件夹
  */
@@ -43,41 +55,26 @@ if (existsSync(oldConfigPath)) {
   renameSync(oldConfigPath, defaultConfigPath);
 }
 /**
- * 初始化配置文件
- */
-if (!existsSync(defaultConfigPath)) {
-  writeFileSync(defaultConfigPath, JSON.stringify(configTemplate, null, 2));
-}
-/**
- * 读取前置配置文件
- */
-if (!existsSync(userConfigPath)) {
-  writeFileSync(userConfigPath, "{}");
-}
-const user = require(userConfigPath);
-console.log("user Config", user);
-
-/**
- * 用户配置
- * @type {Object} 配置数据
- */
-let config = null;
-const addEventListenderList = new Set();
-
-/**
  * 加载用户配置
+ * @param {String} userId 根据 userId 来判断读取哪个配置文件
  */
-function loadUserConfig(configId) {
-  const userConfigFile = user[configId];
+function loadUserConfig(userId) {
+  const userConfigFile = userConfig.get(userId);
+  let loadConfig;
   if (userConfigFile) {
     loadConfigPath = join(pluginDataPath, userConfigFile);
-    if (!existsSync(loadConfigPath)) {
-      writeFileSync(loadConfigPath, JSON.stringify(configTemplate, null, 2));
-    }
   } else {
     loadConfigPath = defaultConfigPath;
   }
-  const loadConfig = require(loadConfigPath);
+  if (!existsSync(loadConfigPath)) {
+    writeFileSync(loadConfigPath, JSON.stringify(configTemplate, null, 2));
+  }
+  try {
+    loadConfig = require(loadConfigPath);
+  } catch (err) {
+    loadConfig = configTemplate;
+    writeFileSync(loadConfigPath, JSON.stringify(configTemplate, null, 2));
+  }
   updateConfig(recursiveAssignment(loadConfig, configTemplate));
 }
 
@@ -89,7 +86,7 @@ function pushUpdate() {
 }
 
 /**
- * 配置更新事件
+ * 添加配置更新监听
  * @param {Function} callback 配置更新回调
  */
 function onUpdateConfig(callback) {
@@ -106,4 +103,4 @@ function updateConfig(newConfig) {
   pushUpdate();
 }
 
-export { config, loadUserConfig, updateConfig, onUpdateConfig };
+export { config, userConfig, loadUserConfig, updateConfig, onUpdateConfig };
