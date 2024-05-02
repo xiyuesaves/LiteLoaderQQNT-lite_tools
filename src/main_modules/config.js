@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, renameSync, writeFileSync } from "fs";
 import { join } from "path";
 import { UserConfig } from "./userConfig.js";
+const log = console.log;
 /**
  * 配置合并模块
  */
@@ -34,9 +35,13 @@ const userConfig = new UserConfig(userConfigPath);
  */
 const addEventListenderList = new Set();
 /**
- * 当前读取的配置文件路径
+ * 当前读取的配置文件夹路径
  */
 let loadConfigPath;
+/**
+ * 当前读取的配置文件路径
+ */
+let configPath;
 /**
  * 用户配置
  * @type {Object} 配置数据
@@ -59,21 +64,30 @@ if (existsSync(oldConfigPath)) {
  * @param {String} userId 根据 userId 来判断读取哪个配置文件
  */
 function loadUserConfig(userId) {
-  const userConfigFile = userConfig.get(userId);
+  /**
+   * 独立配置文件路径
+   */
+  const standalonePath = userConfig.get(userId);
   let loadConfig;
-  if (userConfigFile) {
-    loadConfigPath = join(pluginDataPath, userConfigFile);
+  if (standalonePath) {
+    log("找到独立配置");
+    loadConfigPath = join(pluginDataPath, standalonePath);
   } else {
-    loadConfigPath = defaultConfigPath;
+    log("使用默认配置");
+    loadConfigPath = pluginDataPath;
   }
+  configPath = join(loadConfigPath, "config.json");
   if (!existsSync(loadConfigPath)) {
-    writeFileSync(loadConfigPath, JSON.stringify(configTemplate, null, 2));
+    log("初始化配置目录");
+    mkdirSync(loadConfigPath, { recursive: true });
+    writeFileSync(configPath, JSON.stringify(configTemplate, null, 2));
   }
   try {
-    loadConfig = require(loadConfigPath);
+    loadConfig = require(configPath);
   } catch (err) {
+    log("读取配置文件失败，重置为默认配置");
     loadConfig = configTemplate;
-    writeFileSync(loadConfigPath, JSON.stringify(configTemplate, null, 2));
+    writeFileSync(configPath, JSON.stringify(configTemplate, null, 2));
   }
   updateConfig(recursiveAssignment(loadConfig, configTemplate));
 }
@@ -98,8 +112,9 @@ function onUpdateConfig(callback) {
  * @param {Object} newConfig 新的配置文件
  */
 function updateConfig(newConfig) {
+  log("更新配置文件", newConfig);
   config = newConfig;
-  writeFileSync(loadConfigPath, JSON.stringify(newConfig, null, 2));
+  writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
   pushUpdate();
 }
 
