@@ -1,9 +1,9 @@
-const { existsSync, mkdirSync, renameSync, writeFileSync } = require("fs");
-const { join } = require("path");
+import { existsSync, mkdirSync, renameSync, writeFileSync } from "fs";
+import { join } from "path";
 /**
  * 配置合并模块
  */
-import recursiveAssignment from "./recursiveAssignment.mjs";
+import recursiveAssignment from "./recursiveAssignment.js";
 /**
  * 配置模板
  */

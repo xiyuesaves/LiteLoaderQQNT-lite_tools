@@ -1,5 +1,5 @@
-import { initMain } from "./main_modules/onload.mjs";
-import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.mjs";
+import { initMain } from "./main_modules/onload.js";
+import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.js";
 
 const { app, ipcMain, dialog, shell, BrowserWindow } = require("electron");
 
