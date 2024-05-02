@@ -13,8 +13,10 @@ class Logs {
     return this.log.bind(this);
   }
   log(...args) {
-    console.log(`[${this.logName}]`, ...args);
-    cacheLogs.push([`[${this.logName}]`, ...args]);
+    if (config.debug.mainConsole) {
+      console.log(`[${this.logName}]`, ...args);
+      cacheLogs.push([`[${this.logName}]`, ...args]);
+    }
   }
 }
 class WebLog {

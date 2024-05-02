@@ -47,7 +47,6 @@ function proxySend(window) {
     if (init) {
     } else {
       if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
-        log("账号已登录");
         loadUserConfig(args?.[2]?.[0]?.payload?.uid);
         log("成功读取配置文件");
         initMain();
