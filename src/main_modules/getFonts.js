@@ -1,5 +1,8 @@
-const { exec } = require("node:child_process");
-const os = require("os");
+import { exec } from "node:child_process";
+import { ipcMain } from "electron";
+import { Logs } from "./logs";
+import os from "os";
+const log = new Logs("获取字体模块");
 const release = os.release();
 /**
  * windows系统获取字体列表
@@ -95,4 +98,26 @@ function macGetFonts() {
     );
   });
 }
-module.exports = { winGetFonts, linuxGetFonts, macGetFonts };
+let systemFontList = [];
+// 获取系统字体列表
+ipcMain.handle("LiteLoader.lite_tools.getSystemFonts", async (_) => {
+  if (systemFontList.length <= 1) {
+    try {
+      switch (LiteLoader.os.platform) {
+        case "win32":
+          systemFontList = await winGetFonts();
+          break;
+        case "darwin":
+          systemFontList = await macGetFonts();
+          break;
+        case "linux":
+          systemFontList = await linuxGetFonts();
+          break;
+      }
+    } catch (err) {
+      log("获取字体列表失败", err);
+      systemFontList = ["获取系统字体列表失败"];
+    }
+  }
+  return systemFontList;
+});
