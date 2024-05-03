@@ -1,6 +1,7 @@
 import { config, onUpdateConfig } from "./config.js";
 import { Logs } from "./logs.js";
 import "./wallpaper.js";
+import "./initStyle.js";
 const log = new Logs("initMain");
 
 function initMain() {

@@ -2,6 +2,7 @@
   "debug": {
     "console": false,
     "mainConsole": false,
+    "autoCompileScss": false,
     "showWeb": false,
     "showChannedCommunication": false
   },
