@@ -2,7 +2,7 @@
  * 防抖函数
  * @param {Function} fn 需要防抖的函数
  * @param {Number} time 等待时间
- * @returns 
+ * @returns
  */
 function debounce(fn, time) {
   let timer = null;
@@ -13,4 +13,4 @@ function debounce(fn, time) {
     }, time);
   };
 }
-module.exports = debounce;
+export { debounce };

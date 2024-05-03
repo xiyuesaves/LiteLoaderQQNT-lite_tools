@@ -162,17 +162,12 @@ async function onConfigView(view) {
   log("页面功能初始化完成");
 
   // 批量添加事件
-  view.querySelectorAll(".q-switch").forEach(el => {
-    const configPath = el.getAttribute("data-config")
-    if(configPath){
+  view.querySelectorAll(".q-switch").forEach((el) => {
+    const configPath = el.getAttribute("data-config");
+    if (configPath) {
       addSwitchEventlistener(configPath, el);
     }
-  })
-
-  // 移除头衔
-  addSwitchEventlistener("disableQtag.level", ".disableQtag-level");
-  addSwitchEventlistener("disableQtag.title", ".disableQtag-title");
-  addSwitchEventlistener("disableQtag.all", ".disableQtag-all");
+  });
 
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
@@ -200,28 +195,6 @@ async function onConfigView(view) {
   addSwitchEventlistener("message.avatarSticky.enabled", ".avatarSticky", (_, enabled) => {
     view.querySelector(".avatar-bottom-li").classList.toggle("disabled-switch", !enabled);
   });
-
-  // 合并消息
-  addSwitchEventlistener("message.mergeMessage", ".mergeMessage");
-  // 合并消息并保留时间
-  addSwitchEventlistener("message.mergeMessageKeepTime", ".mergeMessageKeepTime");
-
-  // 头像置底
-  addSwitchEventlistener("message.avatarSticky.toBottom", ".avatar-bottom");
-
-  // 移除回复时的@标记
-  addSwitchEventlistener("message.removeReplyAt", ".removeReplyAt");
-
-  // 侧键返回
-  addSwitchEventlistener("message.goBackMainList", ".goBackMainList");
-
-  // 阻止撤回
-  addSwitchEventlistener("preventMessageRecall.enabled", ".preventMessageRecall");
-  addSwitchEventlistener("preventMessageRecall.localStorage", ".localStorage");
-  addSwitchEventlistener("preventMessageRecall.preventSelfMsg", ".preventSelfMsg");
-  addSwitchEventlistener("preventMessageRecall.customColor", ".custom-color");
-  addSwitchEventlistener("preventMessageRecall.blockAllRetractions", ".blockAllRetractions");
-  addSwitchEventlistener("preventMessageRecall.stealthMode", ".stealthMode");
 
   // 初始化自定义撤回样式
   const customTextColorLight = view.querySelector(".custom-text-color-lite");
@@ -255,19 +228,10 @@ async function onConfigView(view) {
     lite_tools.openRecallMsgList();
   });
 
-  // 提前执行
-  addSwitchEventlistener("advanceHookVue", ".advanceHookVue");
-
-  // 链接预览
-  addSwitchEventlistener("message.previreUrl.enabled", ".previreUrlEnabled");
-  // 加载预览图片
-  addSwitchEventlistener("message.previreUrl.dontLoadPic", ".loadPrevirePic");
-
   // 图片遮罩
   addSwitchEventlistener("message.preventNSFW.enabled", ".preventNSFW", (_, enabled) => {
     view.querySelector(".preventNSFW-keyword").classList.toggle("disabled-input", !enabled);
   });
-  addSwitchEventlistener("message.preventNSFW.includesAnimationEmoticons", ".includesAnimationEmoticons");
   const preventNSFW = view.querySelector(".preventNSFW-list-input");
   preventNSFW.value = options.message.preventNSFW.list.join(",");
   preventNSFW.addEventListener("input", (e) => {
@@ -278,69 +242,6 @@ async function onConfigView(view) {
     }
     debounceSetOptions();
   });
-
-  // 快速关闭图片
-  addSwitchEventlistener("imageViewer.quickClose", ".switchQuickCloseImage");
-
-  // 图片窗口全局拖拽
-  addSwitchEventlistener("imageViewer.touchMove", ".touchMove");
-
-  // 移除vip红名
-  addSwitchEventlistener("message.removeVipName", ".removeVipName");
-
-  // 进入聊天时回到离开的位置
-  addSwitchEventlistener("message.currentLocation", ".currentLocation");
-
-  // 图片宽度自适应
-  addSwitchEventlistener("message.imageAutoWidth", ".imageAutoWidth");
-
-  // 复读机
-  addSwitchEventlistener("message.replaceBtn", ".replaceBtn");
-  // 复读机-双击切换
-  addSwitchEventlistener("message.doubleClickReplace", ".doubleClickReplace");
-
-  // 禁用推荐表情
-  addSwitchEventlistener("message.disabledSticker", ".switchSticker");
-
-  // 禁用表情GIF热图
-  addSwitchEventlistener("message.disabledHotGIF", ".switchHotGIF");
-
-  // 禁用红点
-  addSwitchEventlistener("message.disabledBadge", ".disabledBadge");
-
-  // 未读气泡显示真实数量
-  addSwitchEventlistener("message.removeBubbleLimit", ".removeBubbleLimit");
-
-  // 阻止 ESC 关闭窗口
-  addSwitchEventlistener("preventEscape", ".preventEscape");
-
-  // 将哔哩哔哩小程序替换为url卡片
-  addSwitchEventlistener("message.convertMiniPrgmArk", ".switchDisabledMiniPrgm");
-
-  // debug开关
-  addSwitchEventlistener("debug.showWeb", ".showWeb");
-  addSwitchEventlistener("debug.console", ".switchDebug");
-  addSwitchEventlistener("debug.mainConsole", ".switchMainDebug");
-  addSwitchEventlistener("debug.showChannedCommunication", ".showChannedCommunication");
-
-  // 显示每条消息发送时间
-  addSwitchEventlistener("message.showMsgTime", ".showMsgTime");
-  // 显示完整日期
-  addSwitchEventlistener("message.showMsgTimeFullDate", ".showMsgTimeFullDate");
-  // 插入到用户名后方
-  addSwitchEventlistener("message.showMsgTimeToSenderName", ".showMsgTimeToSenderName");
-
-  // 禁用滑动多选消息
-  addSwitchEventlistener("message.disabledSlideMultipleSelection", ".switchDisabledSlideMultipleSelection");
-
-  // 消息靠左显示
-  addSwitchEventlistener("message.selfMsgToLeft", ".selfMsgToLeft");
-
-  // 消息列表只显示头像
-  addSwitchEventlistener("message.onlyAvatar", ".onlyAvatar");
-
-  // 右键菜单高亮
-  addSwitchEventlistener("message.HighlightReplies", ".HighlightReplies");
 
   // 消息关键词
   addSwitchEventlistener("keywordReminder.enabled", ".keywordReminder", (_, enabled) => {
@@ -357,10 +258,6 @@ async function onConfigView(view) {
     debounceSetOptions();
   });
 
-  // 消息转图片
-  addSwitchEventlistener("messageToImage.enabled", ".messageToImage");
-  // 消息转图片-高清化
-  addSwitchEventlistener("messageToImage.highResolution", ".highResolution");
   view.querySelector(".select-default-save-file-input-clear").value = options.messageToImage.path;
   view.querySelector(".select-default-save-file-input").addEventListener("click", () => {
     log("修改默认保存位置");
@@ -387,18 +284,12 @@ async function onConfigView(view) {
     options.localEmoticons.localPath = "";
     lite_tools.setOptions(options);
   });
-  // 移动插入位置
-  addSwitchEventlistener("localEmoticons.toLeftSlot", ".toLeftSlot");
-  // 表情加载优化
-  addSwitchEventlistener("localEmoticons.majorization", ".majorization");
-  // 以图片形式发送
-  addSwitchEventlistener("localEmoticons.sendBigImage", ".sendBigImage");
+
   // 快捷输入表情功能
   addSwitchEventlistener("localEmoticons.quickEmoticons", ".switchQuickEmoticons", (_, enabled) => {
     view.querySelector(".switchQuickEmoticonsAutoInputOnlyOne").parentNode.classList.toggle("disabled-switch", !enabled);
   });
   // 快捷表情自动插入
-  addSwitchEventlistener("localEmoticons.quickEmoticonsAutoInputOnlyOne", ".switchQuickEmoticonsAutoInputOnlyOne");
   const quickEmoticonsActiveKey = view.querySelector(".quickEmoticonsActiveKey");
   quickEmoticonsActiveKey.value = options.localEmoticons.quickEmoticonsActiveKey;
   quickEmoticonsActiveKey.addEventListener("input", (e) => {
@@ -415,32 +306,8 @@ async function onConfigView(view) {
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons", (_, enabled) => {
     view.querySelector(".hoverShowCommonlyEmoticons").classList.toggle("disabled-switch", !enabled);
   });
-  // 移入显示历史表情
-  addSwitchEventlistener("localEmoticons.hoverShowCommonlyEmoticons", ".hoverShowCommonlyEmoticons");
-  // 保存到本地表情
-  addSwitchEventlistener("localEmoticons.copyFileTolocalEmoticons", ".copyFileTolocalEmoticons");
 
-  // 兼容模式
-  addSwitchEventlistener("compatibleLLAPI", ".compatibleLLAPI");
 
-  // 窗口图标改为聊天头像
-  addSwitchEventlistener("setWindowIcon", ".setWindowIcon");
-
-  // 插件更新后自动重启
-  addSwitchEventlistener("autoRelanch", ".autoRelanch");
-
-  // 自定义背景
-  addSwitchEventlistener("background.enabled", ".switchBackgroundImage");
-  // 磨砂效果
-  addSwitchEventlistener("background.blurFilter", ".blurFilter");
-  // 增强可见性
-  addSwitchEventlistener("background.backgroundVisible", ".backgroundVisible");
-  // 覆盖侧边栏
-  addSwitchEventlistener("background.overlaySiderBar", ".overlaySiderBar");
-  // 移除背景遮罩
-  addSwitchEventlistener("background.removeMask", ".removeMask");
-  // 重绘卡片消息
-  addSwitchEventlistener("background.redrawCard", ".redrawCard");
   // 初始化背景路径选择监听和值
   view.querySelector(".select-background-wallpaper-clear").value = options.background.url;
   view.querySelector(".select-background-wallpaper").addEventListener("click", () => {
@@ -548,8 +415,6 @@ async function onConfigView(view) {
   }
 
   // 消息后缀
-  addSwitchEventlistener("tail.enabled", ".msg-tail");
-  addSwitchEventlistener("tail.tips", ".msg-tail-tips");
   const listView = view.querySelector(".vertical-list-item .tail-ruls-list");
   const tailList = new TailList(listView, options.tail.list);
   view.querySelector(".create-new-tail-item").addEventListener("click", () => {

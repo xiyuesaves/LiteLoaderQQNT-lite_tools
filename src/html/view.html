@@ -26,7 +26,7 @@
           <h2>消息列表只显示头像</h2>
           <span class="secondary-text">消息列表将隐藏昵称/群名称/最新消息，同时会影响搜索界面，此功能会强行覆盖部分主题样式</span>
         </div>
-        <div class="onlyAvatar q-switch">
+        <div class="onlyAvatar q-switch" data-config="message.onlyAvatar">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -47,7 +47,7 @@
             <h2>连续消息合并</h2>
             <span class="secondary-text">模拟tg消息效果 - 需要开启头像浮动</span>
           </div>
-          <div class="mergeMessage q-switch">
+          <div class="mergeMessage q-switch" data-config="message.mergeMessage">
             <span class="q-switch__handle"></span>
           </div>
         </li>
@@ -56,7 +56,7 @@
             <h2>保留时间</h2>
             <span class="secondary-text">启用 连续消息合并 后保留时间分隔 - 重载消息生效</span>
           </div>
-          <div class="mergeMessageKeepTime q-switch">
+          <div class="mergeMessageKeepTime q-switch" data-config="message.mergeMessageKeepTime">
             <span class="q-switch__handle"></span>
           </div>
         </li>
@@ -66,7 +66,7 @@
             <h2>头像置底</h2>
             <span class="secondary-text">还原tg头像 - 需要开启头像浮动</span>
           </div>
-          <div class="avatar-bottom q-switch">
+          <div class="avatar-bottom q-switch" data-config="message.avatarSticky.toBottom">
             <span class="q-switch__handle"></span>
           </div>
         </li>
@@ -77,7 +77,7 @@
           <h2>消息靠左</h2>
           <span class="secondary-text">自己发送的消息将靠左显示 - 重载消息生效</span>
         </div>
-        <div class="selfMsgToLeft q-switch">
+        <div class="selfMsgToLeft q-switch" data-config="message.selfMsgToLeft">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -87,7 +87,7 @@
           <h2>禁用表情推荐</h2>
           <span class="secondary-text">修复官方设置有时无效的问题</span>
         </div>
-        <div class="switchSticker q-switch">
+        <div class="switchSticker q-switch" data-config="message.disabledSticker">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -97,7 +97,7 @@
           <h2>阻止拖拽多选消息</h2>
           <span class="secondary-text">避免误触发多选消息</span>
         </div>
-        <div class="switchDisabledSlideMultipleSelection q-switch">
+        <div class="switchDisabledSlideMultipleSelection q-switch" data-config="message.disabledSlideMultipleSelection">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -107,7 +107,7 @@
           <h2>显示消息发送时间</h2>
           <span class="secondary-text">显示每一条消息的发送时间 - 重载消息生效</span>
         </div>
-        <div class="showMsgTime q-switch">
+        <div class="showMsgTime q-switch" data-config="message.showMsgTime">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -116,7 +116,7 @@
           <h2>显示完整日期</h2>
           <span class="secondary-text">会占用过多空间，建议配合 插入到用户名后方 使用</span>
         </div>
-        <div class="showMsgTimeFullDate q-switch">
+        <div class="showMsgTimeFullDate q-switch" data-config="message.showMsgTimeFullDate">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -125,7 +125,7 @@
           <h2>插入到用户名后方</h2>
           <span class="secondary-text">在群组内时将时间插入到用户名后方</span>
         </div>
-        <div class="showMsgTimeToSenderName q-switch">
+        <div class="showMsgTimeToSenderName q-switch" data-config="message.showMsgTimeToSenderName">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -135,7 +135,7 @@
           <h2>快速关闭图片</h2>
           <span class="secondary-text">点击图片关闭查看窗口</span>
         </div>
-        <div class="switchQuickCloseImage q-switch">
+        <div class="switchQuickCloseImage q-switch" data-config="imageViewer.quickClose">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -145,7 +145,7 @@
           <h2>图片窗口全局拖拽</h2>
           <span class="secondary-text">旧版功能，针对过大图片无效，无法将窗口拖到屏幕外</span>
         </div>
-        <div class="touchMove q-switch">
+        <div class="touchMove q-switch" data-config="imageViewer.touchMove">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -155,7 +155,7 @@
           <h2>禁用表情中的GIF热图</h2>
           <span class="secondary-text">看个人喜好</span>
         </div>
-        <div class="switchHotGIF q-switch">
+        <div class="switchHotGIF q-switch" data-config="message.disabledHotGIF">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -165,7 +165,7 @@
           <h2>禁用小红点</h2>
           <span class="secondary-text">移除左侧按钮上的小红点</span>
         </div>
-        <div class="disabledBadge q-switch">
+        <div class="disabledBadge q-switch" data-config="message.disabledBadge">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -175,7 +175,7 @@
           <h2>未读气泡显示真实消息数量</h2>
           <span class="secondary-text">主窗口未读气泡将显示超过99条消息</span>
         </div>
-        <div class="removeBubbleLimit q-switch">
+        <div class="removeBubbleLimit q-switch" data-config="message.removeBubbleLimit">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -185,7 +185,7 @@
           <h2>移除vip彩色昵称</h2>
           <span class="secondary-text">统一页面显示内容</span>
         </div>
-        <div class="removeVipName q-switch">
+        <div class="removeVipName q-switch" data-config="message.removeVipName">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -195,7 +195,7 @@
           <h2>图片自适应窗口宽度</h2>
           <span class="secondary-text">解除图片大小限制 - 重载消息生效</span>
         </div>
-        <div class="imageAutoWidth q-switch">
+        <div class="imageAutoWidth q-switch" data-config="message.imageAutoWidth">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -205,7 +205,7 @@
           <h2>侧键返回</h2>
           <span class="secondary-text">按下鼠标返回侧键主窗口将回退到未选择聊天对象时的界面</span>
         </div>
-        <div class="goBackMainList q-switch">
+        <div class="goBackMainList q-switch" data-config="message.goBackMainList">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -215,7 +215,7 @@
           <h2>阻止 ESC 关闭窗口</h2>
           <span class="secondary-text">避免误操作</span>
         </div>
-        <div class="preventEscape q-switch">
+        <div class="preventEscape q-switch" data-config="preventEscape">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -225,7 +225,7 @@
           <h2>窗口使用聊天头像作为图标</h2>
           <span class="secondary-text">不是任务栏图标，仅限 Windows 系统 - 重启生效</span>
         </div>
-        <div class="setWindowIcon q-switch">
+        <div class="setWindowIcon q-switch" data-config="setWindowIcon">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -235,7 +235,7 @@
           <h2>移除等级头衔</h2>
           <span class="secondary-text">移除灰色等级头衔</span>
         </div>
-        <div class="disableQtag-level q-switch">
+        <div class="disableQtag-level q-switch" data-config="disableQtag.level">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -245,7 +245,7 @@
           <h2>移除自定义头衔</h2>
           <span class="secondary-text">移除紫色群主设置的头衔</span>
         </div>
-        <div class="disableQtag-title q-switch">
+        <div class="disableQtag-title q-switch" data-config="disableQtag.title">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -255,7 +255,7 @@
           <h2>移除所有头衔</h2>
           <span class="secondary-text">移除包括管理在内的所有头衔</span>
         </div>
-        <div class="disableQtag-all q-switch">
+        <div class="disableQtag-all q-switch" data-config="disableQtag.all">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -316,7 +316,7 @@
           <h2>消息转图片</h2>
           <span class="secondary-text">纯文本消息可以转为图片</span>
         </div>
-        <div class="messageToImage q-switch">
+        <div class="messageToImage q-switch" data-config="messageToImage.enabled">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -325,7 +325,7 @@
           <h2>高清化</h2>
           <span class="secondary-text">生成的图片分辨率将会翻倍</span>
         </div>
-        <div class="highResolution q-switch">
+        <div class="highResolution q-switch" data-config="messageToImage.highResolution">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -348,7 +348,7 @@
           <h2>保存到本地表情</h2>
           <span class="secondary-text">需要开启本地表情功能</span>
         </div>
-        <div class="copyFileTolocalEmoticons q-switch">
+        <div class="copyFileTolocalEmoticons q-switch" data-config="localEmoticons.copyFileTolocalEmoticons">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -361,7 +361,7 @@
             <a class="link" data-href="https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies">HighlightReplies</a> 当前接手维护
           </span>
         </div>
-        <div class="HighlightReplies q-switch">
+        <div class="HighlightReplies q-switch" data-config="message.HighlightReplies">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -382,7 +382,7 @@
           <h2>消息+1</h2>
           <span class="secondary-text">人的本质是______ - 重载消息生效</span>
         </div>
-        <div class="replaceBtn q-switch">
+        <div class="replaceBtn q-switch" data-config="message.replaceBtn">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -391,7 +391,7 @@
           <h2>双击执行</h2>
           <span class="secondary-text">避免误触</span>
         </div>
-        <div class="doubleClickReplace q-switch">
+        <div class="doubleClickReplace q-switch" data-config="message.doubleClickReplace">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -401,7 +401,7 @@
           <h2>回复不带@</h2>
           <span class="secondary-text">移除回复时自带的@标记</span>
         </div>
-        <div class="removeReplyAt q-switch">
+        <div class="removeReplyAt q-switch" data-config="message.removeReplyAt">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -411,7 +411,7 @@
           <h2>小程序分享转为url卡片</h2>
           <span class="secondary-text">部分元数据没有携带链接的小程序卡片将不会被转换</span>
         </div>
-        <div class="switchDisabledMiniPrgm q-switch">
+        <div class="switchDisabledMiniPrgm q-switch" data-config="message.convertMiniPrgmArk">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -421,7 +421,7 @@
           <h2>记录离开时的位置</h2>
           <span class="secondary-text">进入时会自动回到上次离开的位置，但进入时可能会出现短暂闪烁。</span>
         </div>
-        <div class="currentLocation q-switch">
+        <div class="currentLocation q-switch" data-config="message.currentLocation">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -453,7 +453,7 @@
             在消息中展示链接预览信息，此功能会在识别到链接时自动请求第一个链接地址<br />并生成一张类似tg中的预览卡片 - 重载消息生效
           </span>
         </div>
-        <div class="previreUrlEnabled q-switch">
+        <div class="previreUrlEnabled q-switch" data-config="message.previreUrl.enabled">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -462,7 +462,7 @@
           <h2>不加载图片</h2>
           <span class="secondary-text"> 可以减少请求耗时 </span>
         </div>
-        <div class="loadPrevirePic q-switch">
+        <div class="loadPrevirePic q-switch" data-config="message.previreUrl.dontLoadPic">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -481,7 +481,7 @@
           <h2>包括收藏表情</h2>
           <span class="secondary-text">收藏表情也会被添加遮罩，但官方表情依旧正常显示</span>
         </div>
-        <div class="includesAnimationEmoticons q-switch">
+        <div class="includesAnimationEmoticons q-switch" data-config="message.preventNSFW.includesAnimationEmoticons">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -539,7 +539,7 @@
           <h2>移动功能位置</h2>
           <span class="secondary-text">将本地表情入口移动到功能列表左侧</span>
         </div>
-        <div class="toLeftSlot q-switch">
+        <div class="toLeftSlot q-switch" data-config="localEmoticons.toLeftSlot">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -549,7 +549,7 @@
           <h2>内存优化</h2>
           <span class="secondary-text">适用于加载表情过多的情况，推荐开启</span>
         </div>
-        <div class="majorization q-switch">
+        <div class="majorization q-switch" data-config="localEmoticons.majorization">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -559,7 +559,7 @@
           <h2>以图片形式发送</h2>
           <span class="secondary-text">表情会显示的更大</span>
         </div>
-        <div class="sendBigImage q-switch">
+        <div class="sendBigImage q-switch" data-config="localEmoticons.sendBigImage">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -589,7 +589,7 @@
           <h2>移入显示历史表情</h2>
           <span class="secondary-text recommend-num">鼠标移入本地表情按钮后显示历史表情列表，需要开启 历史表情 功能</span>
         </div>
-        <div class="hoverShowCommonlyEmoticons q-switch">
+        <div class="hoverShowCommonlyEmoticons q-switch" data-config="localEmoticons.hoverShowCommonlyEmoticons">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -608,7 +608,7 @@
           <h2>自动填充</h2>
           <span class="secondary-text">快捷输入表情 功能筛选只有一个表情时自动填充到输入框</span>
         </div>
-        <div class="switchQuickEmoticonsAutoInputOnlyOne q-switch">
+        <div class="switchQuickEmoticonsAutoInputOnlyOne q-switch" data-config="localEmoticons.quickEmoticonsAutoInputOnlyOne">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -665,7 +665,7 @@
           <h2>启用</h2>
           <span class="secondary-text">只有此选项开启的情况下，消息后缀才会生效</span>
         </div>
-        <div class="msg-tail q-switch">
+        <div class="msg-tail q-switch" data-config="tail.enabled">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -675,7 +675,7 @@
           <h2>后缀提示</h2>
           <span class="secondary-text">如果聊天对象匹配到了消息后缀，那么将会在发送按钮旁边显示后缀内容</span>
         </div>
-        <div class="msg-tail-tips q-switch">
+        <div class="msg-tail-tips q-switch" data-config="tail.tips">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -709,7 +709,7 @@
           <h2>启用</h2>
           <span class="secondary-text">只有此选项开启的情况下，阻止撤回才会生效</span>
         </div>
-        <div class="preventMessageRecall q-switch">
+        <div class="preventMessageRecall q-switch" data-config="preventMessageRecall.enabled">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -719,7 +719,7 @@
           <h2>拦截自己的撤回操作</h2>
           <span class="secondary-text">本人发起的撤回也将被拦截</span>
         </div>
-        <div class="preventSelfMsg q-switch">
+        <div class="preventSelfMsg q-switch" data-config="preventMessageRecall.preventSelfMsg">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -729,7 +729,7 @@
           <h2>拦截所有群组的撤回事件</h2>
           <span class="secondary-text">不开启时仅拦截最近打开过的10个聊天对象，启用后会占用更多资源 - 重启生效</span>
         </div>
-        <div class="blockAllRetractions q-switch">
+        <div class="blockAllRetractions q-switch" data-config="preventMessageRecall.blockAllRetractions">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -745,7 +745,7 @@
             建议每隔一段时间清理一次本地数据<br />
           </span>
         </div>
-        <div class="localStorage q-switch">
+        <div class="localStorage q-switch" data-config="preventMessageRecall.localStorage">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -755,7 +755,7 @@
           <h2>隐蔽模式</h2>
           <span class="secondary-text">不会替换页面中的撤回标记，但可以在 查看撤回消息 功能中查看被捕获的消息 - 重载消息生效</span>
         </div>
-        <div class="stealthMode q-switch">
+        <div class="stealthMode q-switch" data-config="preventMessageRecall.stealthMode">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -765,7 +765,7 @@
           <h2>自定义颜色</h2>
           <span class="secondary-text">调整撤回消息颜色 - 重载消息生效</span>
         </div>
-        <div class="custom-color q-switch">
+        <div class="custom-color q-switch" data-config="preventMessageRecall.customColor">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -817,7 +817,7 @@
           <h2>自定义背景</h2>
           <span class="secondary-text">仅支持单张图片/视频</span>
         </div>
-        <div class="switchBackgroundImage q-switch">
+        <div class="switchBackgroundImage q-switch" data-config="background.enabled">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -840,7 +840,7 @@
           <h2>覆盖侧边栏</h2>
           <span class="secondary-text">背景图片/视频内容覆盖窗口左侧功能栏</span>
         </div>
-        <div class="overlaySiderBar q-switch">
+        <div class="overlaySiderBar q-switch" data-config="background.overlaySiderBar">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -854,7 +854,7 @@
             使用
           </span>
         </div>
-        <div class="removeMask q-switch">
+        <div class="removeMask q-switch" data-config="background.removeMask">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -864,7 +864,7 @@
           <h2>磨砂效果</h2>
           <span class="secondary-text">控制输入框等区域的磨砂效果</span>
         </div>
-        <div class="blurFilter q-switch">
+        <div class="blurFilter q-switch" data-config="background.blurFilter">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -874,7 +874,7 @@
           <h2>增强可读性</h2>
           <span class="secondary-text">控制输入框等区域用于增强可见性的背景色</span>
         </div>
-        <div class="backgroundVisible q-switch">
+        <div class="backgroundVisible q-switch" data-config="background.backgroundVisible">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -884,7 +884,7 @@
           <h2>重绘卡片</h2>
           <span class="secondary-text">重绘canvas卡片，统一消息样式 - 重载消息生效</span>
         </div>
-        <div class="redrawCard q-switch">
+        <div class="redrawCard q-switch" data-config="background.redrawCard">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -960,7 +960,7 @@
           <h2>回退逻辑实现</h2>
           <span class="secondary-text">回退部分功能实现方式，请在功能出现问题时开启</span>
         </div>
-        <div class="compatibleLLAPI q-switch">
+        <div class="compatibleLLAPI q-switch" data-config="compatibleLLAPI">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -970,7 +970,7 @@
           <h2>预载hookVue模块</h2>
           <span class="secondary-text">增加插件运行稳定性，可解决部分功能有概率失效的问题 - 重启生效</span>
         </div>
-        <div class="advanceHookVue q-switch">
+        <div class="advanceHookVue q-switch" data-config="advanceHookVue">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -980,7 +980,7 @@
           <h2>更新后自动重启</h2>
           <span class="secondary-text">插件自更新后，自动重启</span>
         </div>
-        <div class="autoRelanch q-switch">
+        <div class="autoRelanch q-switch" data-config="autoRelanch">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -1006,7 +1006,7 @@
         <div>
           <h2>渲染进程调试</h2>
         </div>
-        <div class="switchDebug q-switch">
+        <div class="switchDebug q-switch" data-config="debug.console">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -1015,7 +1015,7 @@
         <div>
           <h2>主进程调试</h2>
         </div>
-        <div class="switchMainDebug q-switch">
+        <div class="switchMainDebug q-switch" data-config="debug.mainConsole">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -1033,7 +1033,7 @@
         <div>
           <h2>web调试</h2>
         </div>
-        <div class="showWeb q-switch">
+        <div class="showWeb q-switch" data-config="debug.showWeb">
           <span class="q-switch__handle"></span>
         </div>
       </li>
@@ -1042,7 +1042,7 @@
         <div>
           <h2>显示所有通信数据</h2>
         </div>
-        <div class="showChannedCommunication q-switch">
+        <div class="showChannedCommunication q-switch" data-config="debug.showChannedCommunication">
           <span class="q-switch__handle"></span>
         </div>
       </li>
