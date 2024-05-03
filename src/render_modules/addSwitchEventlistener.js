@@ -12,21 +12,27 @@ function SwitchEventlistener(viewEl) {
   /**
    *
    * @param {String} optionKey 设置对象key路径
-   * @param {String} switchClass 设置界面class选择器
+   * @param {String|Element} switchClass 设置界面class选择器或元素
    * @param {Function} callback 回调函数 Event,Boolend
    */
-  function addSwitchEventlistener(optionKey, switchClass, callback) {
+  function addSwitchEventlistener(optionKey, element, callback) {
     const option = Function("options", `return options.${optionKey}`)(options);
-    if (option) {
-      view.querySelector(switchClass).classList.add("is-active");
+    let target;
+    if (typeof element === "string") {
+      target = view.querySelector(element);
     } else {
-      view.querySelector(switchClass).classList.remove("is-active");
+      target = element;
+    }
+    if (option) {
+      target.classList.add("is-active");
+    } else {
+      target.classList.remove("is-active");
     }
     // 初始化时执行一次callback方法
     if (callback) {
       callback(null, option);
     }
-    view.querySelector(switchClass).addEventListener("click", function (event) {
+    target.addEventListener("click", function (event) {
       this.classList.toggle("is-active");
       let newOptions = Object.assign(
         options,

@@ -161,6 +161,14 @@ async function onConfigView(view) {
 
   log("页面功能初始化完成");
 
+  // 批量添加事件
+  view.querySelectorAll(".q-switch").forEach(el => {
+    const configPath = el.getAttribute("data-config")
+    if(configPath){
+      addSwitchEventlistener(configPath, el);
+    }
+  })
+
   // 移除头衔
   addSwitchEventlistener("disableQtag.level", ".disableQtag-level");
   addSwitchEventlistener("disableQtag.title", ".disableQtag-title");
