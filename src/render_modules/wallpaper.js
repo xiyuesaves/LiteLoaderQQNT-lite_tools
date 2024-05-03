@@ -1,5 +1,4 @@
 // 刷新背景样式
-let styleText = "";
 let timeout;
 import { Logs } from "./logs.js";
 import { options } from "./options.js";
