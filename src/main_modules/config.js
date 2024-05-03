@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, renameSync, writeFileSync } from "fs";
 import { join } from "path";
+import { ipcMain } from "electron";
 import { UserConfig } from "./userConfig.js";
 const log = console.log;
 /**
@@ -89,6 +90,7 @@ function loadUserConfig(userId) {
     loadConfig = configTemplate;
     writeFileSync(configPath, JSON.stringify(configTemplate, null, 2));
   }
+  // initIpcMainEvent();
   updateConfig(recursiveAssignment(loadConfig, configTemplate));
 }
 
@@ -117,5 +119,15 @@ function updateConfig(newConfig) {
   writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
   pushUpdate();
 }
+
+/**
+ * 初始化 ipcMain 监听
+ */
+ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
+  event.returnValue = config;
+});
+ipcMain.on("LiteLoader.lite_tools.setOptions", (_, newConfig) => {
+  updateConfig(newConfig);
+});
 
 export { config, userConfig, loadUserConfig, updateConfig, onUpdateConfig };
