@@ -1,11 +1,11 @@
 // 该模块修改自：https://www.codeproject.com/Articles/813480/HTTP-Partial-Content-In-Node-js
 // 初始化需要的对象
-const http = require("http");
-const net = require("net");
-const fs = require("fs");
-const { extname } = require("path");
-const logs = require("./logs");
-const log = logs("视频背景服务模块");
+import { createServer as createHttpServer } from "http";
+import { createServer as createNetServer } from "net";
+import fs from "fs";
+import { extname } from "path";
+import { Logs } from "./logs.js";
+const log = new Logs("视频背景服务模块");
 
 /**
  * 视频背景http服务类
@@ -14,7 +14,7 @@ class RangesServer {
   constructor() {
     this.videoPath = "";
     this.port = 0;
-    this.server = http.createServer(this.httpListener.bind(this));
+    this.server = createHttpServer(this.httpListener.bind(this));
     this.mimeNames = {
       ".mp4": "video/mp4",
       ".webm": "video/webm",
@@ -30,7 +30,7 @@ class RangesServer {
           res(this.server.address().port);
         } else {
           this.port = (() => {
-            const server = net.createServer();
+            const server = createNetServer();
             server.listen(0);
             const { port } = server.address();
             server.close();
@@ -156,4 +156,4 @@ class RangesServer {
   }
 }
 
-module.exports = RangesServer;
+export { RangesServer };
