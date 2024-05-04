@@ -30,4 +30,11 @@ ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
   log("获取窗口id", event.sender.id.toString());
   event.returnValue = event.sender.id.toString();
 });
+
+// 调试用代码
+
+// 获取本地保存的撤回消息数量
+ipcMain.on("LiteLoader.lite_tools.getRecallListNum", (event) => {
+  event.returnValue = 123;
+});
 export { initMain };
