@@ -18,7 +18,6 @@ let abortController;
 let sass;
 onUpdateConfig(() => {
   try {
-    log(config.debug.autoCompileScss);
     if (config.debug.autoCompileScss) {
       abortController = new AbortController();
       // 编译样式

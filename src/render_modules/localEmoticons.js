@@ -190,7 +190,7 @@ async function init() {
   }
 }
 // 错开CPU高占用阶段
-setTimeout(init, 500);
+// setTimeout(init, 500);
 
 /**
  * 初始化本地表情包功能

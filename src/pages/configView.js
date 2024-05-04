@@ -220,7 +220,7 @@ async function onConfigView(view) {
     view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${num} 条消息`;
   });
   // 获取本地撤回消息数量
-  const recallNum = lite_tools.getRecallListNum();
+  const recallNum = 0; // lite_tools.getRecallListNum();
   view.querySelector(".local-recall-msg-num").innerText = `清除所有本地保存的撤回数据，当前保存约 ${recallNum} 条消息`;
   // 查看撤回数据
   view.querySelector(".open-recall-msg-list").addEventListener("click", () => {
@@ -258,6 +258,7 @@ async function onConfigView(view) {
     debounceSetOptions();
   });
 
+  // 消息转图片
   view.querySelector(".select-default-save-file-input-clear").value = options.messageToImage.path;
   view.querySelector(".select-default-save-file-input").addEventListener("click", () => {
     log("修改默认保存位置");
@@ -306,7 +307,6 @@ async function onConfigView(view) {
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons", (_, enabled) => {
     view.querySelector(".hoverShowCommonlyEmoticons").classList.toggle("disabled-switch", !enabled);
   });
-
 
   // 初始化背景路径选择监听和值
   view.querySelector(".select-background-wallpaper-clear").value = options.background.url;

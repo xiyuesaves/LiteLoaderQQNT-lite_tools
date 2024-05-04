@@ -3,6 +3,11 @@ import { initMain } from "./main_modules/initMain.js";
 import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.js";
 import { Logs } from "./main_modules/logs.js";
 
+// 功能模块
+import "./main_modules/wallpaper.js";
+import "./main_modules/initStyle.js";
+import "./main_modules/getFonts.js";
+
 const log = new Logs("main");
 /**
  * 是否已经初始化
@@ -45,6 +50,7 @@ function proxySend(window) {
   const originalSend = window.webContents.send;
   window.webContents.send = (...args) => {
     if (init) {
+
     } else {
       if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
         loadUserConfig(args?.[2]?.[0]?.payload?.uid);

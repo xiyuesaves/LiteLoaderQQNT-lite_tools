@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, renameSync, writeFileSync } from "fs";
+import { globalBroadcast } from "./globalBroadcast.js";
 import { join } from "path";
 import { ipcMain } from "electron";
 import { UserConfig } from "./userConfig.js";
@@ -47,7 +48,7 @@ let configPath;
  * 用户配置
  * @type {Object} 配置数据
  */
-let config = null;
+let config = {};
 /**
  * 初始化配置文件夹
  */
@@ -99,6 +100,7 @@ function loadUserConfig(userId) {
  */
 function pushUpdate() {
   addEventListenderList.forEach((callback) => callback(config));
+  globalBroadcast("LiteLoader.lite_tools.updateOptions", config);
 }
 
 /**
@@ -124,6 +126,7 @@ function updateConfig(newConfig) {
  * 初始化 ipcMain 监听
  */
 ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
+  log("返回配置文件", config);
   event.returnValue = config;
 });
 ipcMain.on("LiteLoader.lite_tools.setOptions", (_, newConfig) => {
