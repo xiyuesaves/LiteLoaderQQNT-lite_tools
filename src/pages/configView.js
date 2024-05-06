@@ -344,9 +344,14 @@ async function onConfigView(view) {
     options.localEmoticons.rowsSize * 2
   }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
   const commonlyEmoticonsEl = view.querySelector(".commonly-emoticons-num");
+  commonlyEmoticonsEl.setAttribute("placeholder", options.localEmoticons.rowsSize * 3);
   commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
   commonlyEmoticonsEl.addEventListener("blur", (e) => {
-    options.localEmoticons.commonlyNum = parseInt(e.target.value) || 20;
+    let inputValue = parseInt(e.target.value);
+    if (!inputValue || inputValue <= 0) {
+      inputValue = options.localEmoticons.rowsSize * 3;
+    }
+    options.localEmoticons.commonlyNum = inputValue;
     commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
     debounceSetOptions();
   });
@@ -383,9 +388,11 @@ async function onConfigView(view) {
         });
         if (newVal !== -1) {
           options.localEmoticons.rowsSize = newVal + 3;
+          view.querySelector(".commonly-emoticons-num").setAttribute("placeholder", options.localEmoticons.rowsSize * 3);
           view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
             options.localEmoticons.rowsSize * 2
           }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
+
           debounceSetOptions();
           updateSider();
         }
