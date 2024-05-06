@@ -91,7 +91,6 @@ function loadUserConfig(userId) {
     loadConfig = configTemplate;
     writeFileSync(configPath, JSON.stringify(configTemplate, null, 2));
   }
-  // initIpcMainEvent();
   updateConfig(recursiveAssignment(loadConfig, configTemplate));
 }
 
@@ -99,8 +98,8 @@ function loadUserConfig(userId) {
  * 推送配置更新
  */
 function pushUpdate() {
-  addEventListenderList.forEach((callback) => callback(config));
   globalBroadcast("LiteLoader.lite_tools.updateOptions", config);
+  addEventListenderList.forEach((callback) => callback(config));
 }
 
 /**

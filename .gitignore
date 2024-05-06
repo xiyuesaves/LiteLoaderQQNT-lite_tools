@@ -1,4 +1,5 @@
 node_modules
+.VSCodeCounter
 package-lock.json
 pnpm-lock.yaml
 css
