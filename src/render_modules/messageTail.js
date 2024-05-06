@@ -48,7 +48,7 @@ function messageTail() {
     });
     tail = options.tail.list[tailIndex];
     log("初始化", tail, tailIndex);
-    if (tail && options.tail.enabled) {
+    if (tail && options.tail.enabled && tail.content) {
       if (!tailTipsEl) {
         log("插入html");
         container.insertAdjacentHTML(

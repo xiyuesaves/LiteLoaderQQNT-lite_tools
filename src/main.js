@@ -2,6 +2,7 @@ import { app, ipcMain, dialog, shell, BrowserWindow } from "electron";
 import { initMain } from "./main_modules/initMain.js";
 import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.js";
 import { Logs } from "./main_modules/logs.js";
+import { addMsgTail } from "./main_modules/addMsgTail.js";
 
 // 功能模块
 import "./main_modules/wallpaper.js";
@@ -31,6 +32,7 @@ function proxyIpcMessage(window) {
   const ipc_message_proxy = window.webContents._events["-ipc-message"]?.[0] || window.webContents._events["-ipc-message"];
   const proxyIpcMsg = new Proxy(ipc_message_proxy, {
     apply(target, thisArg, args) {
+      addMsgTail(args);
       return target.apply(thisArg, args);
     },
   });
@@ -50,7 +52,6 @@ function proxySend(window) {
   const originalSend = window.webContents.send;
   window.webContents.send = (...args) => {
     if (init) {
-
     } else {
       if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
         loadUserConfig(args?.[2]?.[0]?.payload?.uid);
