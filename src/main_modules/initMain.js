@@ -1,6 +1,7 @@
-import { ipcMain, shell } from "electron";
+import { ipcMain, shell, dialog } from "electron";
 import { normalize } from "path";
 import { config, updateConfig } from "./config.js";
+import { copyFile, writeFileSync, existsSync } from "fs";
 import { Logs } from "./logs.js";
 const log = new Logs("initMain");
 
@@ -18,7 +19,7 @@ ipcMain.on("LiteLoader.lite_tools.openWeb", (_, url) => {
 // 复制文件
 ipcMain.handle("LiteLoader.lite_tools.copyFile", async (_, from, to) => {
   return new Promise((res, rej) => {
-    fs.copyFile(from, to, (err) => {
+    copyFile(from, to, (err) => {
       if (err) {
         res(false);
       } else {
@@ -68,55 +69,6 @@ ipcMain.on("LiteLoader.lite_tools.sendChatTopList", (_, list) => {
   updateConfig(config);
 });
 
-// 保存图片消息到本地
-ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64) => {
-  log("接收到保存为文件事件");
-  const buffer = Buffer.from(base64.split(",")[1], "base64");
-  if (config.messageToImage.path && fs.existsSync(config.messageToImage.path)) {
-    const savePath = path.join(config.messageToImage.path, fileName);
-    log("默认文件路径", savePath);
-    fs.writeFileSync(savePath, buffer, { encoding: null });
-  } else {
-    dialog
-      .showSaveDialog({
-        title: "请选择位置", //默认路径,默认选择的文件
-        properties: ["dontAddToRecent "],
-        message: "选择图片保存位置",
-        defaultPath: fileName,
-      })
-      .then((result) => {
-        log(result);
-        if (!result.canceled) {
-          log("选择了文件夹", result.filePath);
-          fs.writeFileSync(result.filePath, buffer, { encoding: null });
-        }
-      })
-      .catch((err) => {
-        log("无效操作", err);
-      });
-  }
-});
-
-// 选择默认图片消息保存路径
-ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
-  dialog
-    .showOpenDialog({
-      title: "请选择文件夹", //默认路径,默认选择的文件
-      properties: ["openDirectory"],
-      buttonLabel: "选择文件夹",
-    })
-    .then((result) => {
-      log("选择了文件夹", result);
-      if (!result.canceled) {
-        const newPath = path.join(result.filePaths[0]);
-        config.messageToImage.path = newPath;
-      }
-    })
-    .catch((err) => {
-      log("无效操作", err);
-    });
-});
-
 // 打开文件夹
 ipcMain.on("LiteLoader.lite_tools.openFolder", (_, localPath) => {
   const openPath = normalize(localPath);
@@ -158,5 +110,54 @@ ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (_, uid) => {
 // 获取本地保存的撤回消息数量
 ipcMain.on("LiteLoader.lite_tools.getRecallListNum", (event) => {
   event.returnValue = 123;
+});
+
+// 保存图片消息到本地
+ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64) => {
+  log("接收到保存为文件事件");
+  const buffer = Buffer.from(base64.split(",")[1], "base64");
+  if (config.messageToImage.path && existsSync(config.messageToImage.path)) {
+    const savePath = path.join(config.messageToImage.path, fileName);
+    log("默认文件路径", savePath);
+    writeFileSync(savePath, buffer, { encoding: null });
+  } else {
+    dialog
+      .showSaveDialog({
+        title: "请选择位置", //默认路径,默认选择的文件
+        properties: ["dontAddToRecent "],
+        message: "选择图片保存位置",
+        defaultPath: fileName,
+      })
+      .then((result) => {
+        log(result);
+        if (!result.canceled) {
+          log("选择了文件夹", result.filePath);
+          writeFileSync(result.filePath, buffer, { encoding: null });
+        }
+      })
+      .catch((err) => {
+        log("无效操作", err);
+      });
+  }
+});
+
+// 选择默认图片消息保存路径
+ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
+  dialog
+    .showOpenDialog({
+      title: "请选择文件夹", //默认路径,默认选择的文件
+      properties: ["openDirectory"],
+      buttonLabel: "选择文件夹",
+    })
+    .then((result) => {
+      log("选择了文件夹", result);
+      if (!result.canceled) {
+        const newPath = path.join(result.filePaths[0]);
+        config.messageToImage.path = newPath;
+      }
+    })
+    .catch((err) => {
+      log("无效操作", err);
+    });
 });
 export { initMain };
