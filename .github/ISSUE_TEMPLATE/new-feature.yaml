@@ -4,6 +4,12 @@ title: '[Feat]: '
 labels: [ "enhancement" ]
 
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ❗ | 当前暂不接受新功能请求，详情请查看 [暂停接受新功能请求](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues/175)
+        ## ❗ | 针对新功能请求的 issue 将会被直接关闭，如果你有新插件/功能需求，请到 [此处](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/new/choose) 提交
+        ---
   - type: textarea
     id: feature-to-add
     attributes:
