@@ -132,4 +132,4 @@ ipcMain.on("LiteLoader.lite_tools.setOptions", (_, newConfig) => {
   updateConfig(newConfig);
 });
 
-export { config, userConfig, loadUserConfig, updateConfig, onUpdateConfig };
+export { config, userConfig, loadConfigPath, loadUserConfig, updateConfig, onUpdateConfig };

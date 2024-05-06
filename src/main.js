@@ -8,6 +8,7 @@ import { addMsgTail } from "./main_modules/addMsgTail.js";
 import "./main_modules/wallpaper.js";
 import "./main_modules/initStyle.js";
 import "./main_modules/getFonts.js";
+import "./main_modules/localEmoticons.js";
 
 const log = new Logs("main");
 /**
