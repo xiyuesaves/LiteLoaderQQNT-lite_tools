@@ -31,12 +31,12 @@ async function onLoad() {
       return;
     }
     if (hash.includes("#/main/message")) {
-      app.classList.add("lite-tools-main");
       initCurAioData();
+      app.classList.add("lite-tools-main");
       import("./pages/mainMessage.js");
     } else if (hash.includes("#/chat")) {
-      app.classList.add("lite-tools-chat");
       initCurAioData();
+      app.classList.add("lite-tools-chat");
       import("./pages/chatMessage.js");
     } else if (hash.includes("#/forward")) {
       app.classList.add("lite-tools-forward");

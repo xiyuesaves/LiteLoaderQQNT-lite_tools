@@ -1,10 +1,10 @@
-import { extname, basename } from "path";
+import { join, extname, basename } from "path";
 
-import { config, onUpdateConfig } from "./config.js";
+import { config, updateConfig, onUpdateConfig } from "./config.js";
 import { Logs } from "./logs.js";
 import { RangesServer } from "./rangesServer.js";
 import { globalBroadcast } from "./globalBroadcast.js";
-import { ipcMain } from "electron";
+import { ipcMain, dialog } from "electron";
 const videoServer = new RangesServer();
 const log = new Logs("背景模块");
 
@@ -69,40 +69,9 @@ ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
     .then((result) => {
       log("选择了文件", result);
       if (!result.canceled) {
-        const newFilePath = path.join(result.filePaths[0]);
-        // 背景视频相关
-        if (config.background.enabled && newFilePath !== config.background.url) {
-          if ([".mp4", ".webm"].includes(path.extname(newFilePath))) {
-            videoServer.setFilePath(newFilePath);
-            videoServer
-              .startServer()
-              .then((port) => {
-                backgroundData = {
-                  href: `http://localhost:${port}/${path.basename(newFilePath)}`,
-                  type: "video",
-                };
-                log("背景-更新为视频");
-                globalBroadcast("LiteLoader.lite_tools.updateWallpaper", config.background.enabled, backgroundData);
-              })
-              .catch((err) => {
-                log("启用视频背景服务时出错", err);
-                backgroundData = {
-                  href: "",
-                  type: "image",
-                };
-                globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
-              });
-          } else {
-            videoServer.stopServer();
-            backgroundData = {
-              href: `local:///${newFilePath.replace(/\\/g, "//")}`,
-              type: "image",
-            };
-            log("背景-更新为图片");
-            globalBroadcast("LiteLoader.lite_tools.updateWallpaper", config.background.enabled, backgroundData);
-          }
-        }
+        const newFilePath = join(result.filePaths[0]);
         config.background.url = newFilePath;
+        updateConfig(config);
       }
     })
     .catch((err) => {
