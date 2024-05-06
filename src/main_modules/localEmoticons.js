@@ -26,13 +26,18 @@ let localEmoticonsConfigPath;
 let emoticonsList = [];
 /**
  * 文件监听函数信号
- * @type {AbortController}
+ * @type {AbortController[]}
  */
-let watchSignal;
+let signals = [];
 /**
  * 加载文件夹路径
  */
 let localPath = null;
+
+/**
+ * 本地表情常用表情数量
+ */
+let oldCommonlyNum = -1;
 
 onUpdateConfig(async () => {
   // 初始化配置文件
@@ -41,28 +46,45 @@ onUpdateConfig(async () => {
     writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfigTemplate, null, 4));
   }
   localEmoticonsConfig = require(localEmoticonsConfigPath);
-  log("本地表情配置文件", localEmoticonsConfig);
+  log("本地表情配置文件", localPath, config.localEmoticons.localPath);
   if (config.localEmoticons.enabled && config.localEmoticons.localPath) {
     if (localPath !== config.localEmoticons.localPath) {
       if (localPath !== null) {
         resetCommonlyEmoticons();
       }
       localPath = config.localEmoticons.localPath;
-      if (watchSignal) {
-        watchSignal.abort();
-      }
+      signals.forEach((signal) => {
+        signal.abort();
+      });
       log("功能启用，开始加载文件夹", config.localEmoticons.localPath);
-      watchSignal = new AbortController();
       emoticonsList = await loadFolder(config.localEmoticons.localPath);
       updateEmoticonList();
+    } else {
+      log("路径没有变化，无需更新");
     }
   } else {
     log("功能关闭");
     localPath = null;
     emoticonsList = [];
-    if (watchSignal) {
-      watchSignal.abort();
+    signals.forEach((signal) => {
+      signal.abort();
+    });
+  }
+  // 如果没有启用历史表情，或者关闭了历史表情，则清除数据
+  if (!config.localEmoticons.commonlyEmoticons) {
+    resetCommonlyEmoticons();
+  }
+  // 动态更新历史表情数量限制
+  if (oldCommonlyNum === -1) {
+    oldCommonlyNum = config.localEmoticons.commonlyNum;
+  }
+  if (config.localEmoticons.commonlyNum !== oldCommonlyNum) {
+    if (config.localEmoticons.commonlyNum < oldCommonlyNum) {
+      localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.splice(0, config.localEmoticons.commonlyNum);
+      globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+      writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
+    oldCommonlyNum = config.localEmoticons.commonlyNum;
   }
 });
 
@@ -77,7 +99,9 @@ const folderUpdate = debounce(async () => {
  * @param {String} String 文件夹路径
  */
 function addWatchFolders(path) {
-  const watcher = watch(path, { signal: watchSignal.signal });
+  const signal = new AbortController();
+  signals.push(signal);
+  const watcher = watch(path, { signal: signal.signal });
   watcher.on("change", folderUpdate);
 }
 
@@ -168,7 +192,7 @@ function resetCommonlyEmoticons() {
   log("重置常用表情列表");
   localEmoticonsConfig.commonlyEmoticons = [];
   globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
-  fs.writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
+  writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
 // 返回本地表情包数据
