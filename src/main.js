@@ -6,8 +6,8 @@ import { addMsgTail } from "./main_modules/addMsgTail.js";
 import { preventEscape } from "./main_modules/preventEscape.js";
 import { replaceMiniAppArk } from "./main_modules/replaceMiniAppArk.js";
 import { keywordReminder } from "./main_modules/keywordReminder.js";
-import { messageRecall } from "./main_modules/msgRecall.js";
 import { captureWindow } from "./main_modules/captureWindow.js";
+import { messageRecall } from "./main_modules/msgRecall.js";
 
 // 导入独立功能模块
 import "./main_modules/wallpaper.js";
@@ -78,15 +78,18 @@ function proxySend(window) {
         keywordReminder(args);
         sendIpc(args);
       } catch (err) {
-        log("出现错误", err);
+        log("出现错误", err, err?.stack);
       }
     } else {
-      if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
-        loadUserConfig(args?.[2]?.[0]?.payload?.uid);
-        log("成功读取配置文件");
-        initMain();
-        loadMessageRecallList(loadConfigPath);
-        init = true;
+      try {
+        if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
+          loadUserConfig(args?.[2]?.[0]?.payload?.uid);
+          initMain();
+          log("成功读取配置文件");
+          init = true;
+        }
+      } catch (err) {
+        log("出现错误", err, err?.stack);
       }
     }
     originalSend.call(window.webContents, ...args);

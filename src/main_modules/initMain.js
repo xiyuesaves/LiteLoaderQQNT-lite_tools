@@ -5,10 +5,8 @@ import { copyFile, writeFileSync, existsSync } from "fs";
 import { randomUUID } from "crypto";
 import { Logs } from "./logs.js";
 const log = new Logs("initMain");
-const EventEmitter = require("events");
-class MainEvent extends EventEmitter {}
-const mainEvent = new MainEvent();
-
+import { EventEmitter } from "events";
+const mainEvent = new EventEmitter();
 // 重置函数this指向
 ipcMain.emit = ipcMain.emit.bind(ipcMain);
 
