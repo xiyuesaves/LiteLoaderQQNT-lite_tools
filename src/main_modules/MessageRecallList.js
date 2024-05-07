@@ -1,7 +1,7 @@
-const path = require("path");
-const fs = require("fs");
-const logs = require("./logs");
-const log = logs("撤回实例");
+import { basename, join } from "path";
+import { writeFileSync, readFileSync } from "fs";
+import { Logs } from "./logs.js";
+const log = new Logs("本地撤回数据实例");
 import superjson from "superjson";
 
 /**
@@ -9,7 +9,7 @@ import superjson from "superjson";
  */
 class MessageRecallList {
   constructor(messageRecallJson, messageRecallPath = false, limit = 0) {
-    log(`新的历史记录实例，目标文件 ${path.basename(messageRecallJson)} 实例状态 ${messageRecallPath ? "读写" : "只读"} 切片大小 ${limit}`);
+    log(`新的历史记录实例，目标文件 ${basename(messageRecallJson)} 实例状态 ${messageRecallPath ? "读写" : "只读"} 切片大小 ${limit}`);
     this.limit = limit;
     this.messageRecallPath = messageRecallPath;
     this.latestPath = messageRecallJson;
@@ -17,27 +17,18 @@ class MessageRecallList {
     this.newRecallMsgEvent = new Set();
 
     // 针对不同版本的本地撤回文件进行统一化处理
-    const stringData = fs.readFileSync(this.latestPath, { encoding: "utf-8" });
+    const stringData = readFileSync(this.latestPath, { encoding: "utf-8" });
     try {
-      // 判断字符串是否为base64格式
       const rawData = Buffer.from(stringData, "base64").toString("utf-8");
       const jsonParse = JSON.parse(rawData);
       if (jsonParse.json) {
-        // 当前的 base64 superjson
         this.map = superjson.parse(rawData);
-        // log("文件格式为 base64 superjson");
       } else {
-        // this.map = new Map(JSON.parse(Buffer.from(fs.readFileSync(this.latestPath, { encoding: "utf-8" }), "base64").toString("utf-8"))); // 从文件中初始化撤回信息
-        // 第二版的 base64 jsonString
         this.map = new Map(jsonParse);
-        // log("文件格式为 base64 jsonString");
         this.saveFile();
       }
     } catch {
-      // this.map = new Map(JSON.parse(fs.readFileSync(this.latestPath, { encoding: "utf-8" }))); // 从文件中初始化撤回信息
-      // 最早的明文 jsonString
       this.map = new Map(JSON.parse(stringData));
-      // log("文件格式为 jsonString");
       this.saveFile();
     }
   }
@@ -46,10 +37,11 @@ class MessageRecallList {
       this.map.set(key, value);
       if (this.map.size >= this.limit) {
         log("缓存撤回消息超过阈值，开始切片");
-        const newFileName = `${new Date().getTime()}.json`;
-        const filePath = path.join(this.messageRecallPath, newFileName);
-        fs.writeFileSync(filePath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
-        this.newFileEvent.forEach((callback) => callback(newFileName));
+        const sliceTime = new Date().getTime();
+        const newFileName = `${sliceTime}.json`;
+        const filePath = join(this.messageRecallPath, newFileName);
+        writeFileSync(filePath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
+        this.newFileEvent.forEach((callback) => callback(sliceTime));
         this.map = new Map();
       }
       this.saveFile();
@@ -59,11 +51,10 @@ class MessageRecallList {
     }
   }
   saveFile() {
-    console.log("保存到本地");
     try {
-      fs.writeFileSync(this.latestPath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
+      writeFileSync(this.latestPath, Buffer.from(superjson.stringify(this.map), "utf-8").toString("base64"));
     } catch (err) {
-      console.log("保存出错", err);
+      console.log("保存撤回数据出错", err);
     }
   }
   onNewRecallMsg(callback) {
@@ -95,4 +86,5 @@ class MessageRecallList {
     }
   }
 }
-module.exports = MessageRecallList;
+
+export { MessageRecallList };
