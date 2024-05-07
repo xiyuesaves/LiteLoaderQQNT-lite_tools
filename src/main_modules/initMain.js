@@ -1,4 +1,4 @@
-import { ipcMain, shell, dialog } from "electron";
+import { ipcMain, shell, dialog, BrowserWindow } from "electron";
 import { normalize } from "path";
 import { config, updateConfig } from "./config.js";
 import { copyFile, writeFileSync, existsSync } from "fs";
@@ -105,6 +105,15 @@ ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (_, uid) => {
   return userInfo;
 });
 
+// 设置窗口图标
+ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (_, path, webContentId) => {
+  try {
+    const webContent = BrowserWindow.fromId(parseInt(webContentId));
+    webContent.setIcon(path);
+  } catch (err) {
+    log("设置窗口图标失败", err.message);
+  }
+});
 // 调试用代码
 
 // 获取本地保存的撤回消息数量
