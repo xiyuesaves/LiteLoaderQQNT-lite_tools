@@ -3,6 +3,7 @@ import { initMain } from "./main_modules/initMain.js";
 import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.js";
 import { Logs } from "./main_modules/logs.js";
 import { addMsgTail } from "./main_modules/addMsgTail.js";
+import { preventEscape } from "./main_modules/preventEscape.js";
 
 // 功能模块
 import "./main_modules/wallpaper.js";
@@ -24,6 +25,7 @@ function onBrowserWindowCreated(window) {
   try {
     proxyIpcMessage(window);
     proxySend(window);
+    preventEscape(window);
   } catch (err) {
     log("出现错误", err);
   }
