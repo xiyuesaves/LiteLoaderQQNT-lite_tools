@@ -2,11 +2,22 @@ import { ipcMain, shell, dialog, BrowserWindow } from "electron";
 import { normalize } from "path";
 import { config, updateConfig } from "./config.js";
 import { copyFile, writeFileSync, existsSync } from "fs";
+import { randomUUID } from "crypto";
 import { Logs } from "./logs.js";
 const log = new Logs("initMain");
+const EventEmitter = require("events");
+class MainEvent extends EventEmitter {}
+const mainEvent = new MainEvent();
+
+// 重置函数this指向
+ipcMain.emit = ipcMain.emit.bind(ipcMain);
 
 function initMain() {
   log("初始化主进程", config);
+}
+
+function sendIpc(args) {
+  mainEvent.emit("send", ...args);
 }
 
 // 通用ipc事件处理
@@ -96,13 +107,40 @@ ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (_, uid) => {
       }
     }
     mainEvent.on("send", onEvent);
-    ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: crypto.randomUUID(), eventName: "ns-ntApi-2" }, [
+    ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: randomUUID(), eventName: "ns-ntApi-2" }, [
       "nodeIKernelProfileService/getUserDetailInfo",
       { uid: uid },
       null,
     ]);
   });
   return userInfo;
+});
+
+// 跳转到指定聊天窗口的对应消息
+ipcMain.on("LiteLoader.lite_tools.sendToMsg", (_, sceneData) => {
+  ipcMain.emit(
+    "IPC_UP_2",
+    {
+      sender: {
+        send: (...args) => {},
+      },
+    },
+    { type: "request", callbackId: randomUUID(), eventName: "ns-WindowApi-2" },
+    [
+      "goMainWindowScene",
+      {
+        scene: sceneData.scene,
+        sceneParams: {
+          peerUid: sceneData.peerUid,
+          chatType: sceneData.chatType,
+          type: sceneData.type,
+          params: {
+            msgId: sceneData.msgId,
+          },
+        },
+      },
+    ],
+  );
 });
 
 // 设置窗口图标
@@ -115,11 +153,6 @@ ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (_, path, webContentId) => {
   }
 });
 // 调试用代码
-
-// 获取本地保存的撤回消息数量
-ipcMain.on("LiteLoader.lite_tools.getRecallListNum", (event) => {
-  event.returnValue = 123;
-});
 
 // 保存图片消息到本地
 ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64) => {
@@ -169,4 +202,4 @@ ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
       log("无效操作", err);
     });
 });
-export { initMain };
+export { initMain, sendIpc };
