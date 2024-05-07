@@ -1,6 +1,6 @@
 import { findEventIndex } from "./findEventIndex.js";
 import { checkChatType } from "./checkChatType.js";
-import { globalBroadcast } from "./globalBroadcast.js";
+import { mainMessage } from "./captureWindow.js";
 import { config } from "./config.js";
 
 /**
@@ -19,7 +19,7 @@ function keywordReminder(args) {
         msgData.elements.forEach((msgElements) => {
           if (msgElements?.textElement) {
             if (config.keywordReminder.keyList.some((key) => msgElements?.textElement?.content?.includes(key))) {
-              globalBroadcast("LiteLoader.lite_tools.onKeywordReminder", msgData.peerUid, msgData.msgId);
+              mainMessage.webContents.send("LiteLoader.lite_tools.onKeywordReminder", msgData.peerUid, msgData.msgId);
             }
           }
         });
