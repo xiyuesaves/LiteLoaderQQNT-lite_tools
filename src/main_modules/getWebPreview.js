@@ -4,17 +4,20 @@ const logs = require("./logs");
 const log = logs("链接预览");
 const http = require("http");
 const https = require("https");
+
+import { config, onUpdateConfig } from "./config.js";
+
 // 把缓存逻辑移到这里，好让所有页面共用
 // 缓存200条url预览数据，因为增加了图片数据，为了避免内存占用过多所以只缓存200条
 const MAX_CACHE_SIZE = 200;
 let previewCatch = new Map();
+let dontLoadPic;
 
-Opt.on("update", (newOptions) => {
-  // 只有当 dontLoadPic 配置变化时才清空缓存
-  if (options.message.previreUrl.dontLoadPic !== newOptions.message.previreUrl.dontLoadPic) {
+onUpdateConfig(() => {
+  if (dontLoadPic !== config.message.previreUrl.dontLoadPic) {
     previewCatch = new Map();
   }
-  options = newOptions;
+  dontLoadPic = config.message.previreUrl.dontLoadPic;
 });
 
 /**
@@ -30,7 +33,7 @@ async function getWebText(url) {
     const data = await fetch(url, {
       method: "GET",
       headers: {
-        "User-Agent": options.global.UA,
+        "User-Agent": config.global.UA,
       },
     });
     const text = await data.text();
@@ -125,7 +128,7 @@ module.exports = async function getWebPrevew(url) {
         description: webMeta.data["og:description"] || webMeta.data["twitter:description"] || webMeta.data["description"],
         site_name: webMeta.data["og:site_name"] || webMeta.data["twitter:site"] || webMeta.data["url"],
       };
-      if (standardData.imageUrl && !options.message.previreUrl.dontLoadPic) {
+      if (standardData.imageUrl && !config.message.previreUrl.dontLoadPic) {
         standardData.image = await imageUrlToBase64(standardData.imageUrl);
       }
       previewCatch.set(url, standardData);
@@ -167,7 +170,7 @@ async function checkContentType(href, target) {
     path: url.pathname,
     method: "GET",
     headers: {
-      "User-Agent": options.global.UA,
+      "User-Agent": config.global.UA,
     },
   };
   return await new Promise((resolve) => {
@@ -198,7 +201,7 @@ async function imageUrlToBase64(url) {
   const response = await fetch(url, {
     method: "GET",
     headers: {
-      "User-Agent": options.global.UA,
+      "User-Agent": config.global.UA,
     },
   });
   if (response.status === 200) {
