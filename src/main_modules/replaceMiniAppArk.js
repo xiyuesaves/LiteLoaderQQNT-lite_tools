@@ -4,6 +4,13 @@ import { checkChatType } from "./checkChatType.js";
 import { replaceArk } from "./replaceArk.js";
 import { Logs } from "./logs.js";
 const log = new Logs("替换小程序卡片");
+
+/**
+ * 根据配置替换给定参数中的小程序卡片。
+ *
+ * @param {Array} args - 包含小程序卡片的参数数组。
+ * @return {void} 此函数不返回任何值。
+ */
 function replaceMiniAppArk(args) {
   if (config.message.convertMiniPrgmArk) {
     // 接收到获取历史消息列表
@@ -21,6 +28,12 @@ function replaceMiniAppArk(args) {
   }
 }
 
+/**
+ * 将给定消息列表中的小程序卡片替换为 replaceArk 函数的结果。
+ *
+ * @param {Array} msgList - 包含小程序卡片的消息对象数组。
+ * @return {void} 此函数不返回任何内容。
+ */
 function replaceMsgList(msgList) {
   msgList.forEach((msgItem) => {
     let msg_seq = msgItem.msgSeq;
