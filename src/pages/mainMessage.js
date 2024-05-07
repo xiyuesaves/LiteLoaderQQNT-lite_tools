@@ -115,7 +115,7 @@ function chatMessage() {
    */
   const navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
   navStore?.finalTabConfig?.forEach((tabIcon) => {
-    const find = options.sidebar.top.find((el) => el?.id == tabIcon?.id);
+    const find = options.sidebar.top.find((el) => el?.name == tabIcon?.label);
     if (find && find.id !== undefined) {
       if (find.disabled) {
         tabIcon.status = 2;
