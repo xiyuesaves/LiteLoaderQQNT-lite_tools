@@ -78,4 +78,9 @@ function clearToast() {
     toast.classList.remove("lite-tools-toast-show");
   });
 }
+
+lite_tools.onToast((_, toast) => {
+  showToast(toast.content, toast.type, toast.duration);
+});
+
 export { showToast, clearToast };

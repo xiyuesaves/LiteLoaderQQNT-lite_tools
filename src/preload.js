@@ -97,6 +97,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updatePlugins: (url) => ipcRenderer.send("LiteLoader.lite_tools.updatePlugins", url),
   // 监听更新事件
   updateEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEvent", callback),
+  // 主进程向渲染进程发送通知
+  onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
   /**
    *
    * @param {String} sendEventName 发送事件名称

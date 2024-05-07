@@ -4,6 +4,11 @@ import { checkChatType } from "./checkChatType.js";
 
 const log = new Logs("消息后缀");
 
+/**
+ * 根据特定条件添加消息尾部的函数。
+ *
+ * @param {Array} args - 传递给函数的参数。
+ */
 function addMsgTail(args) {
   // 消息发送事件
   if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
