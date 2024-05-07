@@ -443,7 +443,7 @@ function singleMessageProcessing(target, msgRecord) {
         // 添加url预览信息
         if (options.message.previreUrl.enabled) {
           const findURL = msgRecord?.elements?.find((element) => urlMatch.test(element?.textElement?.content));
-          showWebPreview(findURL?.textElement?.content, messageEl);
+          showWebPreview(findURL?.textElement?.content, messageEl, msgRecord.msgId);
         }
 
         // 传统处理流传

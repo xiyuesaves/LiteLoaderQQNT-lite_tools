@@ -12,6 +12,7 @@ import "./main_modules/wallpaper.js";
 import "./main_modules/initStyle.js";
 import "./main_modules/getFonts.js";
 import "./main_modules/localEmoticons.js";
+import "./main_modules/getWebPreview.js";
 
 const log = new Logs("main");
 /**

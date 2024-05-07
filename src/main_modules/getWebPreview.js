@@ -1,11 +1,11 @@
-const Opt = require("./option");
-let options = Opt.value;
-const logs = require("./logs");
-const log = logs("链接预览");
-const http = require("http");
-const https = require("https");
-
+import { ipcMain } from "electron";
+import http from "http";
+import https from "https";
+import { globalBroadcast } from "./globalBroadcast.js";
 import { config, onUpdateConfig } from "./config.js";
+import { Logs } from "./logs.js";
+const log = new Logs("链接预览");
+
 
 // 把缓存逻辑移到这里，好让所有页面共用
 // 缓存200条url预览数据，因为增加了图片数据，为了避免内存占用过多所以只缓存200条
@@ -109,7 +109,7 @@ async function getMeatData(url) {
  *                                - site_name: 网站的名称。
  *                           - err: 如果获取不成功，则为错误消息。
  */
-module.exports = async function getWebPrevew(url) {
+async function getWebPrevew(url) {
   try {
     let standardData = previewCatch.get(url);
     if (!standardData) {
@@ -149,10 +149,10 @@ module.exports = async function getWebPrevew(url) {
   } catch (err) {
     return {
       success: false,
-      err: `函数错误 ${err}`,
+      err: `代码错误 ${err}`,
     };
   }
-};
+}
 
 /**
  * 检查给定URL的内容类型并将其与目标内容类型进行比较。
@@ -210,3 +210,11 @@ async function imageUrlToBase64(url) {
     return false;
   }
 }
+
+/**
+ * 获取链接预览信息
+ */
+ipcMain.on("LiteLoader.lite_tools.getWebPrevew", async (_, msgId, url) => {
+  const resData = await getWebPrevew(url);
+  globalBroadcast("LiteLoader.lite_tools.onWebPreviewData", msgId, resData);
+});

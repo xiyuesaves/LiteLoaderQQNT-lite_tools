@@ -11,28 +11,6 @@ import { options, updateOptions } from "./options.js";
 const MAX_IMG_WIDTH = 800;
 
 /**
- * 等待预览数据列表
- * @type {Map}
- */
-const awaitList = new Map();
-
-/**
- * 定时清理超时数据
- * @return {undefined} 此函数不返回任何内容。
- */
-function removeTimeoutData() {
-  setTimeout(removeTimeoutData, 60000);
-  const now = Date.now();
-  awaitList.forEach((value, key) => {
-    if (now - value.time >= 60000) {
-      awaitList.delete(key);
-    }
-  });
-  log("清理超时数据", awaitList.size);
-}
-removeTimeoutData();
-
-/**
  * 缓存200条预览数据
  * @type {Map}
  */
@@ -58,10 +36,9 @@ updateOptions((newOptions) => {
 /**
  * 监听预览数据
  */
-lite_tools.onWebPreviewData((_, uuid, previewData) => {
-  const data = awaitList.get(uuid);
-  awaitList.delete(uuid);
-  if (!data) {
+lite_tools.onWebPreviewData((_, msgId, previewData) => {
+  const msgContainer = document.querySelector(`[id="${msgId}"] .message .msg-content-container`);
+  if (!msgContainer) {
     // 预览数据不存在
     return;
   }
@@ -74,7 +51,6 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
     return;
   }
   log("获取到预览数据", previewData.data.url, previewData);
-  log("当前等待url预览列表长度", awaitList.size);
   // 缓存预览数据
   cacheMap.set(previewData.data.url, previewData);
   // 超出阈值则移除10%最早的数据
@@ -83,7 +59,7 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
     const arrayLength = array.length;
     cacheMap = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
   }
-  setPreviewData(data.msgContainer, previewData);
+  setPreviewData(msgContainer, previewData);
 });
 
 /**
@@ -91,7 +67,7 @@ lite_tools.onWebPreviewData((_, uuid, previewData) => {
  * @param {String} context 含有链接的文本
  * @param {Element} element 目标消息元素
  */
-export function showWebPreview(context, element) {
+export function showWebPreview(context, element, msgId) {
   const msgContainer = element.querySelector(".msg-content-container");
   if (!context || !element || element.classList.contains("lite-tools-web-preview-added") || !msgContainer) {
     return;
@@ -108,12 +84,7 @@ export function showWebPreview(context, element) {
     cacheMap.delete(url);
     cacheMap.set(url, findCache);
   } else {
-    const uuid = crypto.randomUUID();
-    awaitList.set(uuid, {
-      time: Date.now(),
-      msgContainer,
-    });
-    lite_tools.getWebPrevew(uuid, url);
+    lite_tools.getWebPrevew(msgId, url);
   }
 }
 
