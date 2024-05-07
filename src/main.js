@@ -1,11 +1,13 @@
-import { app, ipcMain, dialog, shell, BrowserWindow } from "electron";
-import { initMain } from "./main_modules/initMain.js";
-import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.js";
+import { BrowserWindow } from "electron";
+import { initMain, sendIpc } from "./main_modules/initMain.js";
+import { loadUserConfig, loadConfigPath } from "./main_modules/config.js";
 import { Logs } from "./main_modules/logs.js";
 import { addMsgTail } from "./main_modules/addMsgTail.js";
 import { preventEscape } from "./main_modules/preventEscape.js";
 import { replaceMiniAppArk } from "./main_modules/replaceMiniAppArk.js";
 import { keywordReminder } from "./main_modules/keywordReminder.js";
+import { messageRecall } from "./main_modules/msgRecall.js";
+import { captureWindow } from "./main_modules/captureWindow.js";
 
 // 导入独立功能模块
 import "./main_modules/wallpaper.js";
@@ -13,6 +15,7 @@ import "./main_modules/initStyle.js";
 import "./main_modules/getFonts.js";
 import "./main_modules/localEmoticons.js";
 import "./main_modules/getWebPreview.js";
+import "./main_modules/updatePlugins.js";
 
 const log = new Logs("main");
 /**
@@ -28,6 +31,7 @@ let init = false;
  */
 function onBrowserWindowCreated(window) {
   try {
+    captureWindow(window);
     proxyIpcMessage(window);
     proxySend(window);
     preventEscape(window);
@@ -69,8 +73,10 @@ function proxySend(window) {
   window.webContents.send = (...args) => {
     if (init) {
       try {
+        messageRecall(args);
         replaceMiniAppArk(args);
         keywordReminder(args);
+        sendIpc(args);
       } catch (err) {
         log("出现错误", err);
       }
@@ -79,11 +85,19 @@ function proxySend(window) {
         loadUserConfig(args?.[2]?.[0]?.payload?.uid);
         log("成功读取配置文件");
         initMain();
+        loadMessageRecallList(loadConfigPath);
         init = true;
       }
     }
     originalSend.call(window.webContents, ...args);
   };
 }
+
+/**
+ * 错误捕获
+ */
+process.on("uncaughtException", (e) => {
+  log("插件出现错误", e, e?.stack);
+});
 
 module.exports = { onBrowserWindowCreated };
