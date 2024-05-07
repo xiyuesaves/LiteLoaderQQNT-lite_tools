@@ -4,6 +4,7 @@ import { config, onUpdateConfig, loadUserConfig } from "./main_modules/config.js
 import { Logs } from "./main_modules/logs.js";
 import { addMsgTail } from "./main_modules/addMsgTail.js";
 import { preventEscape } from "./main_modules/preventEscape.js";
+import { replaceMiniAppArk } from "./main_modules/replaceMiniAppArk.js";
 
 // 功能模块
 import "./main_modules/wallpaper.js";
@@ -55,6 +56,7 @@ function proxySend(window) {
   const originalSend = window.webContents.send;
   window.webContents.send = (...args) => {
     if (init) {
+      replaceMiniAppArk(args);
     } else {
       if (args?.[2]?.[0]?.cmdName === "nodeIKernelSessionListener/onSessionInitComplete") {
         loadUserConfig(args?.[2]?.[0]?.payload?.uid);
