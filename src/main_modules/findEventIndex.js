@@ -5,5 +5,5 @@
  * @returns {Boolean}
  */
 export function findEventIndex(args, eventName) {
-  return args[2] ? (Array.isArray(args[2]) ? args[2].findIndex((item) => item.cmdName === eventName) : -1) : -1;
+  return args?.[2] ? (Array.isArray(args[2]) ? args[2].findIndex((item) => item.cmdName === eventName) : -1) : -1;
 }

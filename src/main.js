@@ -52,6 +52,9 @@ function proxyIpcMessage(window) {
     apply(target, thisArg, args) {
       addMsgTail(args);
       ipcLog(args);
+      // if(off){
+      //   return;
+      // }
       return target.apply(thisArg, args);
     },
   });

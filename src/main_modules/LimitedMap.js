@@ -32,4 +32,5 @@ class LimitedMap {
     this.map.delete(key);
   }
 }
-module.exports = LimitedMap;
+
+export { LimitedMap };

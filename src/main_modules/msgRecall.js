@@ -1,18 +1,26 @@
 import { join } from "path";
 import { readdir, existsSync, mkdirSync, writeFileSync, unlink } from "fs";
 import { ipcMain, dialog, BrowserWindow } from "electron";
+import { randomUUID } from "crypto";
 import { config, loadConfigPath, onUpdateConfig } from "./config.js";
 import { settingWindow } from "./captureWindow.js";
 import { MessageRecallList } from "./MessageRecallList.js";
 import { globalBroadcast } from "./globalBroadcast.js";
+import { checkChatType } from "./checkChatType.js";
+import { findEventIndex } from "./findEventIndex.js";
+import { LimitedMap } from "./LimitedMap.js";
 import { Logs } from "./logs.js";
 const log = new Logs("阻止撤回模块");
+
+// 重置函数this指向
+ipcMain.emit = ipcMain.emit.bind(ipcMain);
 
 /**
  * 撤回数据保存文件夹路径
  * @type {string}
  */
 let recallMsgDataFolderPath;
+
 /**
  * 最新的撤回消息本地json文件路径
  * @type {string}
@@ -47,6 +55,16 @@ let messageRecallFileList;
 let recallViewWindow;
 
 /**
+ * 内存缓存消息记录实例-用于根据消息id获取撤回原始内容
+ */
+const catchMsgList = new LimitedMap(20000);
+
+/**
+ * 被主动激活的消息列表
+ */
+const activeMessageList = new Set();
+
+/**
  * 加载阻止撤回模块
  * @param {String} loadConfigPath 本地配置文件路径
  */
@@ -68,8 +86,204 @@ onUpdateConfig(() => {
   });
 });
 
-function messageRecall(args) {}
+// 阻止撤回send
+function messageRecall(args) {
+  // 阻止撤回逻辑
+  if (config.preventMessageRecall.enabled) {
+    // 接收到获取历史消息列表
+    const msgList = args[2]?.msgList;
+    if (msgList && msgList.length && checkChatType(msgList[0])) {
+      preventRecallMessage(msgList);
+      return;
+    }
 
+    // 最近联系人列表更新事件 - 选项>阻止撤回>拦截所有撤回
+    const findRecentListIndex = findEventIndex(args, "nodeIKernelRecentContactListener/onRecentContactListChangedVer2");
+    if (config.preventMessageRecall.blockAllRetractions && findRecentListIndex !== -1) {
+      activeAllChat(args?.[2]?.[findRecentListIndex]);
+      return;
+    }
+
+    // 接收到的新消息
+    const onRecvMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecvMsg`);
+    const onRecvActiveMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecvActiveMsg`);
+    const recvMsgUpdate = onRecvMsg !== -1 ? onRecvMsg : onRecvActiveMsg;
+    if (checkChatType(args?.[2]?.[recvMsgUpdate]?.payload?.msgList?.[0])) {
+      const msgList = args[2][recvMsgUpdate].payload.msgList;
+      for (let i = 0; i < msgList.length; i++) {
+        const msgItem = msgList[i];
+        if (msgItem?.elements?.length) {
+          catchMsgList.set(msgItem.msgId, msgItem);
+        }
+      }
+      return;
+    }
+
+    // 消息列表更新
+    const onMsgInfoListUpdate = findEventIndex(args, "nodeIKernelMsgListener/onMsgInfoListUpdate");
+    const onActiveMsgInfoUpdate = findEventIndex(args, "nodeIKernelMsgListener/onActiveMsgInfoUpdate");
+    const msgInfoListUpdate = onMsgInfoListUpdate !== -1 ? onMsgInfoListUpdate : onActiveMsgInfoUpdate;
+    if (checkChatType(args?.[2]?.[msgInfoListUpdate]?.payload?.msgList?.[0])) {
+      const msgList = args[2][msgInfoListUpdate].payload.msgList;
+      for (let i = 0; i < msgList.length; i++) {
+        const msgItem = msgList[i];
+        /**
+         * 找到的撤回元素
+         */
+        const findRevokeElement = msgItem?.elements?.find((element) => element?.grayTipElement?.revokeElement);
+        if (findRevokeElement) {
+          const revokeElement = findRevokeElement.grayTipElement.revokeElement;
+          if (revokeElement.isSelfOperate && !config.preventMessageRecall.preventSelfMsg) {
+            continue;
+          }
+          log("捕获到实时撤回事件", msgItem);
+          const findInCatch = catchMsgList.get(msgItem.msgId);
+          if (findInCatch) {
+            const recallData = getRecallData(msgItem, revokeElement);
+            findInCatch.lite_tools_recall = recallData;
+            globalBroadcast("LiteLoader.lite_tools.onMessageRecall", {
+              msgId: findInCatch.msgId,
+              recallData,
+            });
+            if (config.preventMessageRecall.localStorage) {
+              recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+            } else {
+              tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+            }
+            processPic(findInCatch);
+            if (!config.preventMessageRecall.stealthMode) {
+              args[1][events].payload.msgList.splice(i, 1);
+            }
+            log("成功阻止实时撤回");
+          } else {
+            log("撤回消息没有被记录，反撤回失败");
+          }
+        } else if (msgItem.elements.length) {
+          //是正常消息，存入缓存
+          catchMsgList.set(msgItem.msgId, msgItem);
+        }
+      }
+      return;
+    }
+  }
+}
+
+// 激活所有聊天对象
+function activeAllChat(recentContactList) {
+  log("检测到联系人列表更新", recentContactList);
+  const recentContactLists = recentContactList?.payload?.changedRecentContactLists;
+  if (recentContactLists instanceof Array) {
+    for (let i = 0; i < recentContactLists.length; i++) {
+      const list = recentContactLists[i];
+      if (list.changedList instanceof Array) {
+        for (let i = 0; i < list.changedList.length; i++) {
+          const item = list.changedList[i];
+          // 过滤好友，群组，临时会话的消息
+          if (checkChatType(item)) {
+            const peer = {
+              chatType: item.chatType,
+              peerUid: item.peerUid,
+              guildId: "",
+            };
+            if (activeMessageList.has(peer.peerUid)) {
+              continue;
+            }
+            log("激活聊天", activeMessageList.size, peer);
+            activeMessageList.add(peer.peerUid);
+            ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: randomUUID(), eventName: "ns-ntApi-2" }, [
+              "nodeIKernelMsgService/getAioFirstViewLatestMsgsAndAddActiveChat",
+              {
+                peer,
+                cnt: 10,
+              },
+              null,
+            ]);
+          }
+        }
+      }
+    }
+  }
+}
+
+// 替换消息列表中的撤回标记
+function preventRecallMessage(msgList) {
+  let historyMessageRecallList = new Map();
+  for (let i = 0; i < msgList.length; i++) {
+    const msgItem = msgList[i];
+    for (let j = 0; j < msgItem.elements.length; j++) {
+      const msgElements = msgItem.elements[j];
+      // 不是撤回消息，跳过
+      if (!msgElements?.grayTipElement?.revokeElement) {
+        continue;
+      }
+      // 是自己的撤回消息，判断是否开启了拦截自己的撤回消息
+      if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate && !config.preventMessageRecall.preventSelfMsg) {
+        continue;
+      }
+      log("消息列表中找到撤回元素", msgItem);
+      const revokeElement = msgElements.grayTipElement.revokeElement;
+      const findInCatch = catchMsgList.get(msgItem.msgId);
+      if (findInCatch) {
+        // 添加插件撤回标记
+        findInCatch.lite_tools_recall = getRecallData(msgItem, revokeElement);
+        // 判断存储位置
+        if (config.preventMessageRecall.localStorage) {
+          recordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+        } else {
+          tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
+        }
+        processPic(findInCatch);
+        log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
+        if (!config.preventMessageRecall.stealthMode) {
+          msgList[i] = findInCatch;
+        }
+      } else {
+        let recallIdList;
+        // 判断是从哪个对象中读取撤回数据
+        if (config.preventMessageRecall.localStorage) {
+          recallIdList = recordMessageRecallIdList;
+        } else {
+          recallIdList = tempRecordMessageRecallIdList;
+        }
+        const findInRecord = recallIdList.get(msgItem.msgId);
+        if (findInRecord) {
+          processPic(findInRecord);
+          log(`${msgItem.msgId} 从常驻内存中找撤回数据`, findInRecord);
+          if (!config.preventMessageRecall.stealthMode) {
+            findInRecord.lite_tools_recall = getRecallData(msgItem, revokeElement);
+            msgList[i] = findInRecord;
+          }
+        } else if (config.preventMessageRecall.localStorage) {
+          const msgRecallTime = parseInt(msgItem.recallTime) * 1000; // 获取消息发送时间
+          const historyFile = messageRecallFileList.find((sliceTime) => sliceTime >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
+          if (historyFile) {
+            if (!historyMessageRecallList.has(historyFile)) {
+              const messageRecallList = new MessageRecallList(join(recallMsgDataFolderPath, `${historyFile}.json`));
+              historyMessageRecallList.set(historyFile, messageRecallList);
+            }
+            const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
+            if (findInHistory) {
+              processPic(findInHistory);
+              log(`${msgItem.msgId} 从历史切片中找到消息记录`, findInHistory);
+              if (!config.preventMessageRecall.stealthMode) {
+                findInHistory.lite_tools_recall = getRecallData(msgItem, revokeElement);
+                msgList[i] = findInHistory;
+              }
+            } else {
+              log(`${msgItem.msgId} 本地没有撤回记录`);
+            }
+          } else {
+            log(`${msgItem.msgId} 没有对应时间的历史切片`);
+          }
+        } else {
+          log(`${msgItem.msgId} 内存中没有撤回记录`);
+        }
+      }
+    }
+  }
+}
+
+// 初始化本地撤回数据结构
 function initLocalFile() {
   // 初始化撤回消息列表文件路径
   if (!existsSync(recallMsgDataFolderPath)) {
@@ -91,6 +305,24 @@ function initLocalFile() {
       log("获取历史撤回数据列表失败", err);
     }
   });
+}
+
+/**
+ * 返回撤回数据
+ * @param {Object} msgItem 消息对象
+ * @param {Object} revokeElement 撤回元素
+ * @returns {Object} 撤回数据
+ */
+function getRecallData(msgItem, revokeElement) {
+  return {
+    operatorNick: revokeElement.operatorNick, // 执行撤回昵称
+    operatorRemark: revokeElement.operatorRemark, // 执行撤回备注昵称
+    operatorMemRemark: revokeElement.operatorMemRemark, // 执行撤回群昵称
+    origMsgSenderNick: revokeElement.origMsgSenderNick, // 发送消息角色
+    origMsgSenderRemark: revokeElement.origMsgSenderRemark, // 发送消息角色
+    origMsgSenderMemRemark: revokeElement.origMsgSenderMemRemark, // 发送消息角色
+    recallTime: msgItem.recallTime, // 撤回时间
+  };
 }
 
 /**
