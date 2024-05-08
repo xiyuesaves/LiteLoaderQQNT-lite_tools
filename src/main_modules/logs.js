@@ -80,4 +80,16 @@ onUpdateConfig(() => {
   }
 });
 
-export { Logs, webLog };
+function sendLog(args) {
+  if (config?.debug?.showChannedCommunication) {
+    cacheLogs.push(["[send]", ...args]);
+  }
+}
+
+function ipcLog(args) {
+  if (config?.debug?.showChannedCommunication) {
+    cacheLogs.push(["[get]", ...args]);
+  }
+}
+
+export { Logs, webLog, sendLog, ipcLog };
