@@ -3,15 +3,17 @@ import { recallGroupItem, recallTail, recallImgItem, recallMsgItem } from "../re
 document.querySelector(".logs").innerText += "脚本正在工作\n";
 const groupList = new Map();
 const parser = new DOMParser();
+let concatMap = new Map();
 
-lite_tools.onReacllMsgData((_, map) => {
-  const filterListEl = document.querySelector(".qq-number-filter");
+const filterListEl = document.querySelector(".qq-number-filter");
+
+function initPage(map) {
   document.querySelector(".logs").innerText += `获取到消息map 共有${map.size}\n`;
   document.querySelector(".logs").innerText += `开始整理数据\n`;
 
   if (!map.size) {
     const tipsEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
-    tipsEl.querySelector(".chat-type").innerText = `本地没有数据`;
+    tipsEl.querySelector(".chat-type").innerText = `没有撤回数据`;
     filterListEl.appendChild(tipsEl);
   }
 
@@ -24,16 +26,18 @@ lite_tools.onReacllMsgData((_, map) => {
       groupList.set(peerUid, [msgData]);
     }
   });
+
   groupList.forEach((msgArr) => msgArr.sort((a, b) => a.msgTime - b.msgTime));
 
   document.querySelector(".logs").innerText += `整理结束，共有 ${groupList.size} 个独立群组或私聊，输出到dom\n`;
+
   try {
+    document.querySelector(".loading-tips").remove();
     groupList.forEach((msgArr) => {
       const chatTypeName = msgArr[0].chatType === 1 ? "私聊" : "群组";
       const peerName = getPeerName(msgArr);
       const peerUid = msgArr[0].peerUid;
       const groupItemEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
-
       if (msgArr[0].chatType === 1) {
         new Promise(async (res) => {
           document.querySelector(".logs").innerText += `尝试获取 ${msgArr[0].peerUid}\n`;
@@ -66,6 +70,16 @@ lite_tools.onReacllMsgData((_, map) => {
     });
   } catch (err) {
     document.querySelector(".logs").innerText += `出错${err.message}\n`;
+  }
+}
+
+// 接收撤回数据
+lite_tools.onReacllMsgData((_, map, next) => {
+  concatMap = new Map([...concatMap, ...map]);
+  document.querySelector(".logs").innerText += `获取到数据 ${concatMap.size}, ${next}\n`;
+  if (next === 0) {
+    document.querySelector(".logs").innerText += `接收结束，开始加载数据\n`;
+    initPage(concatMap);
   }
 });
 
@@ -137,6 +151,7 @@ function updateUid(uid) {
     document.querySelector(".logs").innerText += `出错${err.message}\n`;
   }
 }
+
 function getTextContent(elements) {
   let textContent = "";
   elements.forEach((element) => {

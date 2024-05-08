@@ -183,12 +183,19 @@ ipcMain.on("LiteLoader.lite_tools.getRecallListNum", (event) => {
 
 // 发送所有的本地撤回数据
 ipcMain.on("LiteLoader.lite_tools.getReacllMsgData", () => {
-  recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", recordMessageRecallIdList.map);
+  log("开始发送所有的本地撤回数据");
+  recallViewWindow.webContents.send(
+    "LiteLoader.lite_tools.onReacllMsgData",
+    recordMessageRecallIdList.map,
+    messageRecallFileList.length - 1,
+  );
   for (let i = 0; i < messageRecallFileList.length; i++) {
-    const fileName = messageRecallFileList[i];
-    const recall = new MessageRecallList(join(recallMsgDataFolderPath, `${fileName}.json`));
-    recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", recall.map);
+    const sliceTime = messageRecallFileList[i];
+    const recall = new MessageRecallList(join(recallMsgDataFolderPath, `${sliceTime}.json`));
+    recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", recall.map, messageRecallFileList.length - i - 1);
+    log("发送切片数据", sliceTime);
   }
+  log("发送结束");
 });
 
 export { messageRecall };
