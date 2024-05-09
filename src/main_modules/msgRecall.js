@@ -9,6 +9,7 @@ import { globalBroadcast } from "./globalBroadcast.js";
 import { checkChatType } from "./checkChatType.js";
 import { findEventIndex } from "./findEventIndex.js";
 import { LimitedMap } from "./LimitedMap.js";
+import { processPic } from "./processPic.js";
 import { Logs } from "./logs.js";
 const log = new Logs("阻止撤回模块");
 
@@ -152,7 +153,7 @@ function messageRecall(args) {
             }
             processPic(findInCatch);
             if (!config.preventMessageRecall.stealthMode) {
-              args[1][events].payload.msgList.splice(i, 1);
+              args[2][msgInfoListUpdate].payload.msgList.splice(i, 1);
             }
             log("成功阻止实时撤回");
           } else {
@@ -208,6 +209,7 @@ function activeAllChat(recentContactList) {
 // 替换消息列表中的撤回标记
 function preventRecallMessage(msgList) {
   let historyMessageRecallList = new Map();
+  log("处理消息列表");
   for (let i = 0; i < msgList.length; i++) {
     const msgItem = msgList[i];
     for (let j = 0; j < msgItem.elements.length; j++) {
@@ -220,7 +222,7 @@ function preventRecallMessage(msgList) {
       if (msgElements?.grayTipElement?.revokeElement?.isSelfOperate && !config.preventMessageRecall.preventSelfMsg) {
         continue;
       }
-      log("消息列表中找到撤回元素", msgItem);
+      log("检测到撤回标记", msgItem);
       const revokeElement = msgElements.grayTipElement.revokeElement;
       const findInCatch = catchMsgList.get(msgItem.msgId);
       if (findInCatch) {
@@ -233,7 +235,7 @@ function preventRecallMessage(msgList) {
           tempRecordMessageRecallIdList.set(findInCatch.msgId, findInCatch);
         }
         processPic(findInCatch);
-        log(`${msgItem.msgId} 从消息列表中找到消息记录`, findInCatch);
+        log(`${msgItem.msgId} 从常驻内存撤回列表中找到消息记录`, findInCatch);
         if (!config.preventMessageRecall.stealthMode) {
           msgList[i] = findInCatch;
         }
@@ -258,8 +260,12 @@ function preventRecallMessage(msgList) {
           const historyFile = messageRecallFileList.find((sliceTime) => sliceTime >= msgRecallTime); // 有概率含有这条撤回消息的切片文件
           if (historyFile) {
             if (!historyMessageRecallList.has(historyFile)) {
+              log(`加载可能含有撤回消息的历史切片 ${historyFile}`);
               const messageRecallList = new MessageRecallList(join(recallMsgDataFolderPath, `${historyFile}.json`));
+              log(messageRecallList.map);
               historyMessageRecallList.set(historyFile, messageRecallList);
+            } else {
+              log("已加载历史切片", historyFile);
             }
             const findInHistory = historyMessageRecallList.get(historyFile).get(msgItem.msgId);
             if (findInHistory) {
@@ -281,6 +287,7 @@ function preventRecallMessage(msgList) {
       }
     }
   }
+  log("消息列表处理完成");
 }
 
 // 初始化本地撤回数据结构
