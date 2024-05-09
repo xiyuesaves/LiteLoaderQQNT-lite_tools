@@ -97,6 +97,11 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updatePlugins: (url) => ipcRenderer.send("LiteLoader.lite_tools.updatePlugins", url),
   // 监听更新事件
   updateEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEvent", callback),
+  // 获取用户配置数据
+  getUserConfig: () => ipcRenderer.invoke("LiteLoader.lite_tools.getUserConfig"),
+
+  deleteUserConfig: (uid) => ipcRenderer.send("LiteLoader.lite_tools.deleteUserConfig", uid),
+  addUserConfig: (uid, value) => ipcRenderer.send("LiteLoader.lite_tools.addUserConfig", uid, value),
   // 主进程向渲染进程发送通知
   onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
   /**

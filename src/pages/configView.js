@@ -16,6 +16,8 @@ import { pluginIcon } from "../render_modules/svg.js";
 import { simpleMarkdownToHTML } from "../render_modules/simpleMarkdownToHTML.js";
 // 更新日志弹窗
 import { openChangeLog } from "../render_modules/openChangeLog.js";
+// 获取当前登录账号信息
+import { getAuthData } from "../render_modules/nativeCall.js";
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
 import { showToast, clearToast } from "../render_modules/toast.js";
@@ -461,6 +463,26 @@ async function onConfigView(view) {
       }
     }
   });
+
+  // 监听独立配置文件切换
+  const userConfig = await lite_tools.getUserConfig();
+  const authData = await getAuthData();
+  const standaloneConfiguration = view.querySelector(".standaloneConfiguration");
+  if (userConfig && authData) {
+    standaloneConfiguration.classList.toggle("is-active", userConfig.has(authData.uid));
+    standaloneConfiguration.addEventListener("click", (event) => {
+      if (standaloneConfiguration.classList.contains("is-active")) {
+        lite_tools.deleteUserConfig(authData.uid);
+        standaloneConfiguration.classList.remove("is-active");
+      } else {
+        lite_tools.addUserConfig(authData.uid, authData.uin);
+        standaloneConfiguration.classList.add("is-active");
+      }
+    });
+  } else {
+    standaloneConfiguration.classList.add("disabled-switch");
+    standaloneConfiguration.setAttribute("title", "当前环境无法启用");
+  }
 
   // 监听设置文件变动
   updateOptions((opt) => {

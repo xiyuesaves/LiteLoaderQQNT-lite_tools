@@ -1,11 +1,11 @@
-import { existsSync, writeFileSync } from "fs";
+import { existsSync, writeFileSync, readFileSync } from "fs";
 
 export class UserConfig {
   constructor(userConfigPath) {
     this.userConfigPath = userConfigPath;
     if (existsSync(userConfigPath)) {
       try {
-        this.list = new Map(require(userConfigPath));
+        this.list = new Map(JSON.parse(readFileSync(userConfigPath, "utf-8")));
       } catch (err) {
         this.list = new Map();
         writeFileSync(userConfigPath, "[]");

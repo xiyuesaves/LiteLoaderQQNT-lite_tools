@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, renameSync, writeFileSync } from "fs";
 import { globalBroadcast } from "./globalBroadcast.js";
+import { settingWindow } from "./captureWindow.js";
 import { join } from "path";
 import { ipcMain } from "electron";
 import { UserConfig } from "./userConfig.js";
@@ -130,6 +131,25 @@ ipcMain.on("LiteLoader.lite_tools.getOptions", (event) => {
 });
 ipcMain.on("LiteLoader.lite_tools.setOptions", (_, newConfig) => {
   updateConfig(newConfig);
+});
+ipcMain.handle("LiteLoader.lite_tools.getUserConfig", () => userConfig.list);
+
+ipcMain.on("LiteLoader.lite_tools.deleteUserConfig", (_, uid) => {
+  userConfig.delete(uid);
+  settingWindow.webContents.send("LiteLoader.lite_tools.onToast", {
+    content: `配置已更新，建议立即重启`,
+    type: "success",
+    duration: "3000",
+  });
+});
+
+ipcMain.on("LiteLoader.lite_tools.addUserConfig", (_, uid, uin) => {
+  userConfig.set(uid, uin);
+  settingWindow.webContents.send("LiteLoader.lite_tools.onToast", {
+    content: `配置已更新，建议立即重启`,
+    type: "success",
+    duration: "3000",
+  });
 });
 
 export { config, userConfig, loadConfigPath, loadUserConfig, updateConfig, onUpdateConfig };

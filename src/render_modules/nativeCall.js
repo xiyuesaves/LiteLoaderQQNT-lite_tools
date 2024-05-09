@@ -356,23 +356,30 @@ function activeChatAndReturnHistory(peer) {
  * 获取记录的账号 - 登录界面选择账号列表
  */
 function getLoginList() {
-  return lite_tools.nativeCall("ns-ntApi", "nodeIKernelLoginService/getLoginList", null, webContentId, true, false);
+  return lite_tools.nativeCall("ns-ntApi", "nodeIKernelLoginService/getLoginList", [], webContentId, true, false);
 }
 
-
+/**
+ * 获取当前登录账号信息
+ */
+function getAuthData() {
+  return lite_tools.nativeCall("ns-GlobalDataApi", "fetchAuthData", [], webContentId, true, false);
+}
 
 export {
   sendMessage,
   sendRawMessage,
   forwardMessage,
-  getUserInfo,
   goMainWindowScene,
+  openGuidMainWindow,
+  getUserInfo,
   getMembersAvatar,
   getGroupsAvatar,
-  openGuidMainWindow,
   getGroupInfo,
   getGroupsList,
+  getAuthData,
   openExternalWindow,
   activeChatAndReturnPreview,
   activeChatAndReturnHistory,
+  getLoginList,
 };
