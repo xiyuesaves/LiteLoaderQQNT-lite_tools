@@ -364,6 +364,14 @@ function deleteAllLocalRecallData() {
   });
 }
 
+function discardDeleteActive(args) {
+  if (config?.preventMessageRecall?.blockAllRetractions && args[3]?.[1]?.[0] === "nodeIKernelMsgService/deleteActiveChatByUid") {
+    log("丢弃删除激活窗口消息", args);
+    return false;
+  }
+  return true;
+}
+
 // 删除所有本地保存撤回记录
 ipcMain.on("LiteLoader.lite_tools.clearLocalStorageRecallMsg", () => {
   log("尝试清除本地数据");
@@ -437,4 +445,4 @@ ipcMain.on("LiteLoader.lite_tools.getReacllMsgData", () => {
   log("发送结束");
 });
 
-export { messageRecall };
+export { messageRecall, discardDeleteActive };

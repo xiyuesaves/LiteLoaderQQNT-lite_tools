@@ -7,7 +7,7 @@ import { preventEscape } from "./main_modules/preventEscape.js";
 import { replaceMiniAppArk } from "./main_modules/replaceMiniAppArk.js";
 import { keywordReminder } from "./main_modules/keywordReminder.js";
 import { captureWindow } from "./main_modules/captureWindow.js";
-import { messageRecall } from "./main_modules/msgRecall.js";
+import { messageRecall, discardDeleteActive } from "./main_modules/msgRecall.js";
 
 // 导入独立功能模块
 import "./main_modules/wallpaper.js";
@@ -52,9 +52,9 @@ function proxyIpcMessage(window) {
     apply(target, thisArg, args) {
       addMsgTail(args);
       ipcLog(args);
-      // if(off){
-      //   return;
-      // }
+      if (!discardDeleteActive(args)) {
+        return;
+      }
       return target.apply(thisArg, args);
     },
   });
