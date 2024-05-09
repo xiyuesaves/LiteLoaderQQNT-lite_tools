@@ -1,7 +1,7 @@
-const http = require("http");
-const https = require("https");
-const logs = require("./logs");
-const log = logs("图片下载");
+import { get as httpGet } from "http";
+import { get as httpsGet } from "https";
+import { Logs } from "./logs.js";
+const log = new Logs("图片下载");
 
 /**
  * 图片下载函数
@@ -9,11 +9,11 @@ const log = logs("图片下载");
  * @returns {Promise}
  */
 function downloadPic(url) {
-  const protocolModule = url.startsWith("https") ? https : http;
+  const get = url.startsWith("https") ? httpsGet : httpGet;
   return new Promise((resolve, reject) => {
     function doRequest(url) {
       log("下载撤回消息中的图片", url);
-      protocolModule.get(url, (response) => {
+      get(url, (response) => {
         if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
           doRequest(response.headers.location);
         } else {
@@ -36,4 +36,5 @@ function downloadPic(url) {
     doRequest(url);
   });
 }
-exports.downloadPic = downloadPic;
+
+export { downloadPic };

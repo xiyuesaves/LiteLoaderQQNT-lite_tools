@@ -1,10 +1,9 @@
-const path = require("path");
-const fs = require("fs");
-const { downloadPic } = require("./downloadPic");
-const logs = require("./logs");
-const log = logs("图片处理模块");
-const BASE_URL = "https://gchat.qpic.cn";
-const TEMP_RKEY = "&rkey=CAQSKAB6JWENi5LMk0kc62l8Pm3Jn1dsLZHyRLAnNmHGoZ3y_gDZPqZt-64";
+import { dirname } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { downloadPic } from "./downloadPic.js";
+import { config } from "./config.js";
+import { Logs } from "./logs.js";
+const log = new Logs("图片处理模块");
 
 // 获取图片链接
 function getPicUrl(picData) {
@@ -12,15 +11,15 @@ function getPicUrl(picData) {
   if (!picData.original) {
     if (picData.originImageUrl) {
       if (picData.originImageUrl.includes("&rkey=")) {
-        return `${BASE_URL}${picData.originImageUrl}`;
+        return `${config.global.PIC_BASE_URL}${picData.originImageUrl}`;
       } else {
-        return `${BASE_URL}${picData.originImageUrl}${TEMP_RKEY}`;
+        return `${config.global.PIC_BASE_URL}${picData.originImageUrl}${config.global.rkey}`;
       }
     } else {
-      return `${BASE_URL}/gchatpic_new/0/0-0-${picData.originImageMd5}/`;
+      return `${config.global.PIC_BASE_URL}/gchatpic_new/0/0-0-${picData.originImageMd5}/`;
     }
   } else {
-    return `${BASE_URL}/gchatpic_new/0/0-0-${picData.md5HexStr.toUpperCase()}/`;
+    return `${config.global.PIC_BASE_URL}/gchatpic_new/0/0-0-${picData.md5HexStr.toUpperCase()}/`;
   }
 }
 
@@ -47,11 +46,11 @@ async function processPic(msgItem) {
         log("该消息含有图片", el);
         const pic = el.picElement;
         const picUrls = getPicArr(pic);
-        if (!fs.existsSync(pic.sourcePath)) {
+        if (!existsSync(pic.sourcePath)) {
           log("下载原图", picUrls);
           const body = await downloadPic(picUrls[0]);
-          fs.mkdirSync(path.dirname(pic.sourcePath), { recursive: true });
-          fs.writeFileSync(pic.sourcePath, body);
+          mkdirSync(dirname(pic.sourcePath), { recursive: true });
+          writeFileSync(pic.sourcePath, body);
         }
         // 修复本地数据中的错误
         if (pic?.thumbPath) {
@@ -67,12 +66,12 @@ async function processPic(msgItem) {
           log("开始下载缩略图", toArray);
           for (let i = 0; i < toArray.length; i++) {
             const picPath = toArray[i][1];
-            if (!fs.existsSync(picPath)) {
+            if (!existsSync(picPath)) {
               try {
                 log("尝试下载", picPath, picUrls[i]);
                 const body = await downloadPic(picUrls[i]);
-                fs.mkdirSync(path.dirname(picPath), { recursive: true });
-                fs.writeFileSync(picPath, body);
+                mkdirSync(dirname(picPath), { recursive: true });
+                writeFileSync(picPath, body);
               } catch (err) {
                 log("缩略图下载失败", picPath, err?.message);
               }
@@ -85,4 +84,5 @@ async function processPic(msgItem) {
     }
   }
 }
-module.exports = processPic;
+
+export { processPic };
