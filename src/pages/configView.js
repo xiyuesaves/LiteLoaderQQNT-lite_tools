@@ -23,7 +23,10 @@ import { Logs } from "../render_modules/logs.js";
 import { showToast, clearToast } from "../render_modules/toast.js";
 const log = new Logs("配置界面");
 
-// 打开设置界面时触发
+/**
+ * 打开设置界面时触发
+ * @param {Element} view 设置页面容器
+ */
 async function onConfigView(view) {
   // 调试用，等待5秒后再执行
   // await new Promise((res) => setTimeout(res, 3000));
@@ -198,7 +201,10 @@ async function onConfigView(view) {
     view.querySelector(".avatar-bottom-li").classList.toggle("disabled-switch", !enabled);
   });
 
-  // 初始化自定义撤回样式
+  /**
+   * 初始化自定义撤回样式
+   * @type {Element}
+   */
   const customTextColorLight = view.querySelector(".custom-text-color-lite");
   customTextColorLight.value = options.preventMessageRecall.textColor.light;
   customTextColorLight.addEventListener("change", (event) => {
