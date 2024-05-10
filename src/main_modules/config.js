@@ -30,10 +30,6 @@ const oldConfigPath = join(pluginDataPath, "settings.json");
  */
 const userConfigPath = join(pluginDataPath, "user.json");
 /**
- * 读取用户独立配置
- */
-const userConfig = new UserConfig(userConfigPath);
-/**
  * 配置文件更新回调函数列表
  */
 const addEventListenderList = new Set();
@@ -62,6 +58,10 @@ if (!existsSync(pluginDataPath)) {
 if (existsSync(oldConfigPath)) {
   renameSync(oldConfigPath, defaultConfigPath);
 }
+/**
+ * 读取用户独立配置
+ */
+const userConfig = new UserConfig(userConfigPath);
 /**
  * 加载用户配置
  * @param {String} userId 根据 userId 来判断读取哪个配置文件
