@@ -81,8 +81,8 @@ class RangesServer {
       return;
     }
 
-    var start = rangeRequest.Start;
-    var end = rangeRequest.End;
+    const start = rangeRequest.Start;
+    const end = rangeRequest.End;
 
     // 如果请求超出文件大小
     if (start >= stat.size || end >= stat.size) {
