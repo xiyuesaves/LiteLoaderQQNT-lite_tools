@@ -514,6 +514,10 @@
   .ml-root.q-scroll-view {
     .ml-item {
       .merge {
+        // 不知道为什么卡片消息会有个单独的margin-top
+        .ark-msg-content-container {
+          margin-top: 0;
+        }
         .message-tips {
           &.reaction-panel {
             .reaction-content {
