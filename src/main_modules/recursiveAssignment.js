@@ -32,4 +32,4 @@ function recursiveAssignment(fileOptions, defaultOptions) {
   return obj;
 }
 
-export default recursiveAssignment;
+export { recursiveAssignment };

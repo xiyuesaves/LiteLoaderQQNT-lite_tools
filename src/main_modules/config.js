@@ -8,7 +8,7 @@ const log = console.log;
 /**
  * 配置合并模块
  */
-import recursiveAssignment from "./recursiveAssignment.js";
+import { recursiveAssignment } from "./recursiveAssignment.js";
 /**
  * 配置模板
  */
