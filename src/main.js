@@ -50,10 +50,14 @@ function proxyIpcMessage(window) {
   const ipc_message_proxy = window.webContents._events["-ipc-message"]?.[0] || window.webContents._events["-ipc-message"];
   const proxyIpcMsg = new Proxy(ipc_message_proxy, {
     apply(target, thisArg, args) {
-      addMsgTail(args);
-      ipcLog(args);
-      if (!discardDeleteActive(args)) {
-        return;
+      try {
+        addMsgTail(args);
+        ipcLog(args);
+        if (!discardDeleteActive(args)) {
+          return;
+        }
+      } catch (err) {
+        log("出现错误", err, err?.stack);
       }
       return target.apply(thisArg, args);
     },
