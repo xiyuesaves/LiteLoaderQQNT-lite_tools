@@ -103,6 +103,7 @@
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
   "preventEscape": false,
+  "escapeWindowWithInput": false,
   "advanceHookVue": false,
   "setWindowIcon": false,
   "autoRelanch": false,

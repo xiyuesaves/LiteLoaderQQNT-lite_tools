@@ -4,6 +4,7 @@ import { loadUserConfig } from "./main_modules/config.js";
 import { Logs, sendLog, ipcLog } from "./main_modules/logs.js";
 import { addMsgTail } from "./main_modules/addMsgTail.js";
 import { preventEscape } from "./main_modules/preventEscape.js";
+import { escapeWindowWithInput } from "./main_modules/escapeWindowWithInput.js";
 import { replaceMiniAppArk } from "./main_modules/replaceMiniAppArk.js";
 import { keywordReminder } from "./main_modules/keywordReminder.js";
 import { captureWindow } from "./main_modules/captureWindow.js";
@@ -35,6 +36,7 @@ function onBrowserWindowCreated(window) {
     proxyIpcMessage(window);
     proxySend(window);
     preventEscape(window);
+    escapeWindowWithInput(window);
   } catch (err) {
     log("出现错误", err);
   }
