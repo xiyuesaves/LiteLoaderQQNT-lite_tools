@@ -39,6 +39,18 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 - 打开设置页面，选择 `轻量工具箱`
 - 滚动到插件页面底部，点击新版本号，在更新日志窗口点击 `更新` 即可
 
+### 从代码中安装
+
+- git clone 或 下载代码到本地
+- 在项目目录（README.md同级目录）打开终端
+- 运行如下指令：
+  ```
+  npm install
+  npm run build
+  ```
+- 运行后将当前目录内的文件复制到QQ NT插件目录
+- 重启 QQNT 安装完成
+
 ### 查看当前版本更新日志
 
 - 打开设置页面，选择 `轻量工具箱`
