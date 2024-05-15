@@ -82,13 +82,16 @@ async function onConfigView(view) {
   initFontList();
   async function initFontList() {
     /**
-     * 获取系统字体列表
-     * @type {Array}
+     * 获取系统字体列表 改用浏览器接口
+     * @type {FontData[]}
      */
-    const systemFonts = await lite_tools.getSystemFonts();
+    const localFonts = await window.queryLocalFonts();
+    const newFont = new Set();
+    // 由于目前不支持字体样式，所以每个字体家族只保留第一个即可
+    const systemFonts = localFonts.filter((FontData) => !newFont.has(FontData.family) && newFont.add(FontData.family));
     const fontListEl = view.querySelector(".font-list");
     const fontInputEl = view.querySelector(".font-input");
-    fontInputEl.value = options.message.overrideFont;
+    fontInputEl.value = options.message.overrideFont.fullName;
     fontInputEl.addEventListener("focus", updateFilterFontList);
     fontInputEl.addEventListener("input", updateFilterFontList);
     fontInputEl.addEventListener("blur", () => {
@@ -97,9 +100,15 @@ async function onConfigView(view) {
     fontListEl.addEventListener("mousedown", (event) => {
       if (event.target.classList.contains("font-item")) {
         const selectFont = event.target.getAttribute("data-value");
-        log("选择了", selectFont);
-        options.message.overrideFont = selectFont;
-        fontInputEl.value = selectFont;
+        const findFontData = systemFonts.find((FontData) => FontData.postscriptName === selectFont);
+        log("选择了", selectFont, findFontData);
+        options.message.overrideFont = {
+          family: findFontData.family,
+          style: findFontData.style,
+          fullName: findFontData.fullName,
+          postscriptName: findFontData.postscriptName,
+        };
+        fontInputEl.value = findFontData.fullName;
         debounceSetOptions();
       }
     });
@@ -109,16 +118,27 @@ async function onConfigView(view) {
         event.target.select();
       }
       fontListEl.classList.add("show");
-      if (event.target.value.length && event.type !== "focus") {
-        const filterFontList = systemFonts.filter((fontName) =>
-          fontName.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()),
-        );
+      if (event.target.value.length && event.type === "input") {
+        const filterFontList = systemFonts.filter((FontData) => {
+          return (
+            FontData.fullName.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()) ||
+            FontData.family.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()) ||
+            FontData.postscriptName.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase())
+          );
+        });
         updateFontList(filterFontList);
       } else {
         updateFontList(systemFonts);
       }
-      options.message.overrideFont = event.target.value;
-      debounceSetOptions();
+      if (event.type === "input") {
+        options.message.overrideFont = {
+          family: "",
+          style: "",
+          fullName: event.target.value,
+          postscriptName: "",
+        };
+        debounceSetOptions();
+      }
     }
     function updateFontList(fontList) {
       fontListEl.innerHTML = "";
@@ -130,15 +150,14 @@ async function onConfigView(view) {
         settingOptionEl.innerText = "没有匹配字体";
         fontListEl.appendChild(settingOptionEl);
       }
-      fontList.forEach((fontName) => {
+      fontList.forEach((FontData) => {
         const settingOptionEl = document.createElement("span");
-        settingOptionEl.setAttribute("data-value", fontName);
-        settingOptionEl.setAttribute("title", fontName);
+        settingOptionEl.setAttribute("data-value", FontData.postscriptName);
+        settingOptionEl.setAttribute("title", FontData.fullName);
+        settingOptionEl.style.fontFamily = FontData.family;
+        settingOptionEl.style.fontStyle = FontData.style;
         settingOptionEl.classList.add("font-item");
-        if (["当前系统不受支持", "获取系统字体列表失败"].includes(fontName)) {
-          settingOptionEl.classList.add("poe-none");
-        }
-        settingOptionEl.innerText = fontName;
+        settingOptionEl.innerText = FontData.fullName;
         fontListEl.appendChild(settingOptionEl);
       });
     }

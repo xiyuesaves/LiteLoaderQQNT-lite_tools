@@ -2,8 +2,9 @@ import { options, updateOptions } from "./options.js";
 import { Logs } from "./logs.js";
 const log = new Logs("全局样式");
 updateOptions(updateFont);
-function updateFont() {
-  document.body.style.fontFamily = options.message.overrideFont;
+async function updateFont() {
+  document.body.style.fontFamily = options.message.overrideFont.family || options.message.overrideFont.fullName;
+  document.body.style.fontStyle = options.message.overrideFont.style;
 }
 /**
  * 注入全局样式
@@ -20,7 +21,10 @@ function initStyle() {
   const backgroundStyle = document.createElement("link");
   backgroundStyle.id = "liteToolsBackgroundStyle";
   if (options.background.enabled) {
-    backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`);
+    backgroundStyle.setAttribute(
+      "href",
+      `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`,
+    );
   }
   backgroundStyle.setAttribute("rel", "stylesheet");
   document.body.appendChild(backgroundStyle);
@@ -29,7 +33,10 @@ function initStyle() {
   lite_tools.updateStyle(() => {
     log("更新styleCss");
     if (options.background.enabled) {
-      backgroundStyle.setAttribute("href", `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`);
+      backgroundStyle.setAttribute(
+        "href",
+        `local:///${LiteLoader.plugins.lite_tools.path.plugin}/src/css/style.css?r=${new Date().getTime()}`,
+      );
     }
   });
 
