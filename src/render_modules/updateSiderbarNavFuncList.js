@@ -39,28 +39,9 @@ export function updateSiderbarNavFuncList(navStore) {
       };
     }
   });
-  if (
-    options.sidebar.top
-      .map((el) => el.name)
-      .sort()
-      .join() !==
-      top
-        .map((el) => el.name)
-        .sort()
-        .join() ||
-    options.sidebar.bottom
-      .map((el) => el.name)
-      .sort()
-      .join() !==
-      bottom
-        .map((el) => el.name)
-        .sort()
-        .join()
-  ) {
-    log("更新侧边栏数据", top, bottom);
-    lite_tools.sendSidebar({
-      top,
-      bottom,
-    });
-  }
+  log("更新侧边栏数据", top, bottom);
+  lite_tools.sendSidebar({
+    top,
+    bottom,
+  });
 }
