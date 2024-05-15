@@ -14,7 +14,11 @@ export function escapeWindowWithInput(window) {
     if (input.key == "Escape") {
         try {
             if (config.escapeWindowWithInput && !config.preventEscape) {
-                window.hide();
+                if (window.isClosable()) {
+                    window.close();
+                } else {
+                    window.hide();
+                }
             }
         } catch (err) {
             log("出现错误", err, err?.stack);
