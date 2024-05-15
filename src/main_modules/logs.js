@@ -16,6 +16,8 @@ class Logs {
     if (config?.debug?.mainConsole) {
       console.log(`[${this.logName}]`, ...args);
       cacheLogs.push([`[${this.logName}]`, ...args]);
+    } else if (config?.debug?.mainConsole === undefined) {
+      cacheLogs.push([`[${this.logName}]`, ...args]);
     }
   }
 }
