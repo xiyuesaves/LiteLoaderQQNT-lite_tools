@@ -13,7 +13,6 @@ import { messageRecall, discardDeleteActive } from "./main_modules/msgRecall.js"
 // 导入独立功能模块
 import "./main_modules/wallpaper.js";
 import "./main_modules/initStyle.js";
-import "./main_modules/getFonts.js";
 import "./main_modules/localEmoticons.js";
 import "./main_modules/getWebPreview.js";
 import "./main_modules/updatePlugins.js";

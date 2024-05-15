@@ -65,10 +65,15 @@
     "selfMsgToLeft": false,
     "onlyAvatar": false,
     "removeBubbleLimit": false,
-    "overrideFont": "",
     "removeVipName": false,
     "imageAutoWidth": false,
     "currentLocation": false,
+    "overrideFont": {
+      "family": "",
+      "style": "",
+      "fullName": "",
+      "postscriptName": ""
+    },
     "preventNSFW": {
       "enabled": false,
       "includesAnimationEmoticons": false,

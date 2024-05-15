@@ -1,5 +1,5 @@
 import { join } from "path";
-import { readdir, existsSync, mkdirSync, writeFileSync, unlink } from "fs";
+import { existsSync, mkdirSync, writeFileSync, unlink, readdirSync } from "fs";
 import { ipcMain, dialog, BrowserWindow } from "electron";
 import { randomUUID } from "crypto";
 import { config, loadConfigPath, onUpdateConfig } from "./config.js";
@@ -65,26 +65,34 @@ const catchMsgList = new LimitedMap(20000);
  */
 const activeMessageList = new Set();
 
+// 初始化模块
+let initModule = false;
+
 /**
  * 加载阻止撤回模块
  * @param {String} loadConfigPath 本地配置文件路径
  */
 onUpdateConfig(() => {
-  log("加载配置文件", loadConfigPath);
-  recallMsgDataFolderPath = join(loadConfigPath, "messageRecall");
-  recallMsgDataPath = join(recallMsgDataFolderPath, "latestRecallMessage.json");
-  initLocalFile();
-  recordMessageRecallIdList = new MessageRecallList(recallMsgDataPath, recallMsgDataFolderPath, 100);
-  tempRecordMessageRecallIdList = new Map();
-  // 监听常驻历史撤回记录实例创建新的文件切片
-  recordMessageRecallIdList.onNewFile((sliceTime) => {
-    messageRecallFileList.push(sliceTime);
-    messageRecallFileList.sort((a, b) => a - b);
-  });
-  recordMessageRecallIdList.onNewRecallMsg(() => {
+  if (!initModule) {
+    initModule = true;
+    log("加载配置文件", loadConfigPath);
+    recallMsgDataFolderPath = join(loadConfigPath, "messageRecall");
+    recallMsgDataPath = join(recallMsgDataFolderPath, "latestRecallMessage.json");
+    initLocalFile();
+    recordMessageRecallIdList = new MessageRecallList(recallMsgDataPath, recallMsgDataFolderPath, 100);
+    tempRecordMessageRecallIdList = new Map();
     localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
-    globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
-  });
+    // 监听常驻历史撤回记录实例创建新的文件切片
+    recordMessageRecallIdList.onNewFile((sliceTime) => {
+      messageRecallFileList.push(sliceTime);
+      messageRecallFileList.sort((a, b) => a - b);
+    });
+    recordMessageRecallIdList.onNewRecallMsg(() => {
+      localRecallMsgNum = messageRecallFileList.length * 100 + recordMessageRecallIdList.map.size;
+      log("更新本地撤回消息数量", localRecallMsgNum);
+      globalBroadcast("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
+    });
+  }
 });
 
 // 阻止撤回send
@@ -292,26 +300,24 @@ function preventRecallMessage(msgList) {
 
 // 初始化本地撤回数据结构
 function initLocalFile() {
-  // 初始化撤回消息列表文件路径
-  if (!existsSync(recallMsgDataFolderPath)) {
-    mkdirSync(recallMsgDataFolderPath, { recursive: true });
-  }
-  // 初始化当前撤回消息保存文件
-  if (!existsSync(recallMsgDataPath)) {
-    writeFileSync(recallMsgDataPath, JSON.stringify([], null, 4));
-  }
-  // 获取当前撤回消息文件列表
-  readdir(recallMsgDataFolderPath, (err, dirList) => {
-    if (!err) {
-      messageRecallFileList = dirList
-        .filter((item) => parseInt(item).toString().length === 13)
-        .map((item) => parseInt(item.replace(".json", "")))
-        .sort((a, b) => a - b);
-      localRecallMsgNum = messageRecallFileList.length * 100;
-    } else {
-      log("获取历史撤回数据列表失败", err);
+  try {
+    // 初始化撤回消息列表文件路径
+    if (!existsSync(recallMsgDataFolderPath)) {
+      mkdirSync(recallMsgDataFolderPath, { recursive: true });
     }
-  });
+    // 初始化当前撤回消息保存文件
+    if (!existsSync(recallMsgDataPath)) {
+      writeFileSync(recallMsgDataPath, JSON.stringify([], null, 4));
+    }
+    // 获取当前撤回消息文件列表
+    const dirList = readdirSync(recallMsgDataFolderPath);
+    messageRecallFileList = dirList
+      .filter((item) => parseInt(item).toString().length === 13)
+      .map((item) => parseInt(item.replace(".json", "")))
+      .sort((a, b) => a - b);
+  } catch (err) {
+    log("初始化本地撤回数据结构失败", err);
+  }
 }
 
 /**
@@ -389,8 +395,8 @@ ipcMain.on("LiteLoader.lite_tools.clearLocalStorageRecallMsg", () => {
     deleteAllLocalRecallData();
     messageRecallFileList = [];
     localRecallMsgNum = 0;
-    settingWindow.webContents.send("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
     log("已清空本地消息记录");
+    settingWindow.webContents.send("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
   }
 });
 
@@ -431,11 +437,7 @@ ipcMain.on("LiteLoader.lite_tools.getRecallListNum", (event) => {
 // 发送所有的本地撤回数据
 ipcMain.on("LiteLoader.lite_tools.getReacllMsgData", () => {
   log("开始发送所有的本地撤回数据");
-  recallViewWindow.webContents.send(
-    "LiteLoader.lite_tools.onReacllMsgData",
-    recordMessageRecallIdList.map,
-    messageRecallFileList.length - 1,
-  );
+  recallViewWindow.webContents.send("LiteLoader.lite_tools.onReacllMsgData", recordMessageRecallIdList.map, messageRecallFileList.length);
   for (let i = 0; i < messageRecallFileList.length; i++) {
     const sliceTime = messageRecallFileList[i];
     const recall = new MessageRecallList(join(recallMsgDataFolderPath, `${sliceTime}.json`));

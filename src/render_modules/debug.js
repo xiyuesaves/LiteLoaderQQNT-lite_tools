@@ -11,9 +11,26 @@ console.log("通信端口", port);
   while (loop) {
     try {
       let log = superjson.parse(await (await fetch(`http://localhost:${port}/`)).text());
+      // 稍微限制下请求速度
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
       if (log && log.length) {
         for (let i = 0; i < log.length; i++) {
           const singLog = log[i];
+          // 根据日志类型使用颜色区分
+          switch (singLog[0]) {
+            case "[send]":
+              singLog[0] = `%c[send]`;
+              singLog.splice(1, 0, "background:#87e8de;color:#000000D9;padding:2px 4px;border-radius: 4px;width:56px;");
+              break;
+            case "[get]":
+              singLog[0] = `%c[get]`;
+              singLog.splice(1, 0, "background:#b7eb8f;color:#000000D9;padding:2px 4px;border-radius: 4px;width:56px;");
+              break;
+            default:
+              singLog[0] = `%c${singLog[0]}`;
+              singLog.splice(1, 0, "background:#ffd666;color:#000000D9;padding:2px 4px;border-radius: 4px;");
+          }
           if (singLog[3] !== "info" && (singLog?.[1] === "send" ? singLog?.[4]?.[1] : true)) {
             console.log(...singLog);
           }
