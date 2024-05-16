@@ -342,12 +342,9 @@ function getRecallData(msgItem, revokeElement) {
  * 清理本地撤回数据
  */
 function deleteAllLocalRecallData() {
-  // 读取目录中的所有文件
-  readdir(recallMsgDataFolderPath, (err, files) => {
-    if (err) {
-      console.error("无法读取该文件夹:", err);
-      return;
-    }
+  try {
+    // 读取目录中的所有文件
+    const files = readdirSync(recallMsgDataFolderPath);
     // 遍历文件数组，删除历史数据
     files.forEach((file) => {
       const filePath = join(recallMsgDataFolderPath, file);
@@ -362,12 +359,22 @@ function deleteAllLocalRecallData() {
         });
       }
     });
+    messageRecallFileList = [];
+    localRecallMsgNum = 0;
+    settingWindow.webContents.send("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
     settingWindow.webContents.send("LiteLoader.lite_tools.onToast", {
       content: `删除成功`,
       type: "success",
       duration: "3000",
     });
-  });
+    log("已清空本地撤回数据");
+  } catch (err) {
+    settingWindow.webContents.send("LiteLoader.lite_tools.onToast", {
+      content: `删除失败：${err.message}`,
+      type: "error",
+      duration: "3000",
+    });
+  }
 }
 
 function discardDeleteActive(args) {
@@ -392,11 +399,8 @@ ipcMain.on("LiteLoader.lite_tools.clearLocalStorageRecallMsg", () => {
   if (result === 0) {
     recordMessageRecallIdList.map = new Map();
     recordMessageRecallIdList.saveFile();
+    log("已清空常驻历史撤回记录");
     deleteAllLocalRecallData();
-    messageRecallFileList = [];
-    localRecallMsgNum = 0;
-    log("已清空本地消息记录");
-    settingWindow.webContents.send("LiteLoader.lite_tools.updateRecallListNum", localRecallMsgNum);
   }
 });
 
