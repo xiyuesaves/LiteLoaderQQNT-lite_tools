@@ -104,9 +104,9 @@ async function onConfigView(view) {
       for (let i = startIndex; i < endIndex; i++) {
         const target = rendererList[i];
         if (target) {
-          target.style.fontFamily = target.FontData.fullName;
+          target.style.fontFamily = `"${target.FontData.fullName}"`;
           if (target.FontData.family) {
-            target.style.fontFamily += `,${target.FontData.family}`;
+            target.style.fontFamily += `, "${target.FontData.family}"`;
           }
           target.style.fontStyle = ["italic", "oblique"].includes(target.FontData.style.toLocaleLowerCase())
             ? target.FontData.style
