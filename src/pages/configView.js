@@ -88,6 +88,33 @@ async function onConfigView(view) {
     const systemFonts = await window.queryLocalFonts();
     const fontListEl = view.querySelector(".font-list");
     const fontInputEl = view.querySelector(".font-input");
+    let listHeight = 0;
+    let rendererList = [];
+    function resizeHeight() {
+      listHeight = fontListEl.offsetHeight;
+      fontListEl.dispatchEvent(new Event("scroll"));
+      log("更新列表高度", listHeight);
+    }
+    const resizeObserver = new ResizeObserver(resizeHeight);
+    resizeObserver.observe(fontListEl);
+    fontListEl.addEventListener("scroll", (event) => {
+      // 计算可见范围并更新字体样式
+      const startIndex = Math.floor(event.target.scrollTop / 26);
+      const endIndex = startIndex + Math.ceil(listHeight / 26);
+      for (let i = startIndex; i < endIndex; i++) {
+        const target = rendererList[i];
+        if (target) {
+          target.style.fontFamily = target.FontData.fullName;
+          if (target.FontData.family) {
+            target.style.fontFamily += `,${target.FontData.family}`;
+          }
+          target.style.fontStyle = ["italic", "oblique"].includes(target.FontData.style.toLocaleLowerCase())
+            ? target.FontData.style
+            : "normal";
+        }
+      }
+      log("滚动列表", startIndex, endIndex);
+    });
     fontInputEl.value = options.message.overrideFont.fullName;
     fontInputEl.addEventListener("focus", updateFilterFontList);
     fontInputEl.addEventListener("input", updateFilterFontList);
@@ -96,12 +123,11 @@ async function onConfigView(view) {
     });
     fontListEl.addEventListener("mousedown", (event) => {
       if (event.target.classList.contains("font-item")) {
-        const selectFont = event.target.getAttribute("data-value");
-        const findFontData = systemFonts.find((FontData) => FontData.postscriptName === selectFont);
-        log("选择了", selectFont, findFontData);
+        const findFontData = event.target.FontData;
+        log("选择了", findFontData);
         options.message.overrideFont = {
           family: findFontData.family,
-          style: findFontData.style,
+          style: ["italic", "oblique"].includes(findFontData.style.toLocaleLowerCase()) ? findFontData.style : "normal",
           fullName: findFontData.fullName,
           postscriptName: findFontData.postscriptName,
         };
@@ -136,8 +162,10 @@ async function onConfigView(view) {
         };
         debounceSetOptions();
       }
+      fontListEl.dispatchEvent(new Event("scroll"));
     }
     function updateFontList(fontList) {
+      rendererList = [];
       fontListEl.innerHTML = "";
       if (!fontList.length) {
         const settingOptionEl = document.createElement("span");
@@ -149,12 +177,10 @@ async function onConfigView(view) {
       }
       fontList.forEach((FontData) => {
         const settingOptionEl = document.createElement("span");
-        settingOptionEl.setAttribute("data-value", FontData.postscriptName);
-        settingOptionEl.setAttribute("title", FontData.fullName);
-        settingOptionEl.style.fontFamily = FontData.family;
-        settingOptionEl.style.fontStyle = FontData.style;
         settingOptionEl.classList.add("font-item");
         settingOptionEl.innerText = FontData.fullName;
+        settingOptionEl.FontData = FontData;
+        rendererList.push(settingOptionEl);
         fontListEl.appendChild(settingOptionEl);
       });
     }
