@@ -3,7 +3,10 @@ import { Logs } from "./logs.js";
 const log = new Logs("全局样式");
 updateOptions(updateFont);
 async function updateFont() {
-  document.body.style.fontFamily = options.message.overrideFont.family || options.message.overrideFont.fullName;
+  document.body.style.fontFamily = options.message.overrideFont.fullName;
+  if (options.message.overrideFont.family) {
+    document.body.style.fontFamily += `,${options.message.overrideFont.family}`;
+  }
   document.body.style.fontStyle = options.message.overrideFont.style;
 }
 /**
