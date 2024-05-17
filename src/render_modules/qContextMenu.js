@@ -53,6 +53,11 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     scrollEl.classList.add("lite-tools-scroll-box");
     subMenuEl.appendChild(scrollEl);
     subMenuEl.classList.add("lite-tools-sub-context-menu");
+    // 初始化坐标
+    subMenuEl.style.setProperty("--top", `0vh`);
+    subMenuEl.style.setProperty("--left", `0vh`);
+    subMenuEl.style.setProperty("--height", `0px`);
+    subMenuEl.style.setProperty("--width", `0px`);
     subMenuEl.addEventListener("mouseenter", () => {
       clearTimeout(closeSubMenuTimeout);
       subMenuEl.classList.add("show");
