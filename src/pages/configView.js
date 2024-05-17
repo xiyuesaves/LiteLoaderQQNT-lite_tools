@@ -178,6 +178,7 @@ async function onConfigView(view) {
       fontList.forEach((FontData) => {
         const settingOptionEl = document.createElement("span");
         settingOptionEl.classList.add("font-item");
+        settingOptionEl.setAttribute("title", FontData.fullName);
         settingOptionEl.innerText = FontData.fullName;
         settingOptionEl.FontData = FontData;
         rendererList.push(settingOptionEl);
