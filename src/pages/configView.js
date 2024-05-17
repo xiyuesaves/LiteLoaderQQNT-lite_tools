@@ -85,10 +85,7 @@ async function onConfigView(view) {
      * 获取系统字体列表 改用浏览器接口
      * @type {FontData[]}
      */
-    const localFonts = await window.queryLocalFonts();
-    const newFont = new Set();
-    // 由于目前不支持字体样式，所以每个字体家族只保留第一个即可
-    const systemFonts = localFonts.filter((FontData) => !newFont.has(FontData.family) && newFont.add(FontData.family));
+    const systemFonts = await window.queryLocalFonts();
     const fontListEl = view.querySelector(".font-list");
     const fontInputEl = view.querySelector(".font-input");
     fontInputEl.value = options.message.overrideFont.fullName;
