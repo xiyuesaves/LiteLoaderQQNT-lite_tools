@@ -28,7 +28,7 @@ let emoticonsList = [];
  * 文件监听函数信号
  * @type {AbortController[]}
  */
-let signals = [];
+let signals = new Map();
 /**
  * 加载文件夹路径
  */
@@ -39,6 +39,29 @@ let localPath = null;
  */
 let oldCommonlyNum = -1;
 
+/**
+ * 广播表情列表更新添加防抖
+ */
+const updateEmoticonList = debounce(() => {
+  log("广播本地表情列表更新");
+  try {
+    // 将所有的图片路径放入Set
+    const newPaths = new Set(
+      emoticonsList.flatMap((emoticons) => {
+        return emoticons.list.map((item) => item.path);
+      }),
+    );
+    // 如果没有启用历史表情
+    localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
+    globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
+    log("广播本地表情列表更新-完成");
+  } catch (err) {
+    log("广播本地表情列表失败", err);
+  }
+}, 1000);
+
 onUpdateConfig(async () => {
   // 初始化配置文件
   localEmoticonsConfigPath = join(loadConfigPath, "localEmoticonsConfig.json");
@@ -46,17 +69,15 @@ onUpdateConfig(async () => {
     writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfigTemplate, null, 4));
   }
   localEmoticonsConfig = require(localEmoticonsConfigPath);
-  log("本地表情配置文件", localPath, config.localEmoticons.localPath);
+  log("配置更新", localPath, config.localEmoticons.localPath);
   if (config.localEmoticons.enabled && config.localEmoticons.localPath) {
     if (localPath !== config.localEmoticons.localPath) {
       if (localPath !== null) {
         resetCommonlyEmoticons();
       }
       localPath = config.localEmoticons.localPath;
-      signals.forEach((signal) => {
-        signal.abort();
-      });
-      log("功能启用，开始加载文件夹", config.localEmoticons.localPath);
+      abortAllWatchers();
+      log("加载表情文件夹", config.localEmoticons.localPath);
       emoticonsList = await loadFolder(config.localEmoticons.localPath);
       updateEmoticonList();
     } else {
@@ -66,9 +87,7 @@ onUpdateConfig(async () => {
     log("功能关闭");
     localPath = null;
     emoticonsList = [];
-    signals.forEach((signal) => {
-      signal.abort();
-    });
+    abortAllWatchers();
   }
   // 如果没有启用历史表情，或者关闭了历史表情，则清除数据
   if (!config.localEmoticons.commonlyEmoticons) {
@@ -88,21 +107,64 @@ onUpdateConfig(async () => {
   }
 });
 
+// 异步锁
+class AsyncLock {
+  constructor() {
+    this.locked = false;
+  }
+  async execute(asyncFn) {
+    if (this.locked) {
+      log("上一次操作还没有结束，阻止新的请求");
+      return;
+    }
+
+    this.locked = true;
+    try {
+      await asyncFn();
+    } catch (error) {
+      log(`操作时出错: ${error.message}`);
+    } finally {
+      this.locked = false;
+    }
+  }
+}
+const loadEmoticonsLock = new AsyncLock();
+
+// 文件监听函数，添加防抖
 const folderUpdate = debounce(async () => {
-  log("检测到文件夹更新");
-  emoticonsList = await loadFolder(config.localEmoticons.localPath);
+  await loadEmoticonsLock.execute(async () => {
+    // 在更新列表前先停止对所有文件夹的监听事件
+    abortAllWatchers();
+    emoticonsList = await loadFolder(config.localEmoticons.localPath);
+  });
   updateEmoticonList();
-}, 100);
+}, 1000);
+
+function abortAllWatchers() {
+  signals.forEach((signal) => {
+    signal.abort();
+  });
+  signals.clear();
+  log("已取消所有监听");
+}
 
 /**
  * 批量监听文件夹变动
  * @param {String} String 文件夹路径
  */
 function addWatchFolders(path) {
-  const signal = new AbortController();
-  signals.push(signal);
-  const watcher = watch(path, { signal: signal.signal });
-  watcher.on("change", folderUpdate);
+  if (!signals.has(path)) {
+    const signal = new AbortController();
+    signals.set(path, signal);
+    const watcher = watch(path, { signal: signal.signal });
+    watcher.on("change", (event) => {
+      log("检测到文件夹更新", path, event);
+      folderUpdate();
+    });
+    log("添加监听", path);
+  } else {
+    log("无需重复监听", path);
+  }
 }
 
 /**
@@ -163,26 +225,6 @@ async function loadFolder(folderPath, itemIndex = 0) {
     }
   }
   return list;
-}
-
-function updateEmoticonList() {
-  log("广播本地表情列表更新");
-  try {
-    // 将所有的图片路径放入Set
-    const newPaths = new Set(
-      emoticonsList.flatMap((emoticons) => {
-        return emoticons.list.map((item) => item.path);
-      }),
-    );
-    // 如果没有启用历史表情
-    localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
-    globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
-    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
-    writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
-    log("广播本地表情列表更新-完成");
-  } catch (err) {
-    log("广播本地表情列表失败", err);
-  }
 }
 
 /**
