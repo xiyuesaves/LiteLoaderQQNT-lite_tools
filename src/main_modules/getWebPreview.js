@@ -6,7 +6,6 @@ import { config, onUpdateConfig } from "./config.js";
 import { Logs } from "./logs.js";
 const log = new Logs("链接预览");
 
-
 // 把缓存逻辑移到这里，好让所有页面共用
 // 缓存200条url预览数据，因为增加了图片数据，为了避免内存占用过多所以只缓存200条
 const MAX_CACHE_SIZE = 200;
@@ -58,6 +57,7 @@ async function getWebText(url) {
  */
 async function getMeatData(url) {
   if (await checkContentType(url, "text/html")) {
+    log("目标为HTML，开始请求内容");
     const res = await getWebText(url);
     if (!res.success) {
       return res;
@@ -69,7 +69,7 @@ async function getMeatData(url) {
         err: "没有找到meta数据",
       };
     }
-    console.log(metaTags);
+    log("请求成功", metaTags);
     const meta = {};
     metaTags.forEach((tag) => {
       const name = tag.match(/name=["']([^"']+)["']/) || tag.match(/<title>([^<]+)<\/title>/);
@@ -81,11 +81,13 @@ async function getMeatData(url) {
     });
     const urlObj = new URL(url);
     meta.url = urlObj.host.replace(/^www\./, "").replace(/^.{1}/, (str) => str.toUpperCase());
+    log("获取到元数据", meta);
     return {
       success: true,
       data: meta,
     };
   } else {
+    log("目标不是网页", url);
     return {
       success: false,
       err: "目标不是网页",
@@ -110,6 +112,7 @@ async function getMeatData(url) {
  *                           - err: 如果获取不成功，则为错误消息。
  */
 async function getWebPrevew(url) {
+  log("获取预览数据", url);
   try {
     let standardData = previewCatch.get(url);
     if (!standardData) {
@@ -147,6 +150,7 @@ async function getWebPrevew(url) {
       data: standardData,
     };
   } catch (err) {
+    log("出现错误", err, err.stack);
     return {
       success: false,
       err: `代码错误 ${err}`,
@@ -177,16 +181,20 @@ async function checkContentType(href, target) {
     const req = request(reqOptions, (res) => {
       const contentType = res.headers["content-type"];
       if (contentType.startsWith(target)) {
+        log("匹配成功", href, contentType);
         resolve(true);
         req.destroy();
       } else {
+        log("匹配失败", href, contentType);
         resolve(false);
         req.destroy();
       }
     });
-    req.on("error", () => {
+    req.on("error", (err) => {
+      log("请求失败", err);
       resolve(false);
     });
+    log("结束请求");
     req.end();
   });
 }
@@ -198,15 +206,21 @@ async function checkContentType(href, target) {
  * @return {Promise<string|boolean>} 如果请求成功，则解析为图像的base64编码字符串，如果请求失败，则返回 false。
  */
 async function imageUrlToBase64(url) {
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      "User-Agent": config.global.UA,
-    },
-  });
-  if (response.status === 200) {
-    return `data:image/jpeg;base64,${Buffer.from(await response.arrayBuffer()).toString("base64")}`;
-  } else {
+  log("获取图像", url);
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "User-Agent": config.global.UA,
+      },
+    });
+    if (response.status === 200) {
+      return `data:image/jpeg;base64,${Buffer.from(await response.arrayBuffer()).toString("base64")}`;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    log("图片请求失败", err);
     return false;
   }
 }
