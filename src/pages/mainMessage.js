@@ -52,7 +52,12 @@ let uidToMessageId = new Map();
 /**
  * 当前聊天对象的uid
  */
-let curUid = undefined;
+let curUid;
+
+/**
+ * 侧边栏宽度
+ */
+let asideWidth;
 
 /**
  * 更新可见消息id
@@ -177,6 +182,23 @@ function chatMessage() {
 
   // 消息列表只显示头像
   document.querySelector(".two-col-layout__aside")?.classList?.toggle("only-avatar", options.message.onlyAvatar);
+  const twoLayOut = document.querySelector(".tab-container>.message-panel>.two-col-layout");
+  if (twoLayOut?.__VUE__?.[0]?.props?.asideMinWidth) {
+    if (first("initLayoutSide")) {
+      initLayoutSide(twoLayOut.__VUE__[0].props);
+    }
+    if (options.message.onlyAvatar) {
+      twoLayOut.__VUE__[0].props.asideMinWidth = 72;
+      asideWidth = twoLayOut.__VUE__[0].props.asideWidth;
+      twoLayOut.__VUE__[0].props.asideWidth = 72;
+    } else {
+      twoLayOut.__VUE__[0].props.asideMinWidth = 160;
+      if (asideWidth) {
+        twoLayOut.__VUE__[0].props.asideWidth = asideWidth;
+        asideWidth = undefined;
+      }
+    }
+  }
 
   disableQtag();
   localEmoticons();
@@ -184,4 +206,65 @@ function chatMessage() {
   observerChatArea();
   observeChatBox();
   hookUpdate();
+}
+
+function initLayoutSide(props) {
+  let showMain = props.showMain;
+  let mainMinWidth = props.mainMinWidth;
+  Object.defineProperty(props, "showMain", {
+    enumerable: true,
+    configurable: true,
+    get() {
+      if (options.message.onlyAvatar) {
+        return true;
+      } else {
+        return showMain;
+      }
+    },
+    set(newVal) {
+      showMain = newVal;
+    },
+  });
+  Object.defineProperty(props, "mainMinWidth", {
+    enumerable: true,
+    configurable: true,
+    get() {
+      if (options.message.onlyAvatar) {
+        return 0;
+      } else {
+        return mainMinWidth;
+      }
+    },
+    set(newVal) {
+      mainMinWidth = newVal;
+    },
+  });
+  // Object.defineProperty(props, "asideWidth", {
+  //   enumerable: true,
+  //   configurable: true,
+  //   get() {
+  //     if (options.message.onlyAvatar) {
+  //       return 72;
+  //     } else {
+  //       return asideWidth;
+  //     }
+  //   },
+  //   set(newVal) {
+  //     asideWidth = newVal;
+  //   },
+  // });
+  // Object.defineProperty(props, "asideMinWidth", {
+  //   enumerable: true,
+  //   configurable: true,
+  //   get() {
+  //     if (options.message.onlyAvatar) {
+  //       return 72;
+  //     } else {
+  //       return asideMinWidth;
+  //     }
+  //   },
+  //   set(newVal) {
+  //     asideMinWidth = newVal;
+  //   },
+  // });
 }
