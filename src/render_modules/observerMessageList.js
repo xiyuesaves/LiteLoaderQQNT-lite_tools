@@ -3,6 +3,7 @@ import { messageRecall } from "./messageRecall.js";
 import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
 import { getPeer, addEventPeerChange } from "./curAioData.js";
+import { checkChatType } from "./checkChatType.js";
 import { createHtmlCard } from "./createHtmlCard.js";
 import { showWebPreview } from "./showWebPreview.js";
 import { Logs } from "./logs.js";
@@ -45,9 +46,18 @@ const urlMatch = /https?:\/\/[\w\-_]+\.[\w]{1,10}[\S]+/i;
 let checkNSFW = new Set();
 
 /**
+ * 获取当前peer
+ */
+let peer = getPeer();
+
+/**
  * 处理当前可见的消息列表
  */
 function processingMsgList() {
+  // 消息类型不在处理范围
+  if (!checkChatType(peer)) {
+    return;
+  }
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
   const curMsgsLength = curMsgs.length;
@@ -103,6 +113,10 @@ function processingMsgList() {
  * 图片组件单独处理
  */
 function imageComponent(component) {
+  // 消息类型不在处理范围
+  if (!checkChatType(peer)) {
+    return;
+  }
   if (options.message.preventNSFW.enabled) {
     const vnode = component?.vnode?.el;
     const elementType = vnode?.classList?.contains("reply-element") ? "reply" : vnode?.classList?.contains("image") && "image";
@@ -197,6 +211,10 @@ window?.__VUE_MOUNT__?.push((component) => {
  * @param {Object} msgRecord 目标消息对象
  */
 function singleMessageProcessing(target, msgRecord) {
+  // 消息类型不在处理范围
+  if (!checkChatType(peer)) {
+    return;
+  }
   // 处理消息列表
   if (target?.classList && target?.classList?.contains("message") && msgRecord) {
     const messageEl = target;
@@ -204,7 +222,6 @@ function singleMessageProcessing(target, msgRecord) {
       if (chatTypes.includes(msgRecord?.chatType)) {
         // 尺寸监听器
         resizeObserver.observe(messageEl);
-
         // 重写卡片消息
         if (options.background.enabled && options.background.redrawCard) {
           const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
@@ -388,14 +405,12 @@ function singleMessageProcessing(target, msgRecord) {
                   doubleClick = false;
                 }, 500);
                 if (doubleClick) {
-                  const peer = getPeer();
                   log("复读消息", peer);
                   forwardMessage(peer, peer, [msgId]);
                   doubleClick = false;
                 }
                 doubleClick = true;
               } else {
-                const peer = getPeer();
                 log("复读消息", peer);
                 forwardMessage(peer, peer, [msgId]);
               }
@@ -542,8 +557,9 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// 当peer变化时，清空缓存
-addEventPeerChange(() => {
+// 监听peer更新
+addEventPeerChange((newPeer) => {
+  peer = newPeer;
   checkNSFW = new Set();
 });
 
