@@ -64,6 +64,7 @@
     "mergeMessageKeepTime": false,
     "selfMsgToLeft": false,
     "onlyAvatar": false,
+    "unlockMainMinSize": false,
     "removeBubbleLimit": false,
     "removeVipName": false,
     "imageAutoWidth": false,

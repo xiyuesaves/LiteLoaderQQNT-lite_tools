@@ -60,6 +60,11 @@ let curUid;
 let asideWidth;
 
 /**
+ * 是否是窄屏方法的引用
+ */
+let setIsNarrowWindow;
+
+/**
  * 更新可见消息id
  */
 const updateVisibleItem = debounce(() => {
@@ -185,7 +190,10 @@ function chatMessage() {
   const twoLayOut = document.querySelector(".tab-container>.message-panel>.two-col-layout");
   if (twoLayOut?.__VUE__?.[0]?.props?.asideMinWidth) {
     if (first("initLayoutSide")) {
+      setIsNarrowWindow = document.querySelector(".tab-container>.message-panel>.two-col-layout>.two-col-layout__aside>.recent-contact")
+        ?.__VUE__?.[2]?.ctx?.configStore?.setIsNarrowWindow;
       initLayoutSide(twoLayOut.__VUE__[0].props);
+      controlSetIsNarrowWindow();
     }
     if (options.message.onlyAvatar) {
       twoLayOut.__VUE__[0].props.asideMinWidth = 72;
@@ -200,6 +208,12 @@ function chatMessage() {
     }
   }
 
+  if (options.message.unlockMainMinSize) {
+    setIsNarrowWindow?.(false);
+  } else if (document.querySelector(".two-col-layout__main").offsetWidth < 580) {
+    setIsNarrowWindow?.(true);
+  }
+
   disableQtag();
   localEmoticons();
   observeChatTopFunc();
@@ -209,27 +223,12 @@ function chatMessage() {
 }
 
 function initLayoutSide(props) {
-  let showMain = props.showMain;
   let mainMinWidth = props.mainMinWidth;
-  Object.defineProperty(props, "showMain", {
-    enumerable: true,
-    configurable: true,
-    get() {
-      if (options.message.onlyAvatar) {
-        return true;
-      } else {
-        return showMain;
-      }
-    },
-    set(newVal) {
-      showMain = newVal;
-    },
-  });
   Object.defineProperty(props, "mainMinWidth", {
     enumerable: true,
     configurable: true,
     get() {
-      if (options.message.onlyAvatar) {
+      if (options.message.unlockMainMinSize) {
         return 0;
       } else {
         return mainMinWidth;
@@ -239,32 +238,17 @@ function initLayoutSide(props) {
       mainMinWidth = newVal;
     },
   });
-  // Object.defineProperty(props, "asideWidth", {
-  //   enumerable: true,
-  //   configurable: true,
-  //   get() {
-  //     if (options.message.onlyAvatar) {
-  //       return 72;
-  //     } else {
-  //       return asideWidth;
-  //     }
-  //   },
-  //   set(newVal) {
-  //     asideWidth = newVal;
-  //   },
-  // });
-  // Object.defineProperty(props, "asideMinWidth", {
-  //   enumerable: true,
-  //   configurable: true,
-  //   get() {
-  //     if (options.message.onlyAvatar) {
-  //       return 72;
-  //     } else {
-  //       return asideMinWidth;
-  //     }
-  //   },
-  //   set(newVal) {
-  //     asideMinWidth = newVal;
-  //   },
-  // });
+}
+
+function controlSetIsNarrowWindow() {
+  const mainLayout = document.querySelector(".tab-container>.message-panel>.two-col-layout>.two-col-layout__main");
+  const observe = new MutationObserver(() => {
+    if (options.message.unlockMainMinSize && mainLayout.style.display === "none" && setIsNarrowWindow) {
+      setIsNarrowWindow(false);
+    }
+  });
+  observe.observe(mainLayout, {
+    attributes: true,
+    attributeFilter: ["style"],
+  });
 }
