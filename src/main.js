@@ -8,6 +8,7 @@ import { replaceMiniAppArk } from "./main_modules/replaceMiniAppArk.js";
 import { keywordReminder } from "./main_modules/keywordReminder.js";
 import { captureWindow } from "./main_modules/captureWindow.js";
 import { messageRecall, discardDeleteActive } from "./main_modules/msgRecall.js";
+import { proxyOn } from "./main_modules/proxyOn.js";
 
 // 导入独立功能模块
 import "./main_modules/wallpaper.js";
@@ -34,6 +35,7 @@ function onBrowserWindowCreated(window) {
     proxyIpcMessage(window);
     proxySend(window);
     preventEscape(window);
+    proxyOn(window);
   } catch (err) {
     log("出现错误", err);
   }
