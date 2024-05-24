@@ -67,6 +67,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | 移除 VIP 彩色昵称                                                                   | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 | 图片窗口全局拖拽 |
 | [右键菜单选项高亮](https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies) | 记录离开时的位置   | 侧键返回                 | 关键词提醒       |
 | 阻止 ESC 关闭窗口                                                                   | 链接预览           | 图片遮罩                 | 移除头衔         |
+| 取消主窗口最小尺寸限制                                                              |                    |                          |                  |
 
 ## 声明
 
