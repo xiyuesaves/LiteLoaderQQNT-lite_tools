@@ -64,14 +64,19 @@ const updateEmoticonList = debounce(() => {
 
 onUpdateConfig(async () => {
   // 初始化配置文件
-  localEmoticonsConfigPath = join(loadConfigPath, "localEmoticonsConfig.json");
-  if (!existsSync(localEmoticonsConfigPath)) {
-    writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfigTemplate, null, 4));
+  const newLocalEmoticonsConfigPath = join(loadConfigPath, "localEmoticonsConfig.json");
+  if (localEmoticonsConfigPath !== newLocalEmoticonsConfigPath) {
+    localEmoticonsConfigPath = newLocalEmoticonsConfigPath;
+    if (!existsSync(localEmoticonsConfigPath)) {
+      writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfigTemplate, null, 4));
+    }
+    localEmoticonsConfig = require(localEmoticonsConfigPath);
   }
-  localEmoticonsConfig = require(localEmoticonsConfigPath);
-  log("配置更新", localPath, config.localEmoticons.localPath);
+
+  // 动态更新本地表情文件夹
   if (config.localEmoticons.enabled && config.localEmoticons.localPath) {
     if (localPath !== config.localEmoticons.localPath) {
+      log("配置更新", localPath, config.localEmoticons.localPath);
       if (localPath !== null) {
         resetCommonlyEmoticons();
       }
@@ -80,19 +85,19 @@ onUpdateConfig(async () => {
       log("加载表情文件夹", config.localEmoticons.localPath);
       emoticonsList = await loadFolder(config.localEmoticons.localPath);
       updateEmoticonList();
-    } else {
-      log("路径没有变化，无需更新");
     }
-  } else {
+  } else if (localPath) {
     log("功能关闭");
     localPath = null;
     emoticonsList = [];
     abortAllWatchers();
   }
+
   // 如果没有启用历史表情，或者关闭了历史表情，则清除数据
-  if (!config.localEmoticons.commonlyEmoticons) {
+  if (!config.localEmoticons.commonlyEmoticons && localEmoticonsConfig.commonlyEmoticons.length) {
     resetCommonlyEmoticons();
   }
+
   // 动态更新历史表情数量限制
   if (oldCommonlyNum === -1) {
     oldCommonlyNum = config.localEmoticons.commonlyNum;
