@@ -210,7 +210,7 @@ function chatMessage() {
 
   if (options.message.unlockMainMinSize) {
     setIsNarrowWindow?.(false);
-  } else if (document.querySelector(".two-col-layout__main").offsetWidth < 580) {
+  } else if (document.querySelector(".two-col-layout__main").offsetWidth < twoLayOut?.__VUE__?.[0]?.props?.mainMinWidth) {
     setIsNarrowWindow?.(true);
   }
 
