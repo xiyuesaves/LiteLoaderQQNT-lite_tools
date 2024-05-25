@@ -1,5 +1,5 @@
 import { ipcMain, shell, dialog, BrowserWindow } from "electron";
-import { normalize } from "path";
+import { normalize, join } from "path";
 import { config, updateConfig } from "./config.js";
 import { copyFile, writeFileSync, existsSync } from "fs";
 import { randomUUID } from "crypto";
@@ -163,7 +163,7 @@ ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64)
   log("接收到保存为文件事件");
   const buffer = Buffer.from(base64.split(",")[1], "base64");
   if (config.messageToImage.path && existsSync(config.messageToImage.path)) {
-    const savePath = path.join(config.messageToImage.path, fileName);
+    const savePath = join(config.messageToImage.path, fileName);
     log("默认文件路径", savePath);
     writeFileSync(savePath, buffer, { encoding: null });
   } else {
@@ -198,8 +198,9 @@ ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
     .then((result) => {
       log("选择了文件夹", result);
       if (!result.canceled) {
-        const newPath = path.join(result.filePaths[0]);
+        const newPath = join(result.filePaths[0]);
         config.messageToImage.path = newPath;
+        updateConfig(config);
       }
     })
     .catch((err) => {
