@@ -23,6 +23,7 @@
     "enabled": false,
     "quickEmoticons": false,
     "timeSort": false,
+    "showFileName": false,
     "quickEmoticonsAutoInputOnlyOne": false,
     "quickEmoticonsActiveKey": "/",
     "sendBigImage": false,
