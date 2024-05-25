@@ -54,11 +54,11 @@ let peer = getPeer();
  * 处理当前可见的消息列表
  */
 function processingMsgList() {
+  const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   // 消息类型不在处理范围
-  if (!checkChatType(peer)) {
+  if (!checkChatType(curMsgs[0].data)) {
     return;
   }
-  const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   const childElHeight = new Map();
   const curMsgsLength = curMsgs.length;
   for (let index = 0; index < curMsgsLength; index++) {
@@ -113,10 +113,6 @@ function processingMsgList() {
  * 图片组件单独处理
  */
 function imageComponent(component) {
-  // 消息类型不在处理范围
-  if (!checkChatType(peer)) {
-    return;
-  }
   if (options.message.preventNSFW.enabled) {
     const vnode = component?.vnode?.el;
     const elementType = vnode?.classList?.contains("reply-element") ? "reply" : vnode?.classList?.contains("image") && "image";
@@ -126,6 +122,10 @@ function imageComponent(component) {
     const msgRecord = component?.provides?.msgRecord?.value;
     if (!msgRecord) {
       // 目标没有有效数据
+      return;
+    }
+    // 消息类型不在处理范围
+    if (!checkChatType(msgRecord)) {
       return;
     }
     const uuid = component?.attrs?.["element-id"] || msgRecord.msgId;
@@ -211,8 +211,12 @@ window?.__VUE_MOUNT__?.push((component) => {
  * @param {Object} msgRecord 目标消息对象
  */
 function singleMessageProcessing(target, msgRecord) {
+  if (!msgRecord) {
+    return;
+  }
   // 消息类型不在处理范围
-  if (!checkChatType(peer)) {
+  if (!checkChatType(msgRecord)) {
+    log("无需处理消息", msgRecord);
     return;
   }
   // 处理消息列表
@@ -440,9 +444,7 @@ function singleMessageProcessing(target, msgRecord) {
 
         // 插入撤回提示
         if (slotEl && options.preventMessageRecall.enabled) {
-          // 撤回插入元素
           if (msgRecord?.lite_tools_recall) {
-            // 通用消息撤回处理方法
             messageRecall(messageEl, msgRecord?.lite_tools_recall);
           }
         }
@@ -458,7 +460,10 @@ function singleMessageProcessing(target, msgRecord) {
         // 添加url预览信息
         if (options.message.previreUrl.enabled) {
           const findURL = msgRecord?.elements?.find((element) => urlMatch.test(element?.textElement?.content));
-          showWebPreview(findURL?.textElement?.content, messageEl, msgRecord.msgId);
+          if (findURL?.textElement?.content) {
+            log("请求url卡片数据", msgRecord.msgId, findURL.textElement.content);
+            showWebPreview(findURL.textElement.content, messageEl, msgRecord.msgId);
+          }
         }
 
         // 传统处理流传
@@ -502,7 +507,7 @@ const initMessageList = (recursion = true) => {
     const msgItemEl = document.querySelector(`[id="${el.id}"]`);
     const messageEl = msgItemEl.querySelector(".message");
     if (messageEl) {
-      log("处理可见消息数据");
+      log("处理可见消息数据", messageEl, el.data);
       singleMessageProcessing(messageEl, el.data);
     } else if (!msgItemEl && recursion) {
       log("消息元素不存在，重新检测可见消息数据", el.id);
