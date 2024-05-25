@@ -102,6 +102,7 @@ onUpdateConfig(async () => {
   } else if (localPath) {
     log("功能关闭");
     localPath = null;
+    emoticonsListHash = null;
     emoticonsList = [];
     abortAllWatchers();
   }

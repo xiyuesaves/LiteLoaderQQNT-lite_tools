@@ -97,15 +97,29 @@ let commonlyEmoticons;
  */
 let mouseEnterEventTimeOut;
 
+/**
+ * 是否开启本地表情包
+ * @type {Boolean}
+ */
+let isEnabled = false;
+
 const commonlyId = "commonlyEmoticons";
 
 document.body.classList.toggle("lite-tools-showLocalEmoticons", options.localEmoticons.enabled);
 
 updateOptions(async (opt) => {
-  log("更新配置", opt);
+  log(opt);
   document.body.classList.toggle("lite-tools-showLocalEmoticons", opt.localEmoticons.enabled);
   if (opt.localEmoticons.enabled) {
+    if (isEnabled !== opt.localEmoticons.enabled) {
+      // 加载本地表情包
+      const emoticonsList = await lite_tools.getLocalEmoticonsList();
+      appendEmoticons(null, emoticonsList);
+      isEnabled = opt.localEmoticons.enabled;
+      log("加载本地表情数据", emoticonsList);
+    }
     localEmoticons();
+    // 更新表情列表元素每行数量
     folderListEl.setAttribute("style", `--category-item-size: ${(folderListEl.offsetWidth - 12) / opt.localEmoticons.rowsSize}px;`);
     if (options.localEmoticons.toLeftSlot) {
       const targetPosition = document.querySelector(".chat-input-area .chat-func-bar .func-bar:first-child");
@@ -135,6 +149,18 @@ updateOptions(async (opt) => {
       commonlyEmoticons.destroy();
       commonlyEmoticons = null;
     }
+  } else {
+    isEnabled = false;
+    folderInfos.shift();
+    commonlyEmoticons.destroy();
+    commonlyEmoticons = null;
+    folderInfos.forEach((el) => {
+      el.destroy();
+    });
+    folderInfos = [];
+    emoticonsListArr = [];
+    emoticonsList = [];
+    closeLocalEmoticons();
   }
 });
 
@@ -178,6 +204,7 @@ async function init() {
   // 加载本地表情包
   const emoticonsList = await lite_tools.getLocalEmoticonsList();
   appendEmoticons(null, emoticonsList);
+  isEnabled = options.localEmoticons.enabled;
 
   // 初始化常用表情
   if (options.localEmoticons.commonlyEmoticons) {
@@ -902,7 +929,9 @@ class emoticonFolder {
       categoryItemEl.classList.add("category-item");
       categoryItemEl.path = item.path;
       categoryItemEl.index = item.index;
-      categoryItemEl.title = item.name || "";
+      if (options.localEmoticons.showFileName) {
+        categoryItemEl.title = item.name || "";
+      }
       const skiterPreviewEl = document.createElement("div");
       skiterPreviewEl.classList.add("sticker-preview");
       const imgEl = document.createElement("img");
