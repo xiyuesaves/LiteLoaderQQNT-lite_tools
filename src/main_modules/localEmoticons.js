@@ -1,6 +1,8 @@
-import { watch, existsSync, readdir, statSync, writeFileSync, unlinkSync } from "fs";
+import { existsSync, readdir, writeFileSync, unlinkSync } from "fs";
+import { stat, watch } from "fs/promises";
 import { ipcMain, dialog } from "electron";
 import { normalize, join, extname, basename } from "path";
+import { createHash } from "crypto";
 import { config, updateConfig, loadConfigPath, onUpdateConfig } from "./config.js";
 import { globalBroadcast } from "./globalBroadcast.js";
 import { debounce } from "./debounce.js";
@@ -40,11 +42,22 @@ let localPath = null;
 let oldCommonlyNum = -1;
 
 /**
+ * 本地表情列表副本
+ */
+let emoticonsListHash;
+
+/**
  * 广播表情列表更新添加防抖
  */
 const updateEmoticonList = debounce(() => {
-  log("广播本地表情列表更新");
   try {
+    const newHash = calculateHash(JSON.stringify(emoticonsList), "md5");
+    if (emoticonsListHash === newHash) {
+      log("列表没有变化，无需更新");
+      return;
+    }
+    log("广播本地表情列表更新");
+    emoticonsListHash = newHash;
     // 将所有的图片路径放入Set
     const newPaths = new Set(
       emoticonsList.flatMap((emoticons) => {
@@ -146,6 +159,9 @@ const folderUpdate = debounce(async () => {
 }, 1000);
 
 function abortAllWatchers() {
+  if (!signals.size) {
+    return;
+  }
   signals.forEach((signal) => {
     signal.abort();
   });
@@ -157,16 +173,16 @@ function abortAllWatchers() {
  * 批量监听文件夹变动
  * @param {String} String 文件夹路径
  */
-function addWatchFolders(path) {
+async function addWatchFolders(path) {
   if (!signals.has(path)) {
+    log("添加监听", path);
     const signal = new AbortController();
     signals.set(path, signal);
     const watcher = watch(path, { signal: signal.signal });
-    watcher.on("change", (event) => {
+    for await (const event of watcher) {
       log("检测到文件夹更新", path, event);
       folderUpdate();
-    });
-    log("添加监听", path);
+    }
   } else {
     log("无需重复监听", path);
   }
@@ -198,9 +214,7 @@ async function loadFolder(folderPath, itemIndex = 0) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const filePath = normalize(join(folderPath, file));
-      const fileStat = statSync(filePath, {
-        throwIfNoEntry: false,
-      });
+      const fileStat = await stat(filePath).catch(() => null);
       if (fileStat) {
         if (fileStat.isFile()) {
           if (![".png", ".jpg", ".jpeg", ".gif", ".webp"].includes(extname(filePath).toLocaleLowerCase())) {
@@ -285,7 +299,7 @@ ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
 });
 
 // 删除指定文件
-ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", (_, path) => {
+ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
   log("删除表情文件", path);
   if (existsSync(path)) {
     // 验证要删除的文件目录是否在本地表情指定目录中
@@ -336,3 +350,16 @@ ipcMain.on("LiteLoader.lite_tools.openSelectLocalEmoticonsFolder", () => {
       log("无效操作", err);
     });
 });
+
+/**
+ * 使用指定的算法计算给定字符串的哈希值。
+ *
+ * @param {string} str - 要计算哈希值的字符串。
+ * @param {string} [algorithm="md5"] - 用于哈希的算法。默认为“md5”。
+ * @return {string}
+ */
+function calculateHash(str, algorithm = "md5") {
+  const hash = createHash(algorithm);
+  hash.update(str);
+  return hash.digest("hex");
+}
