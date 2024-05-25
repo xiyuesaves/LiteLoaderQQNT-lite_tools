@@ -1,5 +1,5 @@
-import { existsSync, readdir, writeFileSync, unlinkSync } from "fs";
-import { stat, watch } from "fs/promises";
+import { existsSync, writeFileSync, unlinkSync } from "fs";
+import { stat, watch, readdir } from "fs/promises";
 import { ipcMain, dialog } from "electron";
 import { normalize, join, extname, basename } from "path";
 import { createHash } from "crypto";
@@ -49,7 +49,7 @@ let emoticonsListHash;
 /**
  * 广播表情列表更新添加防抖
  */
-const updateEmoticonList = debounce(() => {
+function updateEmoticonList() {
   try {
     const newHash = calculateHash(JSON.stringify(emoticonsList), "md5");
     if (emoticonsListHash === newHash) {
@@ -73,7 +73,7 @@ const updateEmoticonList = debounce(() => {
   } catch (err) {
     log("广播本地表情列表失败", err);
   }
-}, 1000);
+}
 
 onUpdateConfig(async () => {
   // 初始化配置文件
@@ -156,7 +156,7 @@ const folderUpdate = debounce(async () => {
     emoticonsList = await loadFolder(config.localEmoticons.localPath);
   });
   updateEmoticonList();
-}, 1000);
+}, 50);
 
 function abortAllWatchers() {
   if (!signals.size) {
@@ -202,14 +202,7 @@ async function loadFolder(folderPath, itemIndex = 0) {
   if (existsSync(folderPath)) {
     addWatchFolders(folderPath);
     // 异步io操作
-    const files = await new Promise((res) => {
-      readdir(folderPath, (err, files) => {
-        if (err) {
-          res([]);
-        }
-        res(files);
-      });
-    });
+    const files = await readdir(folderPath).catch(() => []);
     let listIndex = 0;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -234,6 +227,7 @@ async function loadFolder(folderPath, itemIndex = 0) {
             path: filePath,
             name: basename(filePath),
             index: listIndex,
+            birthtimeMs: fileStat.birthtimeMs,
           });
           listIndex++;
         } else if (fileStat.isDirectory()) {
@@ -241,6 +235,15 @@ async function loadFolder(folderPath, itemIndex = 0) {
           list.push(...(await loadFolder(filePath, nextItemIndex)));
         }
       }
+    }
+    // 调整排序方式为创建时间递减
+    if (config.localEmoticons.timeSort) {
+      list.forEach((item) => {
+        item.list.sort((a, b) => b.birthtimeMs - a.birthtimeMs);
+        item.list.forEach((item, index) => {
+          item.index = index;
+        });
+      });
     }
   }
   return list;

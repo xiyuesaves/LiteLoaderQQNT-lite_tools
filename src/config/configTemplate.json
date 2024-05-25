@@ -22,6 +22,7 @@
   "localEmoticons": {
     "enabled": false,
     "quickEmoticons": false,
+    "timeSort": false,
     "quickEmoticonsAutoInputOnlyOne": false,
     "quickEmoticonsActiveKey": "/",
     "sendBigImage": false,
