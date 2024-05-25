@@ -37,17 +37,18 @@ updateOptions((newOptions) => {
  * 监听预览数据
  */
 lite_tools.onWebPreviewData((_, msgId, previewData) => {
-  const msgContainer = document.querySelector(`[id="${msgId}"] .message .msg-content-container`);
-  if (!msgContainer) {
-    // 预览数据不存在
-    return;
-  }
   if (!previewData.success) {
     // 获取预览数据失败
     return;
   }
   if (!previewData.data.description) {
     // 没有数据
+    return;
+  }
+  const element = document.querySelector(`[id="${msgId}"] .message`);
+  const msgContainer = element.querySelector(`.msg-content-container`);
+  if (!msgContainer) {
+    // 目标元素不存在
     return;
   }
   log("获取到预览数据", previewData.data.url, previewData);
@@ -59,7 +60,7 @@ lite_tools.onWebPreviewData((_, msgId, previewData) => {
     const arrayLength = array.length;
     cacheMap = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
   }
-  setPreviewData(msgContainer, previewData);
+  setPreviewData(element, msgContainer, previewData);
 });
 
 /**
@@ -68,11 +69,7 @@ lite_tools.onWebPreviewData((_, msgId, previewData) => {
  * @param {Element} element 目标消息元素
  */
 export function showWebPreview(context, element, msgId) {
-  const msgContainer = element.querySelector(".msg-content-container");
-  if (!context || !element || element.classList.contains("lite-tools-web-preview-added") || !msgContainer) {
-    return;
-  }
-  element.classList.add("lite-tools-web-preview-added");
+  const msgContainer = element?.querySelector(".msg-content-container");
   const findUrl = context.match(urlMatch);
   if (!findUrl) {
     return;
@@ -80,7 +77,7 @@ export function showWebPreview(context, element, msgId) {
   const url = findUrl[0];
   const findCache = cacheMap.get(url);
   if (findCache) {
-    setPreviewData(msgContainer, findCache);
+    setPreviewData(element, msgContainer, findCache);
     cacheMap.delete(url);
     cacheMap.set(url, findCache);
   } else {
@@ -93,7 +90,12 @@ export function showWebPreview(context, element, msgId) {
  * @param {Element} msgContainer 目标消息元素
  * @param {Object} previewData 预览数据
  */
-function setPreviewData(msgContainer, previewData) {
+function setPreviewData(element, msgContainer, previewData) {
+  if (element?.classList?.contains("lite-tools-web-preview-added") || !msgContainer) {
+    return;
+  }
+  element.classList.add("lite-tools-web-preview-added");
+  log("开始插入元素");
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "alt":
