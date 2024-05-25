@@ -63,8 +63,6 @@ function chatMessage() {
         } else if (bubbleInside) {
           // 如果是图片则额外判断一次
           if (bubbleInside.classList.contains("mix-message__container--pic")) {
-            const picEl = bubbleInside.querySelector(".pic-element");
-            console.log("图片消息", component);
             const elements = component?.props?.msgRecord?.elements;
             if (
               elements.length === 1 &&

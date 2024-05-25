@@ -4,7 +4,7 @@ import { settingWindow } from "./captureWindow.js";
 import { join } from "path";
 import { ipcMain } from "electron";
 import { UserConfig } from "./userConfig.js";
-const log = console.log;
+const log = () => {};
 /**
  * 配置合并模块
  */

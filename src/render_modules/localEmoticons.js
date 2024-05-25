@@ -868,6 +868,11 @@ class emoticonFolder {
       });
     }
   }
+  /**
+   * 更新表情符号列表并相应地更新UI。
+   *
+   * @param {Array} newEmoticonList - 新的表情符号列表。
+   */
   updateEmoticonList(newEmoticonList) {
     const newListSet = new Set(newEmoticonList.map((emoticon) => emoticon.path));
     const oldListSet = new Set(this.emoticonList.map((emoticon) => emoticon.path));

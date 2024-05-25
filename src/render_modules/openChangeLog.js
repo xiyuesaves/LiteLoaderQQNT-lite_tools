@@ -22,14 +22,12 @@ function openChangeLog(html, updateUrl = false, detailUrl) {
   showMsgBox.offsetHeight;
   showMsgBox.classList.add("show");
   showMsgBox.querySelector(".quite-btn").addEventListener("click", () => {
-    console.log("关闭");
     showMsgBox.addEventListener("transitionend", () => {
       showMsgBox.remove();
     });
     showMsgBox.classList.remove("show");
   });
   showMsgBox.querySelector(".update-btn").addEventListener("click", () => {
-    console.log("更新");
     lite_tools.updatePlugins(updateUrl);
   });
   showMsgBox.querySelector(".detail-btn").addEventListener("click", () => {

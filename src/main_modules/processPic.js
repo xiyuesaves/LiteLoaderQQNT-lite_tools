@@ -7,7 +7,7 @@ const log = new Logs("图片处理模块");
 
 // 获取图片链接
 function getPicUrl(picData) {
-  console.log(picData);
+  log(picData);
   if (!picData.original) {
     if (picData.originImageUrl) {
       if (picData.originImageUrl.includes("&rkey=")) {
