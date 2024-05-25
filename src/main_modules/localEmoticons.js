@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync, unlinkSync } from "fs";
 import { stat, watch, readdir } from "fs/promises";
 import { ipcMain, dialog } from "electron";
-import { normalize, join, extname, basename } from "path";
+import { normalize, join, extname, basename, parse } from "path";
 import { createHash } from "crypto";
 import { config, updateConfig, loadConfigPath, onUpdateConfig } from "./config.js";
 import { globalBroadcast } from "./globalBroadcast.js";
@@ -223,13 +223,17 @@ async function loadFolder(folderPath, itemIndex = 0) {
               list: [],
             });
           }
-          list[0].list.push({
-            path: filePath,
-            name: basename(filePath),
-            index: listIndex,
-            birthtimeMs: fileStat.birthtimeMs,
-          });
-          listIndex++;
+          if (parse(filePath).name === "icon") {
+            list[0].icon = filePath;
+          } else {
+            list[0].list.push({
+              path: filePath,
+              name: parse(filePath).name,
+              index: listIndex,
+              birthtimeMs: fileStat.birthtimeMs,
+            });
+            listIndex++;
+          }
         } else if (fileStat.isDirectory()) {
           nextItemIndex++;
           list.push(...(await loadFolder(filePath, nextItemIndex)));

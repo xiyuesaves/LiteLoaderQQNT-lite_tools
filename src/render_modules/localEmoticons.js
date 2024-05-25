@@ -118,8 +118,9 @@ updateOptions(async (opt) => {
     }
     if (opt.localEmoticons.commonlyEmoticons) {
       const config = await lite_tools.getLocalEmoticonsConfig();
-      const list = config.commonlyEmoticons.map((path, index) => ({ path, index }));
+      const list = config.commonlyEmoticons.map((path, index) => ({ path, index, name: getName(path) }));
       if (commonlyEmoticons && list.length) {
+        commonlyEmoticons.updateEmoticonIcon(list[0].path);
         commonlyEmoticons.updateEmoticonList(list);
       } else if (!commonlyEmoticons && list.length) {
         commonlyEmoticons = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
@@ -146,6 +147,7 @@ function updateLocalEmoticonsConfig(_, config) {
   if (commonlyEmoticons) {
     if (list.length) {
       log("更新常用表情列表", list);
+      commonlyEmoticons.updateEmoticonIcon(list[0].path);
       commonlyEmoticons.updateEmoticonList(list);
     } else {
       log("销毁历史表情实例", commonlyEmoticons.id);
@@ -777,11 +779,19 @@ function appendEmoticons(_, newEmoticonsList) {
     const findEmoticons = folderInfos.find((item) => item.id === folder.id);
     if (findEmoticons) {
       findEmoticons.index = folder.index;
+      findEmoticons.updateEmoticonIcon(folder.icon || folder.list[0].path);
       findEmoticons.updateEmoticonList(folder.list);
       folderListEl.appendChild(findEmoticons.folderEl);
       folderIconListEl.appendChild(findEmoticons.folderIconEl);
     } else {
-      const newEmoticonFolder = new emoticonFolder(folder.name, folder.list, folder.id, folder.list[0].path, folder.index, "folder");
+      const newEmoticonFolder = new emoticonFolder(
+        folder.name,
+        folder.list,
+        folder.id,
+        folder.icon || folder.list[0].path,
+        folder.index,
+        "folder",
+      );
       folderInfos.push(newEmoticonFolder);
       folderListEl.appendChild(newEmoticonFolder.folderEl);
       folderIconListEl.appendChild(newEmoticonFolder.folderIconEl);
@@ -823,6 +833,7 @@ class emoticonFolder {
     // 初始化方法
     this.createFolderEl();
     this.createIconEl();
+    this.updateEmoticonIcon(this.iconPath);
     this.updateEmoticonList(list);
   }
   createFolderEl() {
@@ -880,10 +891,6 @@ class emoticonFolder {
     const deleteEmoticonList = this.emoticonList.filter((emoticon) => !newListSet.has(emoticon.path));
     this.emoticonList = newEmoticonList;
 
-    if (newEmoticonList[0]) {
-      this.iconEl.src = this.protocolPrefix + newEmoticonList[0].path;
-    }
-
     deleteEmoticonList.forEach((item) => {
       const deleteIndex = this.categoryItemsEl.findIndex((El) => El.path === item.path);
       const deleteEl = this.categoryItemsEl.splice(deleteIndex, 1)[0];
@@ -895,6 +902,7 @@ class emoticonFolder {
       categoryItemEl.classList.add("category-item");
       categoryItemEl.path = item.path;
       categoryItemEl.index = item.index;
+      categoryItemEl.title = item.name || "";
       const skiterPreviewEl = document.createElement("div");
       skiterPreviewEl.classList.add("sticker-preview");
       const imgEl = document.createElement("img");
@@ -919,6 +927,10 @@ class emoticonFolder {
     if (!options.localEmoticons.majorization || showEmoticons) {
       this.load();
     }
+  }
+  updateEmoticonIcon(iconPath) {
+    this.iconPath = iconPath;
+    this.iconEl.src = this.protocolPrefix + this.iconPath;
   }
   destroy() {
     log("销毁实例", this.name);
@@ -1056,6 +1068,15 @@ function closeLocalEmoticons() {
     );
   }
   localEmoticonsEl.classList.remove("show");
+}
+
+/**
+ * 从文件路径中获取文件名
+ * @param {String} path 文件路径
+ * @returns 文件名
+ */
+function getName(path) {
+  return path.replace(/^.*[\\\/]|(\.[^.]+)$/g, "");
 }
 
 export { localEmoticons, emoticonsList };
