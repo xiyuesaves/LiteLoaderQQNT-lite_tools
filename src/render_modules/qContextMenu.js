@@ -229,9 +229,12 @@ function addEventqContextMenu() {
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
-            const width = msgEl ? msgEl.offsetWidth : messageEl.offsetWidth;
-            const height = msgEl ? msgEl.offsetHeight : messageEl.offsetHeight;
+            let msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
+            if (!msgEl) {
+              msgEl = messageEl.querySelector(".message-content__wrapper .markdown-rendered");
+            }
+            const width = msgEl.offsetWidth;
+            const height = msgEl.offsetHeight;
             msgSticker = {
               userName,
               userUid,
