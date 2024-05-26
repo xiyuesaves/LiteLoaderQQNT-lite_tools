@@ -230,8 +230,8 @@ function addEventqContextMenu() {
             const userUid = msgRecord?.senderUid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
             const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
-            const width = msgEl.offsetWidth;
-            const height = msgEl.offsetHeight;
+            const width = msgEl ? msgEl.offsetWidth : messageEl.offsetWidth;
+            const height = msgEl ? msgEl.offsetHeight : messageEl.offsetHeight;
             msgSticker = {
               userName,
               userUid,
