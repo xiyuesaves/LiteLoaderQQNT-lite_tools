@@ -1,5 +1,5 @@
 import { options } from "./options.js";
-import { localEmoticonsIcon, searchIcon, copyIcon, imageIcon } from "./svg.js";
+import { localEmoticonsIcon, searchIcon, imageIcon } from "./svg.js";
 import { subMenuIconEl } from "./HTMLtemplate.js";
 import { emoticonsList } from "./localEmoticons.js";
 import { getPicUrl } from "./getPicUrl.js";
@@ -264,7 +264,7 @@ function addEventqContextMenu() {
     }
   });
   // 菜单监听
-  new MutationObserver((_, observer) => {
+  new MutationObserver(() => {
     const qContextMenu = document.querySelector(".q-context-menu:not(.lite-toos-context-menu)");
     if (!qContextMenu) {
       if (!document.querySelector(".q-context-menu")) {

@@ -1,4 +1,3 @@
-import { BrowserWindow } from "electron";
 import { initMain, sendIpc } from "./main_modules/initMain.js";
 import { loadUserConfig } from "./main_modules/config.js";
 import { Logs, sendLog, ipcLog } from "./main_modules/logs.js";

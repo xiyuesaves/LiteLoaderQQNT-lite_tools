@@ -66,7 +66,7 @@ async function onConfigView(view) {
   // 从仓库检查更新
   checkUpdate(view);
   // 调试模式动态更新样式
-  lite_tools.updateSettingStyle((event, message) => {
+  lite_tools.updateSettingStyle(() => {
     link_element.href = css_file_path + `?r=${new Date().getTime()}`;
   });
   // 显示插件版本信息
@@ -200,7 +200,7 @@ async function onConfigView(view) {
 
   // 列表展开功能
   view.querySelectorAll(".wrap .vertical-list-item.title").forEach((el) => {
-    el.addEventListener("click", function (event) {
+    el.addEventListener("click", function () {
       const wrap = this.parentElement;
       wrap.querySelector(".icon").classList.toggle("is-fold");
       wrap.querySelector("ul").classList.toggle("hidden");
@@ -449,7 +449,7 @@ async function onConfigView(view) {
         }
       }
     });
-    window.addEventListener("mouseup", (event) => {
+    window.addEventListener("mouseup", () => {
       hasDown = false;
     });
   }
@@ -519,7 +519,7 @@ async function onConfigView(view) {
   const standaloneConfiguration = view.querySelector(".standaloneConfiguration");
   if (userConfig && authData) {
     standaloneConfiguration.classList.toggle("is-active", userConfig.has(authData.uid));
-    standaloneConfiguration.addEventListener("click", (event) => {
+    standaloneConfiguration.addEventListener("click", () => {
       if (standaloneConfiguration.classList.contains("is-active")) {
         lite_tools.deleteUserConfig(authData.uid);
         standaloneConfiguration.classList.remove("is-active");
@@ -540,7 +540,6 @@ async function onConfigView(view) {
     view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
     view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
     tailList?.updateOptions();
-    customTextColorEl.value = options.preventMessageRecall.textColor;
   });
   log("完成初始化");
 }

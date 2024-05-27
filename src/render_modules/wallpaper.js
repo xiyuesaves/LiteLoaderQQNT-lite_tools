@@ -71,6 +71,10 @@ async function updateWallpaper(enabled, wallpaperData) {
     return;
   }
   wallpaper.updateWallpaper(enabled, wallpaperData);
+  const liteToolsBackgroundStyle = document.querySelector("#liteToolsBackgroundStyle");
+  if (!liteToolsBackgroundStyle) {
+    return;
+  }
   if (enabled) {
     liteToolsBackgroundStyle.setAttribute(
       "href",

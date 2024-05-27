@@ -7,7 +7,7 @@ export class UserConfig {
     if (existsSync(userConfigPath)) {
       try {
         this.list = new Map(JSON.parse(readFileSync(userConfigPath, "utf-8")));
-      } catch (err) {
+      } catch {
         writeFileSync(userConfigPath, "[]");
       }
     } else {

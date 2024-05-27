@@ -7,7 +7,7 @@ export function createHtmlCard(arkData) {
   log("接收到卡片数据", arkData);
   // 当前只处理小程序和url卡片
   switch (arkData.app) {
-    case "com.tencent.miniapp_01":
+    case "com.tencent.miniapp_01": {
       const newMiniappCard = miniappArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
           case "appIcon":
@@ -25,7 +25,8 @@ export function createHtmlCard(arkData) {
         }
       });
       return newMiniappCard;
-    case "com.tencent.structmsg":
+    }
+    case "com.tencent.structmsg": {
       const newUrlCard = urlArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
           case "appIcon":
@@ -41,8 +42,9 @@ export function createHtmlCard(arkData) {
         }
       });
       return newUrlCard;
+    }
     // 推荐联系人
-    case "com.tencent.contact.lua":
+    case "com.tencent.contact.lua": {
       const newContactCard = contactArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
           case "avatarSrc":
@@ -60,8 +62,9 @@ export function createHtmlCard(arkData) {
         }
       });
       return newContactCard;
+    }
     // 推荐群
-    case "com.tencent.troopsharecard":
+    case "com.tencent.troopsharecard": {
       const newTroopCard = contactArkCard.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
         switch (name) {
           case "avatarSrc":
@@ -79,6 +82,7 @@ export function createHtmlCard(arkData) {
         }
       });
       return newTroopCard;
+    }
     default:
       return undefined;
   }

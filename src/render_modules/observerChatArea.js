@@ -9,7 +9,7 @@ let observe;
  */
 async function observerChatArea() {
   if (!observe) {
-    observe = new MutationObserver((mutations, observe) => {
+    observe = new MutationObserver(() => {
       // 禁用指定功能
       document.querySelectorAll(".chat-func-bar .bar-icon").forEach((el) => {
         const id = el.querySelector(".icon-item").id;

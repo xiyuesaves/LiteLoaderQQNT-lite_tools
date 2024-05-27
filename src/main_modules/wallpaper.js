@@ -79,6 +79,6 @@ ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
     });
 });
 
-ipcMain.handle("LiteLoader.lite_tools.getWallpaper", (event) => {
+ipcMain.handle("LiteLoader.lite_tools.getWallpaper", () => {
   return [config.background.enabled, backgroundData];
 });

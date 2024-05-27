@@ -87,7 +87,7 @@ function loadUserConfig(userId) {
   }
   try {
     loadConfig = require(configPath);
-  } catch (err) {
+  } catch {
     log("读取配置文件失败，重置为默认配置");
     loadConfig = configTemplate;
     writeFileSync(configPath, JSON.stringify(configTemplate, null, 2));

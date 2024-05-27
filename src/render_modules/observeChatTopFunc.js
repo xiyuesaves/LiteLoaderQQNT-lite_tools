@@ -9,7 +9,7 @@ let observe;
  */
 function observeChatTopFunc() {
   if (!observe) {
-    observe = new MutationObserver((mutations, observe) => {
+    observe = new MutationObserver(() => {
       document.querySelectorAll(".panel-header__action .func-bar .bar-icon").forEach((el) => {
         const id = el.querySelector(".icon-item").id;
         const find = options.chatAreaFuncList.find((el) => el.id === id);

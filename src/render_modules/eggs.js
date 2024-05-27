@@ -1,6 +1,6 @@
 import { weightIcon } from "./svg.js";
 import { debounce } from "./debounce.js";
-import { showToast, clearToast } from "./toast.js";
+import { showToast } from "./toast.js";
 
 function isToday() {
   const today = new Date();
@@ -158,14 +158,8 @@ const mdn = (e) => {
     mouseleave = false;
   }
 };
-const mup = (e) => {
+const mup = () => {
   dragMouseDown = false;
-};
-const mle = (e) => {
-  if (dragMouseDown) {
-    dragMouseDown = false;
-    // mouseleave = true;
-  }
 };
 const mmo = (e) => {
   if (dragMouseDown && !mouseleave) {

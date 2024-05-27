@@ -1,6 +1,7 @@
 // 通用消息撤回方法
-
 import { options } from "./options.js";
+import { Logs } from "./logs.js";
+const log = new Logs("通用消息撤回");
 
 /**
  *
@@ -61,7 +62,9 @@ function newMessageRecall() {
           msg.data.lite_tools_recall = message.recallData;
         }
       });
-    } catch {}
+    } catch (err) {
+      log("出现错误", err);
+    }
   });
 }
 

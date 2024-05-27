@@ -265,13 +265,13 @@ function resetCommonlyEmoticons() {
 }
 
 // 返回本地表情包数据
-ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", (_) => {
+ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsList", () => {
   log("返回本地表情包数据");
   return emoticonsList;
 });
 
 // 返回常用表情包数据
-ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsConfig", (_) => {
+ipcMain.handle("LiteLoader.lite_tools.getLocalEmoticonsConfig", () => {
   log("返回本地表情包配置");
   return localEmoticonsConfig;
 });
@@ -319,6 +319,7 @@ ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
           msg: "删除成功",
         };
       } catch (err) {
+        log("没有权限", err);
         return {
           success: false,
           msg: "没有权限",

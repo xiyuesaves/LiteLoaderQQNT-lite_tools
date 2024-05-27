@@ -27,7 +27,7 @@ ipcMain.on("LiteLoader.lite_tools.openWeb", (_, url) => {
 
 // 复制文件
 ipcMain.handle("LiteLoader.lite_tools.copyFile", async (_, from, to) => {
-  return new Promise((res, rej) => {
+  return new Promise((res) => {
     copyFile(from, to, (err) => {
       if (err) {
         res(false);
@@ -126,7 +126,7 @@ ipcMain.on("LiteLoader.lite_tools.sendToMsg", (_, sceneData) => {
     "IPC_UP_2",
     {
       sender: {
-        send: (...args) => {},
+        send: () => {},
       },
     },
     { type: "request", callbackId: randomUUID(), eventName: "ns-WindowApi-2" },

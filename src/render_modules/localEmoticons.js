@@ -632,22 +632,22 @@ function loadDom() {
 
   // 处理右键菜单监听事件
   const contextMenuEl = barIcon.querySelector(".context-menu");
-  contextMenuEl.querySelector(".open-folder").addEventListener("click", (event) => {
+  contextMenuEl.querySelector(".open-folder").addEventListener("click", () => {
     log("打开文件路径", targetElement.path);
     lite_tools.openFolder(targetElement.path);
     closeContextMenu();
   });
-  contextMenuEl.querySelector(".open-file").addEventListener("click", (event) => {
+  contextMenuEl.querySelector(".open-file").addEventListener("click", () => {
     log("打开文件", targetElement.path);
     lite_tools.openFile(targetElement.path);
     closeContextMenu();
   });
-  contextMenuEl.querySelector(".delete-from-commonly").addEventListener("click", (event) => {
+  contextMenuEl.querySelector(".delete-from-commonly").addEventListener("click", () => {
     log("从历史记录中移除", targetElement.path);
     lite_tools.deleteCommonlyEmoticons(targetElement.path);
     closeContextMenu();
   });
-  contextMenuEl.querySelector(".delete-file").addEventListener("click", async (event) => {
+  contextMenuEl.querySelector(".delete-file").addEventListener("click", async () => {
     log("从文件中删除", targetElement.path);
     const res = await lite_tools.deleteEmoticonsFile(targetElement.path);
     log("删除结果", res);
@@ -802,7 +802,7 @@ function appendEmoticons(_, newEmoticonsList) {
   });
 
   // 插入新的表情数据
-  newEmoticonsList.forEach((folder, index) => {
+  newEmoticonsList.forEach((folder) => {
     const findEmoticons = folderInfos.find((item) => item.id === folder.id);
     if (findEmoticons) {
       findEmoticons.index = folder.index;
@@ -1105,7 +1105,7 @@ function closeLocalEmoticons() {
  * @returns 文件名
  */
 function getName(path) {
-  return path.replace(/^.*[\\\/]|(\.[^.]+)$/g, "");
+  return path.replace(/^.*[\\/]|(\.[^.]+)$/g, "");
 }
 
 export { localEmoticons, emoticonsList };

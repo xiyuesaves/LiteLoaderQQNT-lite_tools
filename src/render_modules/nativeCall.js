@@ -23,7 +23,7 @@ async function convertMessage(message) {
           atNtUid: "",
         },
       };
-    case "image":
+    case "image": {
       const path = message.path;
       const type = await lite_tools.nativeCall("ns-FsApi", "getFileType", [path], webContentId, true, false);
       const md5 = await lite_tools.nativeCall("ns-FsApi", "getFileMd5", [path], webContentId, true, false);
@@ -80,6 +80,7 @@ async function convertMessage(message) {
         messageChannel.extBufForUI = "";
       }
       return messageChannel;
+    }
     default:
       return null;
   }
