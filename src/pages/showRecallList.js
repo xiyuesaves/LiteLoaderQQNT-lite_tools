@@ -7,7 +7,7 @@ let concatMap = new Map();
 
 const filterListEl = document.querySelector(".qq-number-filter");
 
-function initPage(map) {
+async function initPage(map) {
   document.querySelector(".logs").innerText += `获取到消息map 共有${map.size}\n`;
   document.querySelector(".logs").innerText += `开始整理数据\n`;
 
@@ -33,29 +33,29 @@ function initPage(map) {
 
   try {
     document.querySelector(".loading-tips").remove();
-    groupList.forEach((msgArr) => {
+
+    for (let i = 0; i < groupList.length; i++) {
+      const msgArr = groupList[i];
       const chatTypeName = msgArr[0].chatType === 1 ? "私聊" : "群组";
       const peerName = getPeerName(msgArr);
       const peerUid = msgArr[0].peerUid;
       const groupItemEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
       if (msgArr[0].chatType === 1) {
-        new Promise(async (res) => {
-          document.querySelector(".logs").innerText += `尝试获取 ${msgArr[0].peerUid}\n`;
-          let userInfo;
-          for (let i = 0; i < 20; i++) {
-            userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
-            document.querySelector(".logs").innerText += `尝试获取 - ${userInfo[0].payload.info.uin}\n`;
-            if (!!parseInt(userInfo[0].payload.info.uin)) {
-              break;
-            }
+        document.querySelector(".logs").innerText += `尝试获取 ${msgArr[0].peerUid}\n`;
+        let userInfo;
+        // 循环10次获取对应用户信息的请求
+        for (let i = 0; i < 10; i++) {
+          userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
+          document.querySelector(".logs").innerText += `尝试获取 - ${userInfo[0].payload.info.uin}\n`;
+          if (parseInt(userInfo[0].payload.info.uin)) {
+            break;
           }
-          document.querySelector(".logs").innerText += `${JSON.stringify(userInfo[0].payload)}\n`;
-          const peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
-          groupItemEl.querySelector(".peer-name").innerText = peerName;
-          groupItemEl.querySelector(".peer-name").title = peerName;
-          groupItemEl.querySelector(".peer-uid").innerText = `(${userInfo[0].payload.info.uin})`;
-          res();
-        });
+        }
+        document.querySelector(".logs").innerText += `${JSON.stringify(userInfo[0].payload)}\n`;
+        const peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
+        groupItemEl.querySelector(".peer-name").innerText = peerName;
+        groupItemEl.querySelector(".peer-name").title = peerName;
+        groupItemEl.querySelector(".peer-uid").innerText = `(${userInfo[0].payload.info.uin})`;
       }
       groupItemEl.querySelector(".chat-type").innerText = `[${chatTypeName}]`;
       groupItemEl.querySelector(".peer-name").innerText = peerName;
@@ -67,7 +67,7 @@ function initPage(map) {
         updateUid(peerUid);
       });
       filterListEl.appendChild(groupItemEl);
-    });
+    }
   } catch (err) {
     document.querySelector(".logs").innerText += `出错${err.message}\n`;
   }
