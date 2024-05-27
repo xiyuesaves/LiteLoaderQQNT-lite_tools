@@ -150,10 +150,13 @@ updateOptions(async (opt) => {
       commonlyEmoticons = null;
     }
   } else {
+    log("功能已关闭");
     isEnabled = false;
-    folderInfos.shift();
-    commonlyEmoticons.destroy();
-    commonlyEmoticons = null;
+    if (commonlyEmoticons) {
+      folderInfos.shift();
+      commonlyEmoticons.destroy();
+      commonlyEmoticons = null;
+    }
     folderInfos.forEach((el) => {
       el.destroy();
     });
