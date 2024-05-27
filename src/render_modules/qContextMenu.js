@@ -204,15 +204,15 @@ function addEventqContextMenu() {
       if (messageEl) {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
+        const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
         // 生成表情逻辑
-        if (elements.length === 1 && elements[0].textElement) {
+        if (elements.length === 1 && elements[0].textElement && options.messageToImage.enabled && msgEl) {
           if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 1) {
             const header = app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.header;
             const content = elements[0].textElement.content;
             const userName = header?.peerName || header?.memberName || header?.remark;
             const userUid = header?.uid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
             const width = msgEl.offsetWidth;
             const height = msgEl.offsetHeight;
             msgSticker = {
@@ -229,7 +229,6 @@ function addEventqContextMenu() {
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
             const width = msgEl.offsetWidth;
             const height = msgEl.offsetHeight;
             msgSticker = {
