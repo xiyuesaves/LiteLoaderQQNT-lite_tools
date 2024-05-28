@@ -204,41 +204,48 @@ function addEventqContextMenu() {
       if (messageEl) {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
-        const msgEl = messageEl.querySelector(".message-content__wrapper .text-element");
         // 生成表情逻辑
-        if (elements.length === 1 && elements[0].textElement && options.messageToImage.enabled && msgEl) {
+        if (elements.length === 1 && elements[0].textElement && options.messageToImage.enabled) {
           if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 1) {
             const header = app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.header;
             const content = elements[0].textElement.content;
             const userName = header?.peerName || header?.memberName || header?.remark;
             const userUid = header?.uid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const width = msgEl.offsetWidth;
-            const height = msgEl.offsetHeight;
+            const spanEl = document.createElement("span");
+            spanEl.classList.add("lt-message-to-sticker");
+            spanEl.innerText = content;
+            spanEl.style.fontFamily = fontFamily;
+            event.target.closest(".message-content").appendChild(spanEl);
             msgSticker = {
               userName,
               userUid,
               content,
               fontFamily,
-              width,
-              height,
+              width: spanEl.offsetWidth,
+              height: spanEl.offsetHeight,
             };
+            spanEl.remove();
             log("符合生成条件-好友", msgSticker);
           } else if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 2) {
             const content = elements[0].textElement.content;
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const width = msgEl.offsetWidth;
-            const height = msgEl.offsetHeight;
+            const spanEl = document.createElement("span");
+            spanEl.classList.add("lt-message-to-sticker");
+            spanEl.innerText = content;
+            spanEl.style.fontFamily = fontFamily;
+            event.target.closest(".message-content").appendChild(spanEl);
             msgSticker = {
               userName,
               userUid,
               content,
               fontFamily,
-              width,
-              height,
+              width: spanEl.offsetWidth,
+              height: spanEl.offsetHeight,
             };
+            spanEl.remove();
             log("符合生成条件-群组", msgSticker);
           }
         }

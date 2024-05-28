@@ -1289,3 +1289,12 @@
     display: none !important;
   }
 }
+
+.lt-message-to-sticker {
+  position: absolute;
+  font-size: 14px;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  background-color: #ffffff;
+}
