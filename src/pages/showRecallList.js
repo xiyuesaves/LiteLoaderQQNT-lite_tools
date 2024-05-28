@@ -33,29 +33,30 @@ async function initPage(map) {
 
   try {
     document.querySelector(".loading-tips").remove();
-
-    for (let i = 0; i < groupList.length; i++) {
-      const msgArr = groupList[i];
-      const chatTypeName = msgArr[0].chatType === 1 ? "私聊" : "群组";
-      const peerName = getPeerName(msgArr);
-      const peerUid = msgArr[0].peerUid;
+    for (const [key] of groupList) {
+      const msgArr = groupList.get(key);
+      const chatTypeName = msgArr[0].chatType === 1 ? "私聊" : msgArr[0].chatType === 100 ? "临时" : "群组";
+      let peerName = getPeerName(msgArr);
+      let peerUid = msgArr[0].peerUid;
+      const uuid = peerUid;
       const groupItemEl = parser.parseFromString(recallGroupItem, "text/html").querySelector(".filter-item");
-      if (msgArr[0].chatType === 1) {
-        document.querySelector(".logs").innerText += `尝试获取 ${msgArr[0].peerUid}\n`;
+      groupItemEl.peerUid = peerUid;
+      document.querySelector(".logs").innerText += `--> ${msgArr[0].chatType}\n`;
+      if (msgArr[0].chatType === 1 || msgArr[0].chatType === 100) {
+        document.querySelector(".logs").innerText += `尝试获取 - ${msgArr[0].peerUid}\n`;
         let userInfo;
         // 循环10次获取对应用户信息的请求
         for (let i = 0; i < 10; i++) {
           userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
-          document.querySelector(".logs").innerText += `尝试获取 - ${userInfo[0].payload.info.uin}\n`;
+          document.querySelector(".logs").innerText += `获取数据 - ${userInfo[0].payload.info.uin}\n`;
           if (parseInt(userInfo[0].payload.info.uin)) {
             break;
           }
         }
+        peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
+        peerUid = userInfo[0].payload.info.uin;
         document.querySelector(".logs").innerText += `${JSON.stringify(userInfo[0].payload)}\n`;
-        const peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
-        groupItemEl.querySelector(".peer-name").innerText = peerName;
-        groupItemEl.querySelector(".peer-name").title = peerName;
-        groupItemEl.querySelector(".peer-uid").innerText = `(${userInfo[0].payload.info.uin})`;
+        document.querySelector(".logs").innerText += `peerName - ${peerName}\n`;
       }
       groupItemEl.querySelector(".chat-type").innerText = `[${chatTypeName}]`;
       groupItemEl.querySelector(".peer-name").innerText = peerName;
@@ -64,12 +65,12 @@ async function initPage(map) {
       groupItemEl.addEventListener("click", () => {
         document.querySelector(".filter-item.active")?.classList?.remove("active");
         groupItemEl.classList.add("active");
-        updateUid(peerUid);
+        updateUid(uuid);
       });
       filterListEl.appendChild(groupItemEl);
     }
   } catch (err) {
-    document.querySelector(".logs").innerText += `出错${err.message}\n`;
+    document.querySelector(".logs").innerText += `出错${err.message} ${err.stack}\n`;
   }
 }
 
@@ -123,7 +124,7 @@ function updateUid(uid) {
           const picEl = parser.parseFromString(recallImgItem, "text/html").querySelector(".msg-img-item");
           const imgEl = picEl.querySelector("img");
           imgEl.src = `appimg://${pic}`;
-          imgEl.setAttribute("alt", "图片加载失败");
+          imgEl.setAttribute("alt", "图片获取失败");
           imgListEl.appendChild(picEl);
         });
       }
