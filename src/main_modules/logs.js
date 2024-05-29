@@ -1,12 +1,15 @@
 import { shell } from "electron";
 import { createServer as createHttpServer } from "http";
 import { createServer as creatNetServer } from "net";
-import { readFileSync } from "fs";
+import { readFileSync, createWriteStream, existsSync, mkdirSync } from "fs";
+import { join } from "path";
+import { format } from "util";
 import superjson from "superjson";
+import { config, loadConfigPath, onUpdateConfig } from "./config.js";
 
-import { config, onUpdateConfig } from "./config.js";
-
-let cacheLogs = [];
+let cacheLogs = [],
+  toFileCache = [],
+  logFile;
 class Logs {
   constructor(logName) {
     this.logName = logName;
@@ -16,8 +19,10 @@ class Logs {
     if (config?.debug?.mainConsole) {
       console.log(`[${this.logName}]`, ...args);
       cacheLogs.push([`[${this.logName}]`, ...args]);
+      writeToFile([`${new Date().toLocaleString()} |`, `[${this.logName}]`, ...args]);
     } else if (config?.debug?.mainConsole === undefined) {
       cacheLogs.push([`[${this.logName}]`, ...args]);
+      toFileCache.push([`${new Date().toLocaleString()} |`, `[${this.logName}]`, ...args]);
     }
   }
 }
@@ -77,21 +82,74 @@ onUpdateConfig(() => {
   } else {
     webLog.stop();
   }
+
   if (!config.debug.mainConsole) {
     cacheLogs = [];
+  }
+
+  if (config.debug.mainConsoleToFile) {
+    if (!logFile) {
+      const logFolder = join(loadConfigPath, "logs");
+      const logFilePath = join(logFolder, `${formatDate()}.log`);
+      if (!existsSync(logFolder)) {
+        mkdirSync(logFolder, { recursive: true });
+      }
+      logFile = createWriteStream(logFilePath, { flags: "a" });
+      if (!config.debug.showChannedCommunication) {
+        toFileCache = toFileCache.filter((log) => !["[get]", "[send]"].includes(log[1]));
+      }
+      toFileCache.forEach((log) => {
+        logFile.write(format(...log) + "\n");
+      });
+    }
+    toFileCache = [];
+  } else {
+    toFileCache = [];
+    logFile = null;
   }
 });
 
 function sendLog(args) {
   if (config?.debug?.showChannedCommunication) {
     cacheLogs.push(["[send]", ...args]);
+    writeToFile([`${new Date().toLocaleString()} |`, `[send]`, ...args]);
+  } else if (config?.debug?.showChannedCommunication === undefined) {
+    cacheLogs.push(["[send]", ...args]);
+    toFileCache.push([`${new Date().toLocaleString()} |`, "[send]", ...args]);
   }
 }
 
 function ipcLog(args) {
   if (config?.debug?.showChannedCommunication) {
     cacheLogs.push(["[get]", ...args]);
+    writeToFile([`${new Date().toLocaleString()} |`, `[get]`, ...args]);
+  } else if (config?.debug?.showChannedCommunication === undefined) {
+    cacheLogs.push(["[get]", ...args]);
+    toFileCache.push([`${new Date().toLocaleString()} |`, "[get]", ...args]);
   }
+}
+
+function writeToFile(args) {
+  if (config.debug.mainConsoleToFile && logFile) {
+    logFile.write(format(...args) + "\n");
+  }
+}
+
+function formatDate(date) {
+  if (!date) {
+    date = new Date();
+  }
+  // 补零函数
+  function pad(number) {
+    return number < 10 ? "0" + number : number;
+  }
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1); // getMonth() 返回 0-11，需加1
+  const day = pad(date.getDate());
+
+  // 你可以自定义格式
+  return `${year}-${month}-${day}`;
 }
 
 export { Logs, webLog, sendLog, ipcLog };

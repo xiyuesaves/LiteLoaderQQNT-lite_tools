@@ -17,6 +17,8 @@ import "./main_modules/getWebPreview.js";
 import "./main_modules/updatePlugins.js";
 
 const log = new Logs("main");
+const err = new Logs("Error");
+
 /**
  * 是否已经初始化
  */
@@ -109,7 +111,7 @@ function proxySend(window) {
  * 错误捕获
  */
 process.on("uncaughtException", (e) => {
-  log("插件出现错误", e, e?.stack);
+  err("主进程出错", e, e?.stack);
 });
 
 module.exports = { onBrowserWindowCreated };

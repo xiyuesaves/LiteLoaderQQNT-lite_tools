@@ -81,9 +81,11 @@ onUpdateConfig(async () => {
   if (localEmoticonsConfigPath !== newLocalEmoticonsConfigPath) {
     localEmoticonsConfigPath = newLocalEmoticonsConfigPath;
     if (!existsSync(localEmoticonsConfigPath)) {
+      log("初始化常用表情列表");
       writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfigTemplate, null, 4));
     }
     localEmoticonsConfig = require(localEmoticonsConfigPath);
+    log("读取常用表情列表数据", localEmoticonsConfig);
   }
 
   // 动态更新本地表情文件夹
