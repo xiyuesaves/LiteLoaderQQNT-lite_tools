@@ -212,40 +212,24 @@ function addEventqContextMenu() {
             const userName = header?.peerName || header?.memberName || header?.remark;
             const userUid = header?.uid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const spanEl = document.createElement("span");
-            spanEl.classList.add("lt-message-to-sticker");
-            spanEl.innerText = content;
-            spanEl.style.fontFamily = fontFamily;
-            event.target.closest(".message-content").appendChild(spanEl);
             msgSticker = {
               userName,
               userUid,
               content,
               fontFamily,
-              width: spanEl.offsetWidth,
-              height: spanEl.offsetHeight,
             };
-            spanEl.remove();
             log("符合生成条件-好友", msgSticker);
           } else if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 2) {
             const content = elements[0].textElement.content;
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
             const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            const spanEl = document.createElement("span");
-            spanEl.classList.add("lt-message-to-sticker");
-            spanEl.innerText = content;
-            spanEl.style.fontFamily = fontFamily;
-            event.target.closest(".message-content").appendChild(spanEl);
             msgSticker = {
               userName,
               userUid,
               content,
               fontFamily,
-              width: spanEl.offsetWidth,
-              height: spanEl.offsetHeight,
             };
-            spanEl.remove();
             log("符合生成条件-群组", msgSticker);
           }
         }
@@ -372,6 +356,7 @@ function getParentElement(element, className) {
  */
 async function createSticker(config) {
   let zoom = 1;
+  const msgBoxMaxWidth = 340;
   const userAvatarMap = await getMembersAvatar([config.userUid]);
   const userAvatar = userAvatarMap.get(config.userUid);
   const canvasEl = document.createElement("canvas");
@@ -386,6 +371,14 @@ async function createSticker(config) {
   if (options.messageToImage.highResolution) {
     zoom = 2;
   }
+
+  // 计算消息气泡尺寸
+  ctx.save();
+  ctx.font = 14 + "px " + config.fontFamily;
+  const msgBoxSIze = ctx.measureText(config.content);
+  const width = msgBoxSIze.width <= msgBoxMaxWidth ? msgBoxSIze.width : msgBoxMaxWidth;
+  const height = Math.ceil(msgBoxSIze.width / msgBoxMaxWidth) * 22;
+  ctx.restore();
 
   let userNameColor = "#999999";
   let msgBoxColor = "#ffffff";
@@ -402,14 +395,13 @@ async function createSticker(config) {
   const textMetrics = ctx.measureText(config.userName);
   const userNameWidth = textMetrics.width + 42 + 4;
   ctx.restore();
-  let canWidth = 4 + 32 + 10 + config.width + 20;
+  let canWidth = 4 + 32 + 10 + width + 20;
   if (userNameWidth > canWidth) {
     canWidth = userNameWidth;
   }
-  log("宽度", userNameWidth, canWidth);
   // 设置画布大小
   canvasEl.width = canWidth * zoom;
-  canvasEl.height = (4 + config.height + 16 + 20) * zoom;
+  canvasEl.height = (20 + height + 11) * zoom;
   // 绘制圆形头像
   ctx.save();
   ctx.beginPath();
@@ -426,15 +418,15 @@ async function createSticker(config) {
   // 绘制气泡框
   ctx.save();
   ctx.beginPath();
-  ctx.roundRect(42 * zoom, 20 * zoom, (config.width + 20) * zoom, (config.height + 16) * zoom, 8 * zoom);
+  ctx.roundRect(42 * zoom, 20 * zoom, (width + 20) * zoom, (height + 7) * zoom, 8 * zoom);
   ctx.fillStyle = msgBoxColor;
   ctx.fill();
   ctx.restore();
   // 绘制文本
   ctx.save();
-  ctx.font = 14 * zoom + "px " + config.fontFamily;
   ctx.fillStyle = contextColor;
-  ctx.wrapText(config.content, 52 * zoom, 41 * zoom, (config.width + 2) * zoom, 22 * zoom);
+  ctx.font = 14 * zoom + "px " + config.fontFamily;
+  ctx.wrapText(config.content, 52 * zoom, 40 * zoom, width * zoom, 20 * zoom);
   ctx.restore();
   const base64 = canvasEl.toDataURL("image/png", 1);
   lite_tools.saveBase64ToFile(`${new Date().getTime()}.png`, base64);
