@@ -97,6 +97,7 @@ onUpdateConfig(() => {
       logFile = createWriteStream(logFilePath, { flags: "a" });
       if (!config.debug.showChannedCommunication) {
         toFileCache = toFileCache.filter((log) => !["[get]", "[send]"].includes(log[1]));
+        cacheLogs = cacheLogs.filter((log) => !["[get]", "[send]"].includes(log[1]));
       }
       toFileCache.forEach((log) => {
         logFile.write(format(...log) + "\n");
