@@ -65,9 +65,16 @@ function updateEmoticonList() {
       }),
     );
     // 如果没有启用历史表情
-    localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => newPaths.has(path));
+    log("平铺所有表情文件路径", newPaths);
+    localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => {
+      log("过滤历史表情", path, newPaths.has(path));
+      return newPaths.has(path);
+    });
+    log("广播表情列表", emoticonsList);
     globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    log("广播常用表情列表", localEmoticonsConfig);
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+    log("更新常用表情本地文件", localEmoticonsConfigPath, localEmoticonsConfig);
     writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
     log("广播本地表情列表更新-完成");
   } catch (err) {
@@ -76,22 +83,23 @@ function updateEmoticonList() {
 }
 
 onUpdateConfig(async () => {
+  log("配置更新");
   // 初始化配置文件
   const newLocalEmoticonsConfigPath = join(loadConfigPath, "localEmoticonsConfig.json");
   if (localEmoticonsConfigPath !== newLocalEmoticonsConfigPath) {
     localEmoticonsConfigPath = newLocalEmoticonsConfigPath;
     if (!existsSync(localEmoticonsConfigPath)) {
-      log("初始化常用表情列表");
+      log("初始化常用表情列表", localEmoticonsConfigPath, localEmoticonsConfigTemplate);
       writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfigTemplate, null, 4));
     }
     localEmoticonsConfig = require(localEmoticonsConfigPath);
-    log("读取常用表情列表数据", localEmoticonsConfig);
+    log("读取常用表情列表数据", localEmoticonsConfigPath, localEmoticonsConfig);
   }
 
   // 动态更新本地表情文件夹
   if (config.localEmoticons.enabled && config.localEmoticons.localPath) {
     if (localPath !== config.localEmoticons.localPath) {
-      log("配置更新", localPath, config.localEmoticons.localPath);
+      log("本地表情文件夹路径更新", localPath, config.localEmoticons.localPath);
       if (localPath !== null) {
         resetCommonlyEmoticons();
       }
@@ -122,6 +130,7 @@ onUpdateConfig(async () => {
     if (config.localEmoticons.commonlyNum < oldCommonlyNum) {
       localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.splice(0, config.localEmoticons.commonlyNum);
       globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+      log("更新常用表情本地文件", localEmoticonsConfigPath, localEmoticonsConfig);
       writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
     oldCommonlyNum = config.localEmoticons.commonlyNum;
@@ -260,9 +269,9 @@ async function loadFolder(folderPath, itemIndex = 0) {
  * 重置常用表情列表
  */
 function resetCommonlyEmoticons() {
-  log("重置常用表情列表");
   localEmoticonsConfig.commonlyEmoticons = [];
   globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  log("重置常用表情列表", localEmoticonsConfigPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 }
 
@@ -283,7 +292,6 @@ ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", (_, src) => {
   if (!config.localEmoticons.commonlyEmoticons) {
     return;
   }
-  log("更新常用表情", localEmoticonsConfigPath, config.localEmoticons.commonlyNum);
   const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
   // 如果已经有这个表情了，则更新位置
   newSet.delete(src);
@@ -293,19 +301,19 @@ ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", (_, src) => {
   if (localEmoticonsConfig.commonlyEmoticons.length > config.localEmoticons.commonlyNum) {
     localEmoticonsConfig.commonlyEmoticons.pop();
   }
-  log("常用表情列表", localEmoticonsConfig);
   globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  log("常用表情列表", localEmoticonsConfigPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
 
 // 从历史记录中移除指定文件
 ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
   const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
-  log("从常用表情中移除", localPath);
   // 如果已经有这个表情了，则更新位置
   newSet.delete(localPath);
   localEmoticonsConfig.commonlyEmoticons = Array.from(newSet);
   globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  log("从常用表情中移除", localEmoticonsConfigPath, localPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
 
