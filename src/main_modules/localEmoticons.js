@@ -12,6 +12,7 @@ import { debounce } from "./debounce.js";
 const localEmoticonsConfigTemplate = require("../config/localEmoticonsConfigTemplate.json");
 
 import { Logs } from "./logs.js";
+import { AsyncLock } from "./AsyncLock.js";
 const log = new Logs("本地表情模块");
 
 /**
@@ -45,6 +46,11 @@ let oldCommonlyNum = -1;
  * 本地表情列表副本
  */
 let emoticonsListHash;
+
+/**
+ * 异步锁
+ */
+const loadEmoticonsLock = new AsyncLock();
 
 /**
  * 广播表情列表更新添加防抖
@@ -104,9 +110,12 @@ onUpdateConfig(async () => {
         resetCommonlyEmoticons();
       }
       localPath = config.localEmoticons.localPath;
-      abortAllWatchers();
       log("加载表情文件夹", config.localEmoticons.localPath);
-      emoticonsList = await loadFolder(config.localEmoticons.localPath);
+      await loadEmoticonsLock.execute(async () => {
+        // 在更新列表前先停止对所有文件夹的监听事件
+        abortAllWatchers();
+        emoticonsList = await loadFolder(config.localEmoticons.localPath);
+      });
       updateEmoticonList();
     }
   } else if (localPath) {
@@ -136,29 +145,6 @@ onUpdateConfig(async () => {
     oldCommonlyNum = config.localEmoticons.commonlyNum;
   }
 });
-
-// 异步锁
-class AsyncLock {
-  constructor() {
-    this.locked = false;
-  }
-  async execute(asyncFn) {
-    if (this.locked) {
-      log("上一次操作还没有结束，阻止新的请求");
-      return;
-    }
-
-    this.locked = true;
-    try {
-      await asyncFn();
-    } catch (error) {
-      log(`操作时出错: ${error.message}`);
-    } finally {
-      this.locked = false;
-    }
-  }
-}
-const loadEmoticonsLock = new AsyncLock();
 
 // 文件监听函数，添加防抖
 const folderUpdate = debounce(async () => {
