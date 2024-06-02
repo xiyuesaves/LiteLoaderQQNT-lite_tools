@@ -9,14 +9,15 @@ export class AsyncLock {
   async execute(asyncFn) {
     if (this.locked) {
       log("上一次操作还没有结束，阻止新的请求");
-      return;
+      return false;
     }
-
     this.locked = true;
     try {
       await asyncFn();
+      return true;
     } catch (error) {
       log(`操作时出错: ${error.message}`);
+      return false;
     } finally {
       this.locked = false;
     }

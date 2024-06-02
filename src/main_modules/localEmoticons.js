@@ -110,13 +110,16 @@ onUpdateConfig(async () => {
         resetCommonlyEmoticons();
       }
       localPath = config.localEmoticons.localPath;
-      log("加载表情文件夹", config.localEmoticons.localPath);
-      await loadEmoticonsLock.execute(async () => {
+      log("读取目标文件夹", config.localEmoticons.localPath);
+      const execute = await loadEmoticonsLock.execute(async () => {
         // 在更新列表前先停止对所有文件夹的监听事件
         abortAllWatchers();
         emoticonsList = await loadFolder(config.localEmoticons.localPath);
+        log("读取目标文件夹-完成", emoticonsList);
       });
-      updateEmoticonList();
+      if (execute) {
+        updateEmoticonList();
+      }
     }
   } else if (localPath) {
     log("功能关闭");
@@ -148,12 +151,16 @@ onUpdateConfig(async () => {
 
 // 文件监听函数，添加防抖
 const folderUpdate = debounce(async () => {
-  await loadEmoticonsLock.execute(async () => {
+  const execute = await loadEmoticonsLock.execute(async () => {
     // 在更新列表前先停止对所有文件夹的监听事件
     abortAllWatchers();
     emoticonsList = await loadFolder(config.localEmoticons.localPath);
   });
-  updateEmoticonList();
+  if (execute) {
+    updateEmoticonList();
+  } else {
+    log("读取失败，跳过更新");
+  }
 }, 50);
 
 function abortAllWatchers() {
