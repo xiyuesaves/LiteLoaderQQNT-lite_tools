@@ -56,7 +56,7 @@ let peer = getPeer();
 function processingMsgList() {
   const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
   // 消息类型不在处理范围
-  if (!checkChatType(curMsgs[0].data)) {
+  if (!checkChatType(curMsgs?.[0]?.data)) {
     return;
   }
   const childElHeight = new Map();
