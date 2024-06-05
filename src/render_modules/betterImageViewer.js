@@ -12,7 +12,7 @@ function betterImageViewer() {
   log("模块加载");
   // 修复弹窗字体模糊
   document.body.classList.add("image-viewer");
-  let offset = 0;
+  let offset = 3;
   document.addEventListener(
     "pointerdown",
     (event) => {
