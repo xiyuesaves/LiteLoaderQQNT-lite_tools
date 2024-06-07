@@ -305,7 +305,7 @@ function addEventqContextMenu() {
       const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
       addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, async (event, data) => {
         const filePathArr = _imagePath.replace(/\\/g, "/").split("/");
-        const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace("\\", "/");
+        const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace(/\\/g, "/");
         if (_imagePath.startsWith("qqface:")) {
           const rawPath = _imagePath.split("qqface:")[1];
           if (await lite_tools.copyFile(rawPath + "_aio.png", filePath + "_aio.png")) {

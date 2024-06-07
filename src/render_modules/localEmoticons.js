@@ -287,7 +287,7 @@ function quickInsertion() {
   const msg = ckeditorInstance.getData();
   const msgArr = msg.split("<p>");
   const lastStr = msgArr[msgArr.length - 1];
-  const quickEmoticonsActiveKey = options.localEmoticons.quickEmoticonsActiveKey.replace("\\", "\\\\");
+  const quickEmoticonsActiveKey = options.localEmoticons.quickEmoticonsActiveKey.replace(/\\/g, "\\\\");
   const regExp = new RegExp(`${quickEmoticonsActiveKey}([^${quickEmoticonsActiveKey}]*)(?=$)`);
   regOut = lastStr.replace(/<[^>]+>/g, "").match(regExp);
   let filterEmocicons = [];
