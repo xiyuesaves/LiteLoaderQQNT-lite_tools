@@ -5,6 +5,7 @@ updateOptions(updateFont);
 async function updateFont() {
   if (!options.message.overrideFont.fullName) {
     document.body.style.fontFamily = "";
+    document.body.style.fontStyle = "";
     return;
   }
   if (options.message.overrideFont.fullName.includes(",")) {
