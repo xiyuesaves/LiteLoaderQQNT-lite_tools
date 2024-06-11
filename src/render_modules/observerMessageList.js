@@ -181,9 +181,29 @@ function imageComponent(component) {
 const debounceProcessingMsgList = debounce(processingMsgList, 10);
 
 /**
- * 元素尺寸变化监听器
+ * 元素尺寸更新时更新消息消息列表检测
  */
-const resizeObserver = new ResizeObserver(debounceProcessingMsgList);
+const updateMsgList = new ResizeObserver(debounceProcessingMsgList);
+
+/**
+ * 等待图片元素尺寸更新
+ */
+const awaitList = new Map();
+
+const resizeObserver = new ResizeObserver((entries) => {
+  for (let entry of entries) {
+    if (entry.target) {
+      awaitList.get(entry.target)();
+      awaitList.delete(entry.target);
+      resizeObserver.unobserve(entry.target);
+    }
+  }
+});
+
+function addlImgResizeEvent(img) {
+  resizeObserver.observe(img);
+  return new Promise((res) => awaitList.set(img, res));
+}
 
 /**
  * 向 hookVue3 模块添加功能
@@ -210,13 +230,12 @@ window?.__VUE_MOUNT__?.push((component) => {
  * @param {Element} target 目标消息元素
  * @param {Object} msgRecord 目标消息对象
  */
-function singleMessageProcessing(target, msgRecord) {
+async function singleMessageProcessing(target, msgRecord) {
   if (!msgRecord) {
     return;
   }
   // 消息类型不在处理范围
   if (!checkChatType(msgRecord)) {
-    log("无需处理消息", msgRecord);
     return;
   }
   // 处理消息列表
@@ -225,7 +244,7 @@ function singleMessageProcessing(target, msgRecord) {
     if (messageEl) {
       if (chatTypes.includes(msgRecord?.chatType)) {
         // 尺寸监听器
-        resizeObserver.observe(messageEl);
+        updateMsgList.observe(messageEl);
         // 重写卡片消息
         if (options.background.enabled && options.background.redrawCard) {
           const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
@@ -310,13 +329,14 @@ function singleMessageProcessing(target, msgRecord) {
             // 如果是图片或表情则额外判断一次
             const classList = ["mix-message__container--pic", "mix-message__container--market-face"];
             if (classList.some((className) => bubbleInside.classList.contains(className))) {
+              const imgEl = target.querySelector("img");
+              if (!imgEl.offsetWidth) {
+                await addlImgResizeEvent(imgEl);
+              }
               const elements = msgRecord?.elements;
               const minWidth =
-                options.message.showMsgTime && options.message.showMsgTimeFullDate && !options.message.showMsgTimeToSenderName ? 200 : 120;
-              if (
-                elements.length === 1 &&
-                ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || elements[0]?.picElement?.picWidth >= minWidth)
-              ) {
+                options.message.showMsgTime && options.message.showMsgTimeFullDate && !options.message.showMsgTimeToSenderName ? 200 : 130;
+              if (elements.length === 1 && ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || imgEl.offsetWidth >= minWidth)) {
                 slotEl.classList.add("inside-slot");
                 bubbleInside.appendChild(slotEl);
               } else {
