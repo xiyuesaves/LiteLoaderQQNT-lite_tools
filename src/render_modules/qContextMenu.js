@@ -236,11 +236,12 @@ function addEventqContextMenu() {
         // 发送图片检测
         if (event.target.classList.contains("image-content") && elements.some((ele) => ele.picElement)) {
           imagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
-          event.target.parentElement.__VUE__.forEach((el) => {
+          for (let i = 0; i < event.target.parentElement.__VUE__.length; i++) {
+            const el = event.target.parentElement.__VUE__[i];
             if (el?.ctx?.picData) {
-              searchImagePath = encodeURIComponent(getPicUrl(el.ctx.picData));
+              searchImagePath = encodeURIComponent(await getPicUrl(el.ctx.picData, msgRecord.chatType));
             }
-          });
+          }
           log(decodeURIComponent(searchImagePath));
         }
         // 发送表情包检测

@@ -1,12 +1,14 @@
 import { options } from "./options.js";
-export function getPicUrl(picData) {
+export async function getPicUrl(picData, chatType) {
   if (picData.originImageUrl) {
     if (picData.originImageUrl.includes("&rkey=")) {
-      return `${options.global.PIC_BASE_URL}${picData.originImageUrl}`;
+      return `${options.global.IMAGE_HTTP_HOST_NT}${picData.originImageUrl}`;
     } else {
-      return `${options.global.PIC_BASE_URL}${picData.originImageUrl}${options.global.rkey}`;
+      const rkey = await lite_tools.getRkey(chatType);
+      console.log("返回rkey",rkey);
+      return `${options.global.IMAGE_HTTP_HOST_NT}${picData.originImageUrl}${rkey}`;
     }
   } else {
-    return `${options.global.PIC_BASE_URL}/gchatpic_new/0/0-0-${picData.md5HexStr.toUpperCase()}/0`;
+    return `${options.global.IMAGE_HTTP_HOST}/gchatpic_new/0/0-0-${picData.md5HexStr.toUpperCase()}/0`;
   }
 }

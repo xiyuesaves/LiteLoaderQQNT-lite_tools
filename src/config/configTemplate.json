@@ -128,8 +128,10 @@
   "global": {
     "UA": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "rkey": "&rkey=CAQSKAB6JWENi5LMk0kc62l8Pm3Jn1dsLZHyRLAnNmHGoZ3y_gDZPqZt-64",
-    "PIC_BASE_URL": "https://gchat.qpic.cn"
+    "IMAGE_HTTP_HOST": "https://gchat.qpic.cn",
+    "IMAGE_HTTP_HOST_NT": "https://multimedia.nt.qq.com.cn"
   },
+  "rkeyAPI": "",
   "disableQtag": {
     "level": false,
     "title": false,

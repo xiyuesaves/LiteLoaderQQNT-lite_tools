@@ -3,6 +3,7 @@ import { normalize, join } from "path";
 import { config, updateConfig } from "./config.js";
 import { copyFile, writeFileSync, existsSync } from "fs";
 import { randomUUID } from "crypto";
+import { getRkey } from "./getRkey.js";
 import { Logs } from "./logs.js";
 const log = new Logs("initMain");
 import { EventEmitter } from "events";
@@ -207,4 +208,11 @@ ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
       log("无效操作", err);
     });
 });
+
+// 获取rkey
+ipcMain.handle("LiteLoader.lite_tools.getRkey", async (_, chatType) => {
+  const chatTypeStr = chatType === 2 ? "group_rkey" : "private_rkey";
+  return await getRkey(chatTypeStr);
+});
+
 export { initMain, sendIpc };

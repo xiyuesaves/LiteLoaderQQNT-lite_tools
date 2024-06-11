@@ -2,29 +2,31 @@ import { dirname } from "path";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { downloadPic } from "./downloadPic.js";
 import { config } from "./config.js";
+import { getRkey } from "./getRkey.js";
 import { Logs } from "./logs.js";
 const log = new Logs("图片处理模块");
 
 // 获取图片链接
-function getPicUrl(picData) {
+async function getPicUrl(picData, chatType) {
   log(picData);
   if (!picData.original) {
     if (picData.originImageUrl) {
       if (picData.originImageUrl.includes("&rkey=")) {
-        return `${config.global.PIC_BASE_URL}${picData.originImageUrl}`;
+        return `${config.global.IMAGE_HTTP_HOST_NT}${picData.originImageUrl}`;
       } else {
-        return `${config.global.PIC_BASE_URL}${picData.originImageUrl}${config.global.rkey}`;
+        const rkey = await getRkey(chatType);
+        return `${config.global.IMAGE_HTTP_HOST_NT}${picData.originImageUrl}${rkey}`;
       }
     } else {
-      return `${config.global.PIC_BASE_URL}/gchatpic_new/0/0-0-${picData.originImageMd5}/`;
+      return `${config.global.IMAGE_HTTP_HOST}/gchatpic_new/0/0-0-${picData.originImageMd5}/`;
     }
   } else {
-    return `${config.global.PIC_BASE_URL}/gchatpic_new/0/0-0-${picData.md5HexStr.toUpperCase()}/`;
+    return `${config.global.IMAGE_HTTP_HOST}/gchatpic_new/0/0-0-${picData.md5HexStr.toUpperCase()}/`;
   }
 }
 
-function getPicArr(picData) {
-  const rawUrl = getPicUrl(picData);
+async function getPicArr(picData, chatType) {
+  const rawUrl = await getPicUrl(picData, chatType);
   return [0, 198, 720].map((el) => {
     if (rawUrl.includes("gchatpic_new")) {
       return `${rawUrl}${el}`;
@@ -45,7 +47,8 @@ async function processPic(msgItem) {
       if (el?.picElement) {
         log("该消息含有图片", el);
         const pic = el.picElement;
-        const picUrls = getPicArr(pic);
+        const chatType = msgItem.chatType === 2 ? "group_rkey" : "private_rkey";
+        const picUrls = await getPicArr(pic, chatType);
         if (!existsSync(pic.sourcePath)) {
           log("下载原图", picUrls);
           const body = await downloadPic(picUrls[0]);
@@ -59,6 +62,7 @@ async function processPic(msgItem) {
             [198, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_198")],
             [720, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_720")],
           ]);
+          log("修复缩略图数据", pic.thumbPath);
         }
         // log("缩略图", typeof pic?.thumbPath, pic?.thumbPath instanceof Map);
         if (pic?.thumbPath) {
