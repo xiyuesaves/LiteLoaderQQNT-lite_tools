@@ -140,16 +140,12 @@ function formatDate(date) {
   if (!date) {
     date = new Date();
   }
-  // 补零函数
   function pad(number) {
     return number < 10 ? "0" + number : number;
   }
-
   const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1); // getMonth() 返回 0-11，需加1
+  const month = pad(date.getMonth() + 1);
   const day = pad(date.getDate());
-
-  // 你可以自定义格式
   return `${year}-${month}-${day}`;
 }
 
