@@ -21,8 +21,6 @@ import { observeChatTopFunc } from "../render_modules/observeChatTopFunc.js";
 import { localEmoticons } from "../render_modules/localEmoticons.js";
 // 禁用tag
 import { disableQtag } from "../render_modules/disabledQtag.js";
-// 防抖模块
-import { debounce } from "../render_modules/debounce.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
 // 更新窗口图标
