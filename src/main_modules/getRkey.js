@@ -6,7 +6,7 @@ let rkey;
 export async function getRkey(chatType) {
   log("请求rkey", config.rkeyAPI, chatType);
   if (!config.rkeyAPI || !chatType) {
-    log("没有配置rkey或传入type");
+    log("没有配置rkey或没有传入type");
     return config.global.rkey;
   }
   if (!rkey || rkey.expired_time < Date.now() / 1000) {
