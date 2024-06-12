@@ -192,10 +192,19 @@ const awaitList = new Map();
 
 const resizeObserver = new ResizeObserver((entries) => {
   for (let entry of entries) {
-    if (entry.target) {
-      awaitList.get(entry.target)();
-      awaitList.delete(entry.target);
+    if (entry?.target?.offsetWidth) {
+      log("放行", entry?.target, entry?.target?.offsetWidth);
       resizeObserver.unobserve(entry.target);
+      // 降低处理优先级，避免出现循环监听
+      requestIdleCallback(
+        () => {
+          awaitList.get(entry.target)();
+          awaitList.delete(entry.target);
+        },
+        {
+          timeout: 500,
+        },
+      );
     }
   }
 });
@@ -219,7 +228,9 @@ window?.__VUE_MOUNT__?.push((component) => {
     // 图片组件单独处理
     imageComponent(component);
     // 单条消息处理
-    singleMessageProcessing(component?.vnode?.el, component?.props?.msgRecord);
+    if (component?.vnode?.el && component?.props?.msgRecord) {
+      singleMessageProcessing(component.vnode.el, component.props.msgRecord);
+    }
   } catch (err) {
     log("出现错误", err);
   }
@@ -231,15 +242,12 @@ window?.__VUE_MOUNT__?.push((component) => {
  * @param {Object} msgRecord 目标消息对象
  */
 async function singleMessageProcessing(target, msgRecord) {
-  if (!msgRecord) {
-    return;
-  }
   // 消息类型不在处理范围
   if (!checkChatType(msgRecord)) {
     return;
   }
   // 处理消息列表
-  if (target?.classList && target?.classList?.contains("message") && msgRecord) {
+  if (target?.classList?.contains?.("message")) {
     const messageEl = target;
     if (messageEl) {
       if (chatTypes.includes(msgRecord?.chatType)) {
@@ -329,14 +337,15 @@ async function singleMessageProcessing(target, msgRecord) {
             // 如果是图片或表情则额外判断一次
             const classList = ["mix-message__container--pic", "mix-message__container--market-face"];
             if (classList.some((className) => bubbleInside.classList.contains(className))) {
-              const imgEl = target.querySelector("img");
-              if (!imgEl.offsetWidth) {
-                await addlImgResizeEvent(imgEl);
+              const msgContentEl = target.querySelector(".msg-content-container");
+              if (!msgContentEl.offsetWidth) {
+                await addlImgResizeEvent(msgContentEl);
               }
+              log("图片尺寸", msgContentEl.offsetWidth, document.body.contains(msgContentEl));
               const elements = msgRecord?.elements;
               const minWidth =
                 options.message.showMsgTime && options.message.showMsgTimeFullDate && !options.message.showMsgTimeToSenderName ? 200 : 130;
-              if (elements.length === 1 && ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || imgEl.offsetWidth >= minWidth)) {
+              if (elements.length === 1 && ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || msgContentEl.offsetWidth >= minWidth)) {
                 slotEl.classList.add("inside-slot");
                 bubbleInside.appendChild(slotEl);
               } else {
