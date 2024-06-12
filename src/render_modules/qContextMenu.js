@@ -140,7 +140,7 @@ function addEventqContextMenu() {
   /**
    * 图片路径 - 搜索用
    */
-  let searchImagePath = "";
+  let searchImageData = null;
   /**
    * 图片，表情包路径
    */
@@ -194,10 +194,10 @@ function addEventqContextMenu() {
     }
   });
 
-  document.addEventListener(eventName, async (event) => {
+  document.addEventListener(eventName, (event) => {
     if (event.button === 2) {
       imagePath = "";
-      searchImagePath = "";
+      searchImageData = null;
       msgSticker = null;
       isRightClick = true;
       const messageEl = getParentElement(event.target, "message");
@@ -239,10 +239,10 @@ function addEventqContextMenu() {
           for (let i = 0; i < event.target.parentElement.__VUE__.length; i++) {
             const el = event.target.parentElement.__VUE__[i];
             if (el?.ctx?.picData) {
-              searchImagePath = encodeURIComponent(await getPicUrl(el.ctx.picData, msgRecord.chatType));
+              searchImageData = { picData: el.ctx.picData, chatType: msgRecord.chatType }; //getPicUrl();
             }
           }
-          log(decodeURIComponent(searchImagePath));
+          log(searchImageData);
         }
         // 发送表情包检测
         if (elements.some((ele) => ele.marketFaceElement)) {
@@ -251,7 +251,7 @@ function addEventqContextMenu() {
       }
     } else {
       imagePath = "";
-      searchImagePath = "";
+      searchImageData = null;
       msgSticker = null;
     }
   });
@@ -292,10 +292,11 @@ function addEventqContextMenu() {
       });
     }
     // 搜索图片
-    if (searchImagePath && options.imageSearch.enabled) {
-      const _searchImagePath = searchImagePath;
-      addQContextMenu(qContextMenu, searchIcon, "搜索图片", () => {
-        const openUrl = options.imageSearch.searchUrl.replace("%search%", _searchImagePath);
+    if (searchImageData && options.imageSearch.enabled) {
+      const _searchImageData = searchImageData;
+      addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
+        const searchImageUrl = encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType));
+        const openUrl = options.imageSearch.searchUrl.replace("%search%", searchImageUrl);
         lite_tools.openWeb(openUrl);
       });
     }
