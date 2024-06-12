@@ -1018,22 +1018,29 @@
       <li class="vertical-list-item">
         <div>
           <h2>更新自动重启</h2>
-          <span class="secondary-text">插件自更新后，自动重启</span>
+          <span class="secondary-text">插件更新后，自动重启</span>
         </div>
         <div class="autoRelanch q-switch" data-config="autoRelanch">
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <!-- <hr class="horizontal-dividing-line" />
+      <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
-          <h2>rkey接口</h2>
-          <span class="secondary-text">使用第三方接口获取图片rkey</span>
+          <h2>自定义rkey获取地址</h2>
+          <span class="secondary-text">
+            使用第三方接口获取图片rkey，不填写将使用固定rkey
+            <br />
+            <strong>轻量工具箱不提供该服务，请自行搭建</strong>
+            <br />
+            服务搭建参考
+            <a class="removeMaskLink link" data-href="https://github.com/linyuchen/Lagrange.Core">Lagrange.Core</a>
+          </span>
         </div>
       </li>
       <li class="vertical-list-item">
-        <input placeholder="rkey-api" class="input-text text_color" type="text" spellcheck="false" />
-      </li> -->
+        <input placeholder="" class="rkey-api-url input-text text_color" type="text" spellcheck="false" />
+      </li>
     </ul>
   </setting-panel>
   <!-- 其他-debug -->

@@ -479,6 +479,14 @@ async function onConfigView(view) {
     tailList.createNewTail();
   });
 
+  // rkey接口请求地址
+  const rkeyApiUrl = view.querySelector(".rkey-api-url");
+  rkeyApiUrl.value = options.rkeyAPI;
+  rkeyApiUrl.addEventListener("input", (e) => {
+    options.rkeyAPI = e.target.value;
+    debounceSetOptions();
+  });
+
   // 打开当前版本的更新日志
   view.querySelector(".tag-version").addEventListener("click", () => {
     fetch(`local:///${LiteLoader.plugins.lite_tools.path.plugin}/changeLog.md`)
