@@ -35,7 +35,7 @@ touchMoveSelectin("chat-msg-area");
 chatMessageList();
 newMessageRecall();
 
-const debounceChatMessage = debounce(chatMessage, 50);
+const debounceChatMessage = debounce(chatMessage, 10);
 
 const observe = new MutationObserver(debounceChatMessage);
 observe.observe(document.body, {

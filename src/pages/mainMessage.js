@@ -92,13 +92,14 @@ addEventPeerChange((newPeer) => {
   }
 });
 
-chatMessage();
-const observe = new MutationObserver(chatMessage);
+const debounceChatMessage = debounce(chatMessage, 10);
+const observe = new MutationObserver(debounceChatMessage);
 observe.observe(document.body, {
   childList: true,
   subtree: true,
 });
 updateOptions(chatMessage);
+chatMessage();
 
 /**
  * 监听鼠标侧键返回事件
@@ -113,6 +114,7 @@ document.addEventListener("mouseup", (event) => {
  * 初始化聊天消息功能，包括滚动事件、贴纸条、侧边栏项目、GIF热点地图、徽章、头像显示、消息气泡调整和移除VIP红名。
  */
 function chatMessage() {
+  log("更新页面");
   // 监听消息列表滚动
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
     const el = document.querySelector(".ml-area .q-scroll-view");
