@@ -92,8 +92,7 @@ addEventPeerChange((newPeer) => {
   }
 });
 
-const debounceChatMessage = debounce(chatMessage, 10);
-const observe = new MutationObserver(debounceChatMessage);
+const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
   childList: true,
   subtree: true,
