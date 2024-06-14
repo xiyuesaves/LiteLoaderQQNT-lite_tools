@@ -16,14 +16,21 @@ function replaceMiniAppArk(args) {
     // 接收到获取历史消息列表
     const msgList = args[2]?.msgList;
     if (msgList && msgList.length && checkChatType(msgList[0])) {
+      log("历史消息事件");
       replaceMsgList(msgList);
     }
     // 接收到的新消息
-    const onRecvMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecvMsg`);
-    const onRecvActiveMsg = findEventIndex(args, `nodeIKernelMsgListener/onRecvActiveMsg`);
-    const events = onRecvMsg !== -1 ? onRecvMsg : onRecvActiveMsg;
-    if (checkChatType(args?.[2]?.[events]?.payload?.msgList?.[0])) {
-      replaceMsgList(args[2][events].payload.msgList);
+    const onRecvMsg = findEventIndex(args, ["nodeIKernelMsgListener/onRecvMsg", "nodeIKernelMsgListener/onRecvActiveMsg"]);
+    if (onRecvMsg >= 0 && checkChatType(args?.[2]?.[onRecvMsg]?.payload?.msgList?.[0])) {
+      log("新消息事件");
+      replaceMsgList(args[2][onRecvMsg].payload.msgList);
+    }
+
+    // 转发消息
+    const onForwardMsg = findEventIndex(args, "nodeIKernelMsgListener/onAddSendMsg");
+    if (onForwardMsg >= 0 && checkChatType(args?.[2]?.[onForwardMsg]?.payload?.msgRecord)) {
+      log("转发消息事件");
+      replaceMsgList([args[2][onForwardMsg].payload.msgRecord]);
     }
   }
 }
