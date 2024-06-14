@@ -17,6 +17,10 @@ console.log("通信端口", port);
       if (log && log.length) {
         for (let i = 0; i < log.length; i++) {
           const singLog = log[i];
+          // 过滤无效log
+          if (singLog?.[4]?.[1]?.[0] === "info" || singLog?.[2]?.eventName === "ns-LoggerApi-2") {
+            continue;
+          }
           // 根据日志类型使用颜色区分
           switch (singLog[0]) {
             case "[send]":
@@ -31,9 +35,7 @@ console.log("通信端口", port);
               singLog[0] = `%c${singLog[0]}`;
               singLog.splice(1, 0, "background:#ffd666;color:#000000D9;padding:2px 4px;border-radius: 4px;");
           }
-          if (singLog[3] !== "info" && (singLog?.[1] === "send" ? singLog?.[4]?.[1] : true)) {
-            console.log(...singLog);
-          }
+          console.log(...singLog);
         }
       }
     } catch (err) {
