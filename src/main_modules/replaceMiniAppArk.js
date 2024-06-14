@@ -20,7 +20,11 @@ function replaceMiniAppArk(args) {
       replaceMsgList(msgList);
     }
     // 接收到的新消息
-    const onRecvMsg = findEventIndex(args, ["nodeIKernelMsgListener/onRecvMsg", "nodeIKernelMsgListener/onRecvActiveMsg"]);
+    const onRecvMsg = findEventIndex(args, [
+      "nodeIKernelMsgListener/onRecvMsg",
+      "nodeIKernelMsgListener/onRecvActiveMsg",
+      "nodeIKernelMsgListener/onActiveMsgInfoUpdate",
+    ]);
     if (onRecvMsg >= 0 && checkChatType(args?.[2]?.[onRecvMsg]?.payload?.msgList?.[0])) {
       log("新消息事件");
       replaceMsgList(args[2][onRecvMsg].payload.msgList);
