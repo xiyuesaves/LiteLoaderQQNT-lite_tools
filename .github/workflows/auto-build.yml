@@ -1,12 +1,12 @@
 name: auto-build
-on: 
+on:
   push:
     tags:
       - "v*"
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       contents: write
     steps:
       - name: Checkout
@@ -26,4 +26,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: lite_tools_v4.zip
-          body_path: ./changeLog.md
+          body_path: ./release.md
