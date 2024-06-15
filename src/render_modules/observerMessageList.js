@@ -226,7 +226,7 @@ window?.__VUE_MOUNT__?.push((component) => {
     // 单条消息处理
     if (component?.vnode?.el && component?.props?.msgRecord) {
       singleMessageProcessing(component.vnode.el, component.props.msgRecord);
-      debounceProcessingMsgList();
+      processingMsgList();
     }
   } catch (err) {
     log("出现错误", err);
@@ -494,9 +494,6 @@ async function singleMessageProcessing(target, msgRecord) {
             showWebPreview(findURL.textElement.content, messageEl, msgRecord.msgId);
           }
         }
-
-        // 传统处理流传
-        // debounceProcessingMsgList();
       }
     }
   }
