@@ -383,11 +383,15 @@ async function onConfigView(view) {
   });
 
   // 监听连接元素点击
-  view.querySelectorAll("a").forEach((el) => {
-    el.addEventListener("click", (event) => {
-      lite_tools.openWeb(event.target.getAttribute("data-href"));
-    });
+  view.addEventListener("click", (e) => {
+    if (e.target.tagName === "A") {
+      const href = e.target.getAttribute("data-href");
+      if (href) {
+        lite_tools.openWeb(href);
+      }
+    }
   });
+
   log("完成所有选项初始化");
 
   // 自定义历史表情数量
