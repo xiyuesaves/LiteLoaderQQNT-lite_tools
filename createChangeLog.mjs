@@ -1,7 +1,8 @@
 import { readFileSync, writeFileSync } from "fs";
 const packageJSON = JSON.parse(readFileSync("./package.json", "utf-8"));
 const releaseBody = readFileSync("./release.md", "utf-8");
-const relesasText = `## v${packageJSON.version} - ${new Date().toLocaleString("zh-cn", { hour12: false })}\n\n` + releaseBody;
+const relesasText =
+  `## v${packageJSON.version} - ${new Date().toLocaleString("zh-cn", { hour12: false, timeZone: "Asia/Shanghai" })}\n\n` + releaseBody;
 const releaseList = [];
 
 releaseList.push(relesasText);
@@ -16,7 +17,11 @@ async function getAllRelease(list = [], page = 1) {
       await getAllRelease(list, ++page);
     } else {
       list.forEach((item) => {
-        releaseList.push(`## ${item.tag_name} - ${new Date(item.created_at).toLocaleString("zh-cn", { hour12: false })}\n\n${item.body}`);
+        releaseList.push(
+          `## ${item.tag_name} - ${new Date(item.created_at).toLocaleString("zh-cn", { hour12: false, timeZone: "Asia/Shanghai" })}\n\n${
+            item.body
+          }`,
+        );
       });
       writeFileSync("./changeLog.md", releaseList.join("\n\n"));
     }
