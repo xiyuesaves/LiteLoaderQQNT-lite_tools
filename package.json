@@ -2,10 +2,10 @@
   "name": "lite_tools",
   "version": "2.27.1",
   "description": "LiteLoaderQQNT 插件 轻量工具箱",
-  "main": "index.js",
+  "main": "esbuild.config.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node esbuild.config.js"
+    "build": "node esbuild.config.mjs"
   },
   "keywords": [],
   "author": "",
