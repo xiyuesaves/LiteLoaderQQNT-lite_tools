@@ -533,7 +533,6 @@ const initMessageList = (recursion = true) => {
     const msgItemEl = document.querySelector(`[id="${el.id}"]`);
     const messageEl = msgItemEl.querySelector(".message");
     if (messageEl) {
-      log("处理可见消息数据", messageEl, el.data);
       singleMessageProcessing(messageEl, el.data);
     } else if (!msgItemEl && recursion) {
       log("消息元素不存在，重新检测可见消息数据", el.id);

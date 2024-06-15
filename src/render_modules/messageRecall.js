@@ -12,13 +12,14 @@ function messageRecall(el, find) {
   if (!el || !find || el.classList.contains("lite-tools-recall-msg")) {
     return;
   }
-  // 标记为已撤回消息
-  el.classList.add("lite-tools-recall-msg");
   /**
    * @type {Element}
    */
   const slot = el.querySelector(".lite-tools-slot");
   if (slot) {
+    log("添加撤回标记", el, find);
+    // 标记为已撤回消息
+    el.classList.add("lite-tools-recall-msg");
     const messageRecallEl = document.createElement("div");
     messageRecallEl.innerText = "已撤回";
     messageRecallEl.setAttribute("data-recall", "已撤回");
@@ -39,6 +40,8 @@ function messageRecall(el, find) {
     messageRecallEl.style["--offsetRight"] = `${offsetRight}px`;
     slot.classList.add("recall-tag");
     slot.insertBefore(messageRecallEl, slot.firstChild);
+  } else {
+    log("目标没有插槽");
   }
 }
 
