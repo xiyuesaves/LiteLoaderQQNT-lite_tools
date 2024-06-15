@@ -110,6 +110,11 @@ function processingMsgList() {
 }
 
 /**
+ * 防抖批量处理当前可见的消息列表
+ */
+const debounceProcessingMsgList = debounce(processingMsgList, 10);
+
+/**
  * 图片组件单独处理
  */
 function imageComponent(component) {
@@ -176,11 +181,6 @@ function imageComponent(component) {
 }
 
 /**
- * 防抖批量处理当前可见的消息列表
- */
-const debounceProcessingMsgList = debounce(processingMsgList, 10);
-
-/**
  * 元素尺寸更新时更新消息消息列表检测
  */
 const updateMsgList = new ResizeObserver(debounceProcessingMsgList);
@@ -219,10 +219,6 @@ function addlImgResizeEvent(img) {
  */
 window?.__VUE_MOUNT__?.push((component) => {
   try {
-    // 兼容模式直接返回
-    if (options.compatibleLLAPI) {
-      return;
-    }
     // 消息靠左单独处理函数
     messageToleft(component);
     // 图片组件单独处理
@@ -230,6 +226,7 @@ window?.__VUE_MOUNT__?.push((component) => {
     // 单条消息处理
     if (component?.vnode?.el && component?.props?.msgRecord) {
       singleMessageProcessing(component.vnode.el, component.props.msgRecord);
+      debounceProcessingMsgList();
     }
   } catch (err) {
     log("出现错误", err);
@@ -345,7 +342,10 @@ async function singleMessageProcessing(target, msgRecord) {
               const elements = msgRecord?.elements;
               const minWidth =
                 options.message.showMsgTime && options.message.showMsgTimeFullDate && !options.message.showMsgTimeToSenderName ? 200 : 130;
-              if (elements.length === 1 && ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || msgContentEl.offsetWidth >= minWidth)) {
+              if (
+                elements.length === 1 &&
+                ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || msgContentEl.offsetWidth >= minWidth)
+              ) {
                 slotEl.classList.add("inside-slot");
                 bubbleInside.appendChild(slotEl);
               } else {
@@ -496,7 +496,7 @@ async function singleMessageProcessing(target, msgRecord) {
         }
 
         // 传统处理流传
-        debounceProcessingMsgList();
+        // debounceProcessingMsgList();
       }
     }
   }
@@ -604,10 +604,6 @@ function initObserver() {
   const mlList = document.querySelector(".ml-area.v-list-area .virtual-scroll-area .ml-list.list");
   if (mlList) {
     new MutationObserver(() => {
-      if (options.compatibleLLAPI) {
-        log("兼容模式更新");
-        debounceInitMessageList(false);
-      }
       // 在消息列表发生变化时触发更新消息列表更新逻辑
       debounceProcessingMsgList();
     }).observe(mlList, {
