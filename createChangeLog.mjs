@@ -5,8 +5,6 @@ const relesasText =
   `## v${packageJSON.version} - ${new Date().toLocaleString("zh-cn", { hour12: false, timeZone: "Asia/Shanghai" })}\n\n` + releaseBody;
 const releaseList = [];
 
-releaseList.push(relesasText);
-
 async function getAllRelease(list = [], page = 1) {
   const res = await fetch(`https://api.github.com/repos/xiyuesaves/LiteLoaderQQNT-lite_tools/releases?per_page=100&page=${page}`);
   const json = await res.json();
@@ -23,6 +21,12 @@ async function getAllRelease(list = [], page = 1) {
           }`,
         );
       });
+      if (`v${packageJSON.version}` !== list[0].tag_name) {
+        console.log("插入当前版本");
+        releaseList.unshift(relesasText);
+      } else {
+        console.log("当前版本已存在");
+      }
       writeFileSync("./changeLog.md", releaseList.join("\n\n"));
     }
   } else {
