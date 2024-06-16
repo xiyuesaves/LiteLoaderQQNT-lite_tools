@@ -9,7 +9,7 @@ export async function getRkey(chatType) {
     log("没有配置rkey或没有传入type");
     return config.global.rkey;
   }
-  if (!rkey || rkey.expired_time < Date.now() / 1000) {
+  if (!rkey || rkey.expired_time ? rkey.expired_time < Date.now() / 1000 : true) {
     rkey = await fetchRkey();
     if (rkey) {
       log("成功更新rkey", rkey);
