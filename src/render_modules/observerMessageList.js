@@ -350,7 +350,7 @@ async function singleMessageProcessing(target, msgRecord) {
                 bubbleInside.appendChild(slotEl);
               } else {
                 slotEl.classList.add("outside-slot");
-                if (messageEl.querySelector(".message-container--self")) {
+                if (messageEl.querySelector(".message-container--self") && !options.message.selfMsgToLeft) {
                   bubbleOutside.insertBefore(slotEl, bubbleOutside.firstChild);
                 } else {
                   bubbleOutside.appendChild(slotEl);
@@ -362,7 +362,7 @@ async function singleMessageProcessing(target, msgRecord) {
             }
           } else if (bubbleOutside) {
             slotEl.classList.add("outside-slot");
-            if (messageEl.querySelector(".message-container--self")) {
+            if (messageEl.querySelector(".message-container--self") && !options.message.selfMsgToLeft) {
               bubbleOutside.insertBefore(slotEl, bubbleOutside.firstChild);
             } else {
               bubbleOutside.appendChild(slotEl);
@@ -405,7 +405,7 @@ async function singleMessageProcessing(target, msgRecord) {
               const senderNameEl = messageEl.querySelector(".user-name");
               if (options.message.showMsgTimeToSenderName && senderNameEl) {
                 senderNameEl.classList.add("disabled-send-time");
-                if (messageEl.querySelector(".message-container--self")) {
+                if (messageEl.querySelector(".message-container--self") && !options.message.selfMsgToLeft) {
                   if (messageEl.querySelector(".q-tag")) {
                     senderNameEl.classList.add("self-and-tag");
                     senderNameEl.insertAdjacentElement("beforeend", newTimeEl);
@@ -449,7 +449,7 @@ async function singleMessageProcessing(target, msgRecord) {
               }
             });
             if (slotEl.classList.contains("outside-slot")) {
-              if (messageEl.querySelector(".message-container--self")) {
+              if (messageEl.querySelector(".message-container--self") && !options.message.selfMsgToLeft) {
                 if (slotEl.querySelector(".lite-tools-time")) {
                   slotEl.classList.add("fix-padding-right");
                 }
@@ -462,7 +462,7 @@ async function singleMessageProcessing(target, msgRecord) {
               }
             } else {
               newReplaceEl.classList.add("single");
-              if (messageEl.querySelector(".message-container--self")) {
+              if (messageEl.querySelector(".message-container--self") && !options.message.selfMsgToLeft) {
                 msgEl.insertBefore(newReplaceEl, msgEl.firstChild);
               } else {
                 msgEl.appendChild(newReplaceEl);
