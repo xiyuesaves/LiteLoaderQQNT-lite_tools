@@ -1,6 +1,5 @@
 import http from "http";
 import https from "https";
-import fs from "fs";
 import zlib from "zlib";
 import { config } from "./config.js";
 /**
@@ -46,7 +45,6 @@ export function get(url, redirects = 0) {
           path: urlData.pathname,
           headers: {
             "User-Agent": config.global.UA,
-            "Accept-Encoding": "identity",
           },
         },
         (res) => {
@@ -118,7 +116,6 @@ export function get(url, redirects = 0) {
         function endData() {
           const buffer = Buffer.concat(chunks);
           const html = buffer.toString();
-          fs.writeFileSync("./test.html", html);
           resolve({
             success: true,
             data: html,
