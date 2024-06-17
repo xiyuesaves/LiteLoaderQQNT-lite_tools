@@ -494,9 +494,31 @@ async function onConfigView(view) {
   // 代理地址
   const proxyUrl = view.querySelector(".proxy-url");
   proxyUrl.value = options.proxy.url;
-  proxyUrl.addEventListener("input", (e) => {
-    options.proxy.url = e.target.value;
-    debounceSetOptions();
+  const proxyStatus = view.querySelector(".test-proxy");
+  const applyProxy = view.querySelector(".apply-proxy-url");
+  applyProxy.addEventListener("click", async () => {
+    applyProxy.classList.add("disabled-input");
+    proxyStatus.innerHTML = "检查中...";
+    proxyStatus.className = "test-proxy";
+    await lite_tools.applyProxy(proxyUrl.value);
+    applyProxy.classList.remove("disabled-input");
+  });
+  proxyStatus.addEventListener("click", () => {
+    proxyStatus.innerHTML = "检查中...";
+    proxyStatus.className = "test-proxy";
+    lite_tools.checkProxy();
+  });
+  lite_tools.updateProxyStatus((_, status) => {
+    proxyStatus.style.pointerEvents = "auto";
+    if (status.success) {
+      proxyStatus.classList.add("success");
+      proxyStatus.classList.remove("error");
+      proxyStatus.innerHTML = status.message;
+    } else {
+      proxyStatus.classList.add("error");
+      proxyStatus.classList.remove("success");
+      proxyStatus.innerHTML = status.message;
+    }
   });
 
   // 打开当前版本的更新日志

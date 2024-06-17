@@ -18,7 +18,7 @@ export function get(url, redirects = 0) {
     });
   }
   const urlData = new URL(url);
-  if (config.proxy.url) {
+  if (config.proxy.enabled && config.proxy.url) {
     const proxy = new URL(config.proxy.url);
     return new Promise((resolve) => {
       http
@@ -140,7 +140,3 @@ export function get(url, redirects = 0) {
     }
   }
 }
-
-// log("请求回调", await get("http://wwww.xiaodaowangluo.top/Content/Reg_files/logo.png"));
-// log("请求回调", await get("http://www.youtube.com"));
-// log("请求回调", await get("https://www.bilibili.com/video/BV16m421V79k/"));

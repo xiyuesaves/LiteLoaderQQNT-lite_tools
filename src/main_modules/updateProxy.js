@@ -1,28 +1,77 @@
-// import { ipcMain } from "electron";
-import { fetch, setGlobalDispatcher, ProxyAgent } from "undici";
-import { onUpdateConfig } from "./config.js";
+import { settingWindow } from "./captureWindow.js";
+import { fetch, setGlobalDispatcher, ProxyAgent, Agent } from "undici";
+import { config, updateConfig, onUpdateConfig } from "./config.js";
 import { Logs } from "./logs.js";
+import { ipcMain } from "electron";
 const log = new Logs("updateProxy");
-let setProxyUrl = "";
-onUpdateConfig((config) => {
+let useProxy;
+
+onUpdateConfig(() => {
+  if (config.proxy.enabled && useProxy !== config.proxy.url) {
+    useProxy = config.proxy.url;
+    setGlobalDispatcher(new ProxyAgent(config.proxy.url));
+    log("代理已更新", config.proxy.url);
+  }
+});
+
+ipcMain.on("LiteLoader.lite_tools.checkProxy", () => {
+  checkProxy();
+});
+ipcMain.handle("LiteLoader.lite_tools.applyProxy", async (event, agent) => {
   try {
-    if (config.proxy.url !== setProxyUrl) {
-      setProxyUrl = config.proxy.url;
-      setGlobalDispatcher(new ProxyAgent(config.proxy.url));
-      log("更新代理地址成功", setProxyUrl);
-      fetch("http://www.google.com/generate_204")
-        .then((res) => {
-          if (res.status === 204) {
-            log("代理地址可用", setProxyUrl);
-          } else {
-            log("代理地址不可用-1", res.status);
-          }
-        })
-        .catch(() => {
-          log("代理地址不可用-2", setProxyUrl);
-        });
+    const status = await checkProxy(agent);
+    if (status) {
+      config.proxy.enabled = true;
+      config.proxy.url = agent;
+      setGlobalDispatcher(new ProxyAgent(agent));
+      log("应用代理成功", agent);
+    } else {
+      config.proxy.enabled = false;
+      config.proxy.url = agent;
+      setGlobalDispatcher(new Agent());
+      log("应用代理失败", agent);
+    }
+    updateConfig(config);
+    return status;
+  } catch (err) {
+    log("应用代理失败", err);
+    return false;
+  }
+});
+
+async function checkProxy(agent) {
+  try {
+    let res;
+    if (agent) {
+      log("有代理", agent);
+      res = await fetch("http://www.google.com/generate_204", {
+        dispatcher: new ProxyAgent(agent),
+      });
+    } else {
+      log("无代理");
+      res = await fetch("http://www.google.com/generate_204");
+    }
+    if (res.status === 204) {
+      log("代理有效");
+      settingWindow.webContents.send("LiteLoader.lite_tools.updateProxyStatus", {
+        success: true,
+        message: "代理有效",
+      });
+      return true;
+    } else {
+      log("请求失败", res.status);
+      settingWindow.webContents.send("LiteLoader.lite_tools.updateProxyStatus", {
+        success: false,
+        message: `请求失败 ${res.status}`,
+      });
+      return false;
     }
   } catch (err) {
     log("代理地址有误", err);
+    settingWindow.webContents.send("LiteLoader.lite_tools.updateProxyStatus", {
+      success: false,
+      message: `请求失败 ${err}`,
+    });
+    return false;
   }
-});
+}
