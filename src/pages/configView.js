@@ -491,6 +491,14 @@ async function onConfigView(view) {
     debounceSetOptions();
   });
 
+  // 代理地址
+  const proxyUrl = view.querySelector(".proxy-url");
+  proxyUrl.value = options.proxy.url;
+  proxyUrl.addEventListener("input", (e) => {
+    options.proxy.url = e.target.value;
+    debounceSetOptions();
+  });
+
   // 打开当前版本的更新日志
   view.querySelector(".tag-version").addEventListener("click", () => {
     fetch(`local:///${LiteLoader.plugins.lite_tools.path.plugin}/changeLog.md`)
