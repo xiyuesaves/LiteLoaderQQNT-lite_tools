@@ -500,16 +500,20 @@ async function onConfigView(view) {
     applyProxy.classList.add("disabled-input");
     proxyStatus.innerHTML = "检查中...";
     proxyStatus.className = "test-proxy";
+    proxyStatus.style.pointerEvents = "none";
     await lite_tools.applyProxy(proxyUrl.value);
     applyProxy.classList.remove("disabled-input");
   });
   proxyStatus.addEventListener("click", () => {
     proxyStatus.innerHTML = "检查中...";
     proxyStatus.className = "test-proxy";
+    proxyStatus.style.pointerEvents = "none";
+    applyProxy.classList.add("disabled-input");
     lite_tools.checkProxy();
   });
   lite_tools.updateProxyStatus((_, status) => {
     proxyStatus.style.pointerEvents = "auto";
+    applyProxy.classList.remove("disabled-input");
     if (status.success) {
       proxyStatus.classList.add("success");
       proxyStatus.classList.remove("error");
