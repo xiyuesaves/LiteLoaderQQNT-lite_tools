@@ -89,6 +89,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   onWebPreviewData: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onWebPreviewData", callback),
   // 设置窗口图标
   setWindowIcon: (...args) => ipcRenderer.send("LiteLoader.lite_tools.setWindowIcon", ...args),
+  // 检测插件是否更新
+  checkUpdate: () => ipcRenderer.invoke("LiteLoader.lite_tools.checkUpdate"),
   // 发送更新请求到主进程
   updatePlugins: (url) => ipcRenderer.send("LiteLoader.lite_tools.updatePlugins", url),
   // 监听更新事件
