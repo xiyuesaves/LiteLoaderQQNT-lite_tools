@@ -1,5 +1,16 @@
 .lite-tools-settings {
   width: 100%;
+  .test-proxy {
+    cursor: pointer;
+    font-weight: bold;
+    color: #0099ff;
+    &.success {
+      color: #15D173;
+    }
+    &.error {
+      color: #FF5967;
+    }
+  }
   .LT-disabled {
     display: none !important;
   }
