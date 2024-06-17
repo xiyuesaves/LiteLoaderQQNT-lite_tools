@@ -97,6 +97,12 @@ contextBridge.exposeInMainWorld("lite_tools", {
   updateEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateEvent", callback),
   // 获取用户配置数据
   getUserConfig: () => ipcRenderer.invoke("LiteLoader.lite_tools.getUserConfig"),
+  // 请求更新代理可用性
+  applyProxy: (url) => ipcRenderer.invoke("LiteLoader.lite_tools.applyProxy", url),
+  // 请求更新代理可用性
+  checkProxy: () => ipcRenderer.send("LiteLoader.lite_tools.checkProxy"),
+  // 检测代理可用性监听
+  updateProxyStatus: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateProxyStatus", callback),
   // 获取图片rkey
   getRkey: (chatType) => ipcRenderer.invoke("LiteLoader.lite_tools.getRkey", chatType),
   deleteUserConfig: (uid) => ipcRenderer.send("LiteLoader.lite_tools.deleteUserConfig", uid),
