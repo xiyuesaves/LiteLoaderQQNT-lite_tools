@@ -19,6 +19,9 @@ let sass;
 onUpdateConfig(() => {
   try {
     if (config.debug.autoCompileScss) {
+      if (abortController) {
+        return;
+      }
       abortController = new AbortController();
       // 编译样式
       if (!sass) {
@@ -59,6 +62,7 @@ onUpdateConfig(() => {
       if (abortController) {
         log("结束动态更新样式");
         abortController.abort();
+        abortController = null;
       }
     }
   } catch (err) {
