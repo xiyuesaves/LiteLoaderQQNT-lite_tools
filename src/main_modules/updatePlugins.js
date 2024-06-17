@@ -3,11 +3,14 @@ import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { app, ipcMain } from "electron";
 import { join } from "path";
+import { fetch } from "undici";
 import AdmZip from "adm-zip";
 import { config } from "./config.js";
 import { settingWindow } from "./captureWindow.js";
 
 let isUpdating = "false";
+
+// 更新插件
 ipcMain.on("LiteLoader.lite_tools.updatePlugins", async (_, url) => {
   if (isUpdating === "false") {
     try {
@@ -70,4 +73,9 @@ ipcMain.on("LiteLoader.lite_tools.updatePlugins", async (_, url) => {
       status: "note",
     });
   }
+});
+
+// 获取插件更新
+ipcMain.handle("LiteLoader.lite_tools.checkUpdate", async () => {
+  return (await fetch(config.global.updateUrl)).json();
 });
