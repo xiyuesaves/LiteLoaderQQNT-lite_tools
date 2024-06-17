@@ -131,17 +131,22 @@ updateOptions(async (opt) => {
       targetPosition?.appendChild(barIcon);
     }
     if (opt.localEmoticons.commonlyEmoticons) {
-      const config = await lite_tools.getLocalEmoticonsConfig();
-      const list = config.commonlyEmoticons.map((path, index) => ({ path, index, name: getName(path) }));
-      if (commonlyEmoticons && list.length) {
-        commonlyEmoticons.updateEmoticonIcon(list[0].path);
-        commonlyEmoticons.updateEmoticonList(list);
-      } else if (!commonlyEmoticons && list.length) {
-        commonlyEmoticons = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
-        folderInfos.unshift(commonlyEmoticons);
-        folderListEl.insertBefore(commonlyEmoticons.folderEl, folderListEl.querySelector(":first-child"));
-        folderIconListEl.insertBefore(commonlyEmoticons.folderIconEl, folderIconListEl.querySelector(":first-child"));
-        commonlyEmoticons.load();
+      if (!commonlyEmoticons) {
+        // 避免配置更新过快导致创建多个历史表情实例
+        commonlyEmoticons = "await";
+        const config = await lite_tools.getLocalEmoticonsConfig();
+        const list = config.commonlyEmoticons.map((path, index) => ({ path, index, name: getName(path) }));
+        if (list.length) {
+          commonlyEmoticons = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+          folderInfos.unshift(commonlyEmoticons);
+          folderListEl.insertBefore(commonlyEmoticons.folderEl, folderListEl.querySelector(":first-child"));
+          folderIconListEl.insertBefore(commonlyEmoticons.folderIconEl, folderIconListEl.querySelector(":first-child"));
+          commonlyEmoticons.load();
+        } else {
+          commonlyEmoticons = null;
+        }
+      } else {
+        log("历史表情实例", commonlyEmoticons)
       }
     } else if (commonlyEmoticons) {
       log("销毁历史表情实例", commonlyEmoticons.id);

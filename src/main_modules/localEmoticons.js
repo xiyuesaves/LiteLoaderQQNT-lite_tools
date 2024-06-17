@@ -89,7 +89,6 @@ function updateEmoticonList() {
 }
 
 onUpdateConfig(async () => {
-  log("配置更新");
   // 初始化配置文件
   const newLocalEmoticonsConfigPath = join(loadConfigPath, "localEmoticonsConfig.json");
   if (localEmoticonsConfigPath !== newLocalEmoticonsConfigPath) {
