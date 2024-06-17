@@ -2,11 +2,13 @@ import http from "http";
 import https from "https";
 import zlib from "zlib";
 import { config } from "./config.js";
+import { Logs } from "./logs.js";
+const log = new Logs("getWeb");
 /**
  * 请求数据最大值
  * @type {Number}
  */
-const MAX_CHUNKS = 1024 * 10;
+const MAX_CHUNKS = 1024 * 100;
 
 export function get(url, redirects = 0) {
   if (redirects > 20) {
@@ -56,7 +58,7 @@ export function get(url, redirects = 0) {
 
   function handle(res, resolve) {
     const contentType = res.headers["content-type"];
-    console.log(res.headers);
+    log(res.headers);
     // 处理重定向
     if ([301, 302].includes(res.statusCode)) {
       res.destroy();
@@ -70,11 +72,11 @@ export function get(url, redirects = 0) {
           res.pipe(unzipStream);
           unzipStream.on("data", (chunk) => {
             chunks.push(chunk);
-            console.log("收到新数据");
+            log("收到新数据");
             if (Buffer.concat(chunks).length >= MAX_CHUNKS) {
               res.destroy();
               res.unpipe(unzipStream);
-              console.log("结束请求");
+              log("结束请求");
               endData();
             }
           });
@@ -83,7 +85,7 @@ export function get(url, redirects = 0) {
             endData();
           });
           unzipStream.on("error", (err) => {
-            console.error(`解压遇到问题: ${err.message}`);
+            log(`解压遇到问题: ${err.message}`);
             res.destroy();
             resolve({
               success: false,
@@ -93,10 +95,10 @@ export function get(url, redirects = 0) {
         } else {
           res.on("data", (chunk) => {
             chunks.push(chunk);
-            console.log("收到新数据");
+            log("收到新数据");
             if (Buffer.concat(chunks).length >= MAX_CHUNKS) {
               res.destroy();
-              console.log("结束请求");
+              log("结束请求");
               endData();
             }
           });
@@ -105,7 +107,7 @@ export function get(url, redirects = 0) {
             endData();
           });
           res.on("error", (err) => {
-            console.error(`请求出错: ${err}`);
+            log(`请求出错: ${err}`);
             res.destroy();
             resolve({
               success: false,
@@ -116,6 +118,7 @@ export function get(url, redirects = 0) {
         function endData() {
           const buffer = Buffer.concat(chunks);
           const html = buffer.toString();
+          log("返回数据", html);
           resolve({
             success: true,
             data: html,
@@ -138,6 +141,6 @@ export function get(url, redirects = 0) {
   }
 }
 
-// console.log("请求回调", await get("http://wwww.xiaodaowangluo.top/Content/Reg_files/logo.png"));
-// console.log("请求回调", await get("http://www.youtube.com"));
-// console.log("请求回调", await get("https://www.bilibili.com/video/BV16m421V79k/"));
+// log("请求回调", await get("http://wwww.xiaodaowangluo.top/Content/Reg_files/logo.png"));
+// log("请求回调", await get("http://www.youtube.com"));
+// log("请求回调", await get("https://www.bilibili.com/video/BV16m421V79k/"));

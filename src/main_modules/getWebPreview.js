@@ -1,8 +1,7 @@
 import { ipcMain } from "electron";
-import http from "http";
-import https from "https";
 import { globalBroadcast } from "./globalBroadcast.js";
 import { config, onUpdateConfig } from "./config.js";
+import { get } from "./getWeb.js";
 import { Logs } from "./logs.js";
 const log = new Logs("链接预览");
 
@@ -20,35 +19,6 @@ onUpdateConfig(() => {
 });
 
 /**
- * 从给定的 URL 获取文本内容。
- *
- * @param {string} url - 要获取文本的 URL。
- * @return {Promise<Object>} 包含成功状态和文本内容的对象。
- *                           如果获取成功，则成功状态为 true 并提供文本内容。
- *                           如果获取失败，则成功状态为 false 并提供错误消息。
- */
-async function getWebText(url) {
-  try {
-    const data = await fetch(url, {
-      method: "GET",
-      headers: {
-        "User-Agent": config.global.UA,
-      },
-    });
-    const text = await data.text();
-    return {
-      success: true,
-      data: text,
-    };
-  } catch (err) {
-    return {
-      success: false,
-      err: err.message,
-    };
-  }
-}
-
-/**
  * 从给定的URL获取元数据（如果是HTML页面）。
  *
  * @param {string} url - 要从中检索元数据的URL。
@@ -56,43 +26,35 @@ async function getWebText(url) {
  *                           如果URL不是HTML页面，则成功状态将为false，并提供错误消息。
  */
 async function getMeatData(url) {
-  if (await checkContentType(url, "text/html")) {
-    log("目标为HTML，开始请求内容");
-    const res = await getWebText(url);
-    if (!res.success) {
-      return res;
-    }
-    const metaTags = res.data.match(/<meta[^>]+>/g);
-    if (!(metaTags && metaTags.length)) {
-      return {
-        success: false,
-        err: "没有找到meta数据",
-      };
-    }
-    log("请求成功", metaTags);
-    const meta = {};
-    metaTags.forEach((tag) => {
-      const name = tag.match(/name=["']([^"']+)["']/) || tag.match(/<title>([^<]+)<\/title>/);
-      const content = tag.match(/content=["']([^"']+)["']/);
-      const property = tag.match(/property=["']([^"']+)["']/);
-      if (((name && name.length) || (property && property.length)) && content && content.length) {
-        meta[name?.[1] ?? property?.[1]] = content[1];
-      }
-    });
-    const urlObj = new URL(url);
-    meta.url = urlObj.host.replace(/^www\./, "").replace(/^.{1}/, (str) => str.toUpperCase());
-    log("获取到元数据", meta);
-    return {
-      success: true,
-      data: meta,
-    };
-  } else {
-    log("目标不是网页", url);
+  log("目标为HTML，开始请求内容");
+  const res = await get(url);
+  if (!res.success) {
+    return res;
+  }
+  const metaTags = res.data.match(/<meta[^>]+>/g);
+  if (!(metaTags && metaTags.length)) {
     return {
       success: false,
-      err: "目标不是网页",
+      err: "没有找到meta数据",
     };
   }
+  log("请求成功", metaTags);
+  const meta = {};
+  metaTags.forEach((tag) => {
+    const name = tag.match(/name=["']([^"']+)["']/) || tag.match(/<title>([^<]+)<\/title>/);
+    const content = tag.match(/content=["']([^"']+)["']/);
+    const property = tag.match(/property=["']([^"']+)["']/);
+    if (((name && name.length) || (property && property.length)) && content && content.length) {
+      meta[name?.[1] ?? property?.[1]] = content[1];
+    }
+  });
+  const urlObj = new URL(url);
+  meta.url = urlObj.host.replace(/^www\./, "").replace(/^.{1}/, (str) => str.toUpperCase());
+  log("获取到元数据", meta);
+  return {
+    success: true,
+    data: meta,
+  };
 }
 
 /**
@@ -156,47 +118,6 @@ async function getWebPrevew(url) {
       err: `代码错误 ${err}`,
     };
   }
-}
-
-/**
- * 检查给定URL的内容类型并将其与目标内容类型进行比较。
- *
- * @param {string} href - 要检查的URL。
- * @param {string} target - 要比较的目标内容类型。
- * @return {Promise<boolean>} 如果内容类型与目标匹配，返回true，否则返回false。
- */
-async function checkContentType(href, target) {
-  log("检测目标类型", href, target);
-  const url = new URL(href);
-  const request = url.protocol === "https:" ? https.request : http.request;
-  const reqOptions = {
-    hostname: url.hostname,
-    path: url.pathname,
-    method: "GET",
-    headers: {
-      "User-Agent": config.global.UA,
-    },
-  };
-  return await new Promise((resolve) => {
-    const req = request(reqOptions, (res) => {
-      const contentType = res.headers["content-type"];
-      if (contentType.startsWith(target)) {
-        log("匹配成功", href, contentType);
-        resolve(true);
-        req.destroy();
-      } else {
-        log("匹配失败", href, contentType);
-        resolve(false);
-        req.destroy();
-      }
-    });
-    req.on("error", (err) => {
-      log("请求失败", err);
-      resolve(false);
-    });
-    log("结束请求");
-    req.end();
-  });
 }
 
 /**
