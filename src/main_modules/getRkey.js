@@ -6,7 +6,7 @@ let rkey;
 export async function getRkey(chatType) {
   log("请求rkey", chatType);
   if (!config.rkeyAPI || !chatType) {
-    log("没有配置rkey或没有传入type");
+    log("没有配置rkey或没有传入chatType");
     return config.global.rkey;
   }
   if (!rkey || (rkey.expired_time ? rkey.expired_time < Date.now() / 1000 : true)) {
@@ -24,7 +24,9 @@ export async function getRkey(chatType) {
 async function fetchRkey() {
   try {
     log("正在更新rkey", config.rkeyAPI);
-    const newRkey = await fetch(config.rkeyAPI).then((res) => res.json());
+    const respone = await fetch(config.rkeyAPI).then((res) => res.json());
+    // 适配两种接口返回值
+    const newRkey = respone?.data?.private_rkey ? respone.data : respone;
     if (typeof newRkey.group_rkey === "string" && typeof newRkey.private_rkey === "string") {
       rkey = newRkey;
       log("成功更新rkey", rkey);
