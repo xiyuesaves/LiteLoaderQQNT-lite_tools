@@ -84,7 +84,6 @@ export function get(url, redirects = 0) {
           res.pipe(unzipStream);
           unzipStream.on("data", (chunk) => {
             chunks.push(chunk);
-            log("收到新数据");
             if (Buffer.concat(chunks).length >= MAX_CHUNK_SIZE) {
               res.destroy();
               res.unpipe(unzipStream);
@@ -107,7 +106,6 @@ export function get(url, redirects = 0) {
         } else {
           res.on("data", (chunk) => {
             chunks.push(chunk);
-            log("收到新数据");
             if (Buffer.concat(chunks).length >= MAX_CHUNK_SIZE) {
               res.destroy();
               log("结束请求");
