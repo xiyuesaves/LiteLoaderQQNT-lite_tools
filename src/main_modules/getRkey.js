@@ -25,11 +25,12 @@ async function fetchRkey() {
   try {
     log("正在更新rkey", config.rkeyAPI);
     const newRkey = await fetch(config.rkeyAPI).then((res) => res.json());
-    if (typeof newRkey.group_rkey === "string" && typeof newRkey.private_rkey === "string") {
-      rkey = newRkey;
+    const rkeyData = newRkey.data;
+    if (typeof rkeyData.group_rkey === "string" && typeof rkeyData.private_rkey === "string") {
+      rkey = rkeyData;
       log("成功更新rkey", rkey);
     } else {
-      log("数据返回格式错误", newRkey);
+      log("数据返回格式错误", rkeyData);
       return undefined;
     }
     return rkey;
