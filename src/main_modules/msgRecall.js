@@ -57,6 +57,7 @@ let recallViewWindow;
 
 /**
  * 内存缓存消息记录实例-用于根据消息id获取撤回原始内容
+ * 每1万条消息大概占用50M内存
  */
 const catchMsgList = new LimitedMap(20000);
 
@@ -217,13 +218,15 @@ function activeAllChat(recentContactList) {
 // 替换消息列表中的撤回标记
 function preventRecallMessage(msgList) {
   let historyMessageRecallList = new Map();
-  log("处理消息列表");
+  log("处理消息列表", msgList.length);
   for (let i = 0; i < msgList.length; i++) {
     const msgItem = msgList[i];
     for (let j = 0; j < msgItem.elements.length; j++) {
       const msgElements = msgItem.elements[j];
       // 不是撤回消息，跳过
       if (!msgElements?.grayTipElement?.revokeElement) {
+        // 缓存历史消息
+        catchMsgList.set(msgItem.msgId, msgItem);
         continue;
       }
       // 是自己的撤回消息，判断是否开启了拦截自己的撤回消息
