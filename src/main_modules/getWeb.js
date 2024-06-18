@@ -5,10 +5,10 @@ import { config } from "./config.js";
 import { Logs } from "./logs.js";
 const log = new Logs("getWeb");
 /**
- * 请求数据最大值
+ * 一个链接最多下载100Kb的数据
  * @type {Number}
  */
-const MAX_CHUNKS = 1024 * 100;
+const MAX_CHUNK_SIZE = 1024 * 100;
 
 export function get(url, redirects = 0) {
   if (redirects > 20) {
@@ -21,27 +21,32 @@ export function get(url, redirects = 0) {
   if (config.proxy.enabled && config.proxy.url) {
     const proxy = new URL(config.proxy.url);
     return new Promise((resolve) => {
-      http
-        .get(
-          {
-            host: proxy.hostname,
-            port: proxy.port,
-            path: urlData.href,
-            headers: {
-              Host: urlData.host,
-              "User-Agent": config.global.UA,
-            },
+      const req = http.get(
+        {
+          host: proxy.hostname,
+          port: proxy.port,
+          path: urlData.href,
+          headers: {
+            Host: urlData.host,
+            "User-Agent": config.global.UA,
           },
-          (res) => {
-            handle(res, resolve);
-          },
-        )
-        .end();
+        },
+        (res) => {
+          handle(res, resolve);
+        },
+      );
+      req.on("error", (err) => {
+        log("请求出错", err);
+        resolve({
+          success: false,
+          error: `请求出错 ${err.message}`,
+        });
+      });
     });
   } else {
     return new Promise((resolve) => {
       const request = urlData.protocol === "https:" ? https.get : http.get;
-      request(
+      const req = request(
         {
           hostname: urlData.hostname,
           path: urlData.pathname,
@@ -52,7 +57,14 @@ export function get(url, redirects = 0) {
         (res) => {
           handle(res, resolve);
         },
-      ).end();
+      );
+      req.on("error", (err) => {
+        log("请求出错", err);
+        resolve({
+          success: false,
+          error: `请求出错 ${err.message}`,
+        });
+      });
     });
   }
 
@@ -73,7 +85,7 @@ export function get(url, redirects = 0) {
           unzipStream.on("data", (chunk) => {
             chunks.push(chunk);
             log("收到新数据");
-            if (Buffer.concat(chunks).length >= MAX_CHUNKS) {
+            if (Buffer.concat(chunks).length >= MAX_CHUNK_SIZE) {
               res.destroy();
               res.unpipe(unzipStream);
               log("结束请求");
@@ -85,7 +97,7 @@ export function get(url, redirects = 0) {
             endData();
           });
           unzipStream.on("error", (err) => {
-            log(`解压遇到问题: ${err.message}`);
+            log(`解压出错: ${err.message}`);
             res.destroy();
             resolve({
               success: false,
@@ -96,7 +108,7 @@ export function get(url, redirects = 0) {
           res.on("data", (chunk) => {
             chunks.push(chunk);
             log("收到新数据");
-            if (Buffer.concat(chunks).length >= MAX_CHUNKS) {
+            if (Buffer.concat(chunks).length >= MAX_CHUNK_SIZE) {
               res.destroy();
               log("结束请求");
               endData();
@@ -106,15 +118,15 @@ export function get(url, redirects = 0) {
             res.destroy();
             endData();
           });
-          res.on("error", (err) => {
-            log(`请求出错: ${err}`);
-            res.destroy();
-            resolve({
-              success: false,
-              error: "require error",
-            });
-          });
         }
+        res.on("error", (err) => {
+          log(`接收数据出错: ${err}`);
+          res.destroy();
+          resolve({
+            success: false,
+            error: "respond error",
+          });
+        });
         function endData() {
           const buffer = Buffer.concat(chunks);
           const html = buffer.toString();
