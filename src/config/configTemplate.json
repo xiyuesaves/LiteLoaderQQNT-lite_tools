@@ -98,6 +98,7 @@
     "customColor": false,
     "preventSelfMsg": false,
     "blockAllRetractions": false,
+    "cacheHistory": false,
     "textColor": {
       "light": "#ff6666",
       "dark": "#c70000"

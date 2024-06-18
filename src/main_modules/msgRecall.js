@@ -226,7 +226,9 @@ function preventRecallMessage(msgList) {
       // 不是撤回消息，跳过
       if (!msgElements?.grayTipElement?.revokeElement) {
         // 缓存历史消息
-        catchMsgList.set(msgItem.msgId, msgItem);
+        if (config.preventMessageRecall.cacheHistory) {
+          catchMsgList.set(msgItem.msgId, msgItem);
+        }
         continue;
       }
       // 是自己的撤回消息，判断是否开启了拦截自己的撤回消息

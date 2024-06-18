@@ -764,11 +764,21 @@
         </div>
       </li>
       <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>阻止撤回历史消息</h2>
+          <span class="secondary-text">阻止撤回已被加载过的历史消息</span>
+        </div>
+        <div class="cacheHistory q-switch" data-config="preventMessageRecall.cacheHistory">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
       <li title="" class="vertical-list-item">
         <div>
           <h2>持久化保存</h2>
           <span class="secondary-text">
-            启用此选项后，所有撤回的消息将以<red>base64</red>格式保存在本地。如果担心消息泄露，请慎重开启。<br />
+            启用此选项后，所有撤回的消息将以<red>base64</red>格式保存在插件的数据目录中。如果担心消息泄露，请慎重开启。<br />
             不启用此选项时撤回数据在重启后丢失，且不受 删除本地数据 功能影响。<br />
             此选项仅保存启用后拦截到的撤回数据，开启前的内容将无法保留。<br />
             如果关闭此选项，之前保存在本地的撤回消息也将不会加载。<br />
