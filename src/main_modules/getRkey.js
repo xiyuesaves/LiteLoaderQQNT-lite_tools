@@ -21,6 +21,20 @@ export async function getRkey(chatType) {
   return reqRkey;
 }
 
+/**
+ * 从接口中获取 rkey 数据。
+ * 支持以下两种数据结构：
+ * 1. 直接包含 "private_rkey" 和 "group_rkey" 字段的对象。"expired_time" 参数不是必须的，但建议携带，
+ *    rkey 的安全有效期为1小时。
+ * 2. 包含在 "data" 字段中，其中包含 "private_rkey" 和 "group_rkey" 字段的对象。
+ *
+ * @typedef {Object} RkeyData
+ * @property {string} private_rkey - 包含 "&rkey=xxxxxx" 的私有 rkey。
+ * @property {string} group_rkey - 包含 "&rkey=xxxxxx" 的群组 rkey。
+ * @property {number} [expired_time] - 可选，rkey 的过期时间戳，精确到秒。
+ *
+ * @returns {Promise<string|undefined>} 返回一个 Promise，解析为 rkey 字符串或 undefined。
+ */
 async function fetchRkey() {
   try {
     log("正在更新rkey", config.rkeyAPI);
