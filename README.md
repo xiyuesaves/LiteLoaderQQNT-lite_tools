@@ -39,15 +39,12 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 - 打开设置页面，选择 `轻量工具箱`
 - 滚动到插件页面底部，点击新版本号，在更新日志窗口点击 `更新` 即可
 
-### 如何构建项目
+### 手动构建
 
-- **自行构建的插件在提 issue 时请注明**
-- 请确保您已安装 `git`、`nodejs`、`npm` 并了解如何使用终端
-- 在 `LiteLoaderQQNT` 的 `plugins` 目录下执行 `git clone git@github.com:xiyuesaves/LiteLoaderQQNT-lite_tools.git`
-- 进入 `LiteLoaderQQNT-lite_tools` 文件夹执行以下命令：
-- 安装依赖：`npm install`
-- 构建项目：`npm run build`
-- 构建成功后重启 QQNT 即可
+```
+npm i
+npm run build
+```
 
 ### 查看当前版本更新日志
 
