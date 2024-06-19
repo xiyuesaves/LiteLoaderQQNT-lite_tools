@@ -9,7 +9,7 @@ const log = new Logs("图片处理模块");
 // 获取图片链接
 async function getPicUrl(picData, chatType) {
   let picURL = "";
-  if (picData.originImageUrl.startsWith("/download?appid=1407")) {
+  if (picData.originImageUrl.startsWith("/download?")) {
     if (picData.originImageUrl.includes("&rkey=")) {
       return `${config.global.IMAGE_HTTP_HOST_NT}${picData.originImageUrl}`;
     } else {

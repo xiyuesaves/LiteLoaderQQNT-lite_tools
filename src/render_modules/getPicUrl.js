@@ -1,7 +1,7 @@
 import { options } from "./options.js";
 export async function getPicUrl(picData, chatType) {
   let picURL = "";
-  if (picData.originImageUrl.startsWith("/download?appid=1407")) {
+  if (picData.originImageUrl.startsWith("/download?")) {
     if (picData.originImageUrl.includes("&rkey=")) {
       return `${options.global.IMAGE_HTTP_HOST_NT}${picData.originImageUrl}`;
     } else {
