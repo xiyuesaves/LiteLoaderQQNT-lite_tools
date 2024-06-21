@@ -1,9 +1,9 @@
 import { existsSync, writeFileSync, unlinkSync } from "fs";
 import { stat, watch, readdir } from "fs/promises";
-import { ipcMain, dialog } from "electron";
+import { ipcMain } from "electron";
 import { normalize, join, extname, basename, parse } from "path";
 import { createHash } from "crypto";
-import { config, updateConfig, loadConfigPath, onUpdateConfig } from "./config.js";
+import { config, loadConfigPath, onUpdateConfig } from "./config.js";
 import { globalBroadcast } from "./globalBroadcast.js";
 import { debounce } from "./debounce.js";
 /**
@@ -340,27 +340,6 @@ ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
       msg: "文件不存在",
     };
   }
-});
-
-// 选择文件夹事件
-ipcMain.on("LiteLoader.lite_tools.openSelectLocalEmoticonsFolder", () => {
-  dialog
-    .showOpenDialog({
-      title: "请选择文件夹", //默认路径,默认选择的文件
-      properties: ["openDirectory"],
-      buttonLabel: "选择文件夹",
-    })
-    .then((result) => {
-      log("选择了文件夹", result);
-      if (!result.canceled) {
-        const newPath = join(result.filePaths[0]);
-        config.localEmoticons.localPath = newPath;
-        updateConfig(config);
-      }
-    })
-    .catch((err) => {
-      log("无效操作", err);
-    });
 });
 
 /**

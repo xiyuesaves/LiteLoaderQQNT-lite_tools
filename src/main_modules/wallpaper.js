@@ -1,10 +1,9 @@
-import { join, extname, basename } from "path";
-
-import { config, updateConfig, onUpdateConfig } from "./config.js";
+import { extname, basename } from "path";
+import { config, onUpdateConfig } from "./config.js";
 import { Logs } from "./logs.js";
 import { RangesServer } from "./rangesServer.js";
 import { globalBroadcast } from "./globalBroadcast.js";
-import { ipcMain, dialog } from "electron";
+import { ipcMain } from "electron";
 const videoServer = new RangesServer();
 const log = new Logs("背景模块");
 
@@ -50,33 +49,6 @@ onUpdateConfig(() => {
     };
     globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
   }
-});
-
-// 选择文件事件
-ipcMain.on("LiteLoader.lite_tools.openSelectBackground", () => {
-  dialog
-    .showOpenDialog({
-      title: "请选择文件", //默认路径,默认选择的文件
-      defaultPath: "default.jpg", //过滤文件后缀
-      filters: [
-        {
-          name: "img",
-          extensions: ["jpg", "png", "gif", "webp", "jpeg", "mp4", "webm"],
-        },
-      ], //打开按钮
-      buttonLabel: "选择", //回调结果渲染到img标签上
-    })
-    .then((result) => {
-      log("选择了文件", result);
-      if (!result.canceled) {
-        const newFilePath = join(result.filePaths[0]);
-        config.background.url = newFilePath;
-        updateConfig(config);
-      }
-    })
-    .catch((err) => {
-      log("无效操作", err);
-    });
 });
 
 ipcMain.handle("LiteLoader.lite_tools.getWallpaper", () => {
