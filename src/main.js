@@ -16,6 +16,7 @@ import "./main_modules/initStyle.js";
 import "./main_modules/localEmoticons.js";
 import "./main_modules/getWebPreview.js";
 import "./main_modules/updatePlugins.js";
+import "./main_modules/getTgSticker.js";
 
 const log = new Logs("main");
 const err = new Logs("Error");

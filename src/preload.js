@@ -103,6 +103,9 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getRkey: (chatType) => ipcRenderer.invoke("LiteLoader.lite_tools.getRkey", chatType),
   deleteUserConfig: (uid) => ipcRenderer.send("LiteLoader.lite_tools.deleteUserConfig", uid),
   addUserConfig: (uid, value) => ipcRenderer.send("LiteLoader.lite_tools.addUserConfig", uid, value),
+  // Telegram贴纸集下载相关
+  downloadTgSticker: (url) => ipcRenderer.send("LiteLoader.lite_tools.downloadTgSticker", url),
+  onDownloadTgStickerEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onDownloadTgStickerEvent", callback),
   // 主进程向渲染进程发送通知
   onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
   /**

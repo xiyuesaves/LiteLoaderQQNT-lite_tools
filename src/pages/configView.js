@@ -641,6 +641,41 @@ async function onConfigView(view) {
     options.localEmoticons.tgBotToken = e.target.value;
     debounceSetOptions();
   });
+  // tg表情集下载
+  // 表情集下载提示元素
+  lite_tools.onDownloadTgStickerEvent((_, data) => {
+    clearToast();
+    showToast(data.message, data.type, data.duration);
+  });
+  const tgSticker = view.querySelector(".tg-sticker-add-link");
+  view.querySelector(".tg-sticker-btn").addEventListener("click", async () => {
+    log(tgSticker.value);
+    if (tgSticker.value.startsWith("https://t.me/addstickers/")) {
+      if (!options.localEmoticons.tgBotToken) {
+        showToast("需要填写 Telegram Bot Token", "error", 3000);
+        return;
+      }
+      if (!options.localEmoticons.enabled) {
+        showToast("需要启用本地表情", "error", 3000);
+        return;
+      }
+      if (!options.localEmoticons.localPath) {
+        showToast("需要选择本地表情路径", "error", 3000);
+        return;
+      }
+      clearToast();
+      if (!options.proxy.enabled) {
+        showToast("没有配置有效代理，请确保能够连接到Telegram服务器", "default", 30000);
+      }
+      if (!options.localEmoticons.ffmpegPath) {
+        showToast("没有配置FFmpeg路径，可能无法下载动态表情", "default", 30000);
+      }
+      showToast("已添加下载请求", "default", 30000);
+      lite_tools.downloadTgSticker(tgSticker.value);
+    } else {
+      showToast("无法识别Telegram表情集链接", "error", 6000);
+    }
+  });
 
   // 监听设置文件变动
   updateOptions((opt) => {
