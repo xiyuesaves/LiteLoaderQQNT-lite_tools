@@ -34,6 +34,8 @@
     "hoverShowCommonlyEmoticons": false,
     "commonlyNum": 20,
     "rowsSize": 5,
+    "ffmpegPath": "",
+    "tgBotToken": "",
     "localPath": ""
   },
   "sidebar": {
