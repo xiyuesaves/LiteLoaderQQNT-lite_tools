@@ -171,7 +171,7 @@ ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64)
     dialog
       .showSaveDialog({
         title: "请选择位置", //默认路径,默认选择的文件
-        properties: ["dontAddToRecent "],
+        properties: ["dontAddToRecent"],
         message: "选择图片保存位置",
         defaultPath: fileName,
       })
@@ -188,25 +188,9 @@ ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64)
   }
 });
 
-// 选择默认图片消息保存路径
-ipcMain.on("LiteLoader.lite_tools.openSelectDefaultSaveFilePath", () => {
-  dialog
-    .showOpenDialog({
-      title: "请选择文件夹", //默认路径,默认选择的文件
-      properties: ["openDirectory"],
-      buttonLabel: "选择文件夹",
-    })
-    .then((result) => {
-      log("选择了文件夹", result);
-      if (!result.canceled) {
-        const newPath = join(result.filePaths[0]);
-        config.messageToImage.path = newPath;
-        updateConfig(config);
-      }
-    })
-    .catch((err) => {
-      log("无效操作", err);
-    });
+// 将文件选择api暴露给渲染进程
+ipcMain.handle("LiteLoader.lite_tools.showOpenDialog", async (_, data) => {
+  return await dialog.showOpenDialog(data);
 });
 
 // 获取rkey
