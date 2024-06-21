@@ -5,10 +5,10 @@
     font-weight: bold;
     color: #0099ff;
     &.success {
-      color: #15D173;
+      color: #15d173;
     }
     &.error {
-      color: #FF5967;
+      color: #ff5967;
     }
   }
   .LT-disabled {
@@ -49,6 +49,7 @@
 
   .select-default-save-file-input-clear,
   .select-local-emoticons-folder-clear,
+  .select-ffmpeg-path,
   .select-background-wallpaper-clear {
     cursor: pointer;
   }
