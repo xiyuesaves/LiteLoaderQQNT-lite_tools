@@ -252,13 +252,14 @@ async function onConfigView(view) {
   customTextColorLight.value = options.preventMessageRecall.textColor.light;
   customTextColorLight.addEventListener("change", (event) => {
     options.preventMessageRecall.textColor.light = event.target.value;
-    lite_tools.setOptions(options);
+    debounceSetOptions();
   });
+
   const customTextColorDark = view.querySelector(".custom-text-color-dark");
   customTextColorDark.value = options.preventMessageRecall.textColor.dark;
   customTextColorDark.addEventListener("change", (event) => {
     options.preventMessageRecall.textColor.dark = event.target.value;
-    lite_tools.setOptions(options);
+    debounceSetOptions();
   });
 
   // 清除本地撤回数据
@@ -310,16 +311,24 @@ async function onConfigView(view) {
   });
 
   // 消息转图片
-  view.querySelector(".select-default-save-file-input-clear").value = options.messageToImage.path;
-  view.querySelector(".select-default-save-file-input").addEventListener("click", () => {
-    log("修改默认保存位置");
-    lite_tools.openSelectDefaultSaveFilePath();
+  const defaultSaveFilePath = view.querySelector(".select-default-save-file-input-clear");
+  defaultSaveFilePath.value = options.messageToImage.path;
+  view.querySelector(".select-default-save-file-input").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择文件夹", //默认路径,默认选择的文件
+      properties: ["openDirectory"],
+      buttonLabel: "选择文件夹",
+    });
+    if (!result.canceled) {
+      options.messageToImage.path = result.filePaths[0];
+      log("选择了消息转图片默认保存路径", options.messageToImage.path);
+      debounceSetOptions();
+    }
   });
-  view.querySelector(".select-default-save-file-input-clear").addEventListener("click", () => {
-    log("删除默认保存位置");
-    view.querySelector(".select-default-save-file-input-clear").value = "";
+  defaultSaveFilePath.addEventListener("click", (e) => {
+    e.target.value = "";
     options.messageToImage.path = "";
-    lite_tools.setOptions(options);
+    debounceSetOptions();
   });
 
   // 本地表情包功能
@@ -328,13 +337,22 @@ async function onConfigView(view) {
     view.querySelector(".copyFileTolocalEmoticons").classList.toggle("disabled-switch", !enabled);
   });
   view.querySelector(".select-folder-input input").value = options.localEmoticons.localPath;
-  view.querySelector(".select-local-emoticons-folder").addEventListener("click", () => {
-    lite_tools.openSelectLocalEmoticonsFolder();
+  view.querySelector(".select-local-emoticons-folder").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择文件夹", //默认路径,默认选择的文件
+      properties: ["openDirectory"],
+      buttonLabel: "选择文件夹",
+    });
+    if (!result.canceled) {
+      options.localEmoticons.localPath = result.filePaths[0];
+      log("选择了本地表情路径", options.localEmoticons.localPath);
+      debounceSetOptions();
+    }
   });
-  view.querySelector(".select-local-emoticons-folder-clear").addEventListener("click", () => {
-    view.querySelector(".select-local-emoticons-folder-clear").value = "";
+  view.querySelector(".select-local-emoticons-folder-clear").addEventListener("click", (e) => {
+    e.target.value = "";
     options.localEmoticons.localPath = "";
-    lite_tools.setOptions(options);
+    debounceSetOptions();
   });
 
   // 快捷输入表情功能
@@ -361,13 +379,28 @@ async function onConfigView(view) {
 
   // 初始化背景路径选择监听和值
   view.querySelector(".select-background-wallpaper-clear").value = options.background.url;
-  view.querySelector(".select-background-wallpaper").addEventListener("click", () => {
-    lite_tools.openSelectBackground();
+  view.querySelector(".select-background-wallpaper").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择文件", //默认路径,默认选择的文件
+      defaultPath: "default.jpg", //过滤文件后缀
+      filters: [
+        {
+          name: "img",
+          extensions: ["jpg", "png", "gif", "webp", "jpeg", "mp4", "webm"],
+        },
+      ], //打开按钮
+      buttonLabel: "选择", //回调结果渲染到img标签上
+    });
+    if (!result.canceled) {
+      options.background.url = result.filePaths[0];
+      log("选择了背景图片/视频地址", options.background.url);
+      debounceSetOptions();
+    }
   });
-  view.querySelector(".select-background-wallpaper-clear").addEventListener("click", () => {
-    view.querySelector(".select-background-wallpaper-clear").value = "";
+  view.querySelector(".select-background-wallpaper-clear").addEventListener("click", (e) => {
+    e.target.value = "";
     options.background.url = "";
-    lite_tools.setOptions(options);
+    debounceSetOptions();
   });
   // 初始化背景透明度输入框监听和值
   view.querySelector(".background-opacity").value = options.background.opacity * 100;
