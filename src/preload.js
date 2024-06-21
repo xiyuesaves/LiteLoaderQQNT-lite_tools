@@ -21,8 +21,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getLocalEmoticonsList: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsList"),
   // 主动获取常用表情列表
   getLocalEmoticonsConfig: () => ipcRenderer.invoke("LiteLoader.lite_tools.getLocalEmoticonsConfig"),
-  // 打开选择本地表情文件夹窗口
-  openSelectLocalEmoticonsFolder: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectLocalEmoticonsFolder"),
   // 删除本地表情文件
   deleteEmoticonsFile: (path) => ipcRenderer.invoke("LiteLoader.lite_tools.deleteEmoticonsFile", path),
   // 设置窗口向主进程请求消息窗口侧边栏按钮信息
@@ -37,8 +35,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   sendTextAreaList: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendTextAreaList", list),
   // 消息窗口向主进程发送侧边栏按钮信息
   sendSidebar: (list) => ipcRenderer.send("LiteLoader.lite_tools.sendSidebar", list),
-  // 打开选择背景图片窗口
-  openSelectBackground: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectBackground"),
   // 监听背景数据变化
   onUpdateWallpaper: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateWallpaper", callback),
   // 获取背景数据
@@ -75,8 +71,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getUserInfo: (uid) => ipcRenderer.invoke("LiteLoader.lite_tools.getUserInfo", uid),
   // 保存blob到本地
   saveBase64ToFile: (...args) => ipcRenderer.send("LiteLoader.lite_tools.saveBase64ToFile", ...args),
-  // 选择消息图片默认保存位置
-  openSelectDefaultSaveFilePath: () => ipcRenderer.send("LiteLoader.lite_tools.openSelectDefaultSaveFilePath"),
   // 从历史记录中移除指定文件
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   // 关键字提醒
@@ -103,6 +97,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   checkProxy: () => ipcRenderer.send("LiteLoader.lite_tools.checkProxy"),
   // 检测代理可用性监听
   updateProxyStatus: (callback) => ipcRenderer.on("LiteLoader.lite_tools.updateProxyStatus", callback),
+  // 通用文件选择窗口
+  showOpenDialog: (data) => ipcRenderer.invoke("LiteLoader.lite_tools.showOpenDialog", data),
   // 获取图片rkey
   getRkey: (chatType) => ipcRenderer.invoke("LiteLoader.lite_tools.getRkey", chatType),
   deleteUserConfig: (uid) => ipcRenderer.send("LiteLoader.lite_tools.deleteUserConfig", uid),
