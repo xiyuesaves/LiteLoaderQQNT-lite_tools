@@ -31,7 +31,7 @@ async function getTgSticker(url) {
         settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
           message: `开始下载 ${data.result.title}`,
           type: "default",
-          duration: 6000,
+          duration: 60 * 60 * 1000,
         });
         const stickerList = data.result.stickers;
         const pictureList = [];
