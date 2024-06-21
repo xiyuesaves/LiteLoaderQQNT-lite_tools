@@ -612,12 +612,43 @@ async function onConfigView(view) {
     standaloneConfiguration.setAttribute("title", "当前环境无法启用");
   }
 
+  // 选择ffmpge路径
+  const ffmpegPath = view.querySelector(".select-ffmpeg-path");
+  ffmpegPath.value = options.localEmoticons.ffmpegPath;
+  // 清除设置路径
+  ffmpegPath.addEventListener("click", (e) => {
+    e.target.value = "";
+    options.localEmoticons.ffmpegPath = "";
+    debounceSetOptions();
+  });
+  view.querySelector(".ffmpeg-path-btn").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择ffmpeg",
+      properties: ["openFile"],
+      buttonLabel: "选择",
+    });
+    if (!result.canceled) {
+      options.localEmoticons.ffmpegPath = result.filePaths[0];
+      log("选择了ffmpeg路径", options.localEmoticons.ffmpegPath);
+      debounceSetOptions();
+    }
+  });
+
+  // 设置Telegram Bot Token
+  const tgBotToken = view.querySelector(".tg-bot-token");
+  tgBotToken.value = options.localEmoticons.tgBotToken;
+  tgBotToken.addEventListener("input", (e) => {
+    options.localEmoticons.tgBotToken = e.target.value;
+    debounceSetOptions();
+  });
+
   // 监听设置文件变动
   updateOptions((opt) => {
     log("检测到配置更新", opt);
     view.querySelector(".select-background-wallpaper-clear").value = opt.background.url;
     view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
     view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
+    view.querySelector(".select-ffmpeg-path").value = opt.localEmoticons.ffmpegPath;
     tailList?.updateOptions();
   });
   log("完成初始化");

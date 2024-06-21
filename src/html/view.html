@@ -536,6 +536,19 @@
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
+          <h2>下载tg贴纸</h2>
+          <span class="secondary-text"> 使用前需要配置 Telegram Bot Token，FFmpeg路径和代理地址 </span>
+        </div>
+      </li>
+      <li class="vertical-list-item">
+        <input placeholder="https://t.me/addstickers/*" class="tg-sticker-add-link input-text text_color" type="text" spellcheck="false" />
+        <div class="ops-btns">
+          <button class="q-button q-button--small q-button--secondary tg-sticker-btn">下载</button>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
           <h2>移动功能位置</h2>
           <span class="secondary-text">将本地表情入口移动到功能列表左侧</span>
         </div>
@@ -1056,6 +1069,29 @@
         <div class="ops-btns">
           <button class="q-button q-button--small q-button--secondary apply-proxy-url">应用</button>
         </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>FFmpeg路径地址</h2>
+          <span class="secondary-text"> 用于将tg动态贴纸从webm格式转为webp </span>
+        </div>
+      </li>
+      <li class="select-default-file-path vertical-list-item">
+        <input placeholder="token"  title="移除路径" readonly class="select-ffmpeg-path input-text text_color" type="text" spellcheck="false" />
+        <div class="ops-btns">
+          <button class="q-button q-button--small q-button--secondary ffmpeg-path-btn">选择</button>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
+          <h2>Telegram Bot Token</h2>
+          <span class="secondary-text"> 用于下载tg贴纸集 </span>
+        </div>
+      </li>
+      <li class="select-default-file-path vertical-list-item">
+        <input placeholder="token" class="tg-bot-token input-text text_color" type="text" spellcheck="false" />
       </li>
     </ul>
   </setting-panel>
