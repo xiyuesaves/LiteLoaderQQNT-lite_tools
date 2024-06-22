@@ -56,21 +56,32 @@ async function getTgSticker(url) {
             const item = concatArr.shift();
             downloads.push(downloadFile(item));
           }
-          Promise.all(downloads)
-            .then(() => {
-              settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-                message: `${data.result.title} 下载完成`,
-                type: "success",
-                duration: 6000,
-              });
-            })
-            .catch((err) => {
-              settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-                message: `${data.result.title} 下载失败 ${err?.message} ${err?.stack}`,
-                type: "error",
-                duration: 6000,
-              });
+          try {
+            await Promise.all(downloads);
+            settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+              message: `${data.result.title} 下载完成`,
+              type: "success",
+              duration: 6000,
             });
+          } catch (err) {
+            settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+              message: `${data.result.title} 下载失败 ${err?.message} ${err?.stack}`,
+              type: "error",
+              duration: 6000,
+            });
+          }
+        } else if (dontSupport.length) {
+          settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+            message: `不支持的贴纸类型 ${data.result.title}`,
+            type: "error",
+            duration: 6000,
+          });
+        } else {
+          settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+            message: `没有可下载的贴纸 ${data.result.title}`,
+            type: "error",
+            duration: 6000,
+          });
         }
         async function downloadFile(item) {
           const fileId = item.file_id;
