@@ -6,6 +6,7 @@ import { ipcMain } from "electron";
 import { writeFileSync, mkdirSync } from "fs";
 import { config } from "./config.js";
 import { settingWindow } from "./captureWindow.js";
+import { folderUpdate, setPauseWatch } from "./localEmoticons.js";
 import { Logs } from "./logs.js";
 const log = new Logs("getTgSticker");
 
@@ -96,12 +97,12 @@ async function getTgSticker(url) {
           const filePath = join(folderPath, fileName);
           mkdirSync(folderPath, { recursive: true });
           if (item.is_video) {
-            await new Promise((res) => {
+            await new Promise((res, rej) => {
               Ffmpeg(Readable.from(buffer))
                 .save(filePath)
                 .on("error", (err) => {
                   log("失败", err);
-                  res();
+                  rej(new Error(`ffmpeg 错误\n${err.message}`));
                 })
                 .on("end", () => {
                   log("动图下载完成", filePath);
@@ -138,5 +139,9 @@ async function getTgSticker(url) {
 }
 
 ipcMain.on("LiteLoader.lite_tools.downloadTgSticker", (_, url) => {
-  getTgSticker(url);
+  setPauseWatch(true);
+  getTgSticker(url).finally(() => {
+    setPauseWatch(false);
+    folderUpdate();
+  });
 });

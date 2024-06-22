@@ -16,6 +16,11 @@ import { AsyncLock } from "./AsyncLock.js";
 const log = new Logs("本地表情模块");
 
 /**
+ * 临时阻止监听事件
+ */
+let pauseWatch = false;
+
+/**
  * 本地表情配置文件
  */
 let localEmoticonsConfig;
@@ -184,6 +189,11 @@ async function addWatchFolders(path) {
     signals.set(path, signal);
     const watcher = watch(path, { signal: signal.signal });
     for await (const event of watcher) {
+      // 临时阻止更新本地表情数据
+      if (pauseWatch) {
+        log("临时阻止更新事件");
+        continue;
+      }
       log("检测到文件夹更新", path, event);
       folderUpdate();
     }
@@ -354,3 +364,10 @@ function calculateHash(str, algorithm = "md5") {
   hash.update(str);
   return hash.digest("hex");
 }
+
+function setPauseWatch(pause) {
+  log("更新pause状态", pause);
+  pauseWatch = pause;
+}
+
+export { folderUpdate, setPauseWatch };
