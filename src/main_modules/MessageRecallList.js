@@ -17,7 +17,7 @@ class MessageRecallList {
     this.newRecallMsgEvent = new Set();
 
     // 针对不同版本的本地撤回文件进行统一化处理
-    const stringData = readFileSync(this.latestPath, { encoding: "utf-8" });
+    const stringData = readFileSync(this.latestPath, "utf-8");
     try {
       const rawData = Buffer.from(stringData, "base64").toString("utf-8");
       const jsonParse = JSON.parse(rawData);

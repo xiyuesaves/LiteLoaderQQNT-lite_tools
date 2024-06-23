@@ -40,11 +40,11 @@ class WebLog {
       res.end(log);
     } else if (req.url === "/debug" && req.method === "GET") {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Access-Control-Allow-Origin": "*" });
-      const html = readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/src/html/debug.html`, { encoding: "utf-8" });
+      const html = readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/src/html/debug.html`, "utf-8");
       res.end(html);
     } else if (req.url === "/debug.js" && req.method === "GET") {
       res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Access-Control-Allow-Origin": "*" });
-      const js = readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/dist/debug.js`, { encoding: "utf-8" });
+      const js = readFileSync(`${LiteLoader.plugins.lite_tools.path.plugin}/dist/debug.js`, "utf-8");
       res.end(js);
     } else {
       // 处理其他请求
