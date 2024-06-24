@@ -93,12 +93,18 @@ async function getTgSticker(url) {
           const arrayBuffer = await fileRes.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
           const folderPath = join(config.localEmoticons.localPath, data.result.name);
-          const fileName = `${file_unique_id}.webp`;
+          const fileName = `${file_unique_id}.gif`;
           const filePath = join(folderPath, fileName);
           mkdirSync(folderPath, { recursive: true });
           if (item.is_video) {
             await new Promise((res, rej) => {
               Ffmpeg(Readable.from(buffer))
+                .outputOptions([
+                  '-vf',
+                  'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
+                  '-loop',
+                  '0'
+                ])
                 .save(filePath)
                 .on("error", (err) => {
                   log("失败", err);
