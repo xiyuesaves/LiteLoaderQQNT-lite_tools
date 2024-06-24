@@ -17,7 +17,16 @@ export function get(url, redirects = 0) {
       error: "Too many redirects",
     });
   }
+  log("请求地址", url);
   const urlData = new URL(url);
+  const defaultHeaders = {
+    "User-Agent": config.global.UA,
+    accept: "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8",
+    "accept-language": "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
+    "accept-encoding": "gzip, identity",
+    "cache-control": "no-cache",
+    connection: "keep-alive",
+  };
   if (config.proxy.enabled && config.proxy.url) {
     const proxy = new URL(config.proxy.url);
     return new Promise((resolve) => {
@@ -27,8 +36,8 @@ export function get(url, redirects = 0) {
           port: proxy.port,
           path: urlData.href,
           headers: {
+            ...defaultHeaders,
             Host: urlData.host,
-            "User-Agent": config.global.UA,
           },
         },
         (res) => {
@@ -50,9 +59,7 @@ export function get(url, redirects = 0) {
         {
           hostname: urlData.hostname,
           path: urlData.pathname,
-          headers: {
-            "User-Agent": config.global.UA,
-          },
+          headers: defaultHeaders,
         },
         (res) => {
           handle(res, resolve);
@@ -70,11 +77,16 @@ export function get(url, redirects = 0) {
 
   function handle(res, resolve) {
     const contentType = res.headers["content-type"];
-    log(res.headers);
+    log("返回请求头", res.req.path, res.statusCode, res.headers);
     // 处理重定向
     if ([301, 302].includes(res.statusCode)) {
       res.destroy();
-      resolve(get(res.headers.location, ++redirects));
+      if (res.headers.location.startsWith("http")) {
+        resolve(get(res.headers.location, ++redirects));
+      } else {
+        const href = new URL(res.headers.location, res.req.path).href;
+        resolve(get(href, ++redirects));
+      }
     } else if (res.statusCode === 200) {
       if (contentType?.startsWith("text/html")) {
         let chunks = [];

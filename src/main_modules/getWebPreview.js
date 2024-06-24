@@ -26,7 +26,6 @@ onUpdateConfig(() => {
  *                           如果URL不是HTML页面，则成功状态将为false，并提供错误消息。
  */
 async function getMeatData(url) {
-  log("目标为HTML，开始请求内容");
   const res = await get(url);
   if (!res.success) {
     return res;
