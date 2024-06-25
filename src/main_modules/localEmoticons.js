@@ -227,7 +227,7 @@ async function loadFolder(folderPath, itemIndex = 0) {
           if (![".png", ".jpg", ".jpeg", ".gif", ".webp"].includes(extname(filePath).toLocaleLowerCase())) {
             continue;
           }
-          const id = Buffer.from(folderPath).toString("base64");
+          const id = calculateHash(JSON.stringify(folderPath), "md5");
           if (!list[0] || list[0].id !== id) {
             list.unshift({
               name: basename(folderPath),
