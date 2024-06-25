@@ -146,7 +146,7 @@ updateOptions(async (opt) => {
           commonlyEmoticons = null;
         }
       } else {
-        log("历史表情实例", commonlyEmoticons)
+        log("历史表情实例", commonlyEmoticons);
       }
     } else if (commonlyEmoticons) {
       log("销毁历史表情实例", commonlyEmoticons.id);
@@ -566,20 +566,21 @@ function loadDom() {
    */
   const folderIconListEl = barIcon.querySelector(".folder-icon-list .folder-scroll");
 
-  // 防抖监听滚动事件
+  // 防抖监听滚动事件 处理列表滚动时的懒加载逻辑
   const debounceScroll = debounce((event) => {
     // 显示区域高度
-    const viewHeight = document.querySelector(".lite-tools-local-emoticons-main .folder-list").offsetHeight;
+    const viewHeight = folderListEl.offsetHeight;
     // 当前表情文件夹的底部坐标
     let folderOffsetBottom = 0;
     let isActive = false;
     const scrollTop = event.target.scrollTop;
     const scrollBottom = scrollTop + viewHeight;
-    for (let i = 0; i < folderInfos.length; i++) {
-      const folder = folderInfos[i];
+    const folderList = folderListEl.querySelectorAll(".folder-item");
+    for (let i = 0; i < folderList.length; i++) {
+      const folderEl = folderList[i];
+      const folder = folderEl.emoticonFolder;
       const folderOffsetTop = folderOffsetBottom;
-      folderOffsetBottom += folder.folderEl.offsetHeight;
-
+      folderOffsetBottom += folderEl.offsetHeight;
       // 判断是否需要加载表情符号的条件
       const shouldLoadEmoticons =
         (folderOffsetBottom >= scrollTop && folderOffsetTop <= scrollTop) ||
@@ -588,8 +589,7 @@ function loadDom() {
 
       // 判断表情包是否需要加载
       if (shouldLoadEmoticons && options.localEmoticons.majorization) {
-        const activeEl = document.querySelector(`.folder-icon-item[data-id="${folder.id}"]`);
-        activeEl.emoticonFolder.load();
+        folder.load();
       }
       // 激活距离顶部最近的表情文件夹图标
       if (folderOffsetBottom >= scrollTop + 4 && !isActive) {
@@ -757,7 +757,6 @@ function contextMenu(event) {
   log("目标元素数据", targetElement);
 
   const contextMenuEl = barIcon.querySelector(".context-menu");
-  const folderList = barIcon.querySelector(".lite-tools-local-emoticons-main .folder-list");
   const padding = 6;
 
   if (targetElement.type === "commonly") {
@@ -770,13 +769,13 @@ function contextMenu(event) {
     event.target.parentElement.parentElement.offsetParent.offsetTop +
     event.target.offsetParent.offsetTop +
     event.offsetY -
-    folderList.scrollTop;
-  if (offsetTop + contextMenuEl.offsetHeight > folderList.offsetHeight + 36 - padding) {
+    folderListEl.scrollTop;
+  if (offsetTop + contextMenuEl.offsetHeight > folderListEl.offsetHeight + 36 - padding) {
     offsetTop -= contextMenuEl.offsetHeight;
   }
   contextMenuEl.style.top = offsetTop + "px";
   let offsetLeft = event.target.parentElement.parentElement.offsetParent.offsetLeft + event.target.offsetParent.offsetLeft + event.offsetX;
-  if (offsetLeft + contextMenuEl.offsetWidth > folderList.offsetWidth - padding) {
+  if (offsetLeft + contextMenuEl.offsetWidth > folderListEl.offsetWidth - padding) {
     offsetLeft -= contextMenuEl.offsetWidth;
   }
   contextMenuEl.style.left = offsetLeft + "px";
@@ -792,7 +791,7 @@ function jumpFolder(event) {
     return;
   }
   const targetItem = document.querySelector(`.folder-item[data-id="${id}"]`);
-  document.querySelector(".lite-tools-local-emoticons-main .folder-list").scrollTo({
+  folderListEl.scrollTo({
     top: targetItem.offsetTop,
   });
 }
@@ -842,7 +841,7 @@ function appendEmoticons(_, newEmoticonsList) {
   // 更新数据
   emoticonsList = newEmoticonsList;
   // 对数组进行排序
-  folderInfos.sort((a, b) => a.index - b.index);
+  // folderInfos.sort((a, b) => a.index - b.index);
 }
 
 class emoticonFolder {
@@ -875,7 +874,9 @@ class emoticonFolder {
     this.folderEl = document.createElement("div");
     this.folderEl.classList.add("folder-item");
     this.folderEl.setAttribute("data-id", this.id);
+    this.folderEl.setAttribute("data-name", this.name);
     this.folderEl.setAttribute("data-type", this.type);
+    this.folderEl.emoticonFolder = this;
     this.categoryNameEl = document.createElement("div");
     this.categoryNameEl.classList.add("category-name");
     this.categoryNameEl.innerText = this.name;
@@ -1072,11 +1073,11 @@ function closeCommonlyEmoticonsPanel(immediately = false) {
 function showLocalEmoticons() {
   closeCommonlyEmoticonsPanel(true);
   showEmoticons = true;
-  document.querySelector(".folder-list").scrollTop = 0;
+  folderListEl.scrollTop = 0;
   // 创建一个滚动事件
   const event = new Event("scroll");
   // 触发滚动事件
-  document.querySelector(".folder-list").dispatchEvent(event);
+  folderListEl.dispatchEvent(event);
   barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show");
   if (!options.localEmoticons.majorization) {
     folderInfos.forEach((folderInfo) => {
