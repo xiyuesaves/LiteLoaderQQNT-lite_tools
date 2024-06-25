@@ -1172,6 +1172,11 @@
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
         }
+        .lt-x-icon {
+          width: 12px;
+          height: 12px;
+          transform: scale(1.4);
+        }
       }
 
       .lite-tools-web-preview-img.small-img {

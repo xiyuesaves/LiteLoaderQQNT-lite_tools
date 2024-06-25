@@ -1,6 +1,8 @@
 import { ipcMain } from "electron";
+import { fetch } from "undici";
 import { globalBroadcast } from "./globalBroadcast.js";
 import { config, onUpdateConfig } from "./config.js";
+import { getTweetWebMeta, isValidTwitterPostUrl, isTwitterProfileUrl, getTwitterUserInfoWebMeta } from "./getTwitterWebPreview.js";
 import { get } from "./getWeb.js";
 import { Logs } from "./logs.js";
 const log = new Logs("链接预览");
@@ -77,7 +79,17 @@ async function getWebPrevew(url) {
   try {
     let standardData = previewCatch.get(url);
     if (!standardData) {
-      const webMeta = await getMeatData(url);
+      let webMeta = {
+        success: false,
+        err: "没有找到预览数据",
+      };
+      if (isValidTwitterPostUrl(url)) {
+        webMeta = await getTweetWebMeta(url);
+      } else if (isTwitterProfileUrl(url)) {
+        webMeta = await getTwitterUserInfoWebMeta(url);
+      } else {
+        webMeta = await getMeatData(url);
+      }
       if (!webMeta.success) {
         return webMeta;
       }
