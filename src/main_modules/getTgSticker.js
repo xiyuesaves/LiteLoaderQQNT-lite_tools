@@ -24,11 +24,16 @@ async function getTgSticker(url) {
       const stickerName = url.split("/")[4];
       const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getStickerSet?name=${stickerName}`);
       const data = await res.json();
-      log(data);
+      log("贴图集数据", data);
       if (data.ok) {
         if (data.result.sticker_type !== "regular") {
           throw new Error("不支持的贴纸包类型");
         }
+        const stickerData = {
+          title: data.result.title,
+          name: data.result.name,
+          icon: null,
+        };
         settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
           message: `开始下载 ${data.result.title}`,
           type: "default",
@@ -45,6 +50,10 @@ async function getTgSticker(url) {
             } else {
               pictureList.push(item);
             }
+            if (animatedList.length + pictureList.length === 1) {
+              const iconData = animatedList[0] ?? pictureList[0];
+              stickerData.icon = `${iconData.file_unique_id}.${iconData.is_video ? "gif" : "webp"}`;
+            }
           } else {
             dontSupport.push(item);
           }
@@ -59,6 +68,10 @@ async function getTgSticker(url) {
           }
           try {
             await Promise.all(downloads);
+            // 等待表情文件下载完成后再创建贴纸数据文件
+            const folderPath = join(config.localEmoticons.localPath, data.result.name);
+            const stickerDataPath = join(folderPath, "sticker.json");
+            writeFileSync(stickerDataPath, JSON.stringify(stickerData, null, 2));
             settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
               message: `${data.result.title} 下载完成`,
               type: "success",
