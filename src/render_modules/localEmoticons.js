@@ -815,6 +815,7 @@ function appendEmoticons(_, newEmoticonsList) {
       findEmoticons.index = folder.index;
       findEmoticons.updateEmoticonIcon(folder.icon || folder.list[0].path);
       findEmoticons.updateEmoticonList(folder.list);
+      findEmoticons.updateEmoticonName(folder.name);
       folderListEl.appendChild(findEmoticons.folderEl);
       folderIconListEl.appendChild(findEmoticons.folderIconEl);
     } else {
@@ -969,6 +970,10 @@ class emoticonFolder {
   updateEmoticonIcon(iconPath) {
     this.iconPath = iconPath;
     this.iconEl.src = this.protocolPrefix + this.iconPath;
+  }
+  updateEmoticonName(name){
+    this.name = name;
+    this.categoryNameEl.innerText = this.name;
   }
   destroy() {
     log("销毁实例", this.name);

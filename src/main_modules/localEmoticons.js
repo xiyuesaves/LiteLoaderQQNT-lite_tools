@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync, unlinkSync } from "fs";
+import { existsSync, writeFileSync, readFileSync, unlinkSync } from "fs";
 import { stat, watch, readdir } from "fs/promises";
 import { ipcMain } from "electron";
 import { normalize, join, extname, basename, parse } from "path";
@@ -62,7 +62,7 @@ const loadEmoticonsLock = new AsyncLock();
  */
 function updateEmoticonList() {
   try {
-    const newHash = calculateHash(JSON.stringify(emoticonsList), "md5");
+    const newHash = calculateHash(JSON.stringify(emoticonsList));
     if (emoticonsListHash === newHash) {
       log("列表没有变化，无需更新");
       return;
@@ -227,22 +227,41 @@ async function loadFolder(folderPath, itemIndex = 0) {
           if (![".png", ".jpg", ".jpeg", ".gif", ".webp"].includes(extname(filePath).toLocaleLowerCase())) {
             continue;
           }
-          const id = calculateHash(JSON.stringify(folderPath), "md5");
+          // 如果id不一致则初始化一个新的表情对象
+          const id = calculateHash(folderPath);
           if (!list[0] || list[0].id !== id) {
             list.unshift({
+              id,
               name: basename(folderPath),
               index: thisItemIndex,
-              id,
               path: folderPath,
               list: [],
             });
+            const stickerDataPath = join(folderPath, "sticker.json");
+            if (existsSync(stickerDataPath)) {
+              try {
+                const data = JSON.parse(readFileSync(stickerDataPath, "utf-8"));
+                if (data.title) {
+                  list[0].name = data.title;
+                }
+                if (data.icon) {
+                  const iconPath = join(folderPath, data.icon);
+                  if (existsSync(iconPath)) {
+                    list[0].icon = iconPath;
+                  }
+                }
+              } catch (err) {
+                log("贴图集配置文件读取失败", err);
+              }
+            }
           }
-          if (parse(filePath).name === "icon") {
+          const name = parse(filePath).name;
+          if (name === "icon") {
             list[0].icon = filePath;
           } else {
             list[0].list.push({
+              name,
               path: filePath,
-              name: parse(filePath).name,
               index: listIndex,
               birthtimeMs: fileStat.birthtimeMs,
             });
@@ -359,8 +378,8 @@ ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
  * @param {string} [algorithm="md5"] - 用于哈希的算法。默认为“md5”。
  * @return {string}
  */
-function calculateHash(str, algorithm = "md5") {
-  const hash = createHash(algorithm);
+function calculateHash(str) {
+  const hash = createHash("md5");
   hash.update(str);
   return hash.digest("hex");
 }
