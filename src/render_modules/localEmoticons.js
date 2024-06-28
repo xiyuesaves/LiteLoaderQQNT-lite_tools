@@ -655,6 +655,11 @@ function loadDom() {
     lite_tools.deleteCommonlyEmoticons(targetElement.path);
     closeContextMenu();
   });
+  contextMenuEl.querySelector(".set-icon").addEventListener("click", () => {
+    log("设为分组图标", targetElement.path);
+    lite_tools.setEmoticonsIcon(targetElement.path);
+    closeContextMenu();
+  });
   contextMenuEl.querySelector(".delete-file").addEventListener("click", async () => {
     log("从文件中删除", targetElement.path);
     const res = await lite_tools.deleteEmoticonsFile(targetElement.path);
@@ -761,8 +766,10 @@ function contextMenu(event) {
 
   if (targetElement.type === "commonly") {
     contextMenuEl.querySelector(".delete-from-commonly").classList.remove("hide");
+    contextMenuEl.querySelector(".set-icon").classList.add("hide");
   } else {
     contextMenuEl.querySelector(".delete-from-commonly").classList.add("hide");
+    contextMenuEl.querySelector(".set-icon").classList.remove("hide");
   }
 
   let offsetTop =

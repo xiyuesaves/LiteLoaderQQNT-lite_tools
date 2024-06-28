@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync, readFileSync, unlinkSync } from "fs";
 import { stat, watch, readdir } from "fs/promises";
 import { ipcMain } from "electron";
-import { normalize, join, extname, basename, parse } from "path";
+import { normalize, join, extname, basename, parse, dirname } from "path";
 import { createHash } from "crypto";
 import { config, loadConfigPath, onUpdateConfig } from "./config.js";
 import { globalBroadcast } from "./globalBroadcast.js";
@@ -337,7 +337,32 @@ ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
   log("从常用表情中移除", localEmoticonsConfigPath, localPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
-
+// 设为分组图标
+ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
+  const stickerDataPath = join(dirname(localPath), 'sticker.json');
+  const newIconValue = basename(localPath);
+  if (existsSync(stickerDataPath)) { //已经存在配置文件时，更新json的icon
+    try {
+      const data = JSON.parse(readFileSync(stickerDataPath, "utf-8"));
+      data.icon = newIconValue;
+      writeFileSync(stickerDataPath, JSON.stringify(data, null, 2));
+    } catch (err) {
+      log("更新sticker.json失败", err);
+    }
+  }
+  else //创建一个只规定了icon的json
+  {
+    const newStickerData = {
+      icon: newIconValue
+    };
+    try {
+      writeFileSync(stickerDataPath, JSON.stringify(newStickerData, null, 2));
+    } catch (err) {
+      log("创建sticker.json失败", err);
+    }
+  }
+  globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+});
 // 删除指定文件
 ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
   log("删除表情文件", path);

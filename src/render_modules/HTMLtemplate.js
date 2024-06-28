@@ -60,6 +60,9 @@ const localEmoticonsHTML = `<div class="full-screen-preview">
     <a class="context-menu-item open-file">
       <span class="context-menu-item__text">图片查看器打开</span>
     </a>
+    <a class="context-menu-item set-icon">
+      <span class="context-menu-item__text">设为分组图标</span>
+    </a>
     <a class="context-menu-item context-danger delete-file">
       <span class="context-menu-item__text">从文件夹中删除</span>
     </a>
