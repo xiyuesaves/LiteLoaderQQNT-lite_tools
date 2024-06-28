@@ -73,6 +73,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   saveBase64ToFile: (...args) => ipcRenderer.send("LiteLoader.lite_tools.saveBase64ToFile", ...args),
   // 从历史记录中移除指定文件
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
+  // 设为分组图标
+  setEmoticonsIcon: (path) => ipcRenderer.send("LiteLoader.lite_tools.setEmoticonsIcon", path),
   // 关键字提醒
   onKeywordReminder: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onKeywordReminder", callback),
   // 复制文件
