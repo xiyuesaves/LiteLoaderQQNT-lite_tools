@@ -361,7 +361,6 @@ ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
       log("创建sticker.json失败", err);
     }
   }
-  globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
 });
 // 删除指定文件
 ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
