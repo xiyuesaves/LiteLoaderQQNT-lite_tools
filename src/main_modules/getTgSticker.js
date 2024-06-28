@@ -9,7 +9,7 @@ import { settingWindow } from "./captureWindow.js";
 import { folderUpdate, setPauseWatch } from "./localEmoticons.js";
 import { Logs } from "./logs.js";
 const log = new Logs("getTgSticker");
-
+const MAX_CONCURRENT_DOWNLOADS = 8;
 /**
  * 添加贴纸路径
  * @param {String} url
@@ -62,7 +62,7 @@ async function getTgSticker(url) {
         if (pictureList.length + animatedList.length > 0) {
           const concatArr = [...pictureList, ...animatedList];
           const downloads = [];
-          for (let i = 0; i < 8; i++) {
+          for (let i = 0; i < MAX_CONCURRENT_DOWNLOADS; i++) {
             const item = concatArr.shift();
             downloads.push(downloadFile(item));
           }

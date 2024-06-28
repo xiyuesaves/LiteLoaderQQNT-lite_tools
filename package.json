@@ -4,7 +4,6 @@
   "description": "LiteLoaderQQNT 插件 轻量工具箱",
   "main": "esbuild.config.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node esbuild.config.mjs",
     "build-dev": "node esbuild.config.mjs --dev"
   },
