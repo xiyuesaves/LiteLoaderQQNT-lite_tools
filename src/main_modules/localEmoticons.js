@@ -339,9 +339,9 @@ ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
 });
 // 设为分组图标
 ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
-  const stickerDataPath = join(dirname(localPath), 'sticker.json');
+  const stickerDataPath = join(dirname(localPath), "sticker.json");
   const newIconValue = basename(localPath);
-  if (existsSync(stickerDataPath)) { //已经存在配置文件时，更新json的icon
+  if (existsSync(stickerDataPath)) {
     try {
       const data = JSON.parse(readFileSync(stickerDataPath, "utf-8"));
       data.icon = newIconValue;
@@ -349,17 +349,19 @@ ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
     } catch (err) {
       log("更新sticker.json失败", err);
     }
-  }
-  else //创建一个只规定了icon的json
-  {
+  } else {
     const newStickerData = {
-      icon: newIconValue
+      icon: newIconValue,
     };
     try {
       writeFileSync(stickerDataPath, JSON.stringify(newStickerData, null, 2));
     } catch (err) {
       log("创建sticker.json失败", err);
     }
+  }
+  // 如果当前暂停了文件监听，则主动发送更新事件
+  if (pauseWatch) {
+    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   }
 });
 // 删除指定文件
