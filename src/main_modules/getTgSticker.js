@@ -78,8 +78,20 @@ async function getTgSticker(url) {
               duration: 6000,
             });
           } catch (err) {
+            let message = `${data.result.title} 下载失败 ${err?.message} ${err?.stack}`;
+            switch (err?.message) {
+              case "fetch failed":
+                if (config.proxy.enabled) {
+                  message = `${data.result.title} 下载失败，网络错误，无法访问Telegram服务器`;
+                } else {
+                  message = `${data.result.title} 下载失败，网络错误，请尝试添加代理地址`;
+                }
+                break;
+              default:
+                message = `${data.result.title} 下载失败，${err?.message} ${err?.stack}`;
+            }
             settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-              message: `${data.result.title} 下载失败 ${err?.message} ${err?.stack}`,
+              message,
               type: "error",
               duration: 6000,
             });
@@ -110,6 +122,7 @@ async function getTgSticker(url) {
           if (item.is_video) {
             const fileName = `${file_unique_id}.gif`;
             const filePath = join(folderPath, fileName);
+            // emmm 实在不知道该怎么转成带透明通道的gif
             await new Promise((res, rej) => {
               Ffmpeg(Readable.from(buffer))
                 .outputOptions(["-vf", "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse", "-loop", "0"])

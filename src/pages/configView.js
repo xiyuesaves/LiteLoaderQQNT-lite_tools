@@ -664,9 +664,6 @@ async function onConfigView(view) {
         return;
       }
       clearToast();
-      if (!options.proxy.enabled) {
-        showToast("没有配置有效代理，请确保能够连接到Telegram服务器", "default", 30000);
-      }
       if (!options.localEmoticons.ffmpegPath) {
         showToast("没有配置FFmpeg路径，可能无法下载动态表情", "default", 30000);
       }
