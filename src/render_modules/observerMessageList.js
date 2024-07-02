@@ -93,7 +93,7 @@ function processingMsgList() {
           if (avatarEl) {
             avatarEl.style.height = `${
               (childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight - 4
-            }px`;
+              }px`;
           }
           childElHeight.delete(mapTag);
           msgElMergeType.set(curMsgs[index].id, "merge-main");
@@ -377,27 +377,32 @@ async function singleMessageProcessing(target, msgRecord) {
           if (!messageEl.querySelector(".lite-tools-time")) {
             const find = (msgRecord?.msgTime ?? 0) * 1000;
             if (find) {
-              const newTimeEl = document.createElement("div");
-              const showTime = new Date(find).toLocaleTimeString("zh-CN", {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              const fullTime = new Date(find).toLocaleTimeString("zh-CN", {
-                year: "2-digit",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              });
-              if (options.message.showMsgTimeFullDate) {
-                newTimeEl.innerText = fullTime;
-                newTimeEl.setAttribute("time", fullTime);
-              } else {
-                newTimeEl.innerText = showTime;
-                newTimeEl.title = `${fullTime}`;
-                newTimeEl.setAttribute("time", showTime);
+              const formatConverter = (type) => {
+                switch (type) {
+                  case "1": return "numeric";
+                  case "2": return "2-digit";
+                  default: return undefined
+                }
               }
+
+              const showTime = new Intl.DateTimeFormat("zh-CN", {
+                year: formatConverter(options.message.showMsgTimeDateFormat[0]),
+                month: formatConverter(options.message.showMsgTimeDateFormat[1]),
+                day: formatConverter(options.message.showMsgTimeDateFormat[2]),
+                hour: formatConverter(options.message.showMsgTimeFormat[0]),
+                minute: formatConverter(options.message.showMsgTimeFormat[1]),
+                second: formatConverter(options.message.showMsgTimeFormat[2]),
+                timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined
+              }).format(new Date(find));
+
+              const fullTime = new Intl.DateTimeFormat("zh-CN", {
+                timeStyle: "full", dateStyle: "full"
+              }).format(new Date(find));
+
+              const newTimeEl = document.createElement("div");
+              newTimeEl.innerText = showTime;
+              newTimeEl.title = `${fullTime}`;
+              newTimeEl.setAttribute("time", showTime);
               newTimeEl.classList.add("lite-tools-time");
               /**
                * @type {Element}
@@ -511,7 +516,7 @@ function messageToleft(component) {
       get() {
         return false;
       },
-      set() {},
+      set() { },
     });
   }
 }

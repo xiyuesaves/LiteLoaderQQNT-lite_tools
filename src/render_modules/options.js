@@ -35,6 +35,9 @@
  * @property {Boolean} disabledSlideMultipleSelection 禁用滑动多选消息
  * @property {Boolean} convertMiniPrgmArk 替换小程序为url卡片
  * @property {Boolean} showMsgTime 显示消息发送时间
+ * @property {String} showMsgTimeFormat 时间格式
+ * @property {String} showMsgTimeDateFormat 日期格式
+ * @property {Boolean} showMsgTimeZone 显示时区
  * @property {Boolean} replaceBtn 复读机
  * @property {Boolean} preventMessageRecall 阻止撤回
  * @property {Boolean} removeReplyAt 移除回复时的At标记

@@ -217,6 +217,23 @@ async function onConfigView(view) {
     }
   });
 
+  // 初始化下拉框
+  view.querySelectorAll("setting-select").forEach((el) => {
+    const configPath = el.getAttribute("data-config");
+    if (configPath) {
+      el.addEventListener("selected", (event) => {
+        let newOptions = Object.assign(
+          options,
+          Function("options", `options.${configPath} = \`${event.detail.value}\`; return options`)(options),
+        );
+        lite_tools.setOptions(newOptions);
+      });
+      const option = Function("options", `return options.${configPath}`)(options);
+      const selectedOption = el.querySelector(`[data-value="${option}"]`) || el.querySelector("setting-option");
+      selectedOption?.click()
+    }
+  });
+
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
@@ -430,7 +447,7 @@ async function onConfigView(view) {
   // 自定义历史表情数量
   view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
     options.localEmoticons.rowsSize * 2
-  }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
+    }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
   const commonlyEmoticonsEl = view.querySelector(".commonly-emoticons-num");
   commonlyEmoticonsEl.setAttribute("placeholder", options.localEmoticons.rowsSize * 3);
   commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
@@ -479,7 +496,7 @@ async function onConfigView(view) {
           view.querySelector(".commonly-emoticons-num").setAttribute("placeholder", options.localEmoticons.rowsSize * 3);
           view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
             options.localEmoticons.rowsSize * 2
-          }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
+            }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
 
           debounceSetOptions();
           updateSider();

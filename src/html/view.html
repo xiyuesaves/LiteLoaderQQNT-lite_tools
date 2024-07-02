@@ -121,16 +121,41 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
+      <li class="vertical-list-item sub-item">
         <div>
-          <h2>显示完整日期</h2>
-          <span class="secondary-text">会占用过多空间，建议配合 插入到用户名后方 使用</span>
+          <h2>时间格式</h2>
+          <span class="secondary-text">可以设置是否显示秒数</span>
         </div>
-        <div class="showMsgTimeFullDate q-switch" data-config="message.showMsgTimeFullDate">
+        <setting-select data-config="message.showMsgTimeFormat">
+          <setting-option data-value="220">11:45</setting-option>
+          <setting-option data-value="222">11:45:14</setting-option>
+        </setting-select>
+      </li>
+      <li class="vertical-list-item sub-item">
+        <div>
+          <h2>日期格式</h2>
+          <span class="secondary-text">如果太长可以配合【插入到用户名后方】使用</span>
+        </div>
+        <setting-select data-config="message.showMsgTimeDateFormat">
+          <setting-option data-value="000">不显示</setting-option>
+          <setting-option data-value="011">8/10</setting-option>
+          <setting-option data-value="022">08/10</setting-option>
+          <setting-option data-value="211">19/8/10</setting-option>
+          <setting-option data-value="222">19/08/10</setting-option>
+          <setting-option data-value="111">1919/8/10</setting-option>
+          <setting-option data-value="122">1919/08/10</setting-option>
+        </setting-select>
+      </li>
+      <li class="vertical-list-item sub-item" title="或许可以避免迷失在时差中...">
+        <div>
+          <h2>显示时区</h2>
+          <span class="secondary-text">在时间前面显示当前时区，比如“GMT +8”</span>
+        </div>
+        <div class="showMsgTimeZone q-switch" data-config="message.showMsgTimeZone">
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
+      <li class="vertical-list-item sub-item">
         <div>
           <h2>插入到用户名后方</h2>
           <span class="secondary-text">在群组内时将时间插入到用户名后方</span>
