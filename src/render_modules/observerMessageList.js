@@ -341,7 +341,7 @@ async function singleMessageProcessing(target, msgRecord) {
               log("图片尺寸", msgContentEl.offsetWidth, document.body.contains(msgContentEl));
               const elements = msgRecord?.elements;
               const minWidth =
-                options.message.showMsgTime && options.message.showMsgTimeFullDate && !options.message.showMsgTimeToSenderName ? 200 : 130;
+                options.message.showMsgTime && options.message.showMsgTimeDateFormat !== "000" && !options.message.showMsgTimeToSenderName ? 200 : 130;
               if (
                 elements.length === 1 &&
                 ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || msgContentEl.offsetWidth >= minWidth)
