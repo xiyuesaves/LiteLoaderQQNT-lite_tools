@@ -1,11 +1,16 @@
 import { options, updateOptions } from "./options.js";
 import { Logs } from "./logs.js";
 const log = new Logs("全局样式");
+const qqntEmojiFont = `"Color Emoji",`;
 updateOptions(updateFont);
 async function updateFont() {
   if (!options.message.overrideFont.fullName) {
     document.body.style.fontFamily = "";
     document.body.style.fontStyle = "";
+    if (options.message.overrideEmoji) {
+      // 如果没有自定义字体，但是盖默认emoji，就把默认字体集中的emoji去掉来使用系统自带的emoji
+      document.body.style.fontFamily = getComputedStyle(document.body).fontFamily.replace(qqntEmojiFont, "");
+    }
     return;
   }
   if (options.message.overrideFont.fullName.includes(",")) {
@@ -20,6 +25,10 @@ async function updateFont() {
     document.body.style.fontFamily += `, "${options.message.overrideFont.family}"`;
   }
   document.body.style.fontStyle = options.message.overrideFont.style;
+  if (!options.message.overrideEmoji && document.body.style.fontFamily) { 
+    // 如果设置了自定义字体，但是不覆盖默认emoji，就添加默认emoji字体
+    document.body.style.fontFamily = qqntEmojiFont + document.body.style.fontFamily;
+  }
 }
 /**
  * 注入全局样式
