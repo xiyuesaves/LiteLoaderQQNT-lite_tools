@@ -61,6 +61,7 @@
     "showMsgTime": false,
     "showMsgTimeFormat": "220",
     "showMsgTimeDateFormat": "000",
+    "showMsgTimeZone": false,
     "showMsgTimeToSenderName": false,
     "replaceBtn": false,
     "doubleClickReplace": false,
