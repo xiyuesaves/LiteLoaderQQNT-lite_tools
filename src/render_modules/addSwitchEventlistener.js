@@ -23,24 +23,20 @@ function SwitchEventlistener(viewEl) {
     } else {
       target = element;
     }
-    if (option) {
-      target.classList.add("is-active");
-    } else {
-      target.classList.remove("is-active");
-    }
+    target.classList.toggle("is-active", option);
     // 初始化时执行一次callback方法
     if (callback) {
       callback(null, option);
     }
     target.addEventListener("click", function (event) {
-      this.classList.toggle("is-active");
+      const newValue = this.classList.toggle("is-active");
       let newOptions = Object.assign(
         options,
-        Function("options", `options.${optionKey} = ${this.classList.contains("is-active")}; return options`)(options),
+        Function("options", "newValue", `options.${optionKey} = newValue; return options`)(options, newValue),
       );
       lite_tools.setOptions(newOptions);
       if (callback) {
-        callback(event, this.classList.contains("is-active"));
+        callback(event, newValue);
       }
       switchButtons();
     });

@@ -113,7 +113,6 @@ async function onConfigView(view) {
             : "normal";
         }
       }
-      log("滚动列表", startIndex, endIndex);
     });
     fontInputEl.value = options.message.overrideFont.fullName;
     fontInputEl.addEventListener("focus", updateFilterFontList);
@@ -122,9 +121,8 @@ async function onConfigView(view) {
       fontListEl.classList.remove("show");
     });
     fontListEl.addEventListener("mousedown", (event) => {
-      if (event.target.classList.contains("font-item")) {
+      if (event.target.classList.contains("setting-item")) {
         const findFontData = event.target.FontData;
-        log("选择了", findFontData);
         options.message.overrideFont = {
           family: findFontData.family,
           style: ["italic", "oblique"].includes(findFontData.style.toLocaleLowerCase()) ? findFontData.style : "normal",
@@ -170,14 +168,14 @@ async function onConfigView(view) {
       if (!fontList.length) {
         const settingOptionEl = document.createElement("span");
         settingOptionEl.setAttribute("title", "没有匹配字体");
-        settingOptionEl.classList.add("font-item");
+        settingOptionEl.classList.add("setting-item");
         settingOptionEl.classList.add("poe-none");
         settingOptionEl.innerText = "没有匹配字体";
         fontListEl.appendChild(settingOptionEl);
       }
       fontList.forEach((FontData) => {
         const settingOptionEl = document.createElement("span");
-        settingOptionEl.classList.add("font-item");
+        settingOptionEl.classList.add("setting-item");
         settingOptionEl.setAttribute("title", FontData.fullName);
         settingOptionEl.innerText = FontData.fullName;
         settingOptionEl.FontData = FontData;
@@ -218,21 +216,45 @@ async function onConfigView(view) {
   });
 
   // 初始化下拉框
-  view.querySelectorAll("setting-select").forEach((el) => {
+  view.querySelectorAll(".setting-select").forEach((el) => {
     const configPath = el.getAttribute("data-config");
     if (configPath) {
-      el.addEventListener("selected", (event) => {
-        let newOptions = Object.assign(
-          options,
-          Function("options", `options.${configPath} = \`${event.detail.value}\`; return options`)(options),
-        );
-        lite_tools.setOptions(newOptions);
+      el.addEventListener("click", (event) => {
+        if (event.target.classList.contains("setting-item")) {
+          const newValue = event.target.getAttribute("data-value");
+          const showVlaue = event.target.innerText;
+          let newOptions = Object.assign(
+            options,
+            Function("options", "newValue", `options.${configPath} = newValue; return options`)(options, newValue),
+          );
+          lite_tools.setOptions(newOptions);
+          el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
+          const viewEl = el.querySelector("div.setting-view");
+          if (viewEl) {
+            viewEl.innerText = showVlaue;
+          }
+        }
+        el.querySelector(".setting-option").classList.toggle("show");
       });
       const option = Function("options", `return options.${configPath}`)(options);
-      const selectedOption = el.querySelector(`[data-value="${option}"]`) || el.querySelector("setting-option");
-      selectedOption?.click()
+      const showVlaue =
+        Array.from(el.querySelectorAll(".setting-item")).find((item) => item.getAttribute("data-value") === option)?.innerText ?? option;
+      el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
+      const viewEl = el.querySelector("div.setting-view");
+      if (viewEl) {
+        viewEl.innerText = showVlaue;
+      }
     }
   });
+  document.addEventListener("mousedown", closeSettingOption);
+  window.addEventListener("blur", closeSettingOption);
+  function closeSettingOption(event) {
+    const openSeletc = view.querySelector(".setting-select:has(.setting-option.show)");
+    if (openSeletc === event?.target?.closest?.(".setting-select")) {
+      return;
+    }
+    view.querySelectorAll(".setting-select .setting-option").forEach((el) => el.classList.remove("show"));
+  }
 
   // 划词搜索
   addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
@@ -447,7 +469,7 @@ async function onConfigView(view) {
   // 自定义历史表情数量
   view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
     options.localEmoticons.rowsSize * 2
-    }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
+  }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
   const commonlyEmoticonsEl = view.querySelector(".commonly-emoticons-num");
   commonlyEmoticonsEl.setAttribute("placeholder", options.localEmoticons.rowsSize * 3);
   commonlyEmoticonsEl.value = options.localEmoticons.commonlyNum;
@@ -496,8 +518,7 @@ async function onConfigView(view) {
           view.querySelector(".commonly-emoticons-num").setAttribute("placeholder", options.localEmoticons.rowsSize * 3);
           view.querySelector(".recommend-num").innerText = `自定义历史表情保存数量，推荐：${options.localEmoticons.rowsSize}，${
             options.localEmoticons.rowsSize * 2
-            }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
-
+          }，${options.localEmoticons.rowsSize * 3}，${options.localEmoticons.rowsSize * 4}`;
           debounceSetOptions();
           updateSider();
         }
