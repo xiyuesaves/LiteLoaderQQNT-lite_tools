@@ -15,9 +15,9 @@
           <h2>自定义字体</h2>
           <span class="secondary-text">可通过候选框或手动输入字体家族名称启用此功能</span>
         </div>
-        <div class="fonts-selector">
-          <input placeholder="未选择" class="font-input slot-input text_color" spellcheck="false" />
-          <div class="font-list"></div>
+        <div class="fonts-selector setting-select">
+          <input placeholder="未选择" class="setting-input font-input text_color" spellcheck="false" />
+          <div class="font-list setting-option"></div>
         </div>
       </li>
       <hr class="horizontal-dividing-line" />
@@ -126,30 +126,42 @@
           <h2>时间格式</h2>
           <span class="secondary-text">可以设置是否显示秒数</span>
         </div>
-        <setting-select data-config="message.showMsgTimeFormat">
-          <setting-option data-value="220">11:45</setting-option>
-          <setting-option data-value="222">11:45:14</setting-option>
-        </setting-select>
+        <div class="setting-select" data-config="message.showMsgTimeFormat">
+          <div class="setting-view text_color show-icon">hh:mm</div>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 8L12 17L3 8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+          </svg>
+          <div class="setting-option">
+            <div class="setting-item" data-value="220">hh:mm</div>
+            <div class="setting-item" data-value="222">hh:mm:ss</div>
+          </div>
+        </div>
       </li>
       <li class="vertical-list-item sub-item">
         <div>
           <h2>日期格式</h2>
-          <span class="secondary-text">如果太长可以配合【插入到用户名后方】使用</span>
+          <span class="secondary-text">如果太长可以配合 插入到用户名后方 使用</span>
         </div>
-        <setting-select data-config="message.showMsgTimeDateFormat">
-          <setting-option data-value="000">不显示</setting-option>
-          <setting-option data-value="011">8/10</setting-option>
-          <setting-option data-value="022">08/10</setting-option>
-          <setting-option data-value="211">19/8/10</setting-option>
-          <setting-option data-value="222">19/08/10</setting-option>
-          <setting-option data-value="111">1919/8/10</setting-option>
-          <setting-option data-value="122">1919/08/10</setting-option>
-        </setting-select>
+        <div class="setting-select" data-config="message.showMsgTimeDateFormat">
+          <div class="setting-view text_color show-icon">不显示</div>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 8L12 17L3 8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+          </svg>
+          <div class="setting-option show">
+            <div class="setting-item" data-value="000">不显示</div>
+            <div class="setting-item" data-value="011">M/D</div>
+            <div class="setting-item" data-value="022">MM/DD</div>
+            <div class="setting-item" data-value="211">YY/M/D</div>
+            <div class="setting-item" data-value="222">YY/MM/DD</div>
+            <div class="setting-item" data-value="111">YYYY/M/D</div>
+            <div class="setting-item" data-value="122">YYYY/MM/DD</div>
+          </div>
+        </div>
       </li>
-      <li class="vertical-list-item sub-item" title="或许可以避免迷失在时差中...">
+      <li class="vertical-list-item sub-item">
         <div>
-          <h2>显示时区</h2>
-          <span class="secondary-text">在时间前面显示当前时区，比如“GMT +8”</span>
+          <h2 title="或许可以避免迷失在时差中...">显示时区</h2>
+          <span class="secondary-text">在时间前面显示当前时区，比如 “GMT +8”</span>
         </div>
         <div class="showMsgTimeZone q-switch" data-config="message.showMsgTimeZone">
           <span class="q-switch__handle"></span>
@@ -812,7 +824,7 @@
         </div>
       </li>
       <hr class="horizontal-dividing-line" />
-      <li title="" class="vertical-list-item">
+      <li class="vertical-list-item">
         <div>
           <h2>持久化保存</h2>
           <span class="secondary-text">
@@ -1119,7 +1131,9 @@
       <li class="vertical-list-item">
         <div>
           <h2>Telegram Bot Token</h2>
-          <span class="secondary-text"> 用于下载tg贴纸集，在此处申请：<a class="link" data-href="https://t.me/BotFather">BotFather</a></span>
+          <span class="secondary-text">
+            用于下载tg贴纸集，在此处申请：<a class="link" data-href="https://t.me/BotFather">BotFather</a></span
+          >
         </div>
       </li>
       <li class="select-default-file-path vertical-list-item">
