@@ -1,6 +1,15 @@
 import "../render_modules/wallpaper.js";
 import { options, updateOptions } from "../render_modules/options.js";
 
+/**
+ * 时间格式映射
+ * @type {Object}
+ */
+const TIME_FORMAT_MAPPING = {
+  1: "numeric",
+  2: "2-digit",
+};
+
 updateOptions(chatMessage);
 
 /**
@@ -100,27 +109,25 @@ function chatMessage() {
         if (!messageEl.querySelector(".lite-tools-time")) {
           const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
           if (find) {
+            const showTime = new Intl.DateTimeFormat("zh-CN", {
+              year: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[0]],
+              month: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[1]],
+              day: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[2]],
+              hour: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[0]],
+              minute: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[1]],
+              second: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[2]],
+              timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined,
+            }).format(new Date(find));
+
+            const fullTime = new Intl.DateTimeFormat("zh-CN", {
+              timeStyle: "full",
+              dateStyle: "full",
+            }).format(new Date(find));
+
             const newTimeEl = document.createElement("div");
-            const showTime = new Date(find).toLocaleTimeString("zh-CN", {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-            const fullTime = new Date(find).toLocaleTimeString("zh-CN", {
-              year: "2-digit",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            });
-            if (options.message.showMsgTimeFullDate) {
-              newTimeEl.innerText = fullTime;
-              newTimeEl.setAttribute("time", fullTime);
-            } else {
-              newTimeEl.innerText = showTime;
-              newTimeEl.title = `${fullTime}`;
-              newTimeEl.setAttribute("time", showTime);
-            }
+            newTimeEl.innerText = showTime;
+            newTimeEl.title = `${fullTime}`;
+            newTimeEl.setAttribute("time", showTime);
             newTimeEl.classList.add("lite-tools-time");
             /**
              * @type {Element}

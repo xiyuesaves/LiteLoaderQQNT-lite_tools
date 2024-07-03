@@ -1,5 +1,91 @@
 .lite-tools-settings {
   width: 100%;
+  .setting-select {
+    position: relative;
+    width: 120px;
+    height: 26px;
+    border: solid 1px rgba(127, 127, 127, 0.2);
+    border-radius: 4px;
+    .icon {
+      width: 12px;
+      height: 12px;
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+    }
+    .setting-input,
+    .setting-view {
+      width: 100%;
+      height: 100%;
+      text-indent: 8px;
+      font-size: 12px;
+      border: none;
+      line-height: 24px;
+      opacity: 1;
+      background-color: var(--overlay_active);
+      border-radius: 4px;
+      &.show-icon {
+        width: calc(100% - 24px);
+      }
+      &.no-change {
+        pointer-events: none;
+        background-color: unset;
+        user-select: none;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+        white-space-collapse: collapse;
+        text-wrap: nowrap;
+      }
+    }
+    .setting-view {
+      @extend .no-change;
+    }
+    .setting-option {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: -1px;
+      width: calc(100% + 2px);
+      max-height: 410px;
+      overflow: scroll;
+      border-radius: 6px;
+      padding: 6px;
+      z-index: 100;
+      box-shadow: var(--seletc-list-shadow);
+      background-color: var(--background-color);
+      transition: 150ms;
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      &.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .setting-item {
+        font-size: 12px;
+        line-height: 26px;
+        display: block;
+        border-radius: 4px;
+        padding: 0 4px;
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+        white-space-collapse: collapse;
+        text-wrap: nowrap;
+        z-index: 9999;
+        &.poe-none {
+          pointer-events: none;
+          opacity: 0.6;
+        }
+        &:hover {
+          background-color: var(--hover-background);
+        }
+      }
+    }
+  }
   .test-proxy {
     cursor: pointer;
     font-weight: bold;
@@ -57,6 +143,10 @@
     &.fl-d {
       flex-direction: column;
       align-items: flex-start;
+    }
+
+    &.sub-item {
+      margin-left: 16px;
     }
   }
 
@@ -340,54 +430,6 @@
   .fonts-selector {
     width: calc(100% - 400px) !important;
     max-width: 300px;
-    position: relative;
-    .slot-input {
-      text-align: left;
-      padding-left: 5px;
-    }
-    .font-list {
-      position: absolute;
-      top: calc(100% + 8px);
-      width: 100%;
-      max-height: 410px;
-      overflow: scroll;
-      border-radius: 6px;
-      padding: 6px;
-      z-index: 100;
-      backdrop-filter: blur(28px);
-      box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
-      background-color: var(--background-color);
-      mix-blend-mode: multiply;
-      transition: 150ms;
-      opacity: 0;
-      transform: translateY(-6px);
-      pointer-events: none;
-      &.show {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-      }
-      .font-item {
-        font-size: 14px;
-        line-height: 26px;
-        display: block;
-        border-radius: 4px;
-        padding: 0 4px;
-        max-width: 100%;
-        overflow-x: hidden;
-        overflow-y: hidden;
-        text-overflow: ellipsis;
-        white-space-collapse: collapse;
-        text-wrap: nowrap;
-        &.poe-none {
-          pointer-events: none;
-          opacity: 0.6;
-        }
-        &:hover {
-          background-color: var(--hover-background);
-        }
-      }
-    }
   }
   .slot-input {
     text-align: center;
@@ -715,11 +757,13 @@
     --mask-bg: rgba(0, 0, 0, 0.3);
     --msgbox-bg: rgba(255, 255, 255, 1);
     --msgbox-shadow: 0 15px 20px rgba(0, 0, 0, 0.15);
+
+    --seletc-list-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color: rgb(14, 14, 14);
+    --background-color: #303030;
 
     --background-color-008: rgba(0, 0, 0, 0.08);
     --hover-background: rgba(255, 255, 255, 0.08);
@@ -743,6 +787,8 @@
     --msgbox-bg: rgb(36, 36, 36);
     --btn-bg: rgba(38, 38, 38, 1);
     --msgbox-shadow: 0 15px 40px 25px rgba(0, 0, 0, 0.3);
+
+    --seletc-list-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
 }
 
