@@ -46,6 +46,15 @@ const urlMatch = /https?:\/\/[\w\-_]+\.[\w]{1,10}[\S]+/i;
 let checkNSFW = new Set();
 
 /**
+ * 时间格式映射
+ * @type {Object}
+ */
+const TIME_FORMAT_MAPPING = {
+  1: "numeric",
+  2: "2-digit",
+};
+
+/**
  * 获取当前peer
  */
 let peer = getPeer();
@@ -93,7 +102,7 @@ function processingMsgList() {
           if (avatarEl) {
             avatarEl.style.height = `${
               (childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight - 4
-              }px`;
+            }px`;
           }
           childElHeight.delete(mapTag);
           msgElMergeType.set(curMsgs[index].id, "merge-main");
@@ -341,7 +350,11 @@ async function singleMessageProcessing(target, msgRecord) {
               log("图片尺寸", msgContentEl.offsetWidth, document.body.contains(msgContentEl));
               const elements = msgRecord?.elements;
               const minWidth =
-                options.message.showMsgTime && options.message.showMsgTimeDateFormat !== "000" && !options.message.showMsgTimeToSenderName ? 200 : 130;
+                options.message.showMsgTime && // 开启了显示时间
+                options.message.showMsgTimeDateFormat !== "000" && // 开启了日期显示
+                (!options.message.showMsgTimeToSenderName || peer.chatType !== 2) // 没有开启时间插入到用户名后方或当前聊天是私聊
+                  ? 200
+                  : 130;
               if (
                 elements.length === 1 &&
                 ((elements[0]?.marketFaceElement ? 150 : 0) >= minWidth || msgContentEl.offsetWidth >= minWidth)
@@ -377,26 +390,19 @@ async function singleMessageProcessing(target, msgRecord) {
           if (!messageEl.querySelector(".lite-tools-time")) {
             const find = (msgRecord?.msgTime ?? 0) * 1000;
             if (find) {
-              const formatConverter = (type) => {
-                switch (type) {
-                  case "1": return "numeric";
-                  case "2": return "2-digit";
-                  default: return undefined
-                }
-              }
-
               const showTime = new Intl.DateTimeFormat("zh-CN", {
-                year: formatConverter(options.message.showMsgTimeDateFormat[0]),
-                month: formatConverter(options.message.showMsgTimeDateFormat[1]),
-                day: formatConverter(options.message.showMsgTimeDateFormat[2]),
-                hour: formatConverter(options.message.showMsgTimeFormat[0]),
-                minute: formatConverter(options.message.showMsgTimeFormat[1]),
-                second: formatConverter(options.message.showMsgTimeFormat[2]),
-                timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined
+                year: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[0]],
+                month: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[1]],
+                day: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[2]],
+                hour: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[0]],
+                minute: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[1]],
+                second: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[2]],
+                timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined,
               }).format(new Date(find));
 
               const fullTime = new Intl.DateTimeFormat("zh-CN", {
-                timeStyle: "full", dateStyle: "full"
+                timeStyle: "full",
+                dateStyle: "full",
               }).format(new Date(find));
 
               const newTimeEl = document.createElement("div");
@@ -404,6 +410,7 @@ async function singleMessageProcessing(target, msgRecord) {
               newTimeEl.title = `${fullTime}`;
               newTimeEl.setAttribute("time", showTime);
               newTimeEl.classList.add("lite-tools-time");
+
               /**
                * @type {Element}
                */
@@ -505,7 +512,7 @@ async function singleMessageProcessing(target, msgRecord) {
 }
 
 /**
- * 消息靠右额外处理函数
+ * 消息靠左额外处理函数
  * @param {Object} component 目标消息对象
  */
 function messageToleft(component) {
@@ -516,7 +523,7 @@ function messageToleft(component) {
       get() {
         return false;
       },
-      set() { },
+      set() {},
     });
   }
 }

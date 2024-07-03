@@ -1,6 +1,15 @@
 import "../render_modules/wallpaper.js";
 import { options, updateOptions } from "../render_modules/options.js";
 
+/**
+ * 时间格式映射
+ * @type {Object}
+ */
+const TIME_FORMAT_MAPPING = {
+  1: "numeric",
+  2: "2-digit",
+};
+
 updateOptions(chatMessage);
 
 /**
@@ -100,26 +109,19 @@ function chatMessage() {
         if (!messageEl.querySelector(".lite-tools-time")) {
           const find = (elProps?.msgRecord?.msgTime ?? 0) * 1000;
           if (find) {
-            const formatConverter = (type) => {
-              switch (type) {
-                case "1": return "numeric";
-                case "2": return "2-digit";
-                default: return undefined
-              }
-            }
-
             const showTime = new Intl.DateTimeFormat("zh-CN", {
-              year: formatConverter(options.message.showMsgTimeDateFormat[0]),
-              month: formatConverter(options.message.showMsgTimeDateFormat[1]),
-              day: formatConverter(options.message.showMsgTimeDateFormat[2]),
-              hour: formatConverter(options.message.showMsgTimeFormat[0]),
-              minute: formatConverter(options.message.showMsgTimeFormat[1]),
-              second: formatConverter(options.message.showMsgTimeFormat[2]),
-              timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined
+              year: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[0]],
+              month: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[1]],
+              day: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[2]],
+              hour: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[0]],
+              minute: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[1]],
+              second: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[2]],
+              timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined,
             }).format(new Date(find));
 
             const fullTime = new Intl.DateTimeFormat("zh-CN", {
-              timeStyle: "full", dateStyle: "full"
+              timeStyle: "full",
+              dateStyle: "full",
             }).format(new Date(find));
 
             const newTimeEl = document.createElement("div");
