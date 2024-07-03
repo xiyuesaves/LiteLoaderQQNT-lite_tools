@@ -55,13 +55,13 @@
         <li class="vertical-list-item">
           <div>
             <h2>连续消息合并</h2>
-            <span class="secondary-text">模拟tg消息效果 - 需要开启头像浮动</span>
+            <span class="secondary-text">模拟tg消息效果</span>
           </div>
           <div class="mergeMessage q-switch" data-config="message.mergeMessage">
             <span class="q-switch__handle"></span>
           </div>
         </li>
-        <li class="vertical-list-item">
+        <li class="vertical-list-item sub-item">
           <div>
             <h2>保留时间</h2>
             <span class="secondary-text">启用 连续消息合并 后保留时间分隔 - 重载消息生效</span>
@@ -70,11 +70,10 @@
             <span class="q-switch__handle"></span>
           </div>
         </li>
-        <hr class="horizontal-dividing-line" />
-        <li class="vertical-list-item">
+        <li class="vertical-list-item sub-item">
           <div>
             <h2>头像置底</h2>
-            <span class="secondary-text">还原tg头像 - 需要开启头像浮动</span>
+            <span class="secondary-text">还原tg头像</span>
           </div>
           <div class="avatar-bottom q-switch" data-config="message.avatarSticky.toBottom">
             <span class="q-switch__handle"></span>
@@ -367,15 +366,6 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
-        <div>
-          <h2>高清化</h2>
-          <span class="secondary-text">生成的图片分辨率将会翻倍</span>
-        </div>
-        <div class="highResolution q-switch" data-config="messageToImage.highResolution">
-          <span class="q-switch__handle"></span>
-        </div>
-      </li>
       <li class="select-default-file-path vertical-list-item">
         <input
           placeholder="请选择文件夹"
@@ -389,6 +379,16 @@
           <button class="q-button q-button--small q-button--secondary select-default-save-file-input">选择</button>
         </div>
       </li>
+      <li class="vertical-list-item sub-item">
+        <div>
+          <h2>高清化</h2>
+          <span class="secondary-text">生成的图片分辨率将会翻倍</span>
+        </div>
+        <div class="highResolution q-switch" data-config="messageToImage.highResolution">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
@@ -423,7 +423,7 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
+      <li class="vertical-list-item sub-item">
         <div>
           <h2>双击执行</h2>
           <span class="secondary-text">避免误触</span>
@@ -494,7 +494,7 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
+      <li class="vertical-list-item sub-item">
         <div>
           <h2>不加载图片</h2>
           <span class="secondary-text"> 可以减少请求耗时 </span>
@@ -513,15 +513,6 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
-        <div>
-          <h2>包括收藏表情</h2>
-          <span class="secondary-text">收藏表情也会被添加遮罩，但官方表情依旧正常显示</span>
-        </div>
-        <div class="includesAnimationEmoticons q-switch" data-config="message.preventNSFW.includesAnimationEmoticons">
-          <span class="q-switch__handle"></span>
-        </div>
-      </li>
       <div class="preventNSFW-keyword disabled-input">
         <div class="vertical-list-item">
           <input
@@ -532,6 +523,15 @@
           />
         </div>
       </div>
+      <li class="vertical-list-item sub-item">
+        <div>
+          <h2>包括收藏表情</h2>
+          <span class="secondary-text">收藏表情也会被添加遮罩，但官方表情依旧正常显示</span>
+        </div>
+        <div class="includesAnimationEmoticons q-switch" data-config="message.preventNSFW.includesAnimationEmoticons">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
     </ul>
   </setting-panel>
   <!-- 本地表情包 -->
@@ -683,7 +683,7 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
+      <li class="vertical-list-item sub-item">
         <div>
           <h2>自动填充</h2>
           <span class="secondary-text">快捷输入表情 功能筛选只有一个表情时自动填充到输入框</span>
@@ -692,7 +692,7 @@
           <span class="q-switch__handle"></span>
         </div>
       </li>
-      <li class="vertical-list-item">
+      <li class="vertical-list-item sub-item">
         <div>
           <h2>自定义快捷键</h2>
           <span class="secondary-text">自定义 快捷输入表情 功能的快捷键</span>
