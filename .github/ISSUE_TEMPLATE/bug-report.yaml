@@ -17,8 +17,8 @@ body:
     attributes:
       label: 请确保您已阅读以上注意事项，并勾选下方的确认框。
       options:
-        - label: "我已尝试在仅安装轻量工具箱的情况下问题依旧存在。"
-        - label: "该问题是由多个插件之间互不兼容引起的。"
+        - label: "该问题是由轻量工具箱单独引起。"
+        - label: "该问题是由多个插件之间互不兼容引起。"
         - label: "我已经尝试过删除插件的配置文件并重启 QQ，问题依旧存在。"
           required: true
         - label: "我已经在 [Issue Tracker](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues) 中找过我要提出的问题，没有找到相同问题的 issue。"
