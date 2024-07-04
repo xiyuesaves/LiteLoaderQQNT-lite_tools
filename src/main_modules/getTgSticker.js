@@ -122,9 +122,9 @@ async function getTgSticker(url) {
           if (item.is_video) {
             const fileName = `${file_unique_id}.gif`;
             const filePath = join(folderPath, fileName);
-            // emmm 实在不知道该怎么转成带透明通道的gif
             await new Promise((res, rej) => {
               Ffmpeg(Readable.from(buffer))
+                .inputOptions(["-vcodec", "libvpx-vp9"])
                 .outputOptions(["-vf", "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse", "-loop", "0"])
                 .save(filePath)
                 .on("error", (err) => {
