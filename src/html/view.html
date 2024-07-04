@@ -487,7 +487,7 @@
         <div>
           <h2>链接预览</h2>
           <span class="secondary-text">
-            在消息中展示链接预览信息，此功能会在识别到链接时自动请求第一个链接地址<br />并生成一张类似tg中的预览卡片 - 重载消息生效
+            在消息中展示链接预览信息，此功能会自动请求消息中的第一个链接地址<br />并生成一张类似tg中的预览卡片 - 重载消息生效
           </span>
         </div>
         <div class="previreUrlEnabled q-switch" data-config="message.previreUrl.enabled">
@@ -498,6 +498,15 @@
         <div>
           <h2>不加载图片</h2>
           <span class="secondary-text"> 可以减少请求耗时 </span>
+        </div>
+        <div class="loadPrevirePic q-switch" data-config="message.previreUrl.dontLoadPic">
+          <span class="q-switch__handle"></span>
+        </div>
+      </li>
+      <li class="vertical-list-item sub-item">
+        <div>
+          <h2>更换 Twitter 链接识别方案</h2>
+          <span class="secondary-text"> 切换预览数据获取接口，<red>请注意切换后将会显示包含 NSFW 内容的推文</red> </span>
         </div>
         <div class="loadPrevirePic q-switch" data-config="message.previreUrl.dontLoadPic">
           <span class="q-switch__handle"></span>
