@@ -81,6 +81,7 @@
       "fullName": "",
       "postscriptName": ""
     },
+    "overrideEmoji": false,
     "preventNSFW": {
       "enabled": false,
       "includesAnimationEmoticons": false,
