@@ -65,7 +65,7 @@ body:
   - type: textarea
     id: env-LiteLoaderQQNT-plugins
     attributes:
-      label: 已安装插件列表
+      label: 已安装插件列表（如果你不确定问题出在哪里建议填写）
 
   - type: textarea
     id: reproduce-steps
