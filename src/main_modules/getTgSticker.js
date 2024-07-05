@@ -186,7 +186,10 @@ function convertLottieToGif(buffer, outputPath) {
         type: "error",
         duration: 6000,
       });
-      res("Lottie 转 Gif 出错:", err.toString());
+      log("Lottie 转 Gif 出错:", err.toString());
+      const errbuffer = zlib.gunzipSync(buffer);
+      log("出错数据：", errbuffer.toString());
+      res();
     });
     convertStdin.on("close", (code) => {
       if (code === 0) {
