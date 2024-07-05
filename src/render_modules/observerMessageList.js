@@ -292,7 +292,7 @@ async function singleMessageProcessing(target, msgRecord) {
           messageEl.querySelector(".user-name")?.classList?.remove("user-name--selfReverse");
         }
 
-        // 图片自适应宽度
+        // 图片自适应宽度 - 有问题，会使消息滚动时不受控制的跳动
         if (options.message.imageAutoWidth) {
           const findImageElement = msgRecord?.elements?.find((element) => element?.picElement && element?.picElement?.picSubType === 0);
           if (findImageElement) {
@@ -352,7 +352,7 @@ async function singleMessageProcessing(target, msgRecord) {
               const minWidth =
                 options.message.showMsgTime && // 开启了显示时间
                 options.message.showMsgTimeDateFormat !== "000" && // 开启了日期显示
-                (!options.message.showMsgTimeToSenderName || peer.chatType !== 2) // 没有开启时间插入到用户名后方或当前聊天是私聊
+                (!options.message.showMsgTimeToSenderName || peer.chatType !== 2) // 没有开启插入到用户名后方或当前聊天是私聊
                   ? 200
                   : 130;
               if (
