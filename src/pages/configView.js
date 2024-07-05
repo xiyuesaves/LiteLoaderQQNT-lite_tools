@@ -18,6 +18,8 @@ import { simpleMarkdownToHTML } from "../render_modules/simpleMarkdownToHTML.js"
 import { openChangeLog } from "../render_modules/openChangeLog.js";
 // 获取当前登录账号信息
 import { getAuthData } from "../render_modules/nativeCall.js";
+// 配置属性读写模块
+import { getValueByPath, setValueByPath } from "../render_modules/ObjectPathUtils.js";
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
 import { showToast, clearToast } from "../render_modules/toast.js";
@@ -185,7 +187,10 @@ async function onConfigView(view) {
     }
   }
 
+  // 添加侧边栏上方功能列表
   addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
+
+  // 添加侧边栏下方功能列表
   addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
 
   // 添加输入框上方功能列表
@@ -223,17 +228,14 @@ async function onConfigView(view) {
         if (event.target.classList.contains("setting-item")) {
           const newValue = event.target.getAttribute("data-value");
           const showVlaue = event.target.innerText;
-          let newOptions = Object.assign(
-            options,
-            Function("options", "newValue", `options.${configPath} = newValue; return options`)(options, newValue),
-          );
-          lite_tools.setOptions(newOptions);
+          setValueByPath(options, configPath, newValue);
+          lite_tools.setOptions(options);
           el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
           el.querySelector("div.setting-view")?.setAttribute("data-value", showVlaue);
         }
         el.querySelector(".setting-option").classList.toggle("show");
       });
-      const option = Function("options", `return options.${configPath}`)(options);
+      const option = getValueByPath(options, configPath);
       const showVlaue =
         Array.from(el.querySelectorAll(".setting-item")).find((item) => item.getAttribute("data-value") === option)?.innerText ?? option;
       el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);

@@ -1,5 +1,6 @@
 import { options } from "./options.js";
 import { switchButtons } from "./eggs.js";
+import { getValueByPath, setValueByPath } from "./ObjectPathUtils.js";
 
 /**
  * 初始化设置界面监听方法
@@ -16,7 +17,7 @@ function SwitchEventlistener(viewEl) {
    * @param {Function} callback 回调函数 Event,Boolend
    */
   function addSwitchEventlistener(optionKey, element, callback) {
-    const option = Function("options", `return options.${optionKey}`)(options);
+    const option = getValueByPath(options, optionKey);
     let target;
     if (typeof element === "string") {
       target = view.querySelector(element);
@@ -30,11 +31,8 @@ function SwitchEventlistener(viewEl) {
     }
     target.addEventListener("click", function (event) {
       const newValue = this.classList.toggle("is-active");
-      let newOptions = Object.assign(
-        options,
-        Function("options", "newValue", `options.${optionKey} = newValue; return options`)(options, newValue),
-      );
-      lite_tools.setOptions(newOptions);
+      setValueByPath(options, optionKey, newValue);
+      lite_tools.setOptions(options);
       if (callback) {
         callback(event, newValue);
       }
