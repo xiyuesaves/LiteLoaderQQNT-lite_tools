@@ -43,7 +43,7 @@ const updateAccentColor = debounce(async function (isAutoUpdate) {
   }
 
   if (options.appearance.useSystemAccentColor) {
-    let [accentColor, highlightColor] = await lite_tools.getSystemAccentColor();
+    let [accentColor, highlightColor, menuHighlightColor,hotlightColor] = await lite_tools.getSystemAccentColor();
     if (isAutoUpdate && document.body.highlightColor === highlightColor) {
       // 系统颜色发生变化时 highlight 更新有延迟，暂时先fallback到主色
       // 过一会儿会有另一个事件触发 highlight 更新
@@ -57,6 +57,8 @@ const updateAccentColor = debounce(async function (isAutoUpdate) {
       --brand_standard: ${accentColor}!important;
       --text_link: ${highlightColor}!important;
       --lt-link-url-color: ${highlightColor}!important;
+      --nt_brand_standard_2_overlay_hover_brand_2_mix: ${menuHighlightColor}!important;
+      --nt_brand_standard_2_overlay_pressed_brand_2_mix: ${hotlightColor}!important;
     }`;
   } else {
     colorStyle.innerHTML = "";
