@@ -7,7 +7,8 @@ import { writeFileSync, mkdirSync } from "fs";
 import { config } from "./config.js";
 import { settingWindow } from "./captureWindow.js";
 import { folderUpdate, setPauseWatch } from "./localEmoticons.js";
-import { execFile } from 'child_process';
+import { spawn } from "child_process";
+import { ungzip } from "pako";
 const fs = require('fs');
 import { Logs } from "./logs.js";
 const log = new Logs("getTgSticker");
@@ -106,45 +107,18 @@ async function getTgSticker(url) {
           });
         }
 
-				async function convertTgsToGif(inputPath, outputPath) {
-					try {
-						const exePath = config.localEmoticons.tgsToGifPath;
+        async function convertLottieToGif(inputBuffer, outputPath){
+        	const exePath = config.localEmoticons.tgsToGifPath;
 
-						inputPath = inputPath.replace(/\\/g, '/');
-						outputPath = outputPath.replace(/\\/g, '/');
-
-						const args = ['-i', inputPath, '-o', outputPath];
-
-						await new Promise((resolve, reject) => {
-							execFile(exePath, args, (error, stdout, stderr) => {
-								if (error) {
-									log(`执行TGS转GIF时发生错误: ${error}`);
-									reject(error);
-									return;
-								}
-
-								if (stderr) {
-									log(`stderr: ${stderr}`);
-								}
-
-								if (stdout) {
-									log(`stdout: ${stdout}`);
-								}
-
-								resolve();
-							});
-						});
-
-						fs.unlink(inputPath, (err) => {
-							if (err) {
-								log(`删除TGS文件时发生错误: ${err}`);
-							}
-						});
-
-					} catch (err) {
-						log(`转换过程发生错误: ${err}`);
-					}
-				}
+					const convertStdin = spawn(exePath, [outputPath]);
+					const inputStream = Readable.from(inputBuffer);
+					convertStdin.stdout.on("inputBuffer", (inputBuffer) => {});
+					convertStdin.stderr.on("data", (inputBuffer) => {
+						log("Lottie转Gif错误:", inputBuffer.toString());
+					});
+					convertStdin.on("close", (code) => {});
+					inputStream.pipe(convertStdin.stdin);
+        }
 
         async function downloadFile(item) {
           const fileId = item.file_id;
@@ -178,9 +152,8 @@ async function getTgSticker(url) {
 						const fileName = `${file_unique_id}.gif`;
             const fileInputPath = join(folderPath, fileTgsName);
 						const fileOutputPath = join(folderPath, fileName);
-						writeFileSync(fileInputPath, buffer);
-						// 转成gif
-						await convertTgsToGif(fileInputPath, fileOutputPath);
+						const lottie_json = new TextDecoder("utf-8").decode(await ungzip(buffer));
+						await convertLottieToGif(lottie_json, fileOutputPath);
 						log("TGS动图下载完成", fileOutputPath);
 					} else {
             const fileName = `${file_unique_id}.webp`;
