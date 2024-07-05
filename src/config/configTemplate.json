@@ -104,6 +104,7 @@
     "preventSelfMsg": false,
     "blockAllRetractions": false,
     "cacheHistory": false,
+    "stealthMode": false,
     "textColor": {
       "light": "#ff6666",
       "dark": "#c70000"
