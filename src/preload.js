@@ -110,6 +110,10 @@ contextBridge.exposeInMainWorld("lite_tools", {
   onDownloadTgStickerEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onDownloadTgStickerEvent", callback),
   // 主进程向渲染进程发送通知
   onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
+  // 获取系统主色
+  getSystemAccentColor: () => ipcRenderer.invoke("LiteLoader.lite_tools.getSystemAccentColor"),
+  // 系统主色变化
+  onSystemAccentColorChanged: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onSystemAccentColorChanged", ...args),
   /**
    *
    * @param {String} sendEventName 发送事件名称

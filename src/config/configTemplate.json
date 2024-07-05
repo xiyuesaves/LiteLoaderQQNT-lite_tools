@@ -147,5 +147,8 @@
     "level": false,
     "title": false,
     "all": false
+  },
+  "appearance":{
+    "useSystemAccentColor": false
   }
 }

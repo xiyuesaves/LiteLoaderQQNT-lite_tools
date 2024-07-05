@@ -1,5 +1,7 @@
 import { options, updateOptions } from "./options.js";
 import { Logs } from "./logs.js";
+import { debounce } from "./debounce.js";
+
 const log = new Logs("全局样式");
 const qqntEmojiFont = `"Color Emoji",`;
 updateOptions(updateFont);
@@ -25,11 +27,44 @@ async function updateFont() {
     document.body.style.fontFamily += `, "${options.message.overrideFont.family}"`;
   }
   document.body.style.fontStyle = options.message.overrideFont.style;
-  if (!options.message.overrideEmoji && document.body.style.fontFamily) { 
+  if (!options.message.overrideEmoji && document.body.style.fontFamily) {
     // 如果设置了自定义字体，但是不覆盖默认emoji，就添加默认emoji字体
     document.body.style.fontFamily = qqntEmojiFont + document.body.style.fontFamily;
   }
 }
+
+// 系统颜色变化时会自动触发N次……debounce一下
+const updateAccentColor = debounce(async function (isAutoUpdate) {
+  let colorStyle = document.querySelector("#liteToolsAccentColor");
+  if (!colorStyle) {
+    colorStyle = document.createElement("style");
+    colorStyle.id = "liteToolsAccentColor";
+    document.body.appendChild(colorStyle);
+  }
+
+  if (options.appearance.useSystemAccentColor) {
+    let [accentColor, highlightColor] = await lite_tools.getSystemAccentColor();
+    if (isAutoUpdate && document.body.highlightColor === highlightColor) {
+      // 系统颜色发生变化时 highlight 更新有延迟，暂时先fallback到主色
+      // 过一会儿会有另一个事件触发 highlight 更新
+      highlightColor = accentColor;
+    } else {
+      document.body.highlightColor = highlightColor;
+    }
+
+    colorStyle.innerHTML = `
+    .q-theme-tokens, .q-theme-tokens-light, .q-theme-tokens-dark {
+      --brand_standard: ${accentColor}!important;
+      --text_link: ${highlightColor}!important;
+      --lt-link-url-color: ${highlightColor}!important;
+    }`;
+  } else {
+    colorStyle.innerHTML = "";
+    delete document.body.highlightColor;
+  }
+}, 100);
+updateOptions(updateAccentColor);
+
 /**
  * 注入全局样式
  */
@@ -52,6 +87,9 @@ function initStyle() {
   }
   backgroundStyle.setAttribute("rel", "stylesheet");
   document.body.appendChild(backgroundStyle);
+
+  updateAccentColor(false);
+  lite_tools.onSystemAccentColorChanged(() => updateAccentColor(true));
 
   // 调试用-styleCss刷新
   lite_tools.updateStyle(() => {
