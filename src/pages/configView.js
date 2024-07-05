@@ -666,6 +666,28 @@ async function onConfigView(view) {
     }
   });
 
+	// 选择tgs_to_gif路径
+	const tgsToGifPath = view.querySelector(".select-tgs-to-gif-path");
+	tgsToGifPath.value = options.localEmoticons.tgsToGifPath;
+	// 清除设置路径
+	tgsToGifPath.addEventListener("click", (e) => {
+		e.target.value = "";
+		options.localEmoticons.tgsToGifPath = "";
+		debounceSetOptions();
+	});
+	view.querySelector(".tgs-to-gif-path-btn").addEventListener("click", async () => {
+		const result = await lite_tools.showOpenDialog({
+			title: "请选择tgs_to_gif",
+			properties: ["openFile"],
+			buttonLabel: "选择",
+		});
+		if (!result.canceled) {
+			options.localEmoticons.tgsToGifPath = result.filePaths[0];
+			log("选择了tgs_to_gif路径", options.localEmoticons.tgsToGifPath);
+			debounceSetOptions();
+		}
+	});
+
   // 设置Telegram Bot Token
   const tgBotToken = view.querySelector(".tg-bot-token");
   tgBotToken.value = options.localEmoticons.tgBotToken;
@@ -699,6 +721,9 @@ async function onConfigView(view) {
       if (!options.localEmoticons.ffmpegPath) {
         showToast("没有配置FFmpeg路径，可能无法下载动态表情", "default", 30000);
       }
+      if (!options.localEmoticons.tgsToGifPath) {
+				showToast("没有配置tgs_to_gif路径，可能无法下载动态表情", "default", 30000);
+			}
       showToast("已添加下载请求", "default", 30000);
       lite_tools.downloadTgSticker(tgSticker.value);
     } else {
@@ -713,6 +738,7 @@ async function onConfigView(view) {
     view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
     view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
     view.querySelector(".select-ffmpeg-path").value = opt.localEmoticons.ffmpegPath;
+		view.querySelector(".select-tgs-to-gif-path").value = opt.localEmoticons.tgsToGifPath;
     tailList?.updateOptions();
   });
   log("完成初始化");

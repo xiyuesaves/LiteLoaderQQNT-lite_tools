@@ -35,6 +35,7 @@
     "commonlyNum": 20,
     "rowsSize": 5,
     "ffmpegPath": "",
+    "tgsToGifPath": "",
     "tgBotToken": "",
     "localPath": ""
   },

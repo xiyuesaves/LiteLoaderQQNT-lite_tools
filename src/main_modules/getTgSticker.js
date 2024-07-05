@@ -7,6 +7,8 @@ import { writeFileSync, mkdirSync } from "fs";
 import { config } from "./config.js";
 import { settingWindow } from "./captureWindow.js";
 import { folderUpdate, setPauseWatch } from "./localEmoticons.js";
+import { execFile } from 'child_process';
+const fs = require('fs');
 import { Logs } from "./logs.js";
 const log = new Logs("getTgSticker");
 const MAX_CONCURRENT_DOWNLOADS = 8;
@@ -41,26 +43,20 @@ async function getTgSticker(url) {
         });
         const stickerList = data.result.stickers;
         const pictureList = [];
+        const videoList = [];
         const animatedList = [];
-        const dontSupport = [];
         stickerList.forEach((item) => {
-          if (!item.is_animated) {
-            if (item.is_video) {
-              animatedList.push(item);
-            } else {
-              pictureList.push(item);
-            }
-            if (animatedList.length + pictureList.length === 1) {
-              const iconData = animatedList[0] ?? pictureList[0];
-              stickerData.icon = `${iconData.file_unique_id}.${iconData.is_video ? "gif" : "webp"}`;
-            }
-          } else {
-            dontSupport.push(item);
-          }
+					if (item.is_animated) {
+						animatedList.push(item);
+					}else if (item.is_video) {
+						videoList.push(item);
+					} else {
+						pictureList.push(item);
+					}
         });
-        log(`共有 ${pictureList.length}个静图 ${animatedList.length}个动图 ${dontSupport.length}个不支持`);
-        if (pictureList.length + animatedList.length > 0) {
-          const concatArr = [...pictureList, ...animatedList];
+        log(`共有 ${pictureList.length}个静图 ${videoList.length + animatedList.length}个动图`);
+        if (pictureList.length + animatedList.length + videoList.length > 0) {
+          const concatArr = [...pictureList, ...animatedList, ...videoList];
           const downloads = [];
           for (let i = 0; i < MAX_CONCURRENT_DOWNLOADS; i++) {
             const item = concatArr.shift();
@@ -109,6 +105,47 @@ async function getTgSticker(url) {
             duration: 6000,
           });
         }
+
+				async function convertTgsToGif(inputPath, outputPath) {
+					try {
+						const exePath = config.localEmoticons.tgsToGifPath;
+
+						inputPath = inputPath.replace(/\\/g, '/');
+						outputPath = outputPath.replace(/\\/g, '/');
+
+						const args = ['-i', inputPath, '-o', outputPath];
+
+						await new Promise((resolve, reject) => {
+							execFile(exePath, args, (error, stdout, stderr) => {
+								if (error) {
+									log(`执行TGS转GIF时发生错误: ${error}`);
+									reject(error);
+									return;
+								}
+
+								if (stderr) {
+									log(`stderr: ${stderr}`);
+								}
+
+								if (stdout) {
+									log(`stdout: ${stdout}`);
+								}
+
+								resolve();
+							});
+						});
+
+						fs.unlink(inputPath, (err) => {
+							if (err) {
+								log(`删除TGS文件时发生错误: ${err}`);
+							}
+						});
+
+					} catch (err) {
+						log(`转换过程发生错误: ${err}`);
+					}
+				}
+
         async function downloadFile(item) {
           const fileId = item.file_id;
           const file_unique_id = item.file_unique_id;
@@ -136,7 +173,16 @@ async function getTgSticker(url) {
                   res();
                 });
             });
-          } else {
+          } else if (item.is_animated) {
+						const fileTgsName = `${file_unique_id}.tgs`;
+						const fileName = `${file_unique_id}.gif`;
+            const fileInputPath = join(folderPath, fileTgsName);
+						const fileOutputPath = join(folderPath, fileName);
+						writeFileSync(fileInputPath, buffer);
+						// 转成gif
+						await convertTgsToGif(fileInputPath, fileOutputPath);
+						log("TGS动图下载完成", fileOutputPath);
+					} else {
             const fileName = `${file_unique_id}.webp`;
             const filePath = join(folderPath, fileName);
             writeFileSync(filePath, buffer);
@@ -151,7 +197,7 @@ async function getTgSticker(url) {
         throw new Error(data?.description);
       }
     } catch (err) {
-      log("下载贴纸包失败", err.message);
+      log("下载贴纸包失败", err.message, err.stack);
       settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
         message: `下载贴纸集失败 ${err.message}`,
         type: "error",
