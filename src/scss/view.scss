@@ -41,6 +41,9 @@
     }
     .setting-view {
       @extend .no-change;
+      &::after {
+        content: attr(data-value);
+      }
     }
     .setting-option {
       position: absolute;

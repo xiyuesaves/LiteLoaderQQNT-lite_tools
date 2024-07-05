@@ -229,10 +229,7 @@ async function onConfigView(view) {
           );
           lite_tools.setOptions(newOptions);
           el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
-          const viewEl = el.querySelector("div.setting-view");
-          if (viewEl) {
-            viewEl.innerText = showVlaue;
-          }
+          el.querySelector("div.setting-view")?.setAttribute("data-value", showVlaue);
         }
         el.querySelector(".setting-option").classList.toggle("show");
       });
@@ -240,10 +237,7 @@ async function onConfigView(view) {
       const showVlaue =
         Array.from(el.querySelectorAll(".setting-item")).find((item) => item.getAttribute("data-value") === option)?.innerText ?? option;
       el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
-      const viewEl = el.querySelector("div.setting-view");
-      if (viewEl) {
-        viewEl.innerText = showVlaue;
-      }
+      el.querySelector("div.setting-view")?.setAttribute("data-value", showVlaue);
     }
   });
   document.addEventListener("mousedown", closeSettingOption);
