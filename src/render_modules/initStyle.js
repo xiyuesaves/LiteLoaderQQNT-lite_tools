@@ -45,18 +45,28 @@ const updateAccentColor = debounce(async function (isAutoUpdate) {
   if (options.appearance.useSystemAccentColor) {
     let [accentColor, highlightColor, menuHighlightColor,hotlightColor] = await lite_tools.getSystemAccentColor();
     if (isAutoUpdate && document.body.highlightColor === highlightColor) {
-      // 系统颜色发生变化时 highlight 更新有延迟，暂时先fallback到主色
+      // SystemAccentColor 发生变化时 SystemColor 更新有延迟，暂时先fallback到主色
       // 过一会儿会有另一个事件触发 highlight 更新
-      highlightColor = accentColor;
+      highlightColor = menuHighlightColor = hotlightColor = accentColor;
     } else {
       document.body.highlightColor = highlightColor;
     }
 
     colorStyle.innerHTML = `
     .q-theme-tokens, .q-theme-tokens-light, .q-theme-tokens-dark {
-      --brand_standard: ${accentColor}!important;
-      --text_link: ${highlightColor}!important;
-      --lt-link-url-color: ${highlightColor}!important;
+      /* 与主题色相同的变量 */
+      --system_accent_color: ${accentColor};
+      --brand_standard: var(--system_accent_color)!important;
+      --overlay_active_brand: var(--system_accent_color)!important;
+      --brand_text: var(--system_accent_color)!important;
+
+      /* 与链接颜色相同的变量 */
+      --system_highlight_color: ${highlightColor};
+      --text_link: var(--system_highlight_color)!important;
+      --text-link: var(--system_highlight_color)!important; /* 咋还有横线版本的？ */
+      --lt-link-url-color: var(--system_highlight_color)!important;
+
+      /* hover & active */
       --nt_brand_standard_2_overlay_hover_brand_2_mix: ${menuHighlightColor}!important;
       --nt_brand_standard_2_overlay_pressed_brand_2_mix: ${hotlightColor}!important;
     }`;
