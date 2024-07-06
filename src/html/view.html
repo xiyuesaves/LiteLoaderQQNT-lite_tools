@@ -592,7 +592,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>下载tg贴纸</h2>
-          <span class="secondary-text"> 使用前需要配置 Telegram Bot Token，FFmpeg路径和代理地址 </span>
+          <span class="secondary-text"> 使用前需要配置 Telegram Bot Token，FFmpeg路径，tg_to_gif路径和代理地址 </span>
         </div>
       </li>
       <li class="vertical-list-item">
@@ -1129,7 +1129,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>FFmpeg路径地址</h2>
-          <span class="secondary-text"> 用于将tg动态贴纸从视频格式转为图片 </span>
+          <span class="secondary-text"> 用于将TG动态贴纸从视频格式转为GIF，在此处下载：<a class="link" data-href="https://ffmpeg.org/">FFmpeg</a></span>
         </div>
       </li>
       <li class="select-default-file-path vertical-list-item">
@@ -1148,9 +1148,29 @@
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
+          <h2>TGS转GIF程序路径地址</h2>
+          <span class="secondary-text"> 用于将TGS格式贴纸转为GIF，在此处下载：<a class="link" data-href="https://github.com/jiongjiongJOJO/tgs_to_gif/releases/latest">tgs_to_gif</a></span>
+        </div>
+      </li>
+      <li class="select-default-file-path vertical-list-item">
+        <input
+          placeholder="tgs_to_gif Path"
+          title="移除路径"
+          readonly
+          class="select-tgs-to-gif-path input-text text_color"
+          type="text"
+          spellcheck="false"
+        />
+        <div class="ops-btns">
+          <button class="q-button q-button--small q-button--secondary tgs-to-gif-path-btn">选择</button>
+        </div>
+      </li>
+      <hr class="horizontal-dividing-line" />
+      <li class="vertical-list-item">
+        <div>
           <h2>Telegram Bot Token</h2>
           <span class="secondary-text">
-            用于下载tg贴纸集，在此处申请：<a class="link" data-href="https://t.me/BotFather">BotFather</a></span
+            用于下载TG贴纸包，在此处申请：<a class="link" data-href="https://t.me/BotFather">BotFather</a></span
           >
         </div>
       </li>
