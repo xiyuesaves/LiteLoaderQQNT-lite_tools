@@ -54,28 +54,76 @@ async function getTgSticker(url) {
             pictureList.push(item);
           }
         });
-        log(`共有 ${pictureList.length}个静图 ${videoList.length + animatedList.length}个动图`);
-        if (pictureList.length + animatedList.length + videoList.length > 0) {
-          const concatArr = [...pictureList, ...animatedList, ...videoList];
-          const downloads = [];
-          for (let i = 0; i < MAX_CONCURRENT_DOWNLOADS; i++) {
-            const item = concatArr.shift();
-            downloads.push(downloadFile(item, concatArr, data));
+        log(`共有 ${pictureList.length}个静图 ${videoList.length}个视频 ${animatedList.length}个tgs`);
+        const concatArr = [...pictureList];
+        if (config.localEmoticons.tgsToGifPath) {
+          concatArr.push(...animatedList);
+        }
+        if (videoList.length) {
+          const supportEncoding = await new Promise((res) => {
+            try {
+              Ffmpeg.getAvailableCodecs(function (err, codecs) {
+                if (err) {
+                  settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                    message: `FFmpeg 命令执行失败，请检查 FFmpeg 路径是否填写正确`,
+                    type: "error",
+                    duration: 6000,
+                  });
+                  res(false);
+                } else if (codecs["libvpx-vp9"]) {
+                  res(true);
+                } else {
+                  settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                    message: `当前 FFmpeg 不支持 libvpx-vp9 编码格式，请更换版本后重试`,
+                    type: "error",
+                    duration: 6000,
+                  });
+                  res(false);
+                }
+              });
+            } catch {
+              settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                message: `FFmpeg 命令执行失败，请检查 FFmpeg 路径是否填写正确`,
+                type: "error",
+                duration: 6000,
+              });
+              res(false);
+            }
+          });
+          if (!supportEncoding) {
+            return;
           }
+          concatArr.push(...videoList);
+        }
+        if (concatArr.length) {
           try {
-            await Promise.all(downloads);
+            const downloads = [];
+            for (let i = 0; i < MAX_CONCURRENT_DOWNLOADS; i++) {
+              const item = concatArr.shift();
+              downloads.push(downloadFile(item, concatArr, data));
+            }
+            const resolves = await Promise.all(downloads);
+            const downloadFailedNum = resolves.flat().filter((item) => !item).length;
             // 等待表情文件下载完成后再创建贴纸数据文件
             const folderPath = join(config.localEmoticons.localPath, data.result.name);
             const stickerDataPath = join(folderPath, "sticker.json");
             writeFileSync(stickerDataPath, JSON.stringify(stickerData, null, 2));
-            settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-              message: `${data.result.title} 下载完成`,
-              type: "success",
-              duration: 6000,
-            });
+            if (!downloadFailedNum) {
+              settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                message: `${data.result.title} 下载完成`,
+                type: "success",
+                duration: 6000,
+              });
+            } else {
+              settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                message: `${data.result.title} 下载结束，${downloadFailedNum} 个贴纸下载失败`,
+                type: "default",
+                duration: 6000,
+              });
+            }
           } catch (err) {
             log("下载出错", err);
-            let message = `${data.result.title} 下载失败 ${err?.message} ${err?.stack}`;
+            let message;
             switch (err?.message) {
               case "fetch failed":
                 if (config.proxy.enabled) {
@@ -85,7 +133,7 @@ async function getTgSticker(url) {
                 }
                 break;
               default:
-                message = `${data.result.title} 下载失败，${err?.message} ${err?.stack}`;
+                message = `${data.result.title} 下载失败，${err?.message}`;
             }
             settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
               message,
@@ -94,11 +142,19 @@ async function getTgSticker(url) {
             });
           }
         } else {
-          settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-            message: `没有可下载的贴纸 ${data.result.title}`,
-            type: "error",
-            duration: 6000,
-          });
+          if (animatedList.length) {
+            settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+              message: `无法处理 ${data.result.title} 贴纸包中的 TGS 贴纸`,
+              type: "error",
+              duration: 6000,
+            });
+          } else {
+            settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+              message: `${data.result.title} 没有可下载的贴纸`,
+              type: "error",
+              duration: 6000,
+            });
+          }
         }
       } else {
         throw new Error(data?.description);
@@ -106,7 +162,7 @@ async function getTgSticker(url) {
     } catch (err) {
       log("下载贴纸包失败", err.message, err.stack);
       settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-        message: `下载贴纸包失败 ${err.message}`,
+        message: `下载贴纸包时意外退出：${err.message}`,
         type: "error",
         duration: 6000,
       });
@@ -120,7 +176,7 @@ async function getTgSticker(url) {
   }
 }
 
-async function downloadFile(item, stickerList, data) {
+async function downloadFile(item, stickerList, data, resolve = []) {
   const fileId = item.file_id;
   const file_unique_id = item.file_unique_id;
   const res = await fetch(`https://api.telegram.org/bot${config.localEmoticons.tgBotToken}/getFile?file_id=${fileId}`);
@@ -133,21 +189,23 @@ async function downloadFile(item, stickerList, data) {
   if (item.is_video) {
     const fileName = `${file_unique_id}.gif`;
     const filePath = join(folderPath, fileName);
-    await convertWebmToGif(buffer, filePath);
+    resolve.push(await convertWebmToGif(buffer, filePath));
   } else if (item.is_animated) {
     const fileName = `${file_unique_id}.gif`;
     const filePath = join(folderPath, fileName);
-    await convertLottieToGif(buffer, filePath);
+    resolve.push(await convertLottieToGif(buffer, filePath));
     log("TGS动图下载完成", filePath);
   } else {
     const fileName = `${file_unique_id}.webp`;
     const filePath = join(folderPath, fileName);
-    writeFileSync(filePath, buffer);
+    resolve.push(true);
     log("静图下载完成", filePath);
   }
   if (stickerList.length) {
     const sticker = stickerList.shift();
-    await downloadFile(sticker, stickerList, data);
+    return downloadFile(sticker, stickerList, data, resolve);
+  } else {
+    return resolve;
   }
 }
 
@@ -156,40 +214,28 @@ function convertWebmToGif(buffer, outputPath) {
     Ffmpeg(Readable.from(buffer))
       .inputOptions(["-vcodec", "libvpx-vp9"])
       .outputOptions(["-vf", "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse", "-loop", "0"])
-      .save(outputPath)
       .on("error", (err) => {
-        log("失败", err);
-        // 不退出，尽量下载更多的图片
-        settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-          message: `Webm 转 Gif 出错 ${err.message}`,
-          type: "error",
-          duration: 6000,
-        });
-        log("动图下载出错", err.message);
-        res();
+        log("webm 转 gif 失败", err.message);
+        res(false);
       })
       .on("end", () => {
         log("动图下载完成", outputPath);
-        res();
-      });
+        res(true);
+      })
+      .save(outputPath);
   });
 }
 
 function convertLottieToGif(buffer, outputPath) {
-  return new Promise((res) => {
+  return new Promise((res, rej) => {
     const exePath = config.localEmoticons.tgsToGifPath;
     const convertStdin = spawn(exePath, [outputPath]);
     const inputStream = Readable.from(buffer);
     convertStdin.stderr.on("data", (err) => {
-      settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-        message: `Lottie 转 Gif 出错：${err.toString()}`,
-        type: "error",
-        duration: 6000,
-      });
       log("Lottie 转 Gif 出错:", err.toString());
       const errbuffer = zlib.gunzipSync(buffer);
       log("出错数据：", errbuffer.toString());
-      res();
+      res(false);
     });
     convertStdin.on("close", (code) => {
       if (code === 0) {
@@ -197,7 +243,11 @@ function convertLottieToGif(buffer, outputPath) {
       } else {
         log("Lottie 转 Gif 非正常退出", code);
       }
-      res();
+      res(true);
+    });
+    convertStdin.on("error", (code) => {
+      console.log(code);
+      rej(new Error("TGS 转 GIF 出错，请检查 tgs_to_gif 路径是否填写正确"));
     });
     inputStream.pipe(zlib.createGunzip()).pipe(convertStdin.stdin);
   });
