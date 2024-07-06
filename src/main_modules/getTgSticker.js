@@ -61,34 +61,25 @@ async function getTgSticker(url) {
         }
         if (videoList.length) {
           const supportEncoding = await new Promise((res) => {
-            try {
-              Ffmpeg.getAvailableCodecs(function (err, codecs) {
-                if (err) {
-                  settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-                    message: `FFmpeg 命令执行失败，请检查 FFmpeg 路径是否填写正确`,
-                    type: "error",
-                    duration: 6000,
-                  });
-                  res(false);
-                } else if (codecs["libvpx-vp9"]) {
-                  res(true);
-                } else {
-                  settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-                    message: `当前 FFmpeg 不支持 libvpx-vp9 编码格式，请更换版本后重试`,
-                    type: "error",
-                    duration: 6000,
-                  });
-                  res(false);
-                }
-              });
-            } catch {
-              settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
-                message: `FFmpeg 命令执行失败，请检查 FFmpeg 路径是否填写正确`,
-                type: "error",
-                duration: 6000,
-              });
-              res(false);
-            }
+            Ffmpeg.getAvailableCodecs(function (err, codecs) {
+              if (err) {
+                settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                  message: `FFmpeg 命令执行失败，请检查 FFmpeg 路径是否填写正确`,
+                  type: "error",
+                  duration: 6000,
+                });
+                res(false);
+              } else if (codecs["libvpx-vp9"]) {
+                res(true);
+              } else {
+                settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
+                  message: `当前 FFmpeg 不支持 libvpx-vp9 编码格式，请更换版本后重试`,
+                  type: "error",
+                  duration: 6000,
+                });
+                res(false);
+              }
+            });
           });
           if (!supportEncoding) {
             return;
