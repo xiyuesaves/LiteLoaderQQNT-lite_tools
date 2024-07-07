@@ -225,14 +225,14 @@ function convertLottieToGif(buffer, outputPath) {
     convertStdin.stderr.on("data", (err) => {
       log("Lottie 转 Gif 出错:", err.toString());
       const errbuffer = zlib.gunzipSync(buffer);
-      log("出错数据：", errbuffer.toString());
+      log(outputPath, "出错数据：", errbuffer.toString());
       res(false);
     });
     convertStdin.on("close", (code) => {
       if (code === 0) {
         log("Lottie 转 Gif 完成", outputPath);
       } else {
-        log("Lottie 转 Gif 非正常退出", code);
+        log(outputPath, "Lottie 转 Gif 非正常退出", code);
       }
       res(true);
     });
@@ -240,7 +240,7 @@ function convertLottieToGif(buffer, outputPath) {
       console.log(code);
       rej(new Error("TGS 转 GIF 出错，请检查 tgs_to_gif 路径是否填写正确"));
     });
-    inputStream.pipe(zlib.createGunzip()).pipe(convertStdin.stdin);
+    inputStream.pipe(convertStdin.stdin);
   });
 }
 
