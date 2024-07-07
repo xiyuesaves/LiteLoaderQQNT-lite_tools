@@ -189,6 +189,7 @@ async function downloadFile(item, stickerList, data, resolve = []) {
   } else {
     const fileName = `${file_unique_id}.webp`;
     const filePath = join(folderPath, fileName);
+    writeFileSync(filePath, buffer);
     resolve.push(true);
     log("静图下载完成", filePath);
   }
