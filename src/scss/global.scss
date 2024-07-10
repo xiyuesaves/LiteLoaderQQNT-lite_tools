@@ -475,10 +475,13 @@
       }
     }
   }
-  .avatar-span {
-    position: sticky !important;
-    top: 10px !important;
-    bottom: 10px !important;
+  &:not(.avatar-end) {
+    .avatar-span {
+      position: sticky !important;
+      top: 10px !important;
+      bottom: 10px !important;
+      background-color: red;
+    }
   }
   .ml-root.q-scroll-view {
     .ml-list,
@@ -514,6 +517,11 @@
   .ml-root.q-scroll-view {
     .ml-item {
       .merge {
+        .message-tips {
+          .reaction-content {
+            margin-bottom: 0;
+          }
+        }
         // 不知道为什么卡片消息会有个单独的margin-top
         .ark-msg-content-container {
           margin-top: 0;
