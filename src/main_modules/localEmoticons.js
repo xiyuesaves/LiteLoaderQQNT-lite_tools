@@ -339,11 +339,16 @@ ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", (_, src) => {
 });
 // 更新最近使用分组
 ipcMain.on("LiteLoader.lite_tools.updateRecentFolders", (_, src) => {
+  // 固定当前排序
+  if (config.localEmoticons.recentlyNum === -2) {
+    return;
+  }
+
   // 更新recentFolders
   const folderPath = dirname(src);
 
   // 删除不存在的路径
-  localEmoticonsConfig.recentFolders = localEmoticonsConfig.recentFolders.filter(path => {
+  localEmoticonsConfig.recentFolders = localEmoticonsConfig.recentFolders.filter((path) => {
     const exists = existsSync(path);
     if (!exists) {
       log(`路径不存在，已移除: ${path}`);
