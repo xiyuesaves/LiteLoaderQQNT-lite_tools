@@ -341,7 +341,6 @@ ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", (_, src) => {
 ipcMain.on("LiteLoader.lite_tools.updateRecentFolders", (_, src) => {
   // 更新recentFolders
   const folderPath = dirname(src);
-  const index = localEmoticonsConfig.recentFolders.indexOf(folderPath);
 
   // 删除不存在的路径
   localEmoticonsConfig.recentFolders = localEmoticonsConfig.recentFolders.filter(path => {
@@ -352,6 +351,7 @@ ipcMain.on("LiteLoader.lite_tools.updateRecentFolders", (_, src) => {
     return exists;
   });
 
+  const index = localEmoticonsConfig.recentFolders.indexOf(folderPath);
   if (index !== -1) {
     localEmoticonsConfig.recentFolders.splice(index, 1);
   }
