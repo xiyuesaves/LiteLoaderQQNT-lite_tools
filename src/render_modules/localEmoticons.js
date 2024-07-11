@@ -103,6 +103,12 @@ let mouseEnterEventTimeOut;
  */
 let isEnabled = false;
 
+/**
+ * 是否插入了表情包（影响是否重载最近使用表情分组）
+ * @type {Boolean}
+ */
+let inserted = false;
+
 const commonlyId = "commonlyEmoticons";
 
 document.body.classList.toggle("lite-tools-showLocalEmoticons", options.localEmoticons.enabled);
@@ -428,6 +434,8 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);
     }
+    //更新最近使用分组
+    lite_tools.updateRecentFolders(src);
     // 如果有匹配命令值，则先删除
     if (regOut) {
       ckeditEditorModel.change((writer) => {
@@ -461,7 +469,7 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
         writer.insert(writerEl, position);
       });
     }
-
+    inserted = true;
     showEmoticons = false;
     // 如果按下了ctrl键，则不关闭窗口面板
     if (!ctrlKey) {
@@ -809,47 +817,54 @@ function jumpFolder(event) {
  * @param {Array} newEmoticonsList 表情包列表
  */
 function appendEmoticons(_, newEmoticonsList) {
-  log("获取到表情对象", newEmoticonsList);
-  // 平铺表情对象数组
-  emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
-    return emoticons.list;
-  });
+  lite_tools.getLocalEmoticonsConfig().then(config => {
+    log("获取到表情对象", newEmoticonsList);
+    // 平铺表情对象数组
+    emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
+      return emoticons.list;
+    });
 
-  // 插入新的表情数据
-  newEmoticonsList.forEach((folder) => {
-    const findEmoticons = folderInfos.find((item) => item.id === folder.id);
-    if (findEmoticons) {
-      findEmoticons.index = folder.index;
-      findEmoticons.updateEmoticonIcon(folder.icon || folder.list[0].path);
-      findEmoticons.updateEmoticonList(folder.list);
-      findEmoticons.updateEmoticonName(folder.name);
-      folderListEl.appendChild(findEmoticons.folderEl);
-      folderIconListEl.appendChild(findEmoticons.folderIconEl);
-    } else {
-      const newEmoticonFolder = new emoticonFolder(
-        folder.name,
-        folder.list,
-        folder.id,
-        folder.icon || folder.list[0].path,
-        folder.index,
-        "folder",
-      );
-      folderInfos.push(newEmoticonFolder);
-      folderListEl.appendChild(newEmoticonFolder.folderEl);
-      folderIconListEl.appendChild(newEmoticonFolder.folderIconEl);
-    }
-  });
-  // 销毁无用实例
-  const deleteEmoticon = emoticonsList.filter((item) => !newEmoticonsList.find((newItem) => newItem.id === item.id));
-  deleteEmoticon.forEach((item) => {
-    const deleteIndex = folderInfos.findIndex((emoticon) => emoticon.id === item.id);
-    const emoticon = folderInfos.splice(deleteIndex, 1)[0];
-    emoticon.destroy();
-  });
-  // 更新数据
-  emoticonsList = newEmoticonsList;
-  // 对数组进行排序
-  // folderInfos.sort((a, b) => a.index - b.index);
+    // 将最近使用的分组移到前面
+    const recentEmoticonsList = config.recentFolders.map(path => newEmoticonsList.find(folder => folder.path === path)).filter(Boolean);
+    const remainingEmoticonsList = newEmoticonsList.filter(folder => !config.recentFolders.includes(folder.path));
+    const sortedEmoticonsList = [...recentEmoticonsList, ...remainingEmoticonsList];
+
+    // 插入新的表情数据
+    sortedEmoticonsList.forEach((folder) => {
+      const findEmoticons = folderInfos.find((item) => item.id === folder.id);
+      if (findEmoticons) {
+        findEmoticons.index = folder.index;
+        findEmoticons.updateEmoticonIcon(folder.icon || folder.list[0].path);
+        findEmoticons.updateEmoticonList(folder.list);
+        findEmoticons.updateEmoticonName(folder.name);
+        folderListEl.appendChild(findEmoticons.folderEl);
+        folderIconListEl.appendChild(findEmoticons.folderIconEl);
+      } else {
+        const newEmoticonFolder = new emoticonFolder(
+          folder.name,
+          folder.list,
+          folder.id,
+          folder.icon || folder.list[0].path,
+          folder.index,
+          "folder",
+        );
+        folderInfos.push(newEmoticonFolder);
+        folderListEl.appendChild(newEmoticonFolder.folderEl);
+        folderIconListEl.appendChild(newEmoticonFolder.folderIconEl);
+      }
+    });
+    // 销毁无用实例
+    const deleteEmoticon = emoticonsList.filter((item) => !sortedEmoticonsList.find((newItem) => newItem.id === item.id));
+    deleteEmoticon.forEach((item) => {
+      const deleteIndex = folderInfos.findIndex((emoticon) => emoticon.id === item.id);
+      const emoticon = folderInfos.splice(deleteIndex, 1)[0];
+      emoticon.destroy();
+    });
+    // 更新数据
+    emoticonsList = sortedEmoticonsList;
+    // 对数组进行排序
+    //folderInfos.sort((a, b) => a.index - b.index);
+  }).catch(err => log("获取本地表情配置失败", err));
 }
 
 class emoticonFolder {
@@ -1118,6 +1133,12 @@ function closeLocalEmoticons() {
     );
   }
   localEmoticonsEl.classList.remove("show");
+  if(inserted){
+    lite_tools.getLocalEmoticonsList().then(emoticonsList => {
+      appendEmoticons(null, emoticonsList);
+    });
+    inserted = false;
+  }
 }
 
 /**

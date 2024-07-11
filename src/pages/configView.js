@@ -411,6 +411,15 @@ async function onConfigView(view) {
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons", (_, enabled) => {
     view.querySelector(".hoverShowCommonlyEmoticons").classList.toggle("disabled-switch", !enabled);
   });
+  //最近使用分组数量
+  view.querySelector(".recent-folders-num").value = options.localEmoticons.recentlyNum;
+  view.querySelector(".recent-folders-num").addEventListener("blur", (e) => {
+    const newRecentFoldersNum = parseInt(e.target.value);
+    options.localEmoticons.recentlyNum = Number.isNaN(newRecentFoldersNum) ? 0 : newRecentFoldersNum;
+
+    e.target.value = options.localEmoticons.recentlyNum;
+    debounceSetOptions();
+  });
 
   // 初始化背景路径选择监听和值
   view.querySelector(".select-background-wallpaper-clear").value = options.background.url;
