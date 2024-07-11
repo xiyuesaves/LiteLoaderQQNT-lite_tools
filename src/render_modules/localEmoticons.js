@@ -435,7 +435,9 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
       lite_tools.addCommonlyEmoticons(src);
     }
     //更新最近使用分组
-    lite_tools.updateRecentFolders(src);
+    if (options.localEmoticons.recentlyNum !== 0) {
+      lite_tools.updateRecentFolders(src);
+    }
     // 如果有匹配命令值，则先删除
     if (regOut) {
       ckeditEditorModel.change((writer) => {
@@ -816,8 +818,9 @@ function jumpFolder(event) {
  * @param {Null} _ 无用字段
  * @param {Array} newEmoticonsList 表情包列表
  */
-function appendEmoticons(_, newEmoticonsList) {
-  lite_tools.getLocalEmoticonsConfig().then(config => {
+async function appendEmoticons(_, newEmoticonsList) {
+  try {
+    const config = await lite_tools.getLocalEmoticonsConfig();
     log("获取到表情对象", newEmoticonsList);
     // 平铺表情对象数组
     emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
@@ -825,8 +828,8 @@ function appendEmoticons(_, newEmoticonsList) {
     });
 
     // 将最近使用的分组移到前面
-    const recentEmoticonsList = config.recentFolders.map(path => newEmoticonsList.find(folder => folder.path === path)).filter(Boolean);
-    const remainingEmoticonsList = newEmoticonsList.filter(folder => !config.recentFolders.includes(folder.path));
+    const recentEmoticonsList = config.recentFolders.map((path) => newEmoticonsList.find((folder) => folder.path === path)).filter(Boolean);
+    const remainingEmoticonsList = newEmoticonsList.filter((folder) => !config.recentFolders.includes(folder.path));
     const sortedEmoticonsList = [...recentEmoticonsList, ...remainingEmoticonsList];
 
     // 插入新的表情数据
@@ -862,9 +865,9 @@ function appendEmoticons(_, newEmoticonsList) {
     });
     // 更新数据
     emoticonsList = sortedEmoticonsList;
-    // 对数组进行排序
-    //folderInfos.sort((a, b) => a.index - b.index);
-  }).catch(err => log("获取本地表情配置失败", err));
+  } catch (err) {
+    log("获取本地表情配置失败", err, err?.stack);
+  }
 }
 
 class emoticonFolder {
@@ -993,7 +996,7 @@ class emoticonFolder {
     this.iconPath = iconPath;
     this.iconEl.src = this.protocolPrefix + this.iconPath;
   }
-  updateEmoticonName(name){
+  updateEmoticonName(name) {
     this.name = name;
     this.categoryNameEl.innerText = this.name;
   }
@@ -1133,8 +1136,8 @@ function closeLocalEmoticons() {
     );
   }
   localEmoticonsEl.classList.remove("show");
-  if(inserted){
-    lite_tools.getLocalEmoticonsList().then(emoticonsList => {
+  if (inserted && options.localEmoticons.recentlyNum !== 0) {
+    lite_tools.getLocalEmoticonsList().then((emoticonsList) => {
       appendEmoticons(null, emoticonsList);
     });
     inserted = false;
