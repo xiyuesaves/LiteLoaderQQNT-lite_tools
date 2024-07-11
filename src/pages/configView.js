@@ -415,8 +415,11 @@ async function onConfigView(view) {
   view.querySelector(".recent-folders-num").value = options.localEmoticons.recentlyNum;
   view.querySelector(".recent-folders-num").addEventListener("blur", (e) => {
     const newRecentFoldersNum = parseInt(e.target.value);
-    options.localEmoticons.recentlyNum = Number.isNaN(newRecentFoldersNum) ? 0 : newRecentFoldersNum;
-
+    let newValue = Number.isNaN(newRecentFoldersNum) ? 0 : newRecentFoldersNum;
+    if (newValue < -2) {
+      newValue = 0;
+    }
+    options.localEmoticons.recentlyNum = newValue;
     e.target.value = options.localEmoticons.recentlyNum;
     debounceSetOptions();
   });
