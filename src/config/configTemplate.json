@@ -33,6 +33,7 @@
     "toLeftSlot": false,
     "hoverShowCommonlyEmoticons": false,
     "commonlyNum": 20,
+    "recentlyNum": 0,
     "rowsSize": 5,
     "ffmpegPath": "",
     "tgsToGifPath": "",

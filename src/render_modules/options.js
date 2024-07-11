@@ -31,6 +31,7 @@
  * @property {boolean} localEmoticons.toLeftSlot - 移动功能位置。
  * @property {boolean} localEmoticons.hoverShowCommonlyEmoticons - 悬停显示历史表情。
  * @property {number} localEmoticons.commonlyNum - 历史表情数量。
+ * @property {number} localEmoticons.recentlyNum - 最近使用分组数量。
  * @property {number} localEmoticons.rowsSize - 表情行数大小。
  * @property {string} localEmoticons.ffmpegPath - FFmpeg 路径。
  * @property {string} localEmoticons.tgBotToken - Telegram 机器人令牌。

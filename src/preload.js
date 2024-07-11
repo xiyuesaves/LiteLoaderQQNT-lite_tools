@@ -47,6 +47,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   log: (...args) => ipcRenderer.send("LiteLoader.lite_tools.log", ...args),
   // 更新常用表情列表
   addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
+  // 更新更新最近使用分组
+  updateRecentFolders: (src) => ipcRenderer.send("LiteLoader.lite_tools.updateRecentFolders", src),
   // 获取窗口Id
   getWebContentId: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getWebContentId"),
   // 打开文件路径

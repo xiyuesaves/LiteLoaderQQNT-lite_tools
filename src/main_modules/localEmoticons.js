@@ -104,6 +104,9 @@ onUpdateConfig(async () => {
     }
     localEmoticonsConfig = require(localEmoticonsConfigPath);
     log("读取常用表情列表数据", localEmoticonsConfigPath, localEmoticonsConfig);
+    if (!localEmoticonsConfig.recentFolders) {
+      localEmoticonsConfig.recentFolders = [];
+    }
   }
 
   // 动态更新本地表情文件夹
@@ -150,6 +153,14 @@ onUpdateConfig(async () => {
       writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
     }
     oldCommonlyNum = config.localEmoticons.commonlyNum;
+  }
+
+  // 动态更新最近使用分组的数量
+  if (config.localEmoticons.recentlyNum >= 0 && localEmoticonsConfig.recentFolders.length > config.localEmoticons.recentlyNum) {
+    localEmoticonsConfig.recentFolders = localEmoticonsConfig.recentFolders.slice(0, config.localEmoticons.recentlyNum);
+    globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
+    log("更新最近使用分组数量", localEmoticonsConfigPath, localEmoticonsConfig);
+    writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
   }
 });
 
@@ -326,7 +337,40 @@ ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", (_, src) => {
   log("常用表情列表", localEmoticonsConfigPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
+// 更新最近使用分组
+ipcMain.on("LiteLoader.lite_tools.updateRecentFolders", (_, src) => {
+  // 固定当前排序
+  if (config.localEmoticons.recentlyNum === -2) {
+    return;
+  }
 
+  // 更新recentFolders
+  const folderPath = dirname(src);
+
+  // 删除不存在的路径
+  localEmoticonsConfig.recentFolders = localEmoticonsConfig.recentFolders.filter((path) => {
+    const exists = existsSync(path);
+    if (!exists) {
+      log(`路径不存在，已移除: ${path}`);
+    }
+    return exists;
+  });
+
+  const index = localEmoticonsConfig.recentFolders.indexOf(folderPath);
+  if (index !== -1) {
+    localEmoticonsConfig.recentFolders.splice(index, 1);
+  }
+  localEmoticonsConfig.recentFolders.unshift(folderPath);
+
+  // 删除多余的值
+  const maxRecentFolders = config.localEmoticons.recentlyNum;
+  if (maxRecentFolders >= 0 && localEmoticonsConfig.recentFolders.length > maxRecentFolders) {
+    localEmoticonsConfig.recentFolders = localEmoticonsConfig.recentFolders.slice(0, maxRecentFolders);
+  }
+
+  log("最近使用分组", localEmoticonsConfigPath, localEmoticonsConfig);
+  writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
+});
 // 从历史记录中移除指定文件
 ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
   const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
