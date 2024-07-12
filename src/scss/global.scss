@@ -1266,6 +1266,22 @@
   }
 }
 
+.lite-tools-q-context-menu-reply {
+  background-color: rgba(0, 102, 204, 0.3);
+}
+
+.lite-tools-q-context-menu-reply::hover {
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+.lite-tools-q-context-menu-recall {
+  background-color: rgba(255, 109, 109, 0.3);
+}
+
+.lite-tools-q-context-menu-recall:hover {
+  background-color: rgba(255, 109, 109, 0.1);
+}
+
 // 移除等级 tag
 .disabled-level-tag {
   .q-tag {

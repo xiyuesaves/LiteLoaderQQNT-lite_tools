@@ -269,17 +269,12 @@ function addEventqContextMenu() {
     if (options.message.HighlightReplies) {
       const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
       targetElements.forEach((element) => {
-        if (element.textContent === "回复") {
-          element.parentNode.style.color = "green";
+        if (element.textContent === "回复" || element.textContent === "引用") {
+          element.parentNode.classList.add('lite-tools-q-context-menu-reply');
         }
-        if (element.textContent === "引用") {
-          element.parentNode.style.color = "green";
-        }
-        if (element.textContent === "撤回") {
-          element.parentNode.style.color = "red";
-        }
-        if (element.textContent === "删除") {
-          element.parentNode.style.color = "red";
+
+        if (element.textContent === "删除" || element.textContent === "撤回") {
+          element.parentNode.classList.add('lite-tools-q-context-menu-recall');
         }
       });
     }
