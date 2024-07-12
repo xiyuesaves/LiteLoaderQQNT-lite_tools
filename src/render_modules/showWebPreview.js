@@ -46,9 +46,13 @@ lite_tools.onWebPreviewData((_, msgId, previewData) => {
     return;
   }
   const element = document.querySelector(`[id="${msgId}"] .message`);
+  if (!element) {
+    // 没有找到对应消息
+    return;
+  }
   const msgContainer = element.querySelector(`.msg-content-container`);
   if (!msgContainer) {
-    // 目标元素不存在
+    // 对应消息不支持插入预览卡片
     return;
   }
   log("获取到预览数据", previewData.data.url, previewData);
