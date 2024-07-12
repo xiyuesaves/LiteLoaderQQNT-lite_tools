@@ -86,6 +86,16 @@ export function showWebPreview(context, element, msgId) {
 }
 
 /**
+ * 解析html中的特殊字符
+ * @param {String} str 需要解析的字符串
+ */
+function decodeHtmlEntitiesTextContent(str) {
+  const div = document.createElement("div");
+  div.innerHTML = str;
+  return div.textContent || div.innerText || "";
+}
+
+/**
  * 设置预览数据
  * @param {Element} msgContainer 目标消息元素
  * @param {Object} previewData 预览数据
@@ -99,15 +109,15 @@ function setPreviewData(element, msgContainer, previewData) {
   const injectHTML = webPreview.replace(/\{\{([^}]+)\}\}/g, (match, name) => {
     switch (name) {
       case "alt":
-        return previewData.data.alt || "";
+        return decodeHtmlEntitiesTextContent(previewData.data.alt || "");
       case "title":
-        return previewData.data.title || "";
+        return decodeHtmlEntitiesTextContent(previewData.data.title || "");
       case "desc":
-        return previewData.data.description || "";
+        return decodeHtmlEntitiesTextContent(previewData.data.description || "");
       case "siteName":
-        return previewData.data.site_name || "";
+        return decodeHtmlEntitiesTextContent(previewData.data.site_name || "");
       default:
-        return name;
+        return decodeHtmlEntitiesTextContent(name);
     }
   });
   msgContainer.insertAdjacentHTML("beforeend", injectHTML);
