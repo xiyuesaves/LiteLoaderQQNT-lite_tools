@@ -131,6 +131,7 @@
  * @property {boolean} disableQtag.level - 移除等级头衔。
  * @property {boolean} disableQtag.title - 移除自定义头衔。
  * @property {boolean} disableQtag.all - 移除所有头衔。
+ * @property {boolean} resetLoginInfo - 重置登录信息。
  */
 
 /**

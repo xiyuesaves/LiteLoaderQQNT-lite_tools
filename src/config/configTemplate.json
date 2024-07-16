@@ -149,5 +149,6 @@
     "level": false,
     "title": false,
     "all": false
-  }
+  },
+  "resetLoginInfo": false
 }

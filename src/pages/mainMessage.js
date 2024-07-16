@@ -36,6 +36,8 @@ import { addEventPeerChange } from "../render_modules/curAioData.js";
 import { disableQtag } from "../render_modules/disabledQtag.js";
 // log
 import { Logs } from "../render_modules/logs.js";
+// 原生事件
+import { resetLoginInfo, getAuthData } from "../render_modules/nativeCall.js";
 const log = new Logs("主窗口");
 // 更新窗口图标
 import "../render_modules/setAppIcon.js";
@@ -253,3 +255,20 @@ function controlSetIsNarrowWindow() {
     attributeFilter: ["style"],
   });
 }
+
+/**
+ * 判断是否需要重置登录信息，由于是异步函数所以只能单独拎出来了
+ */
+async function checkResetLoginInfo() {
+  if (options.resetLoginInfo) {
+    const authData = await getAuthData();
+    if (authData.uin) {
+      await resetLoginInfo(authData.uin);
+      log(`移除登录信息成功`);
+    } else {
+      log(`等待用户数据`);
+      setTimeout(checkResetLoginInfo, 500);
+    }
+  }
+}
+updateOptions(checkResetLoginInfo);
