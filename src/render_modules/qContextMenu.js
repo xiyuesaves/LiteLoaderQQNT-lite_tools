@@ -206,20 +206,7 @@ function addEventqContextMenu() {
         const elements = msgRecord?.elements;
         // 生成表情逻辑
         if (elements.length === 1 && elements[0].textElement && options.messageToImage.enabled) {
-          if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 1) {
-            const header = app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.header;
-            const content = elements[0].textElement.content;
-            const userName = header?.peerName || header?.memberName || header?.remark;
-            const userUid = header?.uid;
-            const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            msgSticker = {
-              userName,
-              userUid,
-              content,
-              fontFamily,
-            };
-            log("符合生成条件-好友", msgSticker);
-          } else if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 2) {
+          if ([1, 2, 100].includes(app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType)) {
             const content = elements[0].textElement.content;
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
@@ -230,7 +217,7 @@ function addEventqContextMenu() {
               content,
               fontFamily,
             };
-            log("符合生成条件-群组", msgSticker);
+            log("符合生成条件", msgSticker);
           }
         }
         // 发送图片检测
