@@ -857,11 +857,12 @@
         <div>
           <h2>持久化保存</h2>
           <span class="secondary-text">
-            启用此选项后，所有撤回的消息将以<red>base64</red>格式保存在插件的数据目录中。如果担心消息泄露，请慎重开启。<br />
+            启用此选项后，所有撤回的消息将以<red>base64</red>格式保存在插件的数据目录中。<br />
             不启用此选项时撤回数据在重启后丢失，且不受 删除本地数据 功能影响。<br />
             此选项仅保存启用后拦截到的撤回数据，开启前的内容将无法保留。<br />
-            如果关闭此选项，之前保存在本地的撤回消息也将不会加载。<br />
-            建议每隔一段时间清理一次本地数据<br />
+            保存在本地的数据并未加密，如果担心消息泄露，请勿启用此功能。<br />
+            关闭此选项后，之前保存在本地的撤回消息也将不会加载。<br />
+            建议每隔一段时间清理一次本地数据。<br />
           </span>
         </div>
         <div class="localStorage q-switch" data-config="preventMessageRecall.localStorage">
@@ -1121,12 +1122,9 @@
         <div>
           <h2>自定义rkey获取地址</h2>
           <span class="secondary-text">
-            使用第三方接口获取图片rkey，不填写将使用固定rkey
-            <br />
-            <strong>轻量工具箱不提供该服务，请自行搭建</strong>
-            <br />
-            服务搭建参考
-            <a class="removeMaskLink link" data-href="https://github.com/linyuchen/Lagrange.Core">Lagrange.Core</a>
+            使用第三方接口获取图片rkey，不填写将使用固定rkey<br />
+            <strong>轻量工具箱不提供该服务，请自行搭建</strong><br />
+            服务搭建参考：<a class="removeMaskLink link" data-href="https://github.com/linyuchen/Lagrange.Core">Lagrange.Core</a>
           </span>
         </div>
       </li>
@@ -1176,8 +1174,9 @@
         <div>
           <h2>TGS转GIF程序路径地址</h2>
           <span class="secondary-text">
-            用于将TGS格式贴纸转为GIF，在此处下载：
-            <a class="link" data-href="https://github.com/jiongjiongJOJO/tgs_to_gif/releases/latest">tgs_to_gif</a>
+            用于将TGS格式贴纸转为GIF，在此处下载：<a class="link" data-href="https://github.com/jiongjiongJOJO/tgs_to_gif/releases/latest"
+              >tgs_to_gif</a
+            >
           </span>
         </div>
       </li>
