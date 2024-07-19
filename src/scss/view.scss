@@ -504,6 +504,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .custom-color {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      label{
+        cursor: pointer;
+      }
+      .choose-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 50px;
+        overflow: hidden;
+        margin: 0 6px 0 2px;
+        border: solid 1px rgba(127, 127, 127, 0.5) !important;
+        box-sizing: border-box;
+        font-size: 0;
+        input {
+          width: 100%;
+          height: 100%;
+          padding: 0;
+          cursor: pointer;
+          border: unset !important;
+          outline: none !important;
+          &::-webkit-color-swatch-wrapper {
+            padding: 0;
+          }
+          &::-webkit-color-swatch {
+            width: 100%;
+            height: 100%;
+            border: unset !important;
+          }
+          &:focus {
+            border: unset !important;
+            outline: none !important;
+          }
+        }
+      }
+    }
   }
 
   /* 水平分割线 */

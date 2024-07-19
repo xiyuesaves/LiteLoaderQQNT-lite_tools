@@ -604,6 +604,24 @@ async function onConfigView(view) {
     }
   });
 
+  // 选项高亮-自定义颜色
+  addCustomColorEvent(view.querySelectorAll(`.custom-color-light input[type="color"]`));
+  addCustomColorEvent(view.querySelectorAll(`.custom-color-dark input[type="color"]`));
+
+  function addCustomColorEvent(elements) {
+    elements.forEach((el) => {
+      const id = el.id.replace("lt-", "").split("-");
+      const theme = id[0];
+      const color = id[1];
+      log("theme", theme, "color", color);
+      el.value = options.qContextMenu.customHighlightReplies[theme][color];
+      el.addEventListener("change", (event) => {
+        options.qContextMenu.customHighlightReplies[theme][color] = event.target.value;
+        debounceSetOptions();
+      });
+    });
+  }
+
   // 打开当前版本的更新日志
   view.querySelector(".tag-version").addEventListener("click", () => {
     fetch(`local:///${LiteLoader.plugins.lite_tools.path.plugin}/changeLog.md`)

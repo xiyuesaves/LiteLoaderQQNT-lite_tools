@@ -255,18 +255,35 @@ function addEventqContextMenu() {
 
     if (options.qContextMenu.HighlightReplies) {
       const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
-      targetElements.forEach((element) => {
-        if (element.textContent === "回复") {
-          element.parentNode.style.color = "green";
-        }
-        if (element.textContent === "引用") {
-          element.parentNode.style.color = "green";
-        }
-        if (element.textContent === "撤回") {
-          element.parentNode.style.color = "red";
-        }
-        if (element.textContent === "删除") {
-          element.parentNode.style.color = "red";
+      targetElements?.forEach((element) => {
+        switch (element?.textContent) {
+          case "复制":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-copy-color)");
+            break;
+          case "转发":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-forward-color)");
+            break;
+          case "收藏":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-collect-color)");
+            break;
+          case "多选":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-multiple-color)");
+            break;
+          case "引用":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
+            break;
+          case "回复":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
+            break;
+          case "设为精华":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-essence-color)");
+            break;
+          case "撤回":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-revoke-color)");
+            break;
+          case "删除":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-delete-color)");
+            break;
         }
       });
     }

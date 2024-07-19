@@ -145,6 +145,16 @@
     --preview-bg: rgba(0, 0, 0, 0.05);
     --preview-border: rgba(0, 0, 0, 0.2);
     --preview-title-color: rgba(0, 0, 0, 0.6);
+
+    // 自定义右键菜单高亮颜色
+    --lt-q-context-copy-color: var(--lt-q-light-context-copy-color);
+    --lt-q-context-forward-color: var(--lt-q-light-context-forward-color);
+    --lt-q-context-collect-color: var(--lt-q-light-context-collect-color);
+    --lt-q-context-multiple-color: var(--lt-q-light-context-multiple-color);
+    --lt-q-context-essence-color: var(--lt-q-light-context-essence-color);
+    --lt-q-context-quote-color: var(--lt-q-light-context-quote-color);
+    --lt-q-context-revoke-color: var(--lt-q-light-context-revoke-color);
+    --lt-q-context-delete-color: var(--lt-q-light-context-delete-color);
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -169,6 +179,16 @@
     --preview-bg: rgba(255, 255, 255, 0.1);
     --preview-border: rgba(255, 255, 255, 0.3);
     --preview-title-color: rgba(255, 255, 255, 0.5);
+
+    // 自定义右键菜单高亮颜色
+    --lt-q-context-copy-color: var(--lt-q-dark-context-copy-color);
+    --lt-q-context-forward-color: var(--lt-q-dark-context-forward-color);
+    --lt-q-context-collect-color: var(--lt-q-dark-context-collect-color);
+    --lt-q-context-multiple-color: var(--lt-q-dark-context-multiple-color);
+    --lt-q-context-essence-color: var(--lt-q-dark-context-essence-color);
+    --lt-q-context-quote-color: var(--lt-q-dark-context-quote-color);
+    --lt-q-context-revoke-color: var(--lt-q-dark-context-revoke-color);
+    --lt-q-context-delete-color: var(--lt-q-dark-context-delete-color);
   }
 }
 
