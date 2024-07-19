@@ -83,10 +83,12 @@
  * @property {Object} message.avatarSticky - 头像浮动配置
  * @property {boolean} message.avatarSticky.enabled - 启用头像浮动。
  * @property {boolean} message.avatarSticky.toBottom - 头像浮动到底部。
- * @property {Object} messageToImage - 消息转图片配置
- * @property {boolean} messageToImage.enabled - 启用消息转图片。
- * @property {boolean} messageToImage.highResolution - 启用高分辨率图片。
- * @property {string} messageToImage.path - 图片保存路径。
+ * @property {Object} qContextMenu - 右键菜单配置
+ * @property {Object} qContextMenu.messageToImage - 消息转图片配置
+ * @property {boolean} qContextMenu.messageToImage.enabled - 启用消息转图片。
+ * @property {boolean} qContextMenu.messageToImage.highResolution - 启用高分辨率图片。
+ * @property {string} qContextMenu.messageToImage.path - 图片保存路径。
+ * 
  * @property {Object} preventMessageRecall - 防止消息撤回配置
  * @property {boolean} preventMessageRecall.enabled - 启用防止消息撤回。
  * @property {boolean} preventMessageRecall.localStorage - 使用本地存储防止撤回。

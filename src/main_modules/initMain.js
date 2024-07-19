@@ -163,8 +163,8 @@ ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (_, path, webContentId) => {
 ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64) => {
   log("接收到保存为文件事件");
   const buffer = Buffer.from(base64.split(",")[1], "base64");
-  if (config.messageToImage.path && existsSync(config.messageToImage.path)) {
-    const savePath = join(config.messageToImage.path, fileName);
+  if (config.qContextMenu.messageToImage.path && existsSync(config.qContextMenu.messageToImage.path)) {
+    const savePath = join(config.qContextMenu.messageToImage.path, fileName);
     log("默认文件路径", savePath);
     writeFileSync(savePath, buffer, { encoding: null });
   } else {

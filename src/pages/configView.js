@@ -347,7 +347,7 @@ async function onConfigView(view) {
 
   // 消息转图片
   const defaultSaveFilePath = view.querySelector(".select-default-save-file-input-clear");
-  defaultSaveFilePath.value = options.messageToImage.path;
+  defaultSaveFilePath.value = options.qContextMenu.messageToImage.path;
   view.querySelector(".select-default-save-file-input").addEventListener("click", async () => {
     const result = await lite_tools.showOpenDialog({
       title: "请选择文件夹", //默认路径,默认选择的文件
@@ -355,14 +355,14 @@ async function onConfigView(view) {
       buttonLabel: "选择文件夹",
     });
     if (!result.canceled) {
-      options.messageToImage.path = result.filePaths[0];
-      log("选择了消息转图片默认保存路径", options.messageToImage.path);
+      options.qContextMenu.messageToImage.path = result.filePaths[0];
+      log("选择了消息转图片默认保存路径", options.qContextMenu.messageToImage.path);
       debounceSetOptions();
     }
   });
   defaultSaveFilePath.addEventListener("click", (e) => {
     e.target.value = "";
-    options.messageToImage.path = "";
+    options.qContextMenu.messageToImage.path = "";
     debounceSetOptions();
   });
 
@@ -750,7 +750,7 @@ async function onConfigView(view) {
     log("检测到配置更新", opt);
     view.querySelector(".select-background-wallpaper-clear").value = opt.background.url;
     view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
-    view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
+    view.querySelector(".select-default-save-file-input-clear").value = opt.qContextMenu.messageToImage.path;
     view.querySelector(".select-ffmpeg-path").value = opt.localEmoticons.ffmpegPath;
     view.querySelector(".select-tgs-to-gif-path").value = opt.localEmoticons.tgsToGifPath;
     tailList?.updateOptions();

@@ -54,7 +54,6 @@
       "dontLoadPic": false
     },
     "goBackMainList": false,
-    "HighlightReplies": false,
     "disabledSticker": false,
     "disabledHotGIF": false,
     "disabledBadge": false,
@@ -94,10 +93,35 @@
       "toBottom": false
     }
   },
-  "messageToImage": {
-    "enabled": false,
-    "highResolution": false,
-    "path": ""
+  "qContextMenu":{
+    "HighlightReplies": false,
+    "customHighlightReplies": {
+      "light": {
+        "copy": "#000000",
+        "forward": "#000000",
+        "collect": "#000000",
+        "multiple": "#000000",
+        "quote": "#008000",
+        "essence": "#000000",
+        "revoke": "#ff0000",
+        "delete": "#ff0000"
+      },
+      "dark": {
+        "copy": "#ffffff",
+        "forward": "#ffffff",
+        "collect": "#ffffff",
+        "multiple": "#ffffff",
+        "quote": "#008000",
+        "essence": "#ffffff",
+        "revoke": "#ff0000",
+        "delete": "#ff0000"
+      }
+    },
+    "messageToImage": {
+      "enabled": false,
+      "highResolution": false,
+      "path": ""
+    }
   },
   "preventMessageRecall": {
     "enabled": false,

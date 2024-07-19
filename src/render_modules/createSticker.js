@@ -22,7 +22,7 @@ export async function createSticker(config) {
     image.src = "local:///" + userAvatar;
   });
   // 高清化
-  if (options.messageToImage.highResolution) {
+  if (options.qContextMenu.messageToImage.highResolution) {
     zoom = 2;
   }
 

@@ -205,7 +205,7 @@ function addEventqContextMenu() {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
         // 生成表情逻辑
-        if (elements.length === 1 && elements[0].textElement && options.messageToImage.enabled) {
+        if (elements.length === 1 && elements[0].textElement && options.qContextMenu.messageToImage.enabled) {
           if ([1, 2, 100].includes(app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType)) {
             const content = elements[0].textElement.content;
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
@@ -312,7 +312,7 @@ function addEventqContextMenu() {
       });
     }
     // 消息转图片
-    if (options.messageToImage.enabled && msgSticker) {
+    if (options.qContextMenu.messageToImage.enabled && msgSticker) {
       const _msgSticker = msgSticker;
       addQContextMenu(qContextMenu, imageIcon, "转图片", () => {
         createSticker(_msgSticker);
