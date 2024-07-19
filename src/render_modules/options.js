@@ -11,12 +11,6 @@
  * @property {Object} keywordReminder - 关键词提醒配置
  * @property {boolean} keywordReminder.enabled - 启用关键词提醒。
  * @property {Array<string>} keywordReminder.keyList - 关键词列表。
- * @property {Object} wordSearch - 划词搜索
- * @property {boolean} wordSearch.enabled - 启用划词搜索。
- * @property {string} wordSearch.searchUrl - 划词搜索的 URL 模板。
- * @property {Object} imageSearch - 图片搜索配置
- * @property {boolean} imageSearch.enabled - 启用图片搜索。
- * @property {string} imageSearch.searchUrl - 图片搜索的 URL 模板。
  * @property {Object} localEmoticons - 本地表情配置
  * @property {boolean} localEmoticons.enabled - 启用本地表情。
  * @property {boolean} localEmoticons.quickEmoticons - 快捷输入表情。
@@ -47,7 +41,6 @@
  * @property {boolean} message.previreUrl.enabled - 启用链接预览。
  * @property {boolean} message.previreUrl.dontLoadPic - 不加载图片。
  * @property {boolean} message.goBackMainList - 启用侧键返回。
- * @property {boolean} message.HighlightReplies - 选项高亮。
  * @property {boolean} message.disabledSticker - 禁用表情推荐。
  * @property {boolean} message.disabledHotGIF - 禁用表情中的GIF热图。
  * @property {boolean} message.disabledBadge - 禁用小红点。
@@ -88,7 +81,13 @@
  * @property {boolean} qContextMenu.messageToImage.enabled - 启用消息转图片。
  * @property {boolean} qContextMenu.messageToImage.highResolution - 启用高分辨率图片。
  * @property {string} qContextMenu.messageToImage.path - 图片保存路径。
- * 
+ * @property {boolean} qContextMenu.HighlightReplies - 选项高亮。
+ * @property {Object} qContextMenu.wordSearch - 划词搜索
+ * @property {boolean} qContextMenu.wordSearch.enabled - 启用划词搜索。
+ * @property {string} qContextMenu.wordSearch.searchUrl - 划词搜索的 URL 模板。
+ * @property {Object} qContextMenu.imageSearch - 图片搜索配置
+ * @property {boolean} qContextMenu.imageSearch.enabled - 启用图片搜索。
+ * @property {string} qContextMenu.imageSearch.searchUrl - 图片搜索的 URL 模板。
  * @property {Object} preventMessageRecall - 防止消息撤回配置
  * @property {boolean} preventMessageRecall.enabled - 启用防止消息撤回。
  * @property {boolean} preventMessageRecall.localStorage - 使用本地存储防止撤回。

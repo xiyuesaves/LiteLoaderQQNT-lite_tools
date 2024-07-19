@@ -11,14 +11,6 @@
     "enabled": false,
     "keyList": []
   },
-  "wordSearch": {
-    "enabled": false,
-    "searchUrl": "https://www.bing.com/search?q=%search%"
-  },
-  "imageSearch": {
-    "enabled": false,
-    "searchUrl": "https://saucenao.com/search.php?url=%search%"
-  },
   "localEmoticons": {
     "enabled": false,
     "quickEmoticons": false,
@@ -93,7 +85,7 @@
       "toBottom": false
     }
   },
-  "qContextMenu":{
+  "qContextMenu": {
     "HighlightReplies": false,
     "customHighlightReplies": {
       "light": {
@@ -116,6 +108,14 @@
         "revoke": "#ff0000",
         "delete": "#ff0000"
       }
+    },
+    "wordSearch": {
+      "enabled": false,
+      "searchUrl": "https://www.bing.com/search?q=%search%"
+    },
+    "imageSearch": {
+      "enabled": false,
+      "searchUrl": "https://saucenao.com/search.php?url=%search%"
     },
     "messageToImage": {
       "enabled": false,

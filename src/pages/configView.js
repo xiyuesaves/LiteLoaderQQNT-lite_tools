@@ -253,24 +253,24 @@ async function onConfigView(view) {
   }
 
   // 划词搜索
-  addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
+  addSwitchEventlistener("qContextMenu.wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
   });
   const searchEl = view.querySelector(".search-url");
-  searchEl.value = options.wordSearch.searchUrl;
+  searchEl.value = options.qContextMenu.wordSearch.searchUrl;
   searchEl.addEventListener("input", (e) => {
-    options.wordSearch.searchUrl = e.target.value;
+    options.qContextMenu.wordSearch.searchUrl = e.target.value;
     debounceSetOptions();
   });
 
   // 图片搜索
-  addSwitchEventlistener("imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
+  addSwitchEventlistener("qContextMenu.imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
     view.querySelector(".image-select-search-url").classList.toggle("disabled-input", !enabled);
   });
   const imgSearchEl = view.querySelector(".img-search-url");
-  imgSearchEl.value = options.imageSearch.searchUrl;
+  imgSearchEl.value = options.qContextMenu.imageSearch.searchUrl;
   imgSearchEl.addEventListener("input", (e) => {
-    options.imageSearch.searchUrl = e.target.value;
+    options.qContextMenu.imageSearch.searchUrl = e.target.value;
     debounceSetOptions();
   });
 

@@ -253,7 +253,7 @@ function addEventqContextMenu() {
     }
     qContextMenu.classList.add("lite-toos-context-menu");
 
-    if (options.message.HighlightReplies) {
+    if (options.qContextMenu.HighlightReplies) {
       const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
       targetElements.forEach((element) => {
         if (element.textContent === "回复") {
@@ -272,18 +272,18 @@ function addEventqContextMenu() {
     }
 
     // 在网页搜索
-    if (isRightClick && selectText.length && options.wordSearch.enabled) {
+    if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled) {
       const searchText = selectText;
       addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
-        lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
+        lite_tools.openWeb(options.qContextMenu.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
       });
     }
     // 搜索图片
-    if (searchImageData && options.imageSearch.enabled) {
+    if (searchImageData && options.qContextMenu.imageSearch.enabled) {
       const _searchImageData = searchImageData;
       addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
         const searchImageUrl = encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType));
-        const openUrl = options.imageSearch.searchUrl.replace("%search%", searchImageUrl);
+        const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
         lite_tools.openWeb(openUrl);
       });
     }
