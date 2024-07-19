@@ -45,6 +45,7 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     return;
   }
   log("创建右键菜单项");
+  contextItem?.style?.removeProperty("color");
   if (subMenu && subMenu.length && contextItem.querySelector(".q-context-menu-item__text")) {
     contextItem.insertAdjacentHTML("beforeend", subMenuIconEl);
     const subMenuEl = document.createElement("div");
