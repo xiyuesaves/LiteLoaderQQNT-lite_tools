@@ -110,8 +110,11 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // Telegram贴纸集下载相关
   downloadTgSticker: (url) => ipcRenderer.send("LiteLoader.lite_tools.downloadTgSticker", url),
   onDownloadTgStickerEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onDownloadTgStickerEvent", callback),
+  // 导入eif表情文件
+  extractEifFile: (eifPath) => ipcRenderer.send("LiteLoader.lite_tools.extractEifFile", eifPath),
   // 主进程向渲染进程发送通知
   onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
+  clearToast: (callback) => ipcRenderer.on("LiteLoader.lite_tools.clearToast", callback),
   /**
    *
    * @param {String} sendEventName 发送事件名称

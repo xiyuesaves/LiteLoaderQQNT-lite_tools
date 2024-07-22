@@ -83,4 +83,6 @@ lite_tools.onToast((_, toast) => {
   showToast(toast.content, toast.type, toast.duration);
 });
 
+lite_tools.clearToast(clearToast);
+
 export { showToast, clearToast };

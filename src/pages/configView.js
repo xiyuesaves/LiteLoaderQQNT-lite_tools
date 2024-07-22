@@ -762,6 +762,25 @@ async function onConfigView(view) {
     }
   });
 
+  // 导入eif贴纸集
+  view.querySelector(".import-eif-sticker").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择eif文件",
+      properties: ["openFile"],
+      filters: [
+        {
+          name: "eif",
+          extensions: ["eif"],
+        },
+      ],
+      buttonLabel: "选择",
+    });
+    if (!result.canceled) {
+      log("选择了eif文件", result.filePaths[0]);
+      lite_tools.extractEifFile(result.filePaths[0]);
+    }
+  });
+
   // 监听设置文件变动
   updateOptions((opt) => {
     log("检测到配置更新", opt);
