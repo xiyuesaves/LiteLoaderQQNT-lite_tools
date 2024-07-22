@@ -337,6 +337,7 @@ ipcMain.on("LiteLoader.lite_tools.addCommonlyEmoticons", (_, src) => {
   log("常用表情列表", localEmoticonsConfigPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
+
 // 更新最近使用分组
 ipcMain.on("LiteLoader.lite_tools.updateRecentFolders", (_, src) => {
   // 固定当前排序
@@ -371,6 +372,7 @@ ipcMain.on("LiteLoader.lite_tools.updateRecentFolders", (_, src) => {
   log("最近使用分组", localEmoticonsConfigPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
+
 // 从历史记录中移除指定文件
 ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
   const newSet = new Set(localEmoticonsConfig.commonlyEmoticons);
@@ -381,6 +383,7 @@ ipcMain.on("LiteLoader.lite_tools.deleteCommonlyEmoticons", (_, localPath) => {
   log("从常用表情中移除", localEmoticonsConfigPath, localPath, localEmoticonsConfig);
   writeFileSync(localEmoticonsConfigPath, JSON.stringify(localEmoticonsConfig, null, 4));
 });
+
 // 设为分组图标
 ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
   const stickerDataPath = join(dirname(localPath), "sticker.json");
@@ -408,6 +411,7 @@ ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
   }
 });
+
 // 删除指定文件
 ipcMain.handle("LiteLoader.lite_tools.deleteEmoticonsFile", async (_, path) => {
   log("删除表情文件", path);

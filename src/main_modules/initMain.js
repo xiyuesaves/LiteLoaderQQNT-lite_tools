@@ -157,7 +157,6 @@ ipcMain.on("LiteLoader.lite_tools.setWindowIcon", (_, path, webContentId) => {
     log("设置窗口图标失败", err.message);
   }
 });
-// 调试用代码
 
 // 保存图片消息到本地
 ipcMain.on("LiteLoader.lite_tools.saveBase64ToFile", async (_, fileName, base64) => {
