@@ -613,7 +613,6 @@ async function onConfigView(view) {
       const id = el.id.replace("lt-", "").split("-");
       const theme = id[0];
       const color = id[1];
-      log("theme", theme, "color", color);
       el.value = options.qContextMenu.customHighlightReplies[theme][color];
       el.addEventListener("change", (event) => {
         options.qContextMenu.customHighlightReplies[theme][color] = event.target.value;
