@@ -272,7 +272,7 @@ async function loadFolder(folderPath, itemIndex = 0) {
           } else {
             list[0].list.push({
               name,
-              path: encodeURI(filePath),
+              path: filePath,
               index: listIndex,
               birthtimeMs: fileStat.birthtimeMs,
             });
