@@ -928,7 +928,7 @@ class emoticonFolder {
       log("加载实例", this.name);
       this.isLoad = true;
       this.categoryItemsEl.forEach((categoryItemEl) => {
-        categoryItemEl.imgEl.src = this.protocolPrefix + categoryItemEl.path;
+        categoryItemEl.imgEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(categoryItemEl.path);
       });
     }
   }
@@ -972,7 +972,7 @@ class emoticonFolder {
       const imgEl = document.createElement("img");
       categoryItemEl.imgEl = imgEl;
       if (this.isLoad) {
-        imgEl.src = this.protocolPrefix + categoryItemEl.path;
+        imgEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(categoryItemEl.path);
       }
       skiterPreviewEl.appendChild(imgEl);
       categoryItemEl.append(skiterPreviewEl);
@@ -1023,6 +1023,9 @@ class emoticonFolder {
   }
   static getPath(src) {
     return src.replace(emoticonFolder.prototype.protocolPrefix, "");
+  }
+  static buildImgSrc(filePath) {
+    return encodeURI(encodeURI(filePath.replaceAll('\\', '/')));
   }
 }
 emoticonFolder.prototype.protocolPrefix = "local:///";
