@@ -916,7 +916,7 @@ class emoticonFolder {
     this.folderIconEl.setAttribute("title", this.name);
     this.folderIconEl.setAttribute("data-id", this.id);
     this.iconEl = document.createElement("img");
-    this.iconEl.src = this.protocolPrefix + this.iconPath;
+    this.iconEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(this.iconPath);
     this.iconBoxEl = document.createElement("div");
     this.iconBoxEl.classList.add("icon-box");
     this.iconBoxEl.appendChild(this.iconEl);
@@ -994,7 +994,7 @@ class emoticonFolder {
   }
   updateEmoticonIcon(iconPath) {
     this.iconPath = iconPath;
-    this.iconEl.src = this.protocolPrefix + this.iconPath;
+    this.iconEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(this.iconPath);
   }
   updateEmoticonName(name) {
     this.name = name;
