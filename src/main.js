@@ -8,6 +8,7 @@ import { keywordReminder } from "./main_modules/keywordReminder.js";
 import { captureWindow } from "./main_modules/captureWindow.js";
 import { messageRecall, discardDeleteActive } from "./main_modules/msgRecall.js";
 import { proxyOn } from "./main_modules/proxyOn.js";
+import { windowUnlockMinSize } from "./main_modules/unlockMinSize.js";
 
 // 导入独立功能模块
 import "./main_modules/updateProxy.js";
@@ -40,6 +41,7 @@ function onBrowserWindowCreated(window) {
     proxySend(window);
     preventEscape(window);
     proxyOn(window);
+    windowUnlockMinSize(window);
   } catch (err) {
     log("出现错误", err);
   }
