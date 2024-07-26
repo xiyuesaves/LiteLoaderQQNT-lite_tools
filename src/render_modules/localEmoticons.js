@@ -937,7 +937,7 @@ class emoticonFolder {
       log("卸载实例", this.name);
       this.isLoad = false;
       this.categoryItemsEl.forEach((categoryItemEl) => {
-        categoryItemEl.imgEl.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        categoryItemEl.imgEl.src = "";
       });
     }
   }

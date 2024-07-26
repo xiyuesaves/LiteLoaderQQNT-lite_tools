@@ -857,6 +857,9 @@
               width: 100%;
               height: 100%;
               object-fit: contain;
+              &[src=""]{
+                visibility: hidden;
+              }
             }
           }
           // 暂时没用
