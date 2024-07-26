@@ -338,10 +338,11 @@ function quickInsertion() {
       const stickerPreview = document.createElement("div");
       stickerPreview.classList.add("sticker-preview");
       const img = document.createElement("img");
+      const imgSrc = emoticonFolder.buildImgSrc(forList[i].path);
       if (options.localEmoticons.majorization) {
-        img.setAttribute("data-src", `local:///${forList[i].path}`);
+        img.setAttribute("data-src", `local:///${imgSrc}`);
       } else {
-        img.src = `local:///${forList[i].path}`;
+        img.src = `local:///${emoticonFolder.buildImgSrc(imgSrc)}`;
       }
       stickerPreview.appendChild(img);
       previewItem.appendChild(stickerPreview);
