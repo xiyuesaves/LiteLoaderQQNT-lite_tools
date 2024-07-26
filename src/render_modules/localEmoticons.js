@@ -487,7 +487,7 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
  * @returns
  */
 function insert(event) {
-  insertToEditor(decodeURI(event.target.querySelector("img").src.replace("local:///", "")), event.altKey, event.ctrlKey);
+  insertToEditor(decodeURI(decodeURI(event.target.querySelector("img").src.replace("local:///", ""))), event.altKey, event.ctrlKey);
 }
 
 /**
