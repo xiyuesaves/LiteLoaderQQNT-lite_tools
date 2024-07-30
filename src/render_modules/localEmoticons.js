@@ -291,10 +291,9 @@ function loadEditorModel() {
  */
 function quickInsertion() {
   if (!options.localEmoticons.enabled || !options.localEmoticons.quickEmoticons) {
-    quickPreviewEl?.classList?.remove("show");
+    hiddenQuickInsertion();
     return;
   }
-
   const msg = ckeditorInstance.getData();
   const msgArr = msg.split("<p>");
   const lastStr = msgArr[msgArr.length - 1];
@@ -334,16 +333,15 @@ function quickInsertion() {
     const previewItems = [];
     for (let i = 0; i < forList.length; i++) {
       const previewItem = document.createElement("div");
-      previewItem.classList.add("preview-item");
       const stickerPreview = document.createElement("div");
-      stickerPreview.classList.add("sticker-preview");
       const img = document.createElement("img");
-      const imgSrc = emoticonFolder.buildImgSrc(forList[i].path);
-      if (options.localEmoticons.majorization) {
-        img.setAttribute("data-src", `local:///${imgSrc}`);
-      } else {
-        img.src = `local:///${emoticonFolder.buildImgSrc(imgSrc)}`;
+      previewItem.classList.add("preview-item");
+      previewItem.imgEl = img;
+      previewItem.path = forList[i].path;
+      if (!options.localEmoticons.majorization) {
+        img.src = emoticonFolder.prototype.protocolPrefix + emoticonFolder.buildImgSrc(previewItem.path);
       }
+      stickerPreview.classList.add("sticker-preview");
       stickerPreview.appendChild(img);
       previewItem.appendChild(stickerPreview);
       previewItems.push(previewItem);
@@ -352,8 +350,20 @@ function quickInsertion() {
     previewListEl.scrollTop = 0;
     previewListScroll({ target: previewListEl });
   } else {
-    quickPreviewEl?.classList?.remove("show");
+    hiddenQuickInsertion();
   }
+}
+
+/**
+ * 隐藏快捷输入表情选择列表
+ */
+function hiddenQuickInsertion() {
+  quickPreviewEl?.classList.remove("show");
+  quickPreviewEl?.addEventListener(
+    "transitionend",
+    document.querySelectorAll(".preview-list .preview-item").forEach((el) => el.remove()),
+    { once: true },
+  );
 }
 
 /**
@@ -488,7 +498,8 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
  * @returns
  */
 function insert(event) {
-  insertToEditor(decodeURI(decodeURI(event.target.querySelector("img").src.replace("local:///", ""))), event.altKey, event.ctrlKey);
+  const path = event.target.closest(".preview-item")?.path ?? event.target.closest(".category-item")?.path;
+  insertToEditor(path, event.altKey, event.ctrlKey);
 }
 
 /**
@@ -726,18 +737,18 @@ function initQuickPreview() {
   });
 
   const previewListScroll = debounce((event) => {
-    log("快捷预览窗口滚动", event.target.scrollTop);
     if (options.localEmoticons.majorization) {
+      const target = event.target;
       const listItemHeight = 80;
-      const startTop = event.target.scrollTop;
-      const endBottom = startTop + event.target.offsetHeight;
+      const startTop = target.scrollTop;
+      const endBottom = startTop + target.offsetHeight;
       const startNum = parseInt(startTop / listItemHeight);
       const endNum = Math.ceil((endBottom - startTop) / listItemHeight) + 1;
       for (let i = 0; i < endNum; i++) {
         const index = i + startNum + 1;
-        const prevItemImg = event.target.querySelector(`.preview-item:nth-child(${index}) img`);
-        if (prevItemImg && !prevItemImg.src) {
-          prevItemImg.src = prevItemImg.getAttribute("data-src");
+        const previewItem = target.querySelector(`.preview-item:nth-child(${index})`);
+        if(previewItem){
+          previewItem.imgEl.src = emoticonFolder.prototype.protocolPrefix + emoticonFolder.buildImgSrc(previewItem.path);
         }
       }
     }
@@ -1026,7 +1037,14 @@ class emoticonFolder {
     return src.replace(emoticonFolder.prototype.protocolPrefix, "");
   }
   static buildImgSrc(filePath) {
-    return encodeURI(encodeURI(filePath.replaceAll('\\', '/')));
+    if (!filePath) {
+      return;
+    }
+    return filePath
+      .replace(/\\/g, "/")
+      .split("/")
+      .map((item) => encodeURIComponent(encodeURIComponent(item)))
+      .join("/");
   }
 }
 emoticonFolder.prototype.protocolPrefix = "local:///";
