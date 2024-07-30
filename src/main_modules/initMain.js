@@ -45,6 +45,15 @@ ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
   event.returnValue = event.sender.id.toString();
 });
 
+// 通用窗口移动函数
+ipcMain.on("LiteLoader.lite_tools.windowMoveTo", (event, { newX, newY, width, height }) => {
+  const win = BrowserWindow.fromId(event.sender.id);
+  if (win) {
+    win.setPosition(newX, newY);
+    win.setSize(width, height);
+  }
+});
+
 // 更新侧边栏功能列表
 ipcMain.on("LiteLoader.lite_tools.sendSidebar", (_, list) => {
   // 改为增量更新，不移除已被添加的选项
