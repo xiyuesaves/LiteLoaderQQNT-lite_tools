@@ -71,28 +71,42 @@ let setIsNarrowWindow;
  */
 const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
-    const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
-    if (visibleItems.length) {
+    const visibleItems = document.querySelector(".ml-area.v-list-area")?.__VUE__[0].exposed.getVisibleItems();
+    if (visibleItems?.length) {
       const visibleItem = visibleItems.shift();
-      // log("更新可见消息id", visibleItem);
+      log("更新可见消息id", curUid, visibleItem);
       uidToMessageId.set(curUid, visibleItem.id);
     }
   }
 }, 100);
 
 addEventPeerChange((newPeer) => {
-  log("peer更新", newPeer);
+  log("peer更新-", newPeer);
   curUid = newPeer?.peerUid;
   injectReminder(curUid);
   if (options.message.currentLocation && curUid) {
     const messageId = uidToMessageId.get(curUid);
     if (messageId && messageId != "0") {
-      document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
+      log("跳转到对应消息id", messageId);
+      scrollToItem(messageId);
     } else {
       updateVisibleItem();
     }
   }
 });
+
+async function scrollToItem(messageId, tryNum = 20) {
+  if (tryNum <= 0) {
+    return;
+  }
+  await document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
+  const visibleItems = document.querySelector(".ml-area.v-list-area")?.__VUE__[0].exposed.getVisibleItems();
+  if (!visibleItems.find((item) => item.id == messageId)) {
+    setTimeout(() => {
+      scrollToItem(messageId, --tryNum);
+    }, 10);
+  }
+}
 
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
