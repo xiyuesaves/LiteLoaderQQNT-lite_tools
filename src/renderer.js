@@ -45,6 +45,7 @@ async function onLoad() {
       app.classList.add("lite-tools-image-viewer");
       import("./pages/imageViewer.js");
     }
+    lite_tools.windowOnload();
   }
 }
 if (Object.keys(options).length > 0) {
