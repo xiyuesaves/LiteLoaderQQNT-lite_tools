@@ -114,8 +114,7 @@ contextBridge.exposeInMainWorld("lite_tools", {
   extractEifFile: (eifPath) => ipcRenderer.send("LiteLoader.lite_tools.extractEifFile", eifPath),
   // 主进程向渲染进程发送通知
   onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
-  // 通用窗口移动
-  windowMoveTo: (...args) => ipcRenderer.send("LiteLoader.lite_tools.windowMoveTo", ...args),
+  windowOnload: () => ipcRenderer.send("LiteLoader.lite_tools.windowOnload"),
   clearToast: (callback) => ipcRenderer.on("LiteLoader.lite_tools.clearToast", callback),
   /**
    *
