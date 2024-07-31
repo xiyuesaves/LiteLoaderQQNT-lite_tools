@@ -29,9 +29,17 @@ export async function createSticker(config) {
   // 计算消息气泡尺寸
   ctx.save();
   ctx.font = 14 + "px " + config.fontFamily;
-  const msgBoxSIze = ctx.measureText(config.content);
-  const width = msgBoxSIze.width <= msgBoxMaxWidth ? msgBoxSIze.width : msgBoxMaxWidth;
-  const height = Math.ceil(msgBoxSIze.width / msgBoxMaxWidth) * 22;
+  const contents = config.content.split("\n");
+  let width = 0;
+  let height = 0;
+  for (let i = 0; i < contents.length; i++) {
+    const content = contents[i];
+    const msgBoxSIze = ctx.measureText(content);
+    const calculateWidth = msgBoxSIze.width;
+    const tempWidth = calculateWidth <= msgBoxMaxWidth ? calculateWidth : msgBoxMaxWidth;
+    width = tempWidth > width ? tempWidth : width;
+    height += Math.ceil(calculateWidth / msgBoxMaxWidth + 0.01) * 20;
+  }
   ctx.restore();
 
   let userNameColor = "#999999";
@@ -55,7 +63,7 @@ export async function createSticker(config) {
   }
   // 设置画布大小
   canvasEl.width = canWidth * zoom;
-  canvasEl.height = (20 + height + 11) * zoom;
+  canvasEl.height = (20 + height + 16) * zoom;
   // 绘制圆形头像
   ctx.save();
   ctx.beginPath();
@@ -72,7 +80,7 @@ export async function createSticker(config) {
   // 绘制气泡框
   ctx.save();
   ctx.beginPath();
-  ctx.roundRect(42 * zoom, 20 * zoom, (width + 20) * zoom, (height + 7) * zoom, 8 * zoom);
+  ctx.roundRect(42 * zoom, 20 * zoom, (width + 20) * zoom, (height + 12) * zoom, 8 * zoom);
   ctx.fillStyle = msgBoxColor;
   ctx.fill();
   ctx.restore();
