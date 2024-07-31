@@ -14,8 +14,7 @@ function betterImageViewer() {
   let width = 0;
   let height = 0;
   let lastCall = 0;
-  // 每 10ms 执行一次
-  const throttle = 10;
+  const throttle = 0;
   log("模块加载");
   // 修复弹窗字体模糊
   document.body.classList.add("image-viewer");
@@ -46,7 +45,10 @@ function betterImageViewer() {
             lastCall = now;
             newX += event.movementX;
             newY += event.movementY;
-            lite_tools.windowMoveTo({ newX, newY, width, height });
+            window.moveTo(newX, newY);
+            if (window.devicePixelRatio !== 1) {
+              window.resizeTo(width, height);
+            }
           } else {
             newX += event.movementX;
             newY += event.movementY;
@@ -67,8 +69,11 @@ function betterImageViewer() {
         if (event.target.closest(".main-area__content")) {
           document.querySelector(`div[aria-label="关闭"]`).click();
         }
-      } else if (offset > 2) {
-        lite_tools.windowMoveTo({ newX, newY, width, height });
+      } else if (offset > 2 && options.imageViewer.touchMove) {
+        window.moveTo(newX, newY);
+        if (window.devicePixelRatio !== 1) {
+          window.resizeTo(width, height);
+        }
       }
     },
     true,
