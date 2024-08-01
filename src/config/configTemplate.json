@@ -175,7 +175,8 @@
     "all": false
   },
   "appearance":{
-    "useSystemAccentColor": false
+    "useSystemAccentColor": false,
+    "prioritizeColor": false
   },
   "resetLoginInfo": false,
   "unlockMainMinSize": false

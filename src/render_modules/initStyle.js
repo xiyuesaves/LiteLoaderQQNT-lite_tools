@@ -35,22 +35,23 @@ function updateFont() {
 
 async function updateAccentColor(...args) {
   log("更新主题色", ...args);
-  let colorStyle = document.querySelector("#liteToolsAccentColor");
+  let colorStyle = document.querySelector("#liteTools-accent-tokens");
   if (!colorStyle) {
     colorStyle = document.createElement("style");
-    colorStyle.id = "liteToolsAccentColor";
+    colorStyle.id = "liteTools-accent-tokens"; // 和默认token id风格保持一致
     document.body.appendChild(colorStyle);
   }
 
   if (options.appearance.useSystemAccentColor) {
     const systemAccentColor = await lite_tools.getSystemAccentColor();
     const accentColor = systemAccentColor;
+    const important = options.appearance.prioritizeColor ? " !important" : "";
 
     if (!accentColor) {
       colorStyle.innerHTML = "";
       return;
     }
-    
+
     // It's ok to keep this for debugging
     const [linkColor, hoverColor, pressedColor] = generateColors(accentColor);
 
@@ -73,28 +74,28 @@ async function updateAccentColor(...args) {
       --system_pressed_color: hsl(from var(--system_accent_color) h s calc(l - 5) / alpha);
 
       /* 与主题色相同的变量 */
-      --brand_standard: var(--system_accent_color);
-      --overlay_active_brand: var(--system_accent_color);
-      --brand_text: var(--system_accent_color);
+      --brand_standard: var(--system_accent_color)${important};
+      --overlay_active_brand: var(--system_accent_color)${important};
+      --brand_text: var(--system_accent_color)${important};
 
       /* 气泡颜色 */
-      --host_bubble_bg_css_value: var(--system_accent_color); /* 颜色主题 */
-      --host_bubble_bg_css_value_main: var(--system_accent_color); /* 默认主题 */
+      --host_bubble_bg_css_value: var(--system_accent_color)${important}; /* 颜色主题 */
+      --host_bubble_bg_css_value_main: var(--system_accent_color)${important}; /* 默认主题 */
 
       /* 与链接颜色相同的变量 */
-      --text_link: var(--system_link_color);
-      --text-link: var(--system_link_color); /* 咋还有横线版本的？ */
-      --lt-link-url-color: var(--system_link_color);
+      --text_link: var(--system_link_color)${important};
+      --text-link: var(--system_link_color)${important}; /* 咋还有横线版本的？ */
+      --lt-link-url-color: var(--system_link_color)${important};
 
       /* hover & active */
-      --nt_brand_standard_2_overlay_hover_brand_2_mix: var(--system_hover_color);
-      --nt_brand_standard_2_overlay_pressed_brand_2_mix: var(--system_pressed_color);
+      --nt_brand_standard_2_overlay_hover_brand_2_mix: var(--system_hover_color)${important};
+      --nt_brand_standard_2_overlay_pressed_brand_2_mix: var(--system_pressed_color)${important};
 
       /* recent contact */
-      --nt_brand_light_2_20_2_alpha: hsl(from var(--system_accent_color) h s l / 0.2);
-      --nt_brand_light_2_40_2_alpha: hsl(from var(--system_accent_color) h s l / 0.4);
-      --nt_brand_standard_2_20_2_alpha: hsl(from var(--system_accent_color) h s l / 0.2);
-      --nt_brand_standard_2_40_2_alpha: hsl(from var(--system_accent_color) h s l / 0.4);
+      --nt_brand_light_2_20_2_alpha: hsl(from var(--system_accent_color) h s l / 0.2)${important};
+      --nt_brand_light_2_40_2_alpha: hsl(from var(--system_accent_color) h s l / 0.4)${important};
+      --nt_brand_standard_2_20_2_alpha: hsl(from var(--system_accent_color) h s l / 0.2)${important};
+      --nt_brand_standard_2_40_2_alpha: hsl(from var(--system_accent_color) h s l / 0.4)${important};
     }`;
   } else {
     colorStyle.innerHTML = "";
