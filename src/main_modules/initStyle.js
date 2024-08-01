@@ -72,11 +72,5 @@ onUpdateConfig(() => {
 });
 
 // 色表：https://www.electronjs.org/docs/latest/api/system-preferences#systempreferencesgetaccentcolor-windows-macos
-ipcMain.handle("LiteLoader.lite_tools.getSystemAccentColor", () => [
-  `#${systemPreferences.getAccentColor()}`, 
-  systemPreferences.getColor("highlight"),
-  systemPreferences.getColor("menu-highlight"),
-  systemPreferences.getColor("hotlight")
-]);
-systemPreferences.on('accent-color-changed', () => globalBroadcast("LiteLoader.lite_tools.onSystemAccentColorChanged"));
-systemPreferences.on('color-changed', () => globalBroadcast("LiteLoader.lite_tools.onSystemAccentColorChanged"));
+ipcMain.handle("LiteLoader.lite_tools.getSystemAccentColor", () => `#${systemPreferences.getAccentColor()}`);
+systemPreferences.on("accent-color-changed", () => globalBroadcast("LiteLoader.lite_tools.onSystemAccentColorChanged"));

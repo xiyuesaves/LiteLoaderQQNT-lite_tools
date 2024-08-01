@@ -1,12 +1,8 @@
 import { options, updateOptions } from "./options.js";
 import { Logs } from "./logs.js";
-import { debounce } from "./debounce.js";
 
 const log = new Logs("全局样式");
 const qqntEmojiFont = `"Color Emoji",`;
-
-// 缓存高亮颜色
-let oldHighlightColor;
 
 updateOptions(updateFont);
 function updateFont() {
@@ -38,7 +34,8 @@ function updateFont() {
 }
 
 // 系统颜色变化时会自动触发N次……debounce一下
-const updateAccentColor = debounce(async function (isAutoUpdate) {
+async function updateAccentColor(...args) {
+  log("更新主题色", ...args);
   let colorStyle = document.querySelector("#liteToolsAccentColor");
   if (!colorStyle) {
     colorStyle = document.createElement("style");
@@ -47,14 +44,17 @@ const updateAccentColor = debounce(async function (isAutoUpdate) {
   }
 
   if (options.appearance.useSystemAccentColor) {
-    let [accentColor, highlightColor, menuHighlightColor, hotlightColor] = await lite_tools.getSystemAccentColor();
-    if (isAutoUpdate && oldHighlightColor === highlightColor) {
-      // SystemAccentColor 发生变化时 SystemColor 更新有延迟，暂时先fallback到主色
-      // 过一会儿会有另一个事件触发 highlight 更新
-      highlightColor = menuHighlightColor = hotlightColor = accentColor;
-    } else {
-      oldHighlightColor = highlightColor;
-    }
+    const systemAccentColor = await lite_tools.getSystemAccentColor();
+    const accentColor = systemAccentColor;
+    const [hotlightColor, menuHighlightColor, highlightColor] = generateColors(accentColor);
+
+    console.log(
+      `获取到系统色\n%c${accentColor}\n%c${hotlightColor}\n%c${menuHighlightColor}\n%c${highlightColor}`,
+      `background-color:${accentColor};`,
+      `background-color:${hotlightColor};`,
+      `background-color:${menuHighlightColor};`,
+      `background-color:${highlightColor};`,
+    );
 
     colorStyle.innerHTML = `
     .q-theme-tokens, .q-theme-tokens-light, .q-theme-tokens-dark {
@@ -80,12 +80,111 @@ const updateAccentColor = debounce(async function (isAutoUpdate) {
     }`;
   } else {
     colorStyle.innerHTML = "";
-    oldHighlightColor = undefined;
   }
-}, 100);
-updateOptions(updateAccentColor);
+}
 
-updateOptions(initCustomContextMenuColor);
+/**
+ * 将 hex 转为 hsl
+ * @param {String} hex 十六进制颜色
+ * @returns {String} hsl
+ */
+function hexToHsl(hex) {
+  hex = hex.replace(/^#/, "");
+  let r = parseInt(hex.substring(0, 2), 16) / 255;
+  let g = parseInt(hex.substring(2, 4), 16) / 255;
+  let b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  let max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h,
+    s,
+    l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0; // achromatic
+  } else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return [h * 360, s * 100, l * 100];
+}
+
+/**
+ * 将 hsl 转为 hex
+ * @param {*} h
+ * @param {*} s
+ * @param {*} l
+ * @returns hex
+ */
+function hslToHex(h, s, l) {
+  h /= 360;
+  s /= 100;
+  l /= 100;
+
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    let p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  const toHex = (x) => {
+    const hex = Math.round(x * 255).toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+/**
+ * 根据主题色生成三个配色
+ * @param {String} baseColor 主题色
+ * @returns {String[]} 三个配色
+ */
+function generateColors(baseColor) {
+  /**
+   * h 色相
+   * s 饱和
+   * l 亮度
+   */
+  const [h, s, l] = hexToHsl(baseColor);
+  const color1 = hslToHex(h, Math.min(100, s + 20), l);
+  const color2 = hslToHex(h, s, Math.min(100, l + 20));
+  const color3 = hslToHex(h, Math.min(100, s + 10), l);
+  return [color1, color2, color3];
+}
+
+/**
+ * 初始化自定义右键菜单颜色样式
+ */
 function initCustomContextMenuColor() {
   let customContextMenuColorStyleElement = document.querySelector("#customContextMenuColorStyle");
   if (!customContextMenuColorStyleElement) {
@@ -113,6 +212,9 @@ function initCustomContextMenuColor() {
 --lt-q-dark-context-delete-color: ${options.qContextMenu.customHighlightReplies.dark.delete};
 }`;
 }
+
+updateOptions(updateAccentColor);
+updateOptions(initCustomContextMenuColor);
 /**
  * 注入全局样式
  */
@@ -136,9 +238,6 @@ function initStyle() {
   backgroundStyle.setAttribute("rel", "stylesheet");
   document.body.appendChild(backgroundStyle);
 
-  updateAccentColor(false);
-  lite_tools.onSystemAccentColorChanged(() => updateAccentColor(true));
-
   // 调试用-styleCss刷新
   lite_tools.updateStyle(() => {
     log("更新styleCss");
@@ -158,6 +257,8 @@ function initStyle() {
 
   updateFont();
   initCustomContextMenuColor();
+  updateAccentColor();
+  lite_tools.onSystemAccentColorChanged(updateAccentColor);
   log("模块已加载");
 }
 initStyle();
