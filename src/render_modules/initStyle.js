@@ -78,7 +78,7 @@ async function updateAccentColor(...args) {
       --brand_text: var(--system_accent_color);
 
       /* 气泡颜色 */
-      /* --host_bubble_bg_css_value: var(--system_accent_color); 无主题，但是这状态本来就没上色姑且先注释掉 */
+      --host_bubble_bg_css_value: var(--system_accent_color); /* 颜色主题 */
       --host_bubble_bg_css_value_main: var(--system_accent_color); /* 默认主题 */
 
       /* 与链接颜色相同的变量 */
