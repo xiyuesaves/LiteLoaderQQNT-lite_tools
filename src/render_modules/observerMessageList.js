@@ -623,3 +623,10 @@ function initObserver() {
   }
 }
 initObserver();
+
+export function chatMsgAreaTip() {
+  if (options.message.mergeMessage) {
+    document.body.classList.toggle("lite-tools-merge-message-tip-top-btn-fix", document.querySelector(".chat-msg-area__tip--top-btn"));
+    document.body.classList.toggle("lite-tools-merge-message-tip-bottom-fix", document.querySelector(".chat-msg-area__tip--bottom"));
+  }
+}

@@ -3,7 +3,7 @@ import "../render_modules/wallpaper.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
 // 消息列表监听
-import "../render_modules/observerMessageList.js";
+import { chatMsgAreaTip } from "../render_modules/observerMessageList.js";
 // 配置模块
 import { options, updateOptions } from "../render_modules/options.js";
 // 右键菜单相关操作
@@ -130,6 +130,10 @@ document.addEventListener("mouseup", (event) => {
  */
 function chatMessage() {
   log("更新页面");
+
+  // 消息合并功能判断右侧悬浮按钮是否显示
+  chatMsgAreaTip();
+
   // 监听消息列表滚动
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
     const el = document.querySelector(".ml-area .q-scroll-view");

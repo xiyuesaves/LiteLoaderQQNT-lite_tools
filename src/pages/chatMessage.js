@@ -4,7 +4,7 @@ import { addEventqContextMenu } from "../render_modules/qContextMenu.js";
 // 撤回事件监听
 import { newMessageRecall } from "../render_modules/messageRecall.js";
 // 消息列表监听
-import "../render_modules/observerMessageList.js";
+import { chatMsgAreaTip } from "../render_modules/observerMessageList.js";
 // 监听输入框上方功能
 import { observerChatArea } from "../render_modules/observerChatArea.js";
 // 背景壁纸模块
@@ -46,6 +46,10 @@ chatMessage();
  */
 function chatMessage() {
   log("更新聊天页面配置");
+
+  // 消息合并功能判断右侧悬浮按钮是否显示
+  chatMsgAreaTip();
+
   // 禁用贴纸
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
 

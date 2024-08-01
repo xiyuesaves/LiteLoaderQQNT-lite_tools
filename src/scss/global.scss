@@ -533,10 +533,53 @@
 
 // 消息合并样式
 .merge-message {
+  &.lite-tools-merge-message-tip-top-btn-fix {
+    .chat-msg-area__tip--top-btn{
+      margin: 6px 10px;
+      cursor: pointer;
+    }
+    .ml-root.q-scroll-view {
+      .ml-item {
+        .merge {
+          .message-container--self {
+            .avatar-span {
+              .avatar {
+                top: 50px !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  &.lite-tools-merge-message-tip-bottom-fix {
+    .chat-msg-area__tip--bottom{
+      margin: 6px 10px;
+      cursor: pointer;
+    }
+    .ml-root.q-scroll-view {
+      .ml-item {
+        .merge {
+          .message-container--self {
+            .avatar-span {
+              .avatar {
+                bottom: 40px !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   .ml-root.q-scroll-view {
     .ml-item {
       .merge {
         .message-tips {
+          &.reaction-panel {
+            .reaction-content {
+              margin-bottom: 0;
+            }
+          }
           .reaction-content {
             margin-bottom: 0;
           }
@@ -544,13 +587,6 @@
         // 不知道为什么卡片消息会有个单独的margin-top
         .ark-msg-content-container {
           margin-top: 0;
-        }
-        .message-tips {
-          &.reaction-panel {
-            .reaction-content {
-              margin-bottom: 0;
-            }
-          }
         }
         &.merge-main {
           &.message {
@@ -857,7 +893,7 @@
               width: 100%;
               height: 100%;
               object-fit: contain;
-              &[src=""]{
+              &[src=""] {
                 visibility: hidden;
               }
             }
