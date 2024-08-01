@@ -34,6 +34,8 @@ function simpleMarkdownToHTML(markdown) {
 
       // GitHub Issue Links
       md = md.replace(/#(\d+)/g, '<a data-href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues/$1">#$1</a>');
+      
+      md = md.replace(/@(\S+)/g, '<a data-href="https://github.com/$1">@$1</a>');
 
       md = md.replace(/^\s*-\s(.*)$/gim, "<li>$1</li>");
 

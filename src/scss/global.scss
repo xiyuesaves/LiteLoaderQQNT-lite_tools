@@ -144,7 +144,17 @@
 
     --preview-bg: rgba(0, 0, 0, 0.05);
     --preview-border: rgba(0, 0, 0, 0.2);
-    --preview-title-color: rgba(0, 0, 0, 0.3);
+    --preview-title-color: rgba(0, 0, 0, 0.6);
+
+    // 自定义右键菜单高亮颜色
+    --lt-q-context-copy-color: var(--lt-q-light-context-copy-color);
+    --lt-q-context-forward-color: var(--lt-q-light-context-forward-color);
+    --lt-q-context-collect-color: var(--lt-q-light-context-collect-color);
+    --lt-q-context-multiple-color: var(--lt-q-light-context-multiple-color);
+    --lt-q-context-essence-color: var(--lt-q-light-context-essence-color);
+    --lt-q-context-quote-color: var(--lt-q-light-context-quote-color);
+    --lt-q-context-revoke-color: var(--lt-q-light-context-revoke-color);
+    --lt-q-context-delete-color: var(--lt-q-light-context-delete-color);
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -169,6 +179,16 @@
     --preview-bg: rgba(255, 255, 255, 0.1);
     --preview-border: rgba(255, 255, 255, 0.3);
     --preview-title-color: rgba(255, 255, 255, 0.5);
+
+    // 自定义右键菜单高亮颜色
+    --lt-q-context-copy-color: var(--lt-q-dark-context-copy-color);
+    --lt-q-context-forward-color: var(--lt-q-dark-context-forward-color);
+    --lt-q-context-collect-color: var(--lt-q-dark-context-collect-color);
+    --lt-q-context-multiple-color: var(--lt-q-dark-context-multiple-color);
+    --lt-q-context-essence-color: var(--lt-q-dark-context-essence-color);
+    --lt-q-context-quote-color: var(--lt-q-dark-context-quote-color);
+    --lt-q-context-revoke-color: var(--lt-q-dark-context-revoke-color);
+    --lt-q-context-delete-color: var(--lt-q-dark-context-delete-color);
   }
 }
 
@@ -475,10 +495,12 @@
       }
     }
   }
-  .avatar-span {
-    position: sticky !important;
-    top: 10px !important;
-    bottom: 10px !important;
+  &:not(.avatar-end) {
+    .avatar-span {
+      position: sticky !important;
+      top: 10px !important;
+      bottom: 10px !important;
+    }
   }
   .ml-root.q-scroll-view {
     .ml-list,
@@ -511,19 +533,60 @@
 
 // 消息合并样式
 .merge-message {
+  &.lite-tools-merge-message-tip-top-btn-fix {
+    .chat-msg-area__tip--top-btn{
+      margin: 6px 10px;
+      cursor: pointer;
+    }
+    .ml-root.q-scroll-view {
+      .ml-item {
+        .merge {
+          .message-container--self {
+            .avatar-span {
+              .avatar {
+                top: 50px !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  &.lite-tools-merge-message-tip-bottom-fix {
+    .chat-msg-area__tip--bottom{
+      margin: 6px 10px;
+      cursor: pointer;
+    }
+    .ml-root.q-scroll-view {
+      .ml-item {
+        .merge {
+          .message-container--self {
+            .avatar-span {
+              .avatar {
+                bottom: 40px !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   .ml-root.q-scroll-view {
     .ml-item {
       .merge {
-        // 不知道为什么卡片消息会有个单独的margin-top
-        .ark-msg-content-container {
-          margin-top: 0;
-        }
         .message-tips {
           &.reaction-panel {
             .reaction-content {
               margin-bottom: 0;
             }
           }
+          .reaction-content {
+            margin-bottom: 0;
+          }
+        }
+        // 不知道为什么卡片消息会有个单独的margin-top
+        .ark-msg-content-container {
+          margin-top: 0;
         }
         &.merge-main {
           &.message {
@@ -830,6 +893,9 @@
               width: 100%;
               height: 100%;
               object-fit: contain;
+              &[src=""] {
+                visibility: hidden;
+              }
             }
           }
           // 暂时没用

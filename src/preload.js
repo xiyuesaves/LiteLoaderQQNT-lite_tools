@@ -47,6 +47,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   log: (...args) => ipcRenderer.send("LiteLoader.lite_tools.log", ...args),
   // 更新常用表情列表
   addCommonlyEmoticons: (src) => ipcRenderer.send("LiteLoader.lite_tools.addCommonlyEmoticons", src),
+  // 更新更新最近使用分组
+  updateRecentFolders: (src) => ipcRenderer.send("LiteLoader.lite_tools.updateRecentFolders", src),
   // 获取窗口Id
   getWebContentId: () => ipcRenderer.sendSync("LiteLoader.lite_tools.getWebContentId"),
   // 打开文件路径
@@ -108,12 +110,16 @@ contextBridge.exposeInMainWorld("lite_tools", {
   // Telegram贴纸集下载相关
   downloadTgSticker: (url) => ipcRenderer.send("LiteLoader.lite_tools.downloadTgSticker", url),
   onDownloadTgStickerEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onDownloadTgStickerEvent", callback),
+  // 导入eif表情文件
+  extractEifFile: (eifPath) => ipcRenderer.send("LiteLoader.lite_tools.extractEifFile", eifPath),
   // 主进程向渲染进程发送通知
   onToast: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onToast", ...args),
   // 获取系统主色
   getSystemAccentColor: () => ipcRenderer.invoke("LiteLoader.lite_tools.getSystemAccentColor"),
   // 系统主色变化
   onSystemAccentColorChanged: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onSystemAccentColorChanged", ...args),
+  windowOnload: () => ipcRenderer.send("LiteLoader.lite_tools.windowOnload"),
+  clearToast: (callback) => ipcRenderer.on("LiteLoader.lite_tools.clearToast", callback),
   /**
    *
    * @param {String} sendEventName 发送事件名称

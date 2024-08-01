@@ -45,6 +45,7 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     return;
   }
   log("创建右键菜单项");
+  contextItem?.style?.removeProperty("color");
   if (subMenu && subMenu.length && contextItem.querySelector(".q-context-menu-item__text")) {
     contextItem.insertAdjacentHTML("beforeend", subMenuIconEl);
     const subMenuEl = document.createElement("div");
@@ -205,21 +206,8 @@ function addEventqContextMenu() {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
         const elements = msgRecord?.elements;
         // 生成表情逻辑
-        if (elements.length === 1 && elements[0].textElement && options.messageToImage.enabled) {
-          if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 1) {
-            const header = app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.header;
-            const content = elements[0].textElement.content;
-            const userName = header?.peerName || header?.memberName || header?.remark;
-            const userUid = header?.uid;
-            const fontFamily = getComputedStyle(messageEl).getPropertyValue("font-family");
-            msgSticker = {
-              userName,
-              userUid,
-              content,
-              fontFamily,
-            };
-            log("符合生成条件-好友", msgSticker);
-          } else if (app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType === 2) {
+        if (elements.length === 1 && elements[0].textElement && options.qContextMenu.messageToImage.enabled) {
+          if ([1, 2, 100].includes(app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType)) {
             const content = elements[0].textElement.content;
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
@@ -230,7 +218,7 @@ function addEventqContextMenu() {
               content,
               fontFamily,
             };
-            log("符合生成条件-群组", msgSticker);
+            log("符合生成条件", msgSticker);
           }
         }
         // 发送图片检测
@@ -266,37 +254,54 @@ function addEventqContextMenu() {
     }
     qContextMenu.classList.add("lite-toos-context-menu");
 
-    if (options.message.HighlightReplies) {
+    if (options.qContextMenu.HighlightReplies) {
       const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
-      targetElements.forEach((element) => {
-        if (element.textContent === "回复") {
-          element.parentNode.style.color = "green";
-        }
-        if (element.textContent === "引用") {
-          element.parentNode.style.color = "green";
-        }
-        if (element.textContent === "撤回") {
-          element.parentNode.style.color = "red";
-        }
-        if (element.textContent === "删除") {
-          element.parentNode.style.color = "red";
+      targetElements?.forEach((element) => {
+        switch (element?.textContent) {
+          case "复制":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-copy-color)");
+            break;
+          case "转发":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-forward-color)");
+            break;
+          case "收藏":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-collect-color)");
+            break;
+          case "多选":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-multiple-color)");
+            break;
+          case "引用":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
+            break;
+          case "回复":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
+            break;
+          case "设为精华":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-essence-color)");
+            break;
+          case "撤回":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-revoke-color)");
+            break;
+          case "删除":
+            element.parentNode.style.setProperty("color", "var(--lt-q-context-delete-color)");
+            break;
         }
       });
     }
 
     // 在网页搜索
-    if (isRightClick && selectText.length && options.wordSearch.enabled) {
+    if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled) {
       const searchText = selectText;
       addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
-        lite_tools.openWeb(options.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
+        lite_tools.openWeb(options.qContextMenu.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
       });
     }
     // 搜索图片
-    if (searchImageData && options.imageSearch.enabled) {
+    if (searchImageData && options.qContextMenu.imageSearch.enabled) {
       const _searchImageData = searchImageData;
       addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
         const searchImageUrl = encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType));
-        const openUrl = options.imageSearch.searchUrl.replace("%search%", searchImageUrl);
+        const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
         lite_tools.openWeb(openUrl);
       });
     }
@@ -325,7 +330,7 @@ function addEventqContextMenu() {
       });
     }
     // 消息转图片
-    if (options.messageToImage.enabled && msgSticker) {
+    if (options.qContextMenu.messageToImage.enabled && msgSticker) {
       const _msgSticker = msgSticker;
       addQContextMenu(qContextMenu, imageIcon, "转图片", () => {
         createSticker(_msgSticker);

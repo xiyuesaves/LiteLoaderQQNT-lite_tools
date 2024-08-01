@@ -367,6 +367,27 @@ function getAuthData() {
   return lite_tools.nativeCall("ns-GlobalDataApi", "fetchAuthData", [], webContentId, true, false);
 }
 
+/**
+ * 移除账号登录信息
+ * @param {String} uin 账号uin
+ * @returns 
+ */
+function resetLoginInfo(uin) {
+  return lite_tools.nativeCall(
+    "ns-ntApi",
+    "nodeIKernelLoginService/resetLoginInfo",
+    [
+      {
+        uin: uin,
+      },
+      null,
+    ],
+    webContentId,
+    true,
+    false,
+  );
+}
+
 export {
   sendMessage,
   sendRawMessage,
@@ -383,4 +404,5 @@ export {
   activeChatAndReturnPreview,
   activeChatAndReturnHistory,
   getLoginList,
+  resetLoginInfo,
 };

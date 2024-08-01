@@ -18,6 +18,8 @@ import { simpleMarkdownToHTML } from "../render_modules/simpleMarkdownToHTML.js"
 import { openChangeLog } from "../render_modules/openChangeLog.js";
 // 获取当前登录账号信息
 import { getAuthData } from "../render_modules/nativeCall.js";
+// 配置属性读写模块
+import { getValueByPath, setValueByPath } from "../render_modules/ObjectPathUtils.js";
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
 import { showToast, clearToast } from "../render_modules/toast.js";
@@ -185,7 +187,10 @@ async function onConfigView(view) {
     }
   }
 
+  // 添加侧边栏上方功能列表
   addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
+
+  // 添加侧边栏下方功能列表
   addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
 
   // 添加输入框上方功能列表
@@ -223,17 +228,14 @@ async function onConfigView(view) {
         if (event.target.classList.contains("setting-item")) {
           const newValue = event.target.getAttribute("data-value");
           const showVlaue = event.target.innerText;
-          let newOptions = Object.assign(
-            options,
-            Function("options", "newValue", `options.${configPath} = newValue; return options`)(options, newValue),
-          );
-          lite_tools.setOptions(newOptions);
+          setValueByPath(options, configPath, newValue);
+          lite_tools.setOptions(options);
           el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
           el.querySelector("div.setting-view")?.setAttribute("data-value", showVlaue);
         }
         el.querySelector(".setting-option").classList.toggle("show");
       });
-      const option = Function("options", `return options.${configPath}`)(options);
+      const option = getValueByPath(options, configPath);
       const showVlaue =
         Array.from(el.querySelectorAll(".setting-item")).find((item) => item.getAttribute("data-value") === option)?.innerText ?? option;
       el.querySelector("input.setting-input")?.setAttribute("value", showVlaue);
@@ -251,24 +253,24 @@ async function onConfigView(view) {
   }
 
   // 划词搜索
-  addSwitchEventlistener("wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
+  addSwitchEventlistener("qContextMenu.wordSearch.enabled", ".switchSelectSearch", (_, enabled) => {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
   });
   const searchEl = view.querySelector(".search-url");
-  searchEl.value = options.wordSearch.searchUrl;
+  searchEl.value = options.qContextMenu.wordSearch.searchUrl;
   searchEl.addEventListener("input", (e) => {
-    options.wordSearch.searchUrl = e.target.value;
+    options.qContextMenu.wordSearch.searchUrl = e.target.value;
     debounceSetOptions();
   });
 
   // 图片搜索
-  addSwitchEventlistener("imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
+  addSwitchEventlistener("qContextMenu.imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
     view.querySelector(".image-select-search-url").classList.toggle("disabled-input", !enabled);
   });
   const imgSearchEl = view.querySelector(".img-search-url");
-  imgSearchEl.value = options.imageSearch.searchUrl;
+  imgSearchEl.value = options.qContextMenu.imageSearch.searchUrl;
   imgSearchEl.addEventListener("input", (e) => {
-    options.imageSearch.searchUrl = e.target.value;
+    options.qContextMenu.imageSearch.searchUrl = e.target.value;
     debounceSetOptions();
   });
 
@@ -345,7 +347,7 @@ async function onConfigView(view) {
 
   // 消息转图片
   const defaultSaveFilePath = view.querySelector(".select-default-save-file-input-clear");
-  defaultSaveFilePath.value = options.messageToImage.path;
+  defaultSaveFilePath.value = options.qContextMenu.messageToImage.path;
   view.querySelector(".select-default-save-file-input").addEventListener("click", async () => {
     const result = await lite_tools.showOpenDialog({
       title: "请选择文件夹", //默认路径,默认选择的文件
@@ -353,14 +355,14 @@ async function onConfigView(view) {
       buttonLabel: "选择文件夹",
     });
     if (!result.canceled) {
-      options.messageToImage.path = result.filePaths[0];
-      log("选择了消息转图片默认保存路径", options.messageToImage.path);
+      options.qContextMenu.messageToImage.path = result.filePaths[0];
+      log("选择了消息转图片默认保存路径", options.qContextMenu.messageToImage.path);
       debounceSetOptions();
     }
   });
   defaultSaveFilePath.addEventListener("click", (e) => {
     e.target.value = "";
-    options.messageToImage.path = "";
+    options.qContextMenu.messageToImage.path = "";
     debounceSetOptions();
   });
 
@@ -408,6 +410,18 @@ async function onConfigView(view) {
   // 常用表情分类
   addSwitchEventlistener("localEmoticons.commonlyEmoticons", ".switchCommonlyEmoticons", (_, enabled) => {
     view.querySelector(".hoverShowCommonlyEmoticons").classList.toggle("disabled-switch", !enabled);
+  });
+  //最近使用分组数量
+  view.querySelector(".recent-folders-num").value = options.localEmoticons.recentlyNum;
+  view.querySelector(".recent-folders-num").addEventListener("blur", (e) => {
+    const newRecentFoldersNum = parseInt(e.target.value);
+    let newValue = Number.isNaN(newRecentFoldersNum) ? 0 : newRecentFoldersNum;
+    if (newValue < -2) {
+      newValue = 0;
+    }
+    options.localEmoticons.recentlyNum = newValue;
+    e.target.value = options.localEmoticons.recentlyNum;
+    debounceSetOptions();
   });
 
   // 初始化背景路径选择监听和值
@@ -590,6 +604,23 @@ async function onConfigView(view) {
     }
   });
 
+  // 选项高亮-自定义颜色
+  addCustomColorEvent(view.querySelectorAll(`.custom-color-light input[type="color"]`));
+  addCustomColorEvent(view.querySelectorAll(`.custom-color-dark input[type="color"]`));
+
+  function addCustomColorEvent(elements) {
+    elements.forEach((el) => {
+      const id = el.id.replace("lt-", "").split("-");
+      const theme = id[0];
+      const color = id[1];
+      el.value = options.qContextMenu.customHighlightReplies[theme][color];
+      el.addEventListener("change", (event) => {
+        options.qContextMenu.customHighlightReplies[theme][color] = event.target.value;
+        debounceSetOptions();
+      });
+    });
+  }
+
   // 打开当前版本的更新日志
   view.querySelector(".tag-version").addEventListener("click", () => {
     fetch(`local:///${LiteLoader.plugins.lite_tools.path.plugin}/changeLog.md`)
@@ -666,6 +697,28 @@ async function onConfigView(view) {
     }
   });
 
+  // 选择tgs_to_gif路径
+  const tgsToGifPath = view.querySelector(".select-tgs-to-gif-path");
+  tgsToGifPath.value = options.localEmoticons.tgsToGifPath;
+  // 清除设置路径
+  tgsToGifPath.addEventListener("click", (e) => {
+    e.target.value = "";
+    options.localEmoticons.tgsToGifPath = "";
+    debounceSetOptions();
+  });
+  view.querySelector(".tgs-to-gif-path-btn").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择tgs_to_gif",
+      properties: ["openFile"],
+      buttonLabel: "选择",
+    });
+    if (!result.canceled) {
+      options.localEmoticons.tgsToGifPath = result.filePaths[0];
+      log("选择了tgs_to_gif路径", options.localEmoticons.tgsToGifPath);
+      debounceSetOptions();
+    }
+  });
+
   // 设置Telegram Bot Token
   const tgBotToken = view.querySelector(".tg-bot-token");
   tgBotToken.value = options.localEmoticons.tgBotToken;
@@ -697,7 +750,10 @@ async function onConfigView(view) {
       }
       clearToast();
       if (!options.localEmoticons.ffmpegPath) {
-        showToast("没有配置FFmpeg路径，可能无法下载动态表情", "default", 30000);
+        showToast("没有配置 FFmpeg 路径，可能无法下载动态表情", "default", 30000);
+      }
+      if (!options.localEmoticons.tgsToGifPath) {
+        showToast("没有配置 tgs_to_gif 路径，无法下载 TGS 表情", "default", 30000);
       }
       showToast("已添加下载请求", "default", 30000);
       lite_tools.downloadTgSticker(tgSticker.value);
@@ -706,13 +762,33 @@ async function onConfigView(view) {
     }
   });
 
+  // 导入eif贴纸集
+  view.querySelector(".import-eif-sticker").addEventListener("click", async () => {
+    const result = await lite_tools.showOpenDialog({
+      title: "请选择eif文件",
+      properties: ["openFile"],
+      filters: [
+        {
+          name: "eif",
+          extensions: ["eif"],
+        },
+      ],
+      buttonLabel: "选择",
+    });
+    if (!result.canceled) {
+      log("选择了eif文件", result.filePaths[0]);
+      lite_tools.extractEifFile(result.filePaths[0]);
+    }
+  });
+
   // 监听设置文件变动
   updateOptions((opt) => {
     log("检测到配置更新", opt);
     view.querySelector(".select-background-wallpaper-clear").value = opt.background.url;
     view.querySelector(".select-local-emoticons-folder-clear").value = opt.localEmoticons.localPath;
-    view.querySelector(".select-default-save-file-input-clear").value = opt.messageToImage.path;
+    view.querySelector(".select-default-save-file-input-clear").value = opt.qContextMenu.messageToImage.path;
     view.querySelector(".select-ffmpeg-path").value = opt.localEmoticons.ffmpegPath;
+    view.querySelector(".select-tgs-to-gif-path").value = opt.localEmoticons.tgsToGifPath;
     tailList?.updateOptions();
   });
   log("完成初始化");

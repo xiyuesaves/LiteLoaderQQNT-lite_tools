@@ -1,5 +1,6 @@
 import { options } from "./options.js";
 import { switchButtons } from "./eggs.js";
+import { setValueByPath } from "./ObjectPathUtils.js";
 
 /**
  * 向设置界面插入动态选项
@@ -21,7 +22,7 @@ function addOptionLi(list, element, objKey, key) {
     }
     switchEl.setAttribute("index", index);
     switchEl.addEventListener("click", function () {
-      Function("options", `options.${objKey}[${index}].${key} = ${this.classList.contains("is-active")}`)(options);
+      setValueByPath(options, `${objKey}[${index}].${key}`, this.classList.contains("is-active"));
       this.classList.toggle("is-active");
       lite_tools.setOptions(options);
       switchButtons();

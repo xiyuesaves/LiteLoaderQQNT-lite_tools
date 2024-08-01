@@ -9,7 +9,7 @@ const qqntEmojiFont = `"Color Emoji",`;
 let oldHighlightColor;
 
 updateOptions(updateFont);
-async function updateFont() {
+function updateFont() {
   if (!options.message.overrideFont.fullName) {
     document.body.style.fontFamily = "";
     document.body.style.fontStyle = "";
@@ -85,6 +85,34 @@ const updateAccentColor = debounce(async function (isAutoUpdate) {
 }, 100);
 updateOptions(updateAccentColor);
 
+updateOptions(initCustomContextMenuColor);
+function initCustomContextMenuColor() {
+  let customContextMenuColorStyleElement = document.querySelector("#customContextMenuColorStyle");
+  if (!customContextMenuColorStyleElement) {
+    log("初始化自定义右键菜单颜色样式");
+    customContextMenuColorStyleElement = document.createElement("style");
+    customContextMenuColorStyleElement.id = "customContextMenuColorStyle";
+    document.body.append(customContextMenuColorStyleElement);
+  }
+  customContextMenuColorStyleElement.innerHTML = `:root{
+  --lt-q-light-context-copy-color: ${options.qContextMenu.customHighlightReplies.light.copy};
+--lt-q-light-context-forward-color: ${options.qContextMenu.customHighlightReplies.light.forward};
+--lt-q-light-context-collect-color: ${options.qContextMenu.customHighlightReplies.light.collect};
+--lt-q-light-context-multiple-color: ${options.qContextMenu.customHighlightReplies.light.multiple};
+--lt-q-light-context-quote-color: ${options.qContextMenu.customHighlightReplies.light.quote};
+--lt-q-light-context-essence-color: ${options.qContextMenu.customHighlightReplies.light.essence};
+--lt-q-light-context-revoke-color: ${options.qContextMenu.customHighlightReplies.light.revoke};
+--lt-q-light-context-delete-color: ${options.qContextMenu.customHighlightReplies.light.delete};
+--lt-q-dark-context-copy-color: ${options.qContextMenu.customHighlightReplies.dark.copy};
+--lt-q-dark-context-forward-color: ${options.qContextMenu.customHighlightReplies.dark.forward};
+--lt-q-dark-context-collect-color: ${options.qContextMenu.customHighlightReplies.dark.collect};
+--lt-q-dark-context-multiple-color: ${options.qContextMenu.customHighlightReplies.dark.multiple};
+--lt-q-dark-context-quote-color: ${options.qContextMenu.customHighlightReplies.dark.quote};
+--lt-q-dark-context-essence-color: ${options.qContextMenu.customHighlightReplies.dark.essence};
+--lt-q-dark-context-revoke-color: ${options.qContextMenu.customHighlightReplies.dark.revoke};
+--lt-q-dark-context-delete-color: ${options.qContextMenu.customHighlightReplies.dark.delete};
+}`;
+}
 /**
  * 注入全局样式
  */
@@ -129,6 +157,7 @@ function initStyle() {
   });
 
   updateFont();
+  initCustomContextMenuColor();
   log("模块已加载");
 }
 initStyle();

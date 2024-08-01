@@ -103,6 +103,12 @@ let mouseEnterEventTimeOut;
  */
 let isEnabled = false;
 
+/**
+ * 是否插入了表情包（影响是否重载最近使用表情分组）
+ * @type {Boolean}
+ */
+let inserted = false;
+
 const commonlyId = "commonlyEmoticons";
 
 document.body.classList.toggle("lite-tools-showLocalEmoticons", options.localEmoticons.enabled);
@@ -285,10 +291,9 @@ function loadEditorModel() {
  */
 function quickInsertion() {
   if (!options.localEmoticons.enabled || !options.localEmoticons.quickEmoticons) {
-    quickPreviewEl?.classList?.remove("show");
+    hiddenQuickInsertion();
     return;
   }
-
   const msg = ckeditorInstance.getData();
   const msgArr = msg.split("<p>");
   const lastStr = msgArr[msgArr.length - 1];
@@ -328,15 +333,15 @@ function quickInsertion() {
     const previewItems = [];
     for (let i = 0; i < forList.length; i++) {
       const previewItem = document.createElement("div");
-      previewItem.classList.add("preview-item");
       const stickerPreview = document.createElement("div");
-      stickerPreview.classList.add("sticker-preview");
       const img = document.createElement("img");
-      if (options.localEmoticons.majorization) {
-        img.setAttribute("data-src", `local:///${forList[i].path}`);
-      } else {
-        img.src = `local:///${forList[i].path}`;
+      previewItem.classList.add("preview-item");
+      previewItem.imgEl = img;
+      previewItem.path = forList[i].path;
+      if (!options.localEmoticons.majorization) {
+        img.src = emoticonFolder.prototype.protocolPrefix + emoticonFolder.buildImgSrc(previewItem.path);
       }
+      stickerPreview.classList.add("sticker-preview");
       stickerPreview.appendChild(img);
       previewItem.appendChild(stickerPreview);
       previewItems.push(previewItem);
@@ -345,8 +350,20 @@ function quickInsertion() {
     previewListEl.scrollTop = 0;
     previewListScroll({ target: previewListEl });
   } else {
-    quickPreviewEl?.classList?.remove("show");
+    hiddenQuickInsertion();
   }
+}
+
+/**
+ * 隐藏快捷输入表情选择列表
+ */
+function hiddenQuickInsertion() {
+  quickPreviewEl?.classList.remove("show");
+  quickPreviewEl?.addEventListener(
+    "transitionend",
+    document.querySelectorAll(".preview-list .preview-item").forEach((el) => el.remove()),
+    { once: true },
+  );
 }
 
 /**
@@ -428,6 +445,10 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
     if (options.localEmoticons.commonlyEmoticons) {
       lite_tools.addCommonlyEmoticons(src);
     }
+    //更新最近使用分组
+    if (options.localEmoticons.recentlyNum !== 0) {
+      lite_tools.updateRecentFolders(src);
+    }
     // 如果有匹配命令值，则先删除
     if (regOut) {
       ckeditEditorModel.change((writer) => {
@@ -461,7 +482,7 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
         writer.insert(writerEl, position);
       });
     }
-
+    inserted = true;
     showEmoticons = false;
     // 如果按下了ctrl键，则不关闭窗口面板
     if (!ctrlKey) {
@@ -477,7 +498,8 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
  * @returns
  */
 function insert(event) {
-  insertToEditor(decodeURI(event.target.querySelector("img").src.replace("local:///", "")), event.altKey, event.ctrlKey);
+  const path = event.target.closest(".preview-item")?.path ?? event.target.closest(".category-item")?.path;
+  insertToEditor(path, event.altKey, event.ctrlKey);
 }
 
 /**
@@ -715,18 +737,18 @@ function initQuickPreview() {
   });
 
   const previewListScroll = debounce((event) => {
-    log("快捷预览窗口滚动", event.target.scrollTop);
     if (options.localEmoticons.majorization) {
+      const target = event.target;
       const listItemHeight = 80;
-      const startTop = event.target.scrollTop;
-      const endBottom = startTop + event.target.offsetHeight;
+      const startTop = target.scrollTop;
+      const endBottom = startTop + target.offsetHeight;
       const startNum = parseInt(startTop / listItemHeight);
       const endNum = Math.ceil((endBottom - startTop) / listItemHeight) + 1;
       for (let i = 0; i < endNum; i++) {
         const index = i + startNum + 1;
-        const prevItemImg = event.target.querySelector(`.preview-item:nth-child(${index}) img`);
-        if (prevItemImg && !prevItemImg.src) {
-          prevItemImg.src = prevItemImg.getAttribute("data-src");
+        const previewItem = target.querySelector(`.preview-item:nth-child(${index})`);
+        if(previewItem){
+          previewItem.imgEl.src = emoticonFolder.prototype.protocolPrefix + emoticonFolder.buildImgSrc(previewItem.path);
         }
       }
     }
@@ -808,48 +830,56 @@ function jumpFolder(event) {
  * @param {Null} _ 无用字段
  * @param {Array} newEmoticonsList 表情包列表
  */
-function appendEmoticons(_, newEmoticonsList) {
-  log("获取到表情对象", newEmoticonsList);
-  // 平铺表情对象数组
-  emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
-    return emoticons.list;
-  });
+async function appendEmoticons(_, newEmoticonsList) {
+  try {
+    const config = await lite_tools.getLocalEmoticonsConfig();
+    log("获取到表情对象", newEmoticonsList);
+    // 平铺表情对象数组
+    emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
+      return emoticons.list;
+    });
 
-  // 插入新的表情数据
-  newEmoticonsList.forEach((folder) => {
-    const findEmoticons = folderInfos.find((item) => item.id === folder.id);
-    if (findEmoticons) {
-      findEmoticons.index = folder.index;
-      findEmoticons.updateEmoticonIcon(folder.icon || folder.list[0].path);
-      findEmoticons.updateEmoticonList(folder.list);
-      findEmoticons.updateEmoticonName(folder.name);
-      folderListEl.appendChild(findEmoticons.folderEl);
-      folderIconListEl.appendChild(findEmoticons.folderIconEl);
-    } else {
-      const newEmoticonFolder = new emoticonFolder(
-        folder.name,
-        folder.list,
-        folder.id,
-        folder.icon || folder.list[0].path,
-        folder.index,
-        "folder",
-      );
-      folderInfos.push(newEmoticonFolder);
-      folderListEl.appendChild(newEmoticonFolder.folderEl);
-      folderIconListEl.appendChild(newEmoticonFolder.folderIconEl);
-    }
-  });
-  // 销毁无用实例
-  const deleteEmoticon = emoticonsList.filter((item) => !newEmoticonsList.find((newItem) => newItem.id === item.id));
-  deleteEmoticon.forEach((item) => {
-    const deleteIndex = folderInfos.findIndex((emoticon) => emoticon.id === item.id);
-    const emoticon = folderInfos.splice(deleteIndex, 1)[0];
-    emoticon.destroy();
-  });
-  // 更新数据
-  emoticonsList = newEmoticonsList;
-  // 对数组进行排序
-  // folderInfos.sort((a, b) => a.index - b.index);
+    // 将最近使用的分组移到前面
+    const recentEmoticonsList = config.recentFolders.map((path) => newEmoticonsList.find((folder) => folder.path === path)).filter(Boolean);
+    const remainingEmoticonsList = newEmoticonsList.filter((folder) => !config.recentFolders.includes(folder.path));
+    const sortedEmoticonsList = [...recentEmoticonsList, ...remainingEmoticonsList];
+
+    // 插入新的表情数据
+    sortedEmoticonsList.forEach((folder) => {
+      const findEmoticons = folderInfos.find((item) => item.id === folder.id);
+      if (findEmoticons) {
+        findEmoticons.index = folder.index;
+        findEmoticons.updateEmoticonIcon(folder.icon || folder.list[0].path);
+        findEmoticons.updateEmoticonList(folder.list);
+        findEmoticons.updateEmoticonName(folder.name);
+        folderListEl.appendChild(findEmoticons.folderEl);
+        folderIconListEl.appendChild(findEmoticons.folderIconEl);
+      } else {
+        const newEmoticonFolder = new emoticonFolder(
+          folder.name,
+          folder.list,
+          folder.id,
+          folder.icon || folder.list[0].path,
+          folder.index,
+          "folder",
+        );
+        folderInfos.push(newEmoticonFolder);
+        folderListEl.appendChild(newEmoticonFolder.folderEl);
+        folderIconListEl.appendChild(newEmoticonFolder.folderIconEl);
+      }
+    });
+    // 销毁无用实例
+    const deleteEmoticon = emoticonsList.filter((item) => !sortedEmoticonsList.find((newItem) => newItem.id === item.id));
+    deleteEmoticon.forEach((item) => {
+      const deleteIndex = folderInfos.findIndex((emoticon) => emoticon.id === item.id);
+      const emoticon = folderInfos.splice(deleteIndex, 1)[0];
+      emoticon.destroy();
+    });
+    // 更新数据
+    emoticonsList = sortedEmoticonsList;
+  } catch (err) {
+    log("获取本地表情配置失败", err, err?.stack);
+  }
 }
 
 class emoticonFolder {
@@ -898,7 +928,7 @@ class emoticonFolder {
     this.folderIconEl.setAttribute("title", this.name);
     this.folderIconEl.setAttribute("data-id", this.id);
     this.iconEl = document.createElement("img");
-    this.iconEl.src = this.protocolPrefix + this.iconPath;
+    this.iconEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(this.iconPath);
     this.iconBoxEl = document.createElement("div");
     this.iconBoxEl.classList.add("icon-box");
     this.iconBoxEl.appendChild(this.iconEl);
@@ -910,7 +940,7 @@ class emoticonFolder {
       log("加载实例", this.name);
       this.isLoad = true;
       this.categoryItemsEl.forEach((categoryItemEl) => {
-        categoryItemEl.imgEl.src = this.protocolPrefix + categoryItemEl.path;
+        categoryItemEl.imgEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(categoryItemEl.path);
       });
     }
   }
@@ -919,7 +949,7 @@ class emoticonFolder {
       log("卸载实例", this.name);
       this.isLoad = false;
       this.categoryItemsEl.forEach((categoryItemEl) => {
-        categoryItemEl.imgEl.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        categoryItemEl.imgEl.src = "";
       });
     }
   }
@@ -954,7 +984,7 @@ class emoticonFolder {
       const imgEl = document.createElement("img");
       categoryItemEl.imgEl = imgEl;
       if (this.isLoad) {
-        imgEl.src = this.protocolPrefix + categoryItemEl.path;
+        imgEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(categoryItemEl.path);
       }
       skiterPreviewEl.appendChild(imgEl);
       categoryItemEl.append(skiterPreviewEl);
@@ -976,9 +1006,9 @@ class emoticonFolder {
   }
   updateEmoticonIcon(iconPath) {
     this.iconPath = iconPath;
-    this.iconEl.src = this.protocolPrefix + this.iconPath;
+    this.iconEl.src = this.protocolPrefix + emoticonFolder.buildImgSrc(this.iconPath);
   }
-  updateEmoticonName(name){
+  updateEmoticonName(name) {
     this.name = name;
     this.categoryNameEl.innerText = this.name;
   }
@@ -1005,6 +1035,16 @@ class emoticonFolder {
   }
   static getPath(src) {
     return src.replace(emoticonFolder.prototype.protocolPrefix, "");
+  }
+  static buildImgSrc(filePath) {
+    if (!filePath) {
+      return;
+    }
+    return filePath
+      .replace(/\\/g, "/")
+      .split("/")
+      .map((item) => encodeURIComponent(encodeURIComponent(item)))
+      .join("/");
   }
 }
 emoticonFolder.prototype.protocolPrefix = "local:///";
@@ -1118,6 +1158,12 @@ function closeLocalEmoticons() {
     );
   }
   localEmoticonsEl.classList.remove("show");
+  if (inserted && options.localEmoticons.recentlyNum !== 0) {
+    lite_tools.getLocalEmoticonsList().then((emoticonsList) => {
+      appendEmoticons(null, emoticonsList);
+    });
+    inserted = false;
+  }
 }
 
 /**

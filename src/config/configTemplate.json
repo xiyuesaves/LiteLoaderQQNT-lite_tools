@@ -11,14 +11,6 @@
     "enabled": false,
     "keyList": []
   },
-  "wordSearch": {
-    "enabled": false,
-    "searchUrl": "https://www.bing.com/search?q=%search%"
-  },
-  "imageSearch": {
-    "enabled": false,
-    "searchUrl": "https://saucenao.com/search.php?url=%search%"
-  },
   "localEmoticons": {
     "enabled": false,
     "quickEmoticons": false,
@@ -33,8 +25,10 @@
     "toLeftSlot": false,
     "hoverShowCommonlyEmoticons": false,
     "commonlyNum": 20,
+    "recentlyNum": 0,
     "rowsSize": 5,
     "ffmpegPath": "",
+    "tgsToGifPath": "",
     "tgBotToken": "",
     "localPath": ""
   },
@@ -52,7 +46,6 @@
       "dontLoadPic": false
     },
     "goBackMainList": false,
-    "HighlightReplies": false,
     "disabledSticker": false,
     "disabledHotGIF": false,
     "disabledBadge": false,
@@ -92,10 +85,43 @@
       "toBottom": false
     }
   },
-  "messageToImage": {
-    "enabled": false,
-    "highResolution": false,
-    "path": ""
+  "qContextMenu": {
+    "HighlightReplies": false,
+    "customHighlightReplies": {
+      "light": {
+        "copy": "#000000",
+        "forward": "#000000",
+        "collect": "#000000",
+        "multiple": "#000000",
+        "quote": "#008000",
+        "essence": "#000000",
+        "revoke": "#ff0000",
+        "delete": "#ff0000"
+      },
+      "dark": {
+        "copy": "#ffffff",
+        "forward": "#ffffff",
+        "collect": "#ffffff",
+        "multiple": "#ffffff",
+        "quote": "#008000",
+        "essence": "#ffffff",
+        "revoke": "#ff0000",
+        "delete": "#ff0000"
+      }
+    },
+    "wordSearch": {
+      "enabled": false,
+      "searchUrl": "https://www.bing.com/search?q=%search%"
+    },
+    "imageSearch": {
+      "enabled": false,
+      "searchUrl": "https://saucenao.com/search.php?url=%search%"
+    },
+    "messageToImage": {
+      "enabled": false,
+      "highResolution": false,
+      "path": ""
+    }
   },
   "preventMessageRecall": {
     "enabled": false,
@@ -150,5 +176,7 @@
   },
   "appearance":{
     "useSystemAccentColor": false
-  }
+  },
+  "resetLoginInfo": false,
+  "unlockMainMinSize": false
 }

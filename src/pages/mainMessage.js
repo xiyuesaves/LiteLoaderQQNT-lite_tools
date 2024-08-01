@@ -3,7 +3,7 @@ import "../render_modules/wallpaper.js";
 // 消息后缀提示模块
 import "../render_modules/messageTail.js";
 // 消息列表监听
-import "../render_modules/observerMessageList.js";
+import { chatMsgAreaTip } from "../render_modules/observerMessageList.js";
 // 配置模块
 import { options, updateOptions } from "../render_modules/options.js";
 // 右键菜单相关操作
@@ -36,6 +36,8 @@ import { addEventPeerChange } from "../render_modules/curAioData.js";
 import { disableQtag } from "../render_modules/disabledQtag.js";
 // log
 import { Logs } from "../render_modules/logs.js";
+// 原生事件
+import { resetLoginInfo, getAuthData } from "../render_modules/nativeCall.js";
 const log = new Logs("主窗口");
 // 更新窗口图标
 import "../render_modules/setAppIcon.js";
@@ -69,28 +71,42 @@ let setIsNarrowWindow;
  */
 const updateVisibleItem = debounce(() => {
   if (options.message.currentLocation) {
-    const visibleItems = document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.getVisibleItems();
-    if (visibleItems.length) {
+    const visibleItems = document.querySelector(".ml-area.v-list-area")?.__VUE__[0].exposed.getVisibleItems();
+    if (visibleItems?.length) {
       const visibleItem = visibleItems.shift();
-      // log("更新可见消息id", visibleItem);
+      log("更新可见消息id", curUid, visibleItem);
       uidToMessageId.set(curUid, visibleItem.id);
     }
   }
 }, 100);
 
 addEventPeerChange((newPeer) => {
-  log("peer更新", newPeer);
+  log("peer更新-", newPeer);
   curUid = newPeer?.peerUid;
   injectReminder(curUid);
   if (options.message.currentLocation && curUid) {
     const messageId = uidToMessageId.get(curUid);
     if (messageId && messageId != "0") {
-      document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
+      log("跳转到对应消息id", messageId);
+      scrollToItem(messageId);
     } else {
       updateVisibleItem();
     }
   }
 });
+
+async function scrollToItem(messageId, tryNum = 20) {
+  if (tryNum <= 0) {
+    return;
+  }
+  await document.querySelector(".ml-area.v-list-area").__VUE__[0].exposed.scrollToItem(messageId);
+  const visibleItems = document.querySelector(".ml-area.v-list-area")?.__VUE__[0].exposed.getVisibleItems();
+  if (!visibleItems.find((item) => item.id == messageId)) {
+    setTimeout(() => {
+      scrollToItem(messageId, --tryNum);
+    }, 10);
+  }
+}
 
 const observe = new MutationObserver(chatMessage);
 observe.observe(document.body, {
@@ -114,6 +130,10 @@ document.addEventListener("mouseup", (event) => {
  */
 function chatMessage() {
   log("更新页面");
+
+  // 消息合并功能判断右侧悬浮按钮是否显示
+  chatMsgAreaTip();
+
   // 监听消息列表滚动
   if (document.querySelector(".ml-area .q-scroll-view") && first("scrollEvent")) {
     const el = document.querySelector(".ml-area .q-scroll-view");
@@ -253,3 +273,20 @@ function controlSetIsNarrowWindow() {
     attributeFilter: ["style"],
   });
 }
+
+/**
+ * 判断是否需要重置登录信息，由于是异步函数所以只能单独拎出来了
+ */
+async function checkResetLoginInfo() {
+  if (options.resetLoginInfo) {
+    const authData = await getAuthData();
+    if (authData.uin) {
+      await resetLoginInfo(authData.uin);
+      log(`移除登录信息成功`);
+    } else {
+      log(`等待用户数据`);
+      setTimeout(checkResetLoginInfo, 500);
+    }
+  }
+}
+updateOptions(checkResetLoginInfo);

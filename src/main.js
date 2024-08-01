@@ -10,6 +10,7 @@ import { messageRecall, discardDeleteActive } from "./main_modules/msgRecall.js"
 import { proxyOn } from "./main_modules/proxyOn.js";
 
 // 导入独立功能模块
+import "./main_modules/unlockMinSize.js";
 import "./main_modules/updateProxy.js";
 import "./main_modules/wallpaper.js";
 import "./main_modules/initStyle.js";
@@ -17,6 +18,7 @@ import "./main_modules/localEmoticons.js";
 import "./main_modules/getWebPreview.js";
 import "./main_modules/updatePlugins.js";
 import "./main_modules/getTgSticker.js";
+import "./main_modules/extractEifFile.js";
 
 const log = new Logs("main");
 const err = new Logs("Error");

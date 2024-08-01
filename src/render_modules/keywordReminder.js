@@ -2,7 +2,7 @@ import { reminderEl } from "./HTMLtemplate.js";
 import { options } from "./options.js";
 import { getPeer } from "./curAioData.js";
 import { Logs } from "./logs.js";
-export const log = new Logs("提醒词模块");
+const log = new Logs("提醒词模块");
 
 lite_tools.onKeywordReminder((_, peerUid, msgId) => {
   if (!window.keywordReminder) {
