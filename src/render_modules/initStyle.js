@@ -33,7 +33,6 @@ function updateFont() {
   }
 }
 
-// 系统颜色变化时会自动触发N次……debounce一下
 async function updateAccentColor(...args) {
   log("更新主题色", ...args);
   let colorStyle = document.querySelector("#liteToolsAccentColor");
@@ -46,122 +45,60 @@ async function updateAccentColor(...args) {
   if (options.appearance.useSystemAccentColor) {
     const systemAccentColor = await lite_tools.getSystemAccentColor();
     const accentColor = systemAccentColor;
-    const [hotlightColor, menuHighlightColor, highlightColor] = generateColors(accentColor);
+
+    if (!accentColor) {
+      colorStyle.innerHTML = "";
+      return;
+    }
+    
+    // It's ok to keep this for debugging
+    const [linkColor, hoverColor, pressedColor] = generateColors(accentColor);
 
     console.log(
-      `获取到系统色\n%c${accentColor}\n%c${hotlightColor}\n%c${menuHighlightColor}\n%c${highlightColor}`,
+      `获取到系统色\n%c${accentColor}\n%c${linkColor}\n%c${hoverColor}\n%c${pressedColor}`,
       `background-color:${accentColor};`,
-      `background-color:${hotlightColor};`,
-      `background-color:${menuHighlightColor};`,
-      `background-color:${highlightColor};`,
+      `background-color:${linkColor};`,
+      `background-color:${hoverColor};`,
+      `background-color:${pressedColor};`,
     );
 
     colorStyle.innerHTML = `
-    .q-theme-tokens, .q-theme-tokens-light, .q-theme-tokens-dark {
+    html :is(.q-theme-tokens, .q-theme-tokens-light, .q-theme-tokens-dark) {
       /* 系统颜色变量 */
-      --system_accent_color: ${accentColor} !important;
-      --system_hotlight_color: ${hotlightColor} !important;
-      --system_menu_highlight_color: ${menuHighlightColor} !important;
-      --system_highlight_color: ${highlightColor} !important;
+      --system_accent_color: ${accentColor};
+
+      /* hsl offsets are calculated from the QQNT brand color token */
+      --system_link_color: hsl(from var(--system_accent_color) calc(h + 6) calc(s - 20) calc(l + 15) / alpha);
+      --system_hover_color: hsl(from var(--system_accent_color) h calc(s - 20) calc(l + 5) / alpha);
+      --system_pressed_color: hsl(from var(--system_accent_color) h s calc(l - 5) / alpha);
 
       /* 与主题色相同的变量 */
       --brand_standard: var(--system_accent_color);
       --overlay_active_brand: var(--system_accent_color);
       --brand_text: var(--system_accent_color);
 
+      /* 气泡颜色 */
+      /* --host_bubble_bg_css_value: var(--system_accent_color); 无主题，但是这状态本来就没上色姑且先注释掉 */
+      --host_bubble_bg_css_value_main: var(--system_accent_color); /* 默认主题 */
+
       /* 与链接颜色相同的变量 */
-      --text_link: var(--system_highlight_color);
-      --text-link: var(--system_highlight_color); /* 咋还有横线版本的？ */
-      --lt-link-url-color: var(--system_highlight_color);
+      --text_link: var(--system_link_color);
+      --text-link: var(--system_link_color); /* 咋还有横线版本的？ */
+      --lt-link-url-color: var(--system_link_color);
 
       /* hover & active */
-      --nt_brand_standard_2_overlay_hover_brand_2_mix: var(--system_menu_highlight_color);
-      --nt_brand_standard_2_overlay_pressed_brand_2_mix: var(--system_hotlight_color);
+      --nt_brand_standard_2_overlay_hover_brand_2_mix: var(--system_hover_color);
+      --nt_brand_standard_2_overlay_pressed_brand_2_mix: var(--system_pressed_color);
+
+      /* recent contact */
+      --nt_brand_light_2_20_2_alpha: hsl(from var(--system_accent_color) h s l / 0.2);
+      --nt_brand_light_2_40_2_alpha: hsl(from var(--system_accent_color) h s l / 0.4);
+      --nt_brand_standard_2_20_2_alpha: hsl(from var(--system_accent_color) h s l / 0.2);
+      --nt_brand_standard_2_40_2_alpha: hsl(from var(--system_accent_color) h s l / 0.4);
     }`;
   } else {
     colorStyle.innerHTML = "";
   }
-}
-
-/**
- * 将 hex 转为 hsl
- * @param {String} hex 十六进制颜色
- * @returns {String} hsl
- */
-function hexToHsl(hex) {
-  hex = hex.replace(/^#/, "");
-  let r = parseInt(hex.substring(0, 2), 16) / 255;
-  let g = parseInt(hex.substring(2, 4), 16) / 255;
-  let b = parseInt(hex.substring(4, 6), 16) / 255;
-
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  let h,
-    s,
-    l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0; // achromatic
-  } else {
-    let d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-
-  return [h * 360, s * 100, l * 100];
-}
-
-/**
- * 将 hsl 转为 hex
- * @param {*} h
- * @param {*} s
- * @param {*} l
- * @returns hex
- */
-function hslToHex(h, s, l) {
-  h /= 360;
-  s /= 100;
-  l /= 100;
-
-  let r, g, b;
-
-  if (s === 0) {
-    r = g = b = l; // achromatic
-  } else {
-    const hue2rgb = (p, q, t) => {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    };
-
-    let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    let p = 2 * l - q;
-
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
-  }
-
-  const toHex = (x) => {
-    const hex = Math.round(x * 255).toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
-  };
-
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 /**
@@ -170,15 +107,10 @@ function hslToHex(h, s, l) {
  * @returns {String[]} 三个配色
  */
 function generateColors(baseColor) {
-  /**
-   * h 色相
-   * s 饱和
-   * l 亮度
-   */
-  const [h, s, l] = hexToHsl(baseColor);
-  const color1 = hslToHex(h, Math.min(100, s + 20), l);
-  const color2 = hslToHex(h, s, Math.min(100, l + 20));
-  const color3 = hslToHex(h, Math.min(100, s + 10), l);
+  // currently only for debugging
+  const color1 = `hsl(from ${baseColor} calc(h + 6) calc(s - 20) calc(l + 15) / alpha)`; // link
+  const color2 = `hsl(from ${baseColor} h calc(s - 20) calc(l + 5) / alpha)`; // hover
+  const color3 = `hsl(from ${baseColor} h s calc(l - 5) / alpha)`; // pressed
   return [color1, color2, color3];
 }
 
