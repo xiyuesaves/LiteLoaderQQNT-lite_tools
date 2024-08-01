@@ -68,9 +68,16 @@ async function updateAccentColor(...args) {
       /* 系统颜色变量 */
       --system_accent_color: ${accentColor};
 
+      /* 链接颜色 */
+      &.q-theme-tokens-dark {
+        --system_link_color: hsl(from var(--system_accent_color) calc(h + 6) max(calc(s - 20), 5) max(calc(l + 15), 40) / 1); /* 链接不应用透明度 */
+      }
+      &.q-theme-tokens-light {
+        --system_link_color: hsl(from var(--system_accent_color) calc(h + 6) max(calc(s - 5), 5) min(calc(l - 5), 75) / 1);
+      }
+
       /* hsl offsets are calculated from the QQNT brand color token */
-      --system_link_color: hsl(from var(--system_accent_color) calc(h + 6) calc(s - 20) calc(l + 15) / alpha);
-      --system_hover_color: hsl(from var(--system_accent_color) h calc(s - 20) calc(l + 5) / alpha);
+      --system_hover_color: hsl(from var(--system_accent_color) h max(calc(s - 20), 5) calc(l + 5) / alpha);
       --system_pressed_color: hsl(from var(--system_accent_color) h s calc(l - 5) / alpha);
 
       /* 与主题色相同的变量 */
@@ -109,8 +116,8 @@ async function updateAccentColor(...args) {
  */
 function generateColors(baseColor) {
   // currently only for debugging
-  const color1 = `hsl(from ${baseColor} calc(h + 6) calc(s - 20) calc(l + 15) / alpha)`; // link
-  const color2 = `hsl(from ${baseColor} h calc(s - 20) calc(l + 5) / alpha)`; // hover
+  const color1 = `hsl(from ${baseColor} calc(h + 6) max(calc(s - 20), 10) max(calc(l + 15), 30) / 1)`; // link
+  const color2 = `hsl(from ${baseColor} h max(calc(s - 20), 10) calc(l + 5) / alpha)`; // hover
   const color3 = `hsl(from ${baseColor} h s calc(l - 5) / alpha)`; // pressed
   return [color1, color2, color3];
 }
