@@ -105,10 +105,13 @@ contextBridge.exposeInMainWorld("lite_tools", {
   showOpenDialog: (data) => ipcRenderer.invoke("LiteLoader.lite_tools.showOpenDialog", data),
   // 获取图片rkey
   getRkey: (chatType) => ipcRenderer.invoke("LiteLoader.lite_tools.getRkey", chatType),
+  // 删除账号独立配置
   deleteUserConfig: (uid) => ipcRenderer.send("LiteLoader.lite_tools.deleteUserConfig", uid),
+  // 添加账号独立配置
   addUserConfig: (uid, value) => ipcRenderer.send("LiteLoader.lite_tools.addUserConfig", uid, value),
-  // Telegram贴纸集下载相关
+  // Telegram贴纸集下载请求
   downloadTgSticker: (url) => ipcRenderer.send("LiteLoader.lite_tools.downloadTgSticker", url),
+  // Telegram贴纸集下载事件回调
   onDownloadTgStickerEvent: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onDownloadTgStickerEvent", callback),
   // 导入eif表情文件
   extractEifFile: (eifPath) => ipcRenderer.send("LiteLoader.lite_tools.extractEifFile", eifPath),
@@ -118,7 +121,9 @@ contextBridge.exposeInMainWorld("lite_tools", {
   getSystemAccentColor: () => ipcRenderer.invoke("LiteLoader.lite_tools.getSystemAccentColor"),
   // 系统主色变化
   onSystemAccentColorChanged: (...args) => ipcRenderer.on("LiteLoader.lite_tools.onSystemAccentColorChanged", ...args),
+  // 窗口加载完成事件
   windowOnload: () => ipcRenderer.send("LiteLoader.lite_tools.windowOnload"),
+  // 清除所有提示
   clearToast: (callback) => ipcRenderer.on("LiteLoader.lite_tools.clearToast", callback),
   /**
    *
