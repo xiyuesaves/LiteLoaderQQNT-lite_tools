@@ -144,7 +144,6 @@
   "textAreaFuncList": [],
   "chatAreaFuncList": [],
   "preventEscape": false,
-  "advanceHookVue": false,
   "setWindowIcon": false,
   "autoRelanch": false,
   "background": {
