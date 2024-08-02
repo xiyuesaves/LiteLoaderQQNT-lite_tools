@@ -52,16 +52,19 @@ async function updateAccentColor(...args) {
       return;
     }
 
-    // It's ok to keep this for debugging
-    const [linkColor, hoverColor, pressedColor] = generateColors(accentColor);
 
-    console.log(
-      `获取到系统色\n%c${accentColor}\n%c${linkColor}\n%c${hoverColor}\n%c${pressedColor}`,
-      `background-color:${accentColor};`,
-      `background-color:${linkColor};`,
-      `background-color:${hoverColor};`,
-      `background-color:${pressedColor};`,
-    );
+    // require console debug
+    if (options.debug.console) {
+      // It's ok to keep this for debugging
+      const [linkColor, hoverColor, pressedColor] = generateColors(accentColor);
+      console.log(
+        `获取到系统色\n%c${accentColor}\n%c${linkColor}\n%c${hoverColor}\n%c${pressedColor}`,
+        `background-color:${accentColor};`,
+        `background-color:${linkColor};`,
+        `background-color:${hoverColor};`,
+        `background-color:${pressedColor};`,
+      );
+    }
 
     colorStyle.innerHTML = `
     html :is(.q-theme-tokens, .q-theme-tokens-light, .q-theme-tokens-dark) {
