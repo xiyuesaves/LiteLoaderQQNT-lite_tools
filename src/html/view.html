@@ -34,7 +34,7 @@
         <div>
           <h2>使用系统主题色</h2>
           <span class="secondary-text">
-            使用系统的主题色覆盖默认颜色，Windows下还支持自动响应系统主题色变化<br/>
+            使用系统的主题色覆盖默认颜色，Windows下还支持自动响应系统主题色变化<br />
             - 此功能可能会覆盖部分主题样式 (仅适用于Windows与macOS)
           </span>
         </div>
@@ -45,9 +45,7 @@
       <li class="vertical-list-item sub-item">
         <div>
           <h2>提高优先级</h2>
-          <span class="secondary-text">
-            尝试提高主题色优先级来避免被其他主题覆盖
-          </span>
+          <span class="secondary-text"> 尝试提高主题色优先级来避免被其他主题覆盖 </span>
         </div>
         <div class="onlyAvatar q-switch" data-config="appearance.prioritizeColor">
           <span class="q-switch__handle"></span>
@@ -107,7 +105,7 @@
         <li class="vertical-list-item sub-item">
           <div>
             <h2>保留时间</h2>
-            <span class="secondary-text">启用 连续消息合并 后保留时间分隔 - 重载消息生效</span>
+            <span class="secondary-text">启用 <strong>连续消息合并</strong> 后保留时间分隔 - 重载消息生效</span>
           </div>
           <div class="mergeMessageKeepTime q-switch" data-config="message.mergeMessageKeepTime">
             <span class="q-switch__handle"></span>
@@ -182,7 +180,7 @@
       <li class="vertical-list-item sub-item">
         <div>
           <h2>日期格式</h2>
-          <span class="secondary-text">如果太长可以配合 插入到用户名后方 使用</span>
+          <span class="secondary-text">如果太长可以配合 <strong>插入到用户名后方</strong> 使用</span>
         </div>
         <div class="setting-select" data-config="message.showMsgTimeDateFormat">
           <div class="setting-view text_color show-icon" data-value="未初始化"></div>
@@ -363,7 +361,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>划词搜索</h2>
-          <span class="secondary-text">选中文本右键搜索对应内容，%search%替换链接中搜索值</span>
+          <span class="secondary-text">选中文本右键搜索对应内容，<strong>%search%</strong> 替换链接中搜索值</span>
         </div>
         <div class="switchSelectSearch q-switch">
           <span class="q-switch__handle"></span>
@@ -383,7 +381,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>图片搜索</h2>
-          <span class="secondary-text">右键图片搜索，%search%替换链接中搜索值</span>
+          <span class="secondary-text">右键图片搜索，<strong>%search%</strong> 替换链接中搜索值</span>
         </div>
         <div class="switchImageSearch q-switch">
           <span class="q-switch__handle"></span>
@@ -436,9 +434,11 @@
       <li class="vertical-list-item">
         <div>
           <h2>选项高亮</h2>
-          <span class="secondary-text">
-            功能来自
-            <a class="link" data-href="https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies">HighlightReplies</a> 当前接手维护
+          <span class="secondary-text"
+            >自定义菜单选项颜色，功能来自<a class="link" data-href="https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies"
+              >HighlightReplies</a
+            >
+            当前接手维护
           </span>
         </div>
         <div class="q-switch" data-config="qContextMenu.HighlightReplies">
@@ -447,7 +447,7 @@
       </li>
       <li class="vertical-list-item sub-item">
         <div>
-          <h2>自定义颜色-亮色主题</h2>
+          <h2>亮色主题</h2>
           <div class="secondary-text custom-color-light">
             <div class="custom-color">
               <label for="lt-light-copy">复制</label>
@@ -488,7 +488,7 @@
       </li>
       <li class="vertical-list-item sub-item">
         <div>
-          <h2>自定义颜色-暗色主题</h2>
+          <h2>暗色主题</h2>
           <div class="secondary-text custom-color-dark">
             <div class="custom-color">
               <label for="lt-dark-copy">复制</label>
@@ -591,7 +591,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>关键词提醒</h2>
-          <span class="secondary-text">当消息中含有指定单词时会记录消息并提醒，当前只能在主窗口生效</span>
+          <span class="secondary-text">当消息中含有指定单词时会记录消息并提醒，只在主窗口生效</span>
         </div>
         <div class="keywordReminder q-switch">
           <span class="q-switch__handle"></span>
@@ -673,9 +673,9 @@
         <div>
           <h2>启用本地表情包</h2>
           <span class="secondary-text">
-            可以通过文件夹分组表情包，按住Ctrl可多选表情，按住Alt可直接发送表情<br />
             文件路径及名称不能存在特殊字符<br />
-            不推荐使用webp格式的动态表情，这会导致表情窗口异常卡顿
+            不推荐使用webp格式的动态表情，这会导致表情窗口异常卡顿<br />
+            可以通过文件夹分组表情包，按住Ctrl可多选表情，按住Alt可直接发送表情
           </span>
         </div>
         <div class="switchLocalEmoticons q-switch">
@@ -699,7 +699,12 @@
       <li class="vertical-list-item">
         <div>
           <h2>下载tg贴纸</h2>
-          <span class="secondary-text"> 使用前需要配置 Telegram Bot Token，FFmpeg路径，tg_to_gif路径和代理地址 </span>
+          <span class="secondary-text">
+            使用前需要在 <strong>插件配置</strong> 中填写 <strong>Telegram Bot Token</strong>，<strong>FFmpeg路径</strong>，<strong
+              >tg_to_gif路径</strong
+            >
+            和 <strong>代理地址</strong>
+          </span>
         </div>
       </li>
       <li class="vertical-list-item">
@@ -732,7 +737,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>添加右键菜单</h2>
-          <span class="secondary-text">右键图片时增加 保存到本地表情 选项</span>
+          <span class="secondary-text">图片右键菜单增加 <strong>保存到本地表情</strong> 选项</span>
         </div>
         <div class="copyFileTolocalEmoticons q-switch" data-config="localEmoticons.copyFileTolocalEmoticons">
           <span class="q-switch__handle"></span>
@@ -802,7 +807,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>移入显示历史表情</h2>
-          <span class="secondary-text recommend-num">鼠标移入本地表情按钮后显示历史表情列表，需要开启 历史表情 功能</span>
+          <span class="secondary-text recommend-num">鼠标移入本地表情按钮后显示历史表情列表，需要开启 <strong>历史表情</strong> 功能</span>
         </div>
         <div class="hoverShowCommonlyEmoticons q-switch" data-config="localEmoticons.hoverShowCommonlyEmoticons">
           <span class="q-switch__handle"></span>
@@ -832,7 +837,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>快捷输入表情</h2>
-          <span class="secondary-text">通过输入"/"唤起浮动表情列表，通过文件名进行筛选</span>
+          <span class="secondary-text">通过 <strong>自定义快捷键</strong> 唤起浮动表情列表，通过文件名进行筛选</span>
         </div>
         <div class="switchQuickEmoticons q-switch">
           <span class="q-switch__handle"></span>
@@ -841,7 +846,7 @@
       <li class="vertical-list-item sub-item">
         <div>
           <h2>自动填充</h2>
-          <span class="secondary-text">快捷输入表情 功能筛选只有一个表情时自动填充到输入框</span>
+          <span class="secondary-text"><strong>快捷输入表情</strong> 功能筛选只有一个表情时自动填充到输入框</span>
         </div>
         <div class="switchQuickEmoticonsAutoInputOnlyOne q-switch" data-config="localEmoticons.quickEmoticonsAutoInputOnlyOne">
           <span class="q-switch__handle"></span>
@@ -850,7 +855,7 @@
       <li class="vertical-list-item sub-item">
         <div>
           <h2>自定义快捷键</h2>
-          <span class="secondary-text">自定义 快捷输入表情 功能的快捷键</span>
+          <span class="secondary-text">自定义 <strong>快捷输入表情</strong> 功能的快捷键</span>
         </div>
         <div class="slot-input-box">
           <input placeholder="/" class="slot-input quickEmoticonsActiveKey text_color" spellcheck="false" />
@@ -999,7 +1004,9 @@
       <li class="vertical-list-item">
         <div>
           <h2>隐蔽模式</h2>
-          <span class="secondary-text">不会替换页面中的撤回标记，但可以在 <strong>查看撤回消息</strong> 功能中查看被捕获的消息 - 重载消息生效</span>
+          <span class="secondary-text"
+            >不会替换页面中的撤回标记，但可以在 <strong>查看撤回消息</strong> 功能中查看被捕获的消息 - 重载消息生效</span
+          >
         </div>
         <div class="q-switch" data-config="preventMessageRecall.stealthMode">
           <span class="q-switch__handle"></span>
@@ -1039,7 +1046,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>查看撤回消息</h2>
-          <span class="secondary-text">只能查看持久化保存的撤回消息</span>
+          <span class="secondary-text">只能查看 <strong>持久化保存</strong> 的撤回消息</span>
         </div>
         <div class="ops-btns">
           <button class="q-button q-button--small q-button--secondary open-recall-msg-list">查看</button>
@@ -1062,7 +1069,7 @@
           <h2>自定义背景</h2>
           <span class="secondary-text">
             仅支持单张图片/视频<br />
-            高于 25300 的版本需要先启用官方 极简素雅 主题
+            高于 25300 的版本需要先启用官方 <strong>极简素雅</strong> 主题
           </span>
         </div>
         <div class="q-switch" data-config="background.enabled">
@@ -1206,7 +1213,7 @@
       <li class="vertical-list-item">
         <div>
           <h2>独立配置文件</h2>
-          <span class="secondary-text">该账号的所有数据将被独立保存，包括设置，撤回，本地表情等 - 重启生效</span>
+          <span class="secondary-text">该账号的所有配置数据将被独立保存 - 重启生效</span>
         </div>
         <div class="standaloneConfiguration q-switch">
           <span class="q-switch__handle"></span>
@@ -1334,7 +1341,7 @@
       <hr class="horizontal-dividing-line" />
       <li class="vertical-list-item">
         <div>
-          <h2>此菜单内的选项仅用于调试，普通用户请勿开启</h2>
+          <h2>此菜单内的选项仅用于调试，部分功能可能会导致卡顿、内存泄漏等问题<br /><strong>普通用户请勿开启</strong></h2>
         </div>
       </li>
       <hr class="horizontal-dividing-line" />
