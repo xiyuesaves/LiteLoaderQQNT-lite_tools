@@ -106,7 +106,6 @@
  * @property {Array<Object>} textAreaFuncList - 文本区域功能列表。
  * @property {Array<Object>} chatAreaFuncList - 聊天区域功能列表。
  * @property {boolean} preventEscape - 阻止 ESC 关闭窗口。
- * @property {boolean} advanceHookVue - 预载hookVue模块。
  * @property {boolean} setWindowIcon - 窗口使用聊天头像作为图标。
  * @property {boolean} autoRelanch - 更新自动重启。
  * @property {Object} background - 背景配置
@@ -118,7 +117,7 @@
  * @property {number} background.opacity - 背景透明度。
  * @property {boolean} background.enabled - 启用背景。
  * @property {string} background.url - 背景 URL。
- * @property {Object} global - 全局配置
+ * @property {Object} global - 全局配置 - 该对象下的内容将在每次重启时被重置
  * @property {string} global.UA - 用户代理字符串。
  * @property {string} global.rkey - rkey 参数。
  * @property {string} global.updateUrl - 更新 URL。

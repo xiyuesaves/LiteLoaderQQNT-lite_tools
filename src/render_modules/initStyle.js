@@ -53,7 +53,7 @@ async function updateAccentColor(...args) {
     }
 
 
-    // require console debug
+    // require enabled console debug
     if (options.debug.console) {
       // It's ok to keep this for debugging
       const [linkColor, hoverColor, pressedColor] = generateColors(accentColor);
