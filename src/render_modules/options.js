@@ -132,6 +132,9 @@
  * @property {boolean} disableQtag.level - 移除等级头衔。
  * @property {boolean} disableQtag.title - 移除自定义头衔。
  * @property {boolean} disableQtag.all - 移除所有头衔。
+ * @property {Object} appearance - 样式相关
+ * @property {boolean} appearance.useSystemAccentColor - 使用系统颜色。// 虽然message是口大锅，但这个塞进去还是感觉有点怪…
+ * @property {boolean} appearance.prioritizeColor - 尝试提高优先级。
  * @property {boolean} resetLoginInfo - 重置登录信息。
  */
 

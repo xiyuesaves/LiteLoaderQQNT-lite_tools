@@ -326,7 +326,8 @@
   .link {
     cursor: pointer;
     font-size: 13px;
-    color: #0099ff;
+    margin-left: 4px;
+    color: var(--lt-link-url-color);
   }
   .disabled-switch {
     &.q-switch {
@@ -631,7 +632,7 @@
     }
   }
   red {
-    color: red;
+    color: var(--text-error);
     font-weight: bold;
     margin: 0 2px;
   }
