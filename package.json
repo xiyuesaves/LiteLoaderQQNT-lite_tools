@@ -5,6 +5,7 @@
   "main": "esbuild.config.mjs",
   "scripts": {
     "build": "node esbuild.config.mjs",
+    "build-push": "node esbuild.config.mjs --push",
     "build-dev": "node esbuild.config.mjs --dev"
   },
   "keywords": [],

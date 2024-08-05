@@ -7,6 +7,7 @@ const lite_tools = JSON.parse(fs.readFileSync("./package.json", "utf-8"));
 const manifest_json = JSON.parse(fs.readFileSync("./manifest.json", "utf-8"));
 const args = process.argv.slice(2);
 let isDev = args.includes("--dev");
+let isPush = args.includes("--push");
 
 // 主进程
 buildSync({
@@ -42,7 +43,9 @@ console.log(`编译scss耗时：${(new Date().getTime() - thisTime) / 1000} s`);
 
 // 更新版本号
 console.log(`更新 manifest.json 版本号为 ${lite_tools.version}`);
-if(!isDev){
+if (isPush) {
+  manifest_json.injects.main = "./src/nobuild.js";
+} else {
   manifest_json.injects.main = "./dist/main.js";
 }
 manifest_json.version = `${lite_tools.version}${isDev ? "-dev" : ""}`;
@@ -50,7 +53,7 @@ manifest_json.repository.release.tag = `v${lite_tools.version}`;
 fs.writeFileSync("./manifest.json", JSON.stringify(manifest_json, null, 2));
 
 // 生成更新日志
-if (!isDev) {
+if (!isDev && !isPush) {
   console.log("生成更新日志...");
   await getAllRelease();
 } else {
