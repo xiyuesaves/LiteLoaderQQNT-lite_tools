@@ -42,6 +42,9 @@ console.log(`编译scss耗时：${(new Date().getTime() - thisTime) / 1000} s`);
 
 // 更新版本号
 console.log(`更新 manifest.json 版本号为 ${lite_tools.version}`);
+if(!isDev){
+  manifest_json.injects.main = "./dist/main.js";
+}
 manifest_json.version = `${lite_tools.version}${isDev ? "-dev" : ""}`;
 manifest_json.repository.release.tag = `v${lite_tools.version}`;
 fs.writeFileSync("./manifest.json", JSON.stringify(manifest_json, null, 2));
