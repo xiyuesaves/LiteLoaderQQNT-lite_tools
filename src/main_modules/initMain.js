@@ -48,12 +48,7 @@ ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
 // 更新侧边栏功能列表
 ipcMain.on("LiteLoader.lite_tools.sendSidebar", (_, list) => {
   // 改为增量更新，不移除已被添加的选项
-  const topSet = new Set(config.sidebar.top.map((el) => el.name));
-  const bottomSet = new Set(config.sidebar.bottom.map((el) => el.name));
-  const addTop = list.top.filter((item) => !topSet.has(item.name));
-  const addBottom = list.bottom.filter((item) => !bottomSet.has(item.name));
-  config.sidebar.top = config.sidebar.top.concat(addTop);
-  config.sidebar.bottom = config.sidebar.bottom.concat(addBottom);
+  config.sidebar = list;
   updateConfig(config);
 });
 

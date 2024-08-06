@@ -156,7 +156,15 @@ function chatMessage() {
     }
   });
 
-  // 只执行一次
+  // 初始化底部侧边栏
+  document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el) => {
+    const find = options.sidebar.bottom.find((opt) => opt.id === el?.__VUE__?.[0]?.attrs?.item?.id);
+    if (find) {
+      el.classList.toggle("LT-disabled", find.disabled);
+    }
+  });
+
+  // 更新侧边栏数据，只执行一次
   if (navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
     updateSiderbarNavFuncList(navStore);
   }
@@ -175,22 +183,6 @@ function chatMessage() {
 
   // 初始化推荐表情
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
-
-  // 初始化顶部侧边栏
-  document.querySelectorAll(".nav.sidebar__nav .nav-item").forEach((el, index) => {
-    const find = options.sidebar.top.find((opt) => opt.index == index);
-    if (find) {
-      el.classList.toggle("LT-disabled", find.disabled);
-    }
-  });
-
-  // 初始化底部侧边栏
-  document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el, index) => {
-    const find = options.sidebar.bottom.find((opt) => opt.index == index);
-    if (find) {
-      el.classList.toggle("LT-disabled", find.disabled);
-    }
-  });
 
   // 消息列表气泡数字调整
   document.querySelectorAll(".list-item .list-item__container .list-item__summary .summary-bubble .vue-component").forEach((el) => {
