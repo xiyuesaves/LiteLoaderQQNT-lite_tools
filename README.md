@@ -8,8 +8,6 @@
   <a href="/LICENSE"><img src="https://img.shields.io/github/license/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="LICENSE"></a>
   <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases"><img src="https://img.shields.io/github/v/release/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Release"></a>
   <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues"><img src="https://img.shields.io/github/issues/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Issues"></a>
-<!--   <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases"><img src="https://img.shields.io/github/downloads/xiyuesaves/LiteLoaderQQNT-lite_tools/total.svg" alt="downloads"></a> -->
-<!--   <a href=""><img src="https://img.shields.io/badge/sponsor-%E2%9D%A4-e7477d" alt="sponsor"></a> -->
 </p>
 
 LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
@@ -42,6 +40,8 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 ### 手动构建
 
 ```
+git clone git@github.com:xiyuesaves/LiteLoaderQQNT-lite_tools.git
+cd ./LiteLoaderQQNT-lite_tools
 npm i
 npm run build
 ```
@@ -64,7 +64,7 @@ npm run build
 | 移除 VIP 彩色昵称      | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 | 图片窗口全局拖拽 |
 | [右键菜单选项高亮](https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies) | 记录离开时的位置   | 侧键返回                 | 关键词提醒       |
 | 阻止 ESC 关闭窗口      | 链接预览           | 图片遮罩                 | 移除头衔         |
-| 取消主窗口最小尺寸限制 |                    |                          |                  |
+| 取消主窗口最小尺寸限制 | 使用系统主题色 |                          |                  |
 
 ## 声明
 
