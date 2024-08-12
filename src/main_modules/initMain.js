@@ -28,7 +28,7 @@ ipcMain.on("LiteLoader.lite_tools.openWeb", (_, url) => {
 
 // 复制文件
 ipcMain.handle("LiteLoader.lite_tools.copyFile", async (_, from, to) => {
-  return new Promise((res) => {
+  return await new Promise((res) => {
     copyFile(from, to, (err) => {
       if (err) {
         res(false);
