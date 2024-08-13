@@ -26,7 +26,6 @@ function addMsgTail(args) {
             }
           });
           // 必须含有peerUid且匹配到后缀数据
-          log(tail);
           if (peerUid && tail && !tail.disabled) {
             const tailContext = tail.content;
             const newLine = tail.newLine;
