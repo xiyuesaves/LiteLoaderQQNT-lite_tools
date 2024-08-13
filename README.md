@@ -10,7 +10,7 @@
   <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues"><img src="https://img.shields.io/github/issues/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Issues"></a>
 </p>
 
-LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
+LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效 · 福瑞
 
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
@@ -22,6 +22,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 > macOS 用户如果需要使用本地表情功能，请将表情文件夹选择在沙盒里，否则每次重启 QQ 都需要重新选择一次表情目录
 
 > [!CAUTION]\
+> **不要在国内平台宣传该插件**\
 > **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
 
 ## 使用方法
