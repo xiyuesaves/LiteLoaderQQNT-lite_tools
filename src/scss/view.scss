@@ -90,6 +90,7 @@
     }
   }
   .test-proxy {
+    pointer-events: none!important;
     cursor: pointer;
     font-weight: bold;
     color: #0099ff;
