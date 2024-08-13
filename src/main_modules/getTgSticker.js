@@ -35,6 +35,7 @@ async function getTgSticker(url) {
           title: data.result.title,
           name: data.result.name,
           icon: null,
+          url,
         };
         settingWindow.webContents.send("LiteLoader.lite_tools.onDownloadTgStickerEvent", {
           message: `开始下载 ${data.result.title}`,
