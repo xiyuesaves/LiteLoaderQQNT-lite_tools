@@ -185,13 +185,10 @@ async function downloadFile(item, stickerList, data, resolve = []) {
     const fileName = `${file_unique_id}.gif`;
     const filePath = join(folderPath, fileName);
     resolve.push(await convertLottieToGif(buffer, filePath));
-    log("TGS动图下载完成", filePath);
   } else {
-    const fileName = `${file_unique_id}.webp`;
+    const fileName = `${file_unique_id}.png`;
     const filePath = join(folderPath, fileName);
-    writeFileSync(filePath, buffer);
-    resolve.push(true);
-    log("静图下载完成", filePath);
+    resolve.push(await convertWebpToPng(buffer, filePath));
   }
   if (stickerList.length) {
     const sticker = stickerList.shift();
@@ -201,6 +198,26 @@ async function downloadFile(item, stickerList, data, resolve = []) {
   }
 }
 
+/**
+ * 将webp转换为png
+ * @param {Buffer} buffer Webp 二进制文件
+ * @param {String} outputPath 保存路径
+ * @returns {Boolean}
+ */
+function convertWebpToPng(buffer, outputPath) {
+  return new Promise((res) => {
+    Ffmpeg(Readable.from(buffer))
+      .on("error", (err) => {
+        log("webp 转 png 失败", err.message);
+        res(false);
+      })
+      .on("end", () => {
+        log("静图下载完成", outputPath);
+        res(true);
+      })
+      .save(outputPath);
+  });
+}
 function convertWebmToGif(buffer, outputPath) {
   return new Promise((res) => {
     Ffmpeg(Readable.from(buffer))
