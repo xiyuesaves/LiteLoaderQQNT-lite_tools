@@ -218,6 +218,13 @@ function convertWebpToPng(buffer, outputPath) {
       .save(outputPath);
   });
 }
+
+/**
+ * 将webm转换为gif
+ * @param {Buffer} buffer Webm 二进制文件
+ * @param {String} outputPath 保存路径
+ * @returns {Boolean}
+ */
 function convertWebmToGif(buffer, outputPath) {
   return new Promise((res) => {
     Ffmpeg(Readable.from(buffer))
@@ -235,6 +242,12 @@ function convertWebmToGif(buffer, outputPath) {
   });
 }
 
+/**
+ * 将lottie转换为gif
+ * @param {Buffer} buffer Lottie 二进制文件
+ * @param {String} outputPath 保存路径
+ * @returns {Boolean}
+ */
 function convertLottieToGif(buffer, outputPath) {
   return new Promise((res, rej) => {
     const exePath = config.localEmoticons.tgsToGifPath;
