@@ -635,12 +635,21 @@ function loadDom() {
   emoticonsMainEl.addEventListener("mousedown", emoticonsMousedown);
   commonlyEmoticonsPanelEl.addEventListener("mousedown", emoticonsMousedown);
   function emoticonsMousedown(event) {
-    if (event.target.closest(".category-item")) {
-      if (event.button === 0) {
-        mouseDown(event);
-      } else if (event.button === 2 && event.target.closest(".lite-tools-local-emoticons-main")) {
-        contextMenu(event);
-      }
+    const target = event.target;
+    const isLeftClick = event.button === 0;
+    const isCategoryItem = target.closest(".lite-tools-local-emoticons-main .category-item");
+
+    if (isLeftClick && isCategoryItem) {
+      mouseDown(event);
+      return;
+    }
+
+    const isRightClick = event.button === 2;
+    const isCategoryName = target.classList.contains("category-name");
+    const isFolderItem = target.closest(".folder-item")?.emoticonFolder?.type === "folder";
+
+    if (isRightClick && (isCategoryItem || (isCategoryName && isFolderItem))) {
+      contextMenu(event);
     }
   }
   emoticonsMainEl.addEventListener("mousemove", emoticonsMousemove);
@@ -747,7 +756,7 @@ function initQuickPreview() {
       for (let i = 0; i < endNum; i++) {
         const index = i + startNum + 1;
         const previewItem = target.querySelector(`.preview-item:nth-child(${index})`);
-        if(previewItem){
+        if (previewItem) {
           previewItem.imgEl.src = emoticonFolder.prototype.protocolPrefix + emoticonFolder.buildImgSrc(previewItem.path);
         }
       }
@@ -787,8 +796,9 @@ function contextMenu(event) {
   const padding = 6;
 
   if (targetElement.type === "commonly") {
-    contextMenuEl.querySelector(".delete-from-commonly").classList.remove("hide");
-    contextMenuEl.querySelector(".set-icon").classList.add("hide");
+    contextMenuEl.className = "context-menu show-commonly";
+  } else if (isCategoryName) {
+    contextMenuEl.className = "context-menu show-folder";
   } else {
     contextMenuEl.querySelector(".delete-from-commonly").classList.add("hide");
     contextMenuEl.querySelector(".set-icon").classList.remove("hide");
