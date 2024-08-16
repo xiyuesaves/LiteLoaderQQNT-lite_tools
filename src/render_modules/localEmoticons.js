@@ -16,7 +16,7 @@ const barIcon = initBarIcon();
 /**
  * 主要元素
  */
-const { folderListEl, folderIconListEl, commonlyEmoticonsPanelEl } = loadDom();
+const { emoticonsMainEl, folderListEl, folderIconListEl, commonlyEmoticonsPanelEl } = loadDom();
 /**
  * 快速选择表情元素
  */
@@ -391,7 +391,7 @@ function globalMouseDown(event) {
   if (showContextMenu && !event.target.closest(".context-menu")) {
     closeContextMenu();
   }
-  if (!event.target.closest(".lite-tools-bar") && barIcon.querySelector(".lite-tools-local-emoticons-main")) {
+  if (!event.target.closest(".lite-tools-bar") && emoticonsMainEl) {
     closeLocalEmoticons();
     return;
   }
@@ -773,8 +773,8 @@ function initQuickPreview() {
  */
 function closeContextMenu() {
   showContextMenu = false;
-  barIcon.querySelector(".sticker-preview.active")?.classList?.remove("active");
-  barIcon.querySelector(".lite-tools-local-emoticons-main")?.classList?.remove("show-menu");
+  barIcon.querySelector(".sticker-preview.active,.category-name.active")?.classList?.remove("active");
+  emoticonsMainEl?.classList?.remove("show-menu");
 }
 
 /**
@@ -1140,7 +1140,7 @@ function showLocalEmoticons() {
   const event = new Event("scroll");
   // 触发滚动事件
   folderListEl.dispatchEvent(event);
-  barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show");
+  emoticonsMainEl.classList.add("show");
   if (!options.localEmoticons.majorization) {
     folderInfos.forEach((folderInfo) => {
       folderInfo.load();
@@ -1153,12 +1153,11 @@ function showLocalEmoticons() {
  */
 function closeLocalEmoticons() {
   showEmoticons = false;
-  const localEmoticonsEl = barIcon.querySelector(".lite-tools-local-emoticons-main");
-  if (localEmoticonsEl.classList.contains("show")) {
-    localEmoticonsEl.addEventListener(
+  if (emoticonsMainEl.classList.contains("show")) {
+    emoticonsMainEl.addEventListener(
       "transitionend",
       () => {
-        if (!localEmoticonsEl.classList.contains("show") && options.localEmoticons.majorization) {
+        if (!emoticonsMainEl.classList.contains("show") && options.localEmoticons.majorization) {
           folderInfos.forEach((folderInfo) => {
             folderInfo.unLoad();
           });
@@ -1167,7 +1166,7 @@ function closeLocalEmoticons() {
       { once: true },
     );
   }
-  localEmoticonsEl.classList.remove("show");
+  emoticonsMainEl.classList.remove("show");
   if (inserted && options.localEmoticons.recentlyNum !== 0) {
     lite_tools.getLocalEmoticonsList().then((emoticonsList) => {
       appendEmoticons(null, emoticonsList);
