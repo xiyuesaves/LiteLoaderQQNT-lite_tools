@@ -534,7 +534,7 @@
 // 消息合并样式
 .merge-message {
   &.lite-tools-merge-message-tip-top-btn-fix {
-    .chat-msg-area__tip--top-btn{
+    .chat-msg-area__tip--top-btn {
       margin: 6px 10px;
       cursor: pointer;
     }
@@ -553,7 +553,7 @@
     }
   }
   &.lite-tools-merge-message-tip-bottom-fix {
-    .chat-msg-area__tip--bottom{
+    .chat-msg-area__tip--bottom {
       margin: 6px 10px;
       cursor: pointer;
     }
@@ -793,6 +793,21 @@
     box-shadow: var(--shadow_bg_middle_secondary);
     border: var(--border_secondary);
     display: none;
+    &.show-commonly {
+      .context-menu-item.commonly-item {
+        display: block;
+      }
+    }
+    &.show-default {
+      .context-menu-item.default-item {
+        display: block;
+      }
+    }
+    &.show-folder {
+      .context-menu-item.folder-item {
+        display: block;
+      }
+    }
     .context-menu-item {
       transition-duration: 0.2s;
       transition-timing-function: cubic-bezier(0.2, 0.2, 0, 1);
@@ -800,12 +815,10 @@
       transition-property: background-color;
       padding: 4px 0;
       margin: 4px 7px;
-      display: block;
+      display: none;
       border-radius: 4px;
       cursor: pointer;
-      &.hide {
-        display: none;
-      }
+
       &:hover {
         background-color: var(--context-menu-hover);
       }
@@ -856,6 +869,9 @@
         top: 0;
         bottom: 0;
         z-index: 100;
+        &.active{
+          background-color: var(--emoticons-category-hover-bg);
+        }
       }
       .category-list {
         width: 100%;

@@ -66,6 +66,12 @@ const localEmoticonsHTML = `<div class="full-screen-preview">
     <a class="commonly-item default-item context-menu-item context-danger delete-file">
       <span class="context-menu-item__text">从文件夹中删除</span>
     </a>
+    <a class="folder-item context-menu-item rename-folder">
+      <span class="context-menu-item__text">重命名分组</span>
+    </a>
+    <a class="folder-item context-menu-item context-danger delete-folder">
+      <span class="context-menu-item__text">删除文件夹</span>
+    </a>
   </div>
   <div class="folder-list"></div>
   <div class="folder-icon-list">

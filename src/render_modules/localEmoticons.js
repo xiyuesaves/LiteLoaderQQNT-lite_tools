@@ -691,6 +691,14 @@ function loadDom() {
     lite_tools.setEmoticonsIcon(targetElement.path);
     closeContextMenu();
   });
+  contextMenuEl.querySelector(".rename-folder").addEventListener("click", () => {
+    log("重命名分组", targetElement);
+    closeContextMenu();
+  });
+  contextMenuEl.querySelector(".delete-folder").addEventListener("click", () => {
+    log("删除文件夹", targetElement);
+    closeContextMenu();
+  });
   contextMenuEl.querySelector(".delete-file").addEventListener("click", async () => {
     log("从文件中删除", targetElement.path);
     const res = await lite_tools.deleteEmoticonsFile(targetElement.path);
@@ -784,13 +792,14 @@ function closeContextMenu() {
 function contextMenu(event) {
   event.stopPropagation();
   showContextMenu = true;
+  const isCategoryName = event.target.classList.contains("category-name");
   event.target.classList.add("active");
-  barIcon.querySelector(".lite-tools-local-emoticons-main").classList.add("show-menu");
+  emoticonsMainEl.classList.add("show-menu");
   targetElement = {
-    path: event.target.closest(".category-item").path,
+    path: event.target.closest(".category-item")?.path,
     type: event.target.closest(".folder-item").getAttribute("data-type"),
   };
-  log("目标元素数据", targetElement);
+  log("目标元素数据", targetElement, !!isCategoryName);
 
   const contextMenuEl = barIcon.querySelector(".context-menu");
   const padding = 6;
@@ -800,20 +809,22 @@ function contextMenu(event) {
   } else if (isCategoryName) {
     contextMenuEl.className = "context-menu show-folder";
   } else {
-    contextMenuEl.querySelector(".delete-from-commonly").classList.add("hide");
-    contextMenuEl.querySelector(".set-icon").classList.remove("hide");
+    contextMenuEl.className = "context-menu show-default";
   }
 
-  let offsetTop =
-    event.target.parentElement.parentElement.offsetParent.offsetTop +
-    event.target.offsetParent.offsetTop +
-    event.offsetY -
-    folderListEl.scrollTop;
+  let offsetTop = event.target.closest(".folder-item").offsetTop + event.target.offsetTop + event.offsetY - folderListEl.scrollTop;
+  if (!isCategoryName) {
+    log(event.target.offsetParent);
+    offsetTop += event.target.offsetParent.offsetTop;
+  }
   if (offsetTop + contextMenuEl.offsetHeight > folderListEl.offsetHeight + 36 - padding) {
     offsetTop -= contextMenuEl.offsetHeight;
   }
   contextMenuEl.style.top = offsetTop + "px";
-  let offsetLeft = event.target.parentElement.parentElement.offsetParent.offsetLeft + event.target.offsetParent.offsetLeft + event.offsetX;
+  let offsetLeft = event.target.closest(".folder-item").offsetLeft + event.target.offsetLeft + event.offsetX;
+  if (!isCategoryName) {
+    offsetLeft += event.target.offsetParent.offsetLeft;
+  }
   if (offsetLeft + contextMenuEl.offsetWidth > folderListEl.offsetWidth - padding) {
     offsetLeft -= contextMenuEl.offsetWidth;
   }
