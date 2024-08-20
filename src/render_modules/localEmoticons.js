@@ -271,16 +271,12 @@ async function localEmoticons() {
  * 捕获编辑器实例
  */
 function loadEditorModel() {
-  if (document.querySelector(".ck.ck-content.ck-editor__editable")?.ckeditorInstance) {
+  const editor = document.querySelector(".ck.ck-content.ck-editor__editable");
+  if (editor?.ckeditorInstance) {
     log("获取到编辑器实例");
-    ckeditorInstance = document.querySelector(".ck.ck-content.ck-editor__editable").ckeditorInstance;
+    ckeditorInstance = editor.ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
-    const observe = new MutationObserver(quickInsertion);
-    observe.observe(document.querySelector(".ck.ck-content.ck-editor__editable"), {
-      subtree: true,
-      attributes: false,
-      childList: true,
-    });
+    ckeditEditorModel.document.on("change:data", quickInsertion);
   } else {
     setTimeout(loadEditorModel, 100);
   }
