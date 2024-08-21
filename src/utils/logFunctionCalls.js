@@ -11,3 +11,9 @@ for (const key in temp) {
     }
   }
 }
+
+// 遍历对象自有属性
+const obj = {};
+Object.keys(obj).forEach(key => {
+  console.log(key, obj[key]);
+});
