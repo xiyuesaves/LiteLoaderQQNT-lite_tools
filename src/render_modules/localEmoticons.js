@@ -689,6 +689,20 @@ function loadDom() {
   });
   contextMenuEl.querySelector(".rename-folder").addEventListener("click", () => {
     log("重命名分组", targetElement);
+    targetElement.element.innerHTML = `<input type="text" spellcheck="false" class="rename-input" value="${targetElement.element.innerText}"/>`;
+    const inputEl = targetElement.element.querySelector("input");
+    inputEl.focus();
+    inputEl.addEventListener(
+      "blur",
+      () => {
+        log("重命名结果", inputEl.value);
+        targetElement.element.classList.add("active");
+        targetElement.element.innerText = inputEl.value;
+        // targetElement.element.offsetHeight;
+        // targetElement.element.classList.remove("active");
+      },
+      { once: true },
+    );
     closeContextMenu();
   });
   contextMenuEl.querySelector(".delete-folder").addEventListener("click", () => {
@@ -793,7 +807,8 @@ function contextMenu(event) {
   emoticonsMainEl.classList.add("show-menu");
   targetElement = {
     path: event.target.closest(".category-item")?.path,
-    folderPath: event.target.closest(".folder-item")?.path,
+    folderPath: event.target.closest(".folder-item")?.emoticonFolder?.folderPath,
+    element: event.target,
     type: event.target.closest(".folder-item").getAttribute("data-type"),
   };
   log("目标元素数据", targetElement, !!isCategoryName);
