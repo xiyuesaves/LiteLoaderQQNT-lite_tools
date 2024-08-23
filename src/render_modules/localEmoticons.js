@@ -143,7 +143,7 @@ updateOptions(async (opt) => {
         const config = await lite_tools.getLocalEmoticonsConfig();
         const list = config.commonlyEmoticons.map((path, index) => ({ path, index, name: getName(path) }));
         if (list.length) {
-          commonlyEmoticons = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+          commonlyEmoticons = new emoticonFolder("历史表情", null, list, commonlyId, list[0].path, -1, "commonly");
           folderInfos.unshift(commonlyEmoticons);
           folderListEl.insertBefore(commonlyEmoticons.folderEl, folderListEl.querySelector(":first-child"));
           folderIconListEl.insertBefore(commonlyEmoticons.folderIconEl, folderIconListEl.querySelector(":first-child"));
@@ -196,7 +196,7 @@ function updateLocalEmoticonsConfig(_, config) {
       commonlyEmoticons = null;
     }
   } else if (!commonlyEmoticons && options.localEmoticons.commonlyEmoticons) {
-    commonlyEmoticons = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+    commonlyEmoticons = new emoticonFolder("历史表情", null, list, commonlyId, list[0].path, -1, "commonly");
     folderInfos.unshift(commonlyEmoticons);
     folderListEl.insertBefore(commonlyEmoticons.folderEl, folderListEl.querySelector(":first-child"));
     folderIconListEl.insertBefore(commonlyEmoticons.folderIconEl, folderIconListEl.querySelector(":first-child"));
@@ -225,7 +225,7 @@ async function init() {
     const config = await lite_tools.getLocalEmoticonsConfig();
     const list = config.commonlyEmoticons.map((path, index) => ({ path, index }));
     if (list.length && !commonlyEmoticons) {
-      commonlyEmoticons = new emoticonFolder("历史表情", list, commonlyId, list[0].path, -1, "commonly");
+      commonlyEmoticons = new emoticonFolder("历史表情", null, list, commonlyId, list[0].path, -1, "commonly");
       folderInfos.unshift(commonlyEmoticons);
       folderListEl.insertBefore(commonlyEmoticons.folderEl, folderListEl.querySelector(":first-child"));
       folderIconListEl.insertBefore(commonlyEmoticons.folderIconEl, folderIconListEl.querySelector(":first-child"));
@@ -793,6 +793,7 @@ function contextMenu(event) {
   emoticonsMainEl.classList.add("show-menu");
   targetElement = {
     path: event.target.closest(".category-item")?.path,
+    folderPath: event.target.closest(".folder-item")?.path,
     type: event.target.closest(".folder-item").getAttribute("data-type"),
   };
   log("目标元素数据", targetElement, !!isCategoryName);
@@ -874,6 +875,7 @@ async function appendEmoticons(_, newEmoticonsList) {
       } else {
         const newEmoticonFolder = new emoticonFolder(
           folder.name,
+          folder.folderPath,
           folder.list,
           folder.id,
           folder.icon || folder.list[0].path,
@@ -900,12 +902,13 @@ async function appendEmoticons(_, newEmoticonsList) {
 }
 
 class emoticonFolder {
-  constructor(name, list, id, iconPath, index, type) {
+  constructor(name, folderPath, list, id, iconPath, index, type) {
     // 实例属性
     this.name = name;
     this.id = id;
     this.emoticonList = [];
     this.iconPath = iconPath;
+    this.folderPath = folderPath;
     this.index = index;
     this.type = type;
     this.isLoad = false;

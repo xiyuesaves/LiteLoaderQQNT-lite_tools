@@ -244,6 +244,7 @@ async function loadFolder(folderPath, itemIndex = 0) {
             list.unshift({
               id,
               name: basename(folderPath),
+              folderPath,
               index: thisItemIndex,
               path: folderPath,
               list: [],
@@ -399,6 +400,33 @@ ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
   } else {
     const newStickerData = {
       icon: newIconValue,
+    };
+    try {
+      writeFileSync(stickerDataPath, JSON.stringify(newStickerData, null, 2));
+    } catch (err) {
+      log("创建sticker.json失败", err);
+    }
+  }
+  // 如果当前暂停了文件监听，则主动发送更新事件
+  if (pauseWatch) {
+    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  }
+});
+
+// 重命名分组
+ipcMain.on("LiteLoader.lite_tools.renameEmoticons", (_, localPath, title) => {
+  const stickerDataPath = join(dirname(localPath), "sticker.json");
+  if (existsSync(stickerDataPath)) {
+    try {
+      const data = JSON.parse(readFileSync(stickerDataPath, "utf-8"));
+      data.title = title;
+      writeFileSync(stickerDataPath, JSON.stringify(data, null, 2));
+    } catch (err) {
+      log("更新sticker.json失败", err);
+    }
+  } else {
+    const newStickerData = {
+      title: title,
     };
     try {
       writeFileSync(stickerDataPath, JSON.stringify(newStickerData, null, 2));
