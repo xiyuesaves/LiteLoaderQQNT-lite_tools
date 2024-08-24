@@ -717,10 +717,6 @@ function loadDom() {
     );
     closeContextMenu();
   });
-  contextMenuEl.querySelector(".delete-folder").addEventListener("click", () => {
-    log("删除文件夹", targetElement);
-    closeContextMenu();
-  });
   contextMenuEl.querySelector(".delete-file").addEventListener("click", async () => {
     log("从文件中删除", targetElement.path);
     const res = await lite_tools.deleteEmoticonsFile(targetElement.path);
