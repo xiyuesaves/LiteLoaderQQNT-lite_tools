@@ -77,6 +77,8 @@ contextBridge.exposeInMainWorld("lite_tools", {
   deleteCommonlyEmoticons: (path) => ipcRenderer.send("LiteLoader.lite_tools.deleteCommonlyEmoticons", path),
   // 设为分组图标
   setEmoticonsIcon: (path) => ipcRenderer.send("LiteLoader.lite_tools.setEmoticonsIcon", path),
+  // 设为分组名称
+  renameEmoticons: (...args) => ipcRenderer.send("LiteLoader.lite_tools.renameEmoticons", ...args),
   // 关键字提醒
   onKeywordReminder: (callback) => ipcRenderer.on("LiteLoader.lite_tools.onKeywordReminder", callback),
   // 复制文件

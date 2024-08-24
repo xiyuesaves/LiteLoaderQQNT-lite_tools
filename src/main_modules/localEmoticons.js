@@ -415,29 +415,33 @@ ipcMain.on("LiteLoader.lite_tools.setEmoticonsIcon", (_, localPath) => {
 
 // 重命名分组
 ipcMain.on("LiteLoader.lite_tools.renameEmoticons", (_, localPath, title) => {
-  const stickerDataPath = join(dirname(localPath), "sticker.json");
+  const stickerDataPath = join(localPath, "sticker.json");
+  log("重命名分组", stickerDataPath, title);
   if (existsSync(stickerDataPath)) {
     try {
       const data = JSON.parse(readFileSync(stickerDataPath, "utf-8"));
       data.title = title;
       writeFileSync(stickerDataPath, JSON.stringify(data, null, 2));
+      log("更新成功", data);
     } catch (err) {
       log("更新sticker.json失败", err);
     }
   } else {
+    log("目标没有sticker.json", localPath, title);
     const newStickerData = {
       title: title,
     };
     try {
       writeFileSync(stickerDataPath, JSON.stringify(newStickerData, null, 2));
+      log("更新成功", newStickerData);
     } catch (err) {
       log("创建sticker.json失败", err);
     }
   }
-  // 如果当前暂停了文件监听，则主动发送更新事件
-  if (pauseWatch) {
-    globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
-  }
+  // 如果当前暂停了文件监听，则主动发送更新事件 - 不需要，文件名前端更新即可
+  // if (pauseWatch) {
+  //   globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);
+  // }
 });
 
 // 删除指定文件

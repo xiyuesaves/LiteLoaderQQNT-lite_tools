@@ -689,17 +689,29 @@ function loadDom() {
   });
   contextMenuEl.querySelector(".rename-folder").addEventListener("click", () => {
     log("重命名分组", targetElement);
-    targetElement.element.innerHTML = `<input type="text" spellcheck="false" class="rename-input" value="${targetElement.element.innerText}"/>`;
+    targetElement.element.classList.add("active-rename");
+    targetElement.element.insertAdjacentHTML(
+      "afterbegin",
+      `<input type="text" spellcheck="false" class="rename-input" value="${targetElement.element.innerText}"/>`,
+    );
     const inputEl = targetElement.element.querySelector("input");
     inputEl.focus();
+    inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+    inputEl.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        inputEl.removeEventListener("keydown", this);
+        inputEl.blur();
+      }
+    });
     inputEl.addEventListener(
       "blur",
-      () => {
+      function () {
         log("重命名结果", inputEl.value);
-        targetElement.element.classList.add("active");
-        targetElement.element.innerText = inputEl.value;
-        // targetElement.element.offsetHeight;
-        // targetElement.element.classList.remove("active");
+        const newName = inputEl.value.trim() || targetElement.element.innerText;
+        inputEl.removeEventListener("blur", this);
+        targetElement.element.innerText = newName;
+        targetElement.element.classList.remove("active-rename");
+        lite_tools.renameEmoticons(targetElement.folderPath, newName);
       },
       { once: true },
     );
