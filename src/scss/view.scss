@@ -90,7 +90,7 @@
     }
   }
   .test-proxy {
-    pointer-events: none!important;
+    pointer-events: none !important;
     cursor: pointer;
     font-weight: bold;
     color: #0099ff;
@@ -328,7 +328,7 @@
     cursor: pointer;
     font-size: 13px;
     margin-left: 4px;
-    color: var(--lt-link-url-color);
+    color: var(--lt-link-url-color, var(--text_link));
   }
   .disabled-switch {
     &.q-switch {
@@ -510,7 +510,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      label{
+      label {
         cursor: pointer;
       }
       .choose-color {
