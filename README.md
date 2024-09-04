@@ -1,5 +1,5 @@
 <p align=center>
-  <img width="160" alt="icon" height="160" src="https://fuck-csdn.xiyue.xyz" />
+  <img width="160" alt="icon" height="160" src="./icon.png" />
 </p>
 
 <h1 align="center">轻量工具箱</h1>
