@@ -108,7 +108,8 @@ async function scrollToItem(messageId, tryNum = 20) {
   }
 }
 
-const observe = new MutationObserver(chatMessage);
+const debounceChatMessage = debounce(chatMessage, 10);
+const observe = new MutationObserver(debounceChatMessage);
 observe.observe(document.body, {
   childList: true,
   subtree: true,
