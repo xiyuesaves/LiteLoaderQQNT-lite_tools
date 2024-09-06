@@ -7,6 +7,7 @@ import { sendMessage } from "./nativeCall.js";
 import { first } from "./first.js";
 import { getPeer } from "./curAioData.js";
 import { showToast } from "./toast.js";
+import { throttle } from "./throttle.js";
 const log = new Logs("本地表情包模块");
 /**
  * 图标元素
@@ -268,6 +269,16 @@ async function localEmoticons() {
 }
 
 /**
+ * 防抖快捷输入
+ */
+const debounceQuickInsertion = debounce(quickInsertion, 10);
+
+/**
+ * 节流插入到编辑器
+ */
+const throttleInsertToEditor = throttle(insertToEditor, 100);
+
+/**
  * 捕获编辑器实例
  */
 function loadEditorModel() {
@@ -276,11 +287,12 @@ function loadEditorModel() {
     log("获取到编辑器实例");
     ckeditorInstance = editor.ckeditorInstance;
     ckeditEditorModel = ckeditorInstance.model;
-    if(options.debug.console){
-      window.ckeditorInstance = ckeditorInstance
-      window.ckeditEditorModel = ckeditEditorModel
+    // debug 模式将实例暴露到全局
+    if (options.debug.console) {
+      window.ckeditorInstance = ckeditorInstance;
+      window.ckeditEditorModel = ckeditEditorModel;
     }
-    ckeditEditorModel.document.on("change:data", quickInsertion);
+    ckeditEditorModel.document.on("change:data", debounceQuickInsertion);
   } else {
     setTimeout(loadEditorModel, 100);
   }
@@ -310,9 +322,9 @@ function quickInsertion() {
     if (!quickPreviewEl.classList.contains("show")) {
       quickPreviewEl.classList.add("show");
     }
-    // bug
-    if (options.localEmoticons.quickEmoticonsAutoInputOnlyOne === true && filterEmocicons.length === 1 && false) {
-      insertToEditor(filterEmocicons[0].path);
+
+    if (options.localEmoticons.quickEmoticonsAutoInputOnlyOne === true && filterEmocicons.length === 1) {
+      throttleInsertToEditor(filterEmocicons[0].path);
       return;
     }
     // 如果没有过滤数据，则使用全部图片
@@ -436,7 +448,7 @@ function mouseEnter(event) {
  * @param {Boolean} ctrlKey 是否按下ctrl键
  * @returns
  */
-function insertToEditor(src, altKey = false, ctrlKey = false) {
+async function insertToEditor(src, altKey = false, ctrlKey = false) {
   if (!insertImg) {
     return;
   }
@@ -451,11 +463,14 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
     }
     // 如果有匹配命令值，则先删除
     if (regOut) {
-      ckeditEditorModel.change((writer) => {
-        writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
-        for (let i = 0; i < regOut[0].length; i++) {
-          ckeditorInstance.execute("delete");
-        }
+      await new Promise((res) => {
+        ckeditEditorModel.change(() => {
+          for (let i = 0; i < regOut[0].length; i++) {
+            console.log("执行删除", regOut[0], regOut[0][i]);
+            ckeditorInstance.execute("delete");
+          }
+          res();
+        });
       });
     }
     // 以表情包模式发送
@@ -474,11 +489,12 @@ function insertToEditor(src, altKey = false, ctrlKey = false) {
       }
     } else {
       log("将图片插入到编辑器", src, picSubType);
-      const selection = ckeditEditorModel.document.selection;
-      const position = selection.getFirstPosition();
+
       ckeditEditorModel.change((writer) => {
-        writer.setSelection(writer.createPositionAt(ckeditEditorModel.document.getRoot(), "end"));
         // 插入表情
+        const selection = ckeditEditorModel.document.selection;
+        const position = selection.getFirstPosition();
+        console.log(position);
         const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType }) });
         writer.insert(writerEl, position);
       });
