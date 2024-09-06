@@ -186,7 +186,7 @@ function chatMessage() {
   document.querySelector(".sticker-bar")?.classList?.toggle("LT-disabled", options.message.disabledSticker);
 
   // 消息列表气泡数字调整
-  document.querySelectorAll(".list-item .list-item__container .list-item__summary .summary-bubble .vue-component").forEach((el) => {
+  document.querySelectorAll(".recent-contact-item .item__info .item__summary .summary-bubble div.vue-component,.list-item .list-item__container .list-item__summary .summary-bubble .vue-component").forEach((el) => {
     el.__VUE__[0].props.countLimit = options.message.removeBubbleLimit ? Number.MAX_SAFE_INTEGER : 99;
   });
 
