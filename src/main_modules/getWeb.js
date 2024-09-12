@@ -139,7 +139,9 @@ export function get(url, redirects = 0) {
         });
         function endData() {
           const buffer = Buffer.concat(chunks);
-          const html = buffer.toString();
+          const charset = getCharset(contentType);
+          const decode = new TextDecoder(charset);
+          const html = decode.decode(buffer);
           log("返回数据", html);
           resolve({
             success: true,
@@ -161,4 +163,14 @@ export function get(url, redirects = 0) {
       });
     }
   }
+}
+
+function getCharset(contentType) {
+  if (contentType) {
+    const charset = contentType.match(/charset=(.+)/);
+    if (charset) {
+      return charset[1];
+    }
+  }
+  return "utf-8";
 }
