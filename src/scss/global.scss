@@ -889,7 +889,7 @@
             background-color: var(--emoticons-category-hover-bg);
           }
         }
-        &.active-rename{
+        &.active-rename {
           color: transparent;
         }
         .rename-input {
@@ -1105,6 +1105,35 @@
             display: none !important;
           }
           .viewport-list {
+            .recent-contact-item {
+              position: relative;
+              .item__info {
+                overflow: unset;
+                position: absolute;
+                top: 38px;
+                left: calc(50% + 15px);
+                transform: translateX(-50%);
+                .item__title {
+                  display: none;
+                }
+                .item__summary {
+                  .summary-main {
+                    display: none;
+                  }
+                  .summary-bubble {
+                    margin-left: 0 !important;
+                    .q-icon {
+                      color: var(--text_white);
+                      background-color: var(--fill_standard_primary);
+                      border-radius: 50%;
+                      svg{
+                        transform: scale(0.8);
+                      }
+                    }
+                  }
+                }
+              }
+            }
             .list-item {
               border-radius: 0 !important;
               position: relative;
