@@ -467,6 +467,7 @@ async function insertToEditor(src, altKey = false, ctrlKey = false) {
         ckeditEditorModel.change(() => {
           for (let i = 0; i < regOut[0].length; i++) {
             console.log("执行删除", regOut[0], regOut[0][i]);
+            
             ckeditorInstance.execute("delete");
           }
           res();
@@ -489,14 +490,13 @@ async function insertToEditor(src, altKey = false, ctrlKey = false) {
       }
     } else {
       log("将图片插入到编辑器", src, picSubType);
-
       ckeditEditorModel.change((writer) => {
         // 插入表情
         const selection = ckeditEditorModel.document.selection;
         const position = selection.getFirstPosition();
-        console.log(position);
         const writerEl = writer.createElement("msg-img", { data: JSON.stringify({ type: "pic", src, picSubType }) });
         writer.insert(writerEl, position);
+        writer.setSelection(writer.createPositionAt(writerEl, "after"))
       });
     }
     inserted = true;
