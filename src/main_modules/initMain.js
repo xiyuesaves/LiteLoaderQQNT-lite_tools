@@ -98,7 +98,7 @@ ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (_, uid) => {
     function onEvent(channel, ...args) {
       if (
         channel === "IPC_DOWN_2" &&
-        ["nodeIKernelProfileListener/onProfileDetailInfoChanged", "nodeIKernelProfileListener/onProfileSimpleChanged"].includes(
+        ["onProfileSimpleChanged"].includes(
           args?.[1]?.[0]?.cmdName,
         )
       ) {
@@ -108,9 +108,14 @@ ipcMain.handle("LiteLoader.lite_tools.getUserInfo", async (_, uid) => {
     }
     mainEvent.on("send", onEvent);
     ipcMain.emit("IPC_UP_2", {}, { type: "request", callbackId: randomUUID(), eventName: "ns-ntApi-2" }, [
-      "nodeIKernelProfileService/getUserDetailInfo",
-      { uid: uid },
-      null,
+      "nodeIKernelProfileService/fetchUserDetailInfo",
+      {
+        callFrom: "BuddyProfileStore",
+        uid: [uid],
+        source: 1,
+        bizList: [0],
+      },
+      undefined,
     ]);
   });
   return userInfo;

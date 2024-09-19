@@ -43,19 +43,23 @@ async function initPage(map) {
       groupItemEl.peerUid = peerUid;
       document.querySelector(".logs").innerText += `--> ${msgArr[0].chatType}\n`;
       if (msgArr[0].chatType === 1 || msgArr[0].chatType === 100) {
-        document.querySelector(".logs").innerText += `尝试获取 - ${msgArr[0].peerUid}\n`;
+        // document.querySelector(".logs").innerText += `尝试获取 - ${JSON.stringify(msgArr, null, 2)}\n`;
+        // document.querySelector(".logs").innerText += `尝试获取 - ${msgArr[0]?.peerUid}\n`;
         let userInfo;
         // 循环10次获取对应用户信息的请求
         for (let i = 0; i < 10; i++) {
           userInfo = await lite_tools.getUserInfo(msgArr[0].peerUid);
-          document.querySelector(".logs").innerText += `获取数据 - ${userInfo[0].payload.info.uin}\n`;
-          if (parseInt(userInfo[0].payload.info.uin)) {
+          // document.querySelector(".logs").innerText += `获取数据 - ${userInfo[0]?.payload?.info?.uin}\n`;
+          // document.querySelector(".logs").innerText += `获取数据 - ${JSON.stringify(userInfo, null, 2)}\n`;
+          if (userInfo[0]?.payload?.profiles?.[msgArr[0].peerUid]?.coreInfo) {
+            userInfo = userInfo[0].payload.profiles[msgArr[0].peerUid].coreInfo;
             break;
           }
+          await new Promise((res) => setTimeout(res, 10));
         }
-        peerName = userInfo[0].payload.info.remark || userInfo[0].payload.info.nick;
-        peerUid = userInfo[0].payload.info.uin;
-        document.querySelector(".logs").innerText += `${JSON.stringify(userInfo[0].payload)}\n`;
+        peerName = userInfo?.remark || userInfo?.nick || "未知数据";
+        peerUid = userInfo?.uin || "N/A";
+        document.querySelector(".logs").innerText += JSON.stringify(userInfo, null, 4);
         document.querySelector(".logs").innerText += `peerName - ${peerName}\n`;
       }
       groupItemEl.querySelector(".chat-type").innerText = `[${chatTypeName}]`;
@@ -70,7 +74,7 @@ async function initPage(map) {
       filterListEl.appendChild(groupItemEl);
     }
   } catch (err) {
-    document.querySelector(".logs").innerText += `出错${err.message} ${err.stack}\n`;
+    document.querySelector(".logs").innerText += `出错${err.message} ${err?.stack}\n`;
   }
 }
 
@@ -124,7 +128,7 @@ function updateUid(uid) {
           const picEl = parser.parseFromString(recallImgItem, "text/html").querySelector(".msg-img-item");
           const imgEl = picEl.querySelector("img");
           imgEl.src = `appimg://${pic}`;
-          imgEl.setAttribute("alt", "图片获取失败");
+          imgEl.setAttribute("alt", "加载失败");
           imgListEl.appendChild(picEl);
         });
       }
@@ -182,5 +186,12 @@ function getPeerName(elements) {
   }
   return "没有找到名称";
 }
+
+// 刷新
+window.addEventListener("keydown", (event) => {
+  if (event.code === "F5") {
+    location.reload();
+  }
+});
 
 lite_tools.getReacllMsgData();
