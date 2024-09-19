@@ -5,49 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>撤回消息查看</title>
     <style>
-    .msg-list.dark-mode {
-      background-color: var(--sidebar-bg-color); /* 暗色背景 */
-    }
-    
-    .msg-content.dark-mode {
-      background-color: #1a1a1a; /* 暗色消息背景 */
-      color: #f4f4f4; /* 暗色文本 */
-    }
-       ::-webkit-scrollbar {
-        width: 8px; /* 控制滚动条的宽度 */
+      .dark-mode .msg-list {
+        background-color: var(--sidebar-bg-color); /* 暗色背景 */
       }
+
+      .dark-mode .msg-content {
+        background-color: #1a1a1a; /* 暗色消息背景 */
+        color: #f4f4f4; /* 暗色文本 */
+      }
+
+      ::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+
       ::-webkit-scrollbar-thumb {
         background-color: darkgrey; /* 设置滚动条的背景颜色 */
         border-radius: 10px; /* 设置滚动条的圆角 */
       }
-      ::-webkit-scrollbar-thumb:hover {
-        background-color: #0099ff; /* 设置滚动条在悬停时的颜色 */
+
+      *::-webkit-scrollbar-thumb {
+        background-color: transparent;
       }
+      *:hover::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb-color); /* 设置滚动条在悬停时的颜色 */
+      }
+
       :root {
         --sider-bar-minwidth: 250px;
         --sider-bar-widhth: 30%;
         --sider-bar-maxwidth: 350px;
-        --main-bg-color: #f4f4f4; /* 设置主背景颜色 */
-        --sidebar-bg-color: #eaeaea; /* 设置侧边栏背景颜色 */
-        --primary-color: #0099ff; /* 设置主要颜色 */
-        --text-color: #333; /* 设置文本颜色 */
+
+        --scrollbar-thumb-color: #0000001a;
+
+        --sidebar-active-bg-color: #0099ff; /* 侧边栏选中背景 */
+        --sidebar-active-text-color: #ffffff; /* 侧边栏选中文本 */
+        --sidebar-bg-color: #ffffff; /* 侧边栏背景 */
+        --sidebar-text-color: #111111; /* 侧边栏背景 */
+
+        --msg-content-bg-color: #ffffff; /* 消息内容背景 */
+        --msg-content-text-color: #111111; /* 消息内容文本 */
+        --msg-img-item-bg-color: #f2f2f2; /* 消息图片背景 */
+        --content-list-bg-color: #f2f2f2; /* 消息列表背景 */
       }
 
-    /* 系统暗色主题样式 */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --main-bg-color: #1a1a1a; /* 暗色背景 */
-        --sidebar-bg-color: #333; /* 暗色侧边栏 */
-        
-        --text-color: #f4f4f4; /* 暗色文本 */
+      /* 系统暗色主题样式 */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --scrollbar-thumb-color: #ffffff3d;
+
+          --sidebar-active-bg-color: #ffffff1f; /* 侧边栏选中背景 */
+          --sidebar-active-text-color: #ffffffe6; /* 侧边栏选中文本 */
+          --sidebar-bg-color: #1b1b1b; /* 侧边栏背景 */
+          --sidebar-text-color: #ffffffe6; /* 侧边栏背景 */
+
+          --msg-content-bg-color: #262626; /* 消息内容背景 */
+          --msg-content-text-color: #ffffffe6; /* 消息内容文本 */
+          --msg-img-item-bg-color: #111111; /* 消息图片背景 */
+          --content-list-bg-color: #111111; /* 消息列表背景 */
+        }
       }
-    }
+
       body {
         margin: 0;
         font-family: Arial, sans-serif;
         user-select: none;
         background-color: var(--main-bg-color);
       }
+
       .data {
         width: 100%;
         height: 100vh;
@@ -56,18 +81,19 @@
         align-items: flex-start;
         justify-content: flex-start;
       }
+
       .qq-number-filter {
         width: var(--sider-bar-widhth);
         min-width: var(--sider-bar-minwidth);
         max-width: var(--sider-bar-maxwidth);
         max-height: 100%;
+        height: 100vh;
         overflow: auto;
         background-color: var(--sidebar-bg-color);
-        border-radius: 10px;
-        padding: 10px;
-        padding: 5px; /* 减小内边距 */
- 	box-sizing: border-box;
+        padding: 10px 6px;
+        box-sizing: border-box;
       }
+
       .filter-item {
         cursor: pointer;
         width: 100%;
@@ -75,14 +101,15 @@
         display: flex;
         align-items: center;
         box-sizing: border-box;
-        padding: 5px;  /* 调整内边距 */
+        padding: 6px;
         justify-content: flex-start;
-        margin-bottom:5px;  /* 调整间距 */
-        font-size: 14px;/* 调整字体大小 */
-        color: var(--text-color);
-        border-radius: 5px;  /* 调整圆角 */
-        transition: background-color 0.3s ease;
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: var(--sidebar-text-color);
+        border-radius: 4px;
+        transition: 0.15s ease;
       }
+
       .filter-item span {
         display: block;
         overflow: hidden;
@@ -95,9 +122,10 @@
         flex-shrink: 0;
       }
       .filter-item.active {
-        background-color: #0099ff;
-        color: #ffffff;
+        background-color: var(--sidebar-active-bg-color);
+        color: var(--sidebar-active-text-color);
       }
+
       .msg-list {
         width: calc(100% - min(var(--sider-bar-widhth), var(--sider-bar-maxwidth)));
         max-width: calc(100% - var(--sider-bar-minwidth));
@@ -107,7 +135,7 @@
         overflow: auto;
         overflow: auto;
         box-sizing: border-box;
-        background-color: #f2f2f2;
+        background-color: var(--content-list-bg-color);
       }
       .msg-item {
         display: flex;
@@ -115,32 +143,26 @@
         justify-content: flex-start;
         margin-bottom: 12px;
       }
-      .user-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background-color: antiquewhite;
-        text-align: center;
-      }
       .msg-box {
         width: auto;
         max-width: calc(100% - 32px);
-        /* margin-left: 10px; */
       }
       .user-name {
         margin: 0;
         font-size: 12px;
         padding-left: 8px;
+        color: var(--msg-content-text-color);
       }
       .msg-content {
         width: 100%;
         margin-top: 4px;
         height: auto;
-        background-color: #ffffff;
+        background-color: var(--msg-content-bg-color);
+        color: var(--msg-content-text-color);
         border-radius: 8px;
-        font-size: 12px;
+        font-size: 14px;
         box-sizing: border-box;
-        padding: 12px;
+        padding: 8px 10px;
         cursor: pointer;
       }
       .msg-text-box {
@@ -150,8 +172,8 @@
         display: flex;
         align-items: flex-start;
         justify-content: flex-start;
-        font-size: 12px;
-        line-height: 21px;
+        font-size: 14px;
+        /* line-height: 21px; */
         min-height: 18px;
       }
       .msg-img-list {
@@ -168,14 +190,13 @@
         margin-right: 4px;
         margin-bottom: 4px;
         border-radius: 6px;
-        background-color: #f2f2f2;
+        overflow: hidden;
+        background-color: var(--msg-img-item-bg-color);
       }
       .msg-img-item img {
-        width: 132px;
-        height: 132px;
-        object-fit: cover;
         width: 100%;
         height: 100%;
+        object-fit: cover;
       }
       .msg-text {
         margin: 0;
@@ -185,7 +206,7 @@
         right: 0px;
         float: right;
         font-size: 12px;
-        line-height: 13px;
+        line-height: 16px;
         width: auto;
         text-align: right;
         margin-left: 6px;
@@ -206,6 +227,7 @@
         right: 0;
         opacity: 0.6;
       }
+      /* debug 日志 */
       .logs {
         top: 0;
         left: 0;
@@ -219,14 +241,12 @@
         pointer-events: none;
         opacity: 0;
         height: 0 !important;
-      }
-      blue {
-        color: #0099ff;
+        max-height: 100vh;
       }
     </style>
   </head>
-  <body>    
-<div class="logs"></div>
+  <body>
+    <div class="logs"></div>
     <div class="data">
       <div class="qq-number-filter">
         <div class="filter-item loading-tips">
@@ -238,36 +258,3 @@
   </body>
   <script src="../pages/showRecallList.js" type="module"></script>
 </html>
-<script>
-	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-  		const newColorScheme = event.matches ? "dark" : "light";
-	});
-</script>
-
-  <script>
-    // 函数用于应用主题样式
-    function applyTheme(newColorScheme) {
-      const msgList = document.querySelector('.msg-list');
-      const msgContents = document.querySelectorAll('.msg-content');
-
-      if (newColorScheme === 'dark') {
-        // 添加暗色主题类
-        msgList.classList.add('dark-mode');
-        msgContents.forEach(content => content.classList.add('dark-mode'));
-      } else {
-        // 移除暗色主题类
-        msgList.classList.remove('dark-mode');
-        msgContents.forEach(content => content.classList.remove('dark-mode'));
-      }
-    }
-
-    // 监听系统主题变化
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-      const newColorScheme = event.matches ? "dark" : "light";
-      applyTheme(newColorScheme);
-    });
-
-    // 初始化主题
-    const initialColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
-    applyTheme(initialColorScheme);
-  </script>
