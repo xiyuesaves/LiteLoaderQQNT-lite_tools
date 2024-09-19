@@ -59,34 +59,12 @@ async function processPic(msgItem) {
         } else {
           log("原图已存在", pic.sourcePath);
         }
-        // 修复本地数据中的错误
         if (pic?.thumbPath) {
           pic.thumbPath = new Map([
-            [0, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_0")],
-            [198, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_198")],
-            [720, pic.sourcePath.replace("Ori", "Thumb").replace(pic.md5HexStr, pic.md5HexStr + "_720")],
+            [0, pic.sourcePath],
+            [198, pic.sourcePath],
+            [720, pic.sourcePath],
           ]);
-        }
-        log("缩略图数据", pic.thumbPath);
-        // log("缩略图", typeof pic?.thumbPath, pic?.thumbPath instanceof Map);
-        if (pic?.thumbPath) {
-          const toArray = Array.from(pic.thumbPath);
-          log("开始下载缩略图", toArray);
-          for (let i = 0; i < toArray.length; i++) {
-            const picPath = toArray[i][1];
-            if (requireDownload(picPath)) {
-              try {
-                log("尝试下载缩略图", picPath, picUrls[i]);
-                const body = await downloadPic(picUrls[i]);
-                mkdirSync(dirname(picPath), { recursive: true });
-                writeFileSync(picPath, body);
-              } catch (err) {
-                log("缩略图下载失败", picPath, err?.message, err?.stack);
-              }
-            } else {
-              log("缩略图已存在", picPath);
-            }
-          }
         }
       }
     }
