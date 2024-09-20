@@ -606,6 +606,7 @@
           }
         }
         &.merge-child {
+          .only-time,
           .user-name {
             display: none !important;
           }
@@ -1126,7 +1127,7 @@
                       color: var(--text_white);
                       background-color: var(--fill_standard_primary);
                       border-radius: 50%;
-                      svg{
+                      svg {
                         transform: scale(0.8);
                       }
                     }
