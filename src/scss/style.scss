@@ -56,7 +56,7 @@
   .ark-view-message_not-support {
     background-color: unset;
   }
-  .q-miracle-background{
+  .q-miracle-background {
     display: none;
   }
   // 移除主窗口背景颜色
@@ -116,7 +116,10 @@
   // 侧边栏
   .lite-tools-main {
     .sidebar-nav {
-      background-color: unset;
+      background-color: unset !important;
+      .sidebar-wrapper {
+        background-color: unset !important;
+      }
     }
   }
 }
@@ -125,7 +128,10 @@
   &.lite-tools-full-wallpaper {
     // 侧边栏
     .sidebar-nav {
-      background-color: unset;
+      background-color: unset !important;
+      .sidebar-wrapper {
+        background-color: unset !important;
+      }
     }
   }
   // 调整背景元素定位
