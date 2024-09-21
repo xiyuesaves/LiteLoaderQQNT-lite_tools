@@ -139,7 +139,9 @@ export function get(url, redirects = 0) {
         });
         function endData() {
           const buffer = Buffer.concat(chunks);
-          const charset = getCharset(contentType);
+          const defaultDecoder = new TextDecoder("utf-8");
+          const defaultHtml = defaultDecoder.decode(buffer);
+          const charset = getCharset(contentType, defaultHtml);
           const decode = new TextDecoder(charset);
           const html = decode.decode(buffer);
           log("返回数据", html);
@@ -165,9 +167,15 @@ export function get(url, redirects = 0) {
   }
 }
 
-function getCharset(contentType) {
+function getCharset(contentType, htmlStr) {
   if (contentType) {
     const charset = contentType.match(/charset=(.+)/);
+    if (charset) {
+      return charset[1];
+    }
+  }
+  if (htmlStr) {
+    const charset = htmlStr.match(/<meta\s+http-equiv="Content-Type"\s+content="text\/html;\s*charset=([^"]+)"\s*\/?>/i);
     if (charset) {
       return charset[1];
     }
