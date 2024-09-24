@@ -11,7 +11,7 @@ const log = new Logs("消息后缀");
  */
 function addMsgTail(args) {
   // 消息发送事件
-  if (config.tail.enabled) {
+  if (config?.tail?.enabled) {
     if (args[3]?.[1]?.[0] === "nodeIKernelMsgService/sendMsg") {
       log("消息发送事件", args);
       if (checkChatType(args[3][1][1].peer)) {
