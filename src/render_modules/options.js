@@ -111,7 +111,6 @@
  * @property {Object} background - 背景配置
  * @property {boolean} background.overlaySiderBar - 覆盖侧边栏。
  * @property {boolean} background.removeMask - 移除遮罩。
- * @property {boolean} background.redrawCard - 重新绘制卡片。
  * @property {boolean} background.backgroundVisible - 增强可读性。
  * @property {boolean} background.blurFilter - 启用背景模糊。
  * @property {number} background.opacity - 背景透明度。

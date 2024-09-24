@@ -149,7 +149,6 @@
   "background": {
     "overlaySiderBar": false,
     "removeMask": false,
-    "redrawCard": false,
     "backgroundVisible": true,
     "blurFilter": true,
     "opacity": 0.5,

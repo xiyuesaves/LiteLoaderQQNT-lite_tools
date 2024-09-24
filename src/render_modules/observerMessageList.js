@@ -4,7 +4,6 @@ import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
 import { getPeer, addEventPeerChange } from "./curAioData.js";
 import { checkChatType } from "./checkChatType.js";
-import { createHtmlCard } from "./createHtmlCard.js";
 import { showWebPreview } from "./showWebPreview.js";
 import { Logs } from "./logs.js";
 const log = new Logs("消息列表处理");
@@ -259,30 +258,6 @@ async function singleMessageProcessing(target, msgRecord) {
       if (chatTypes.includes(msgRecord?.chatType)) {
         // 尺寸监听器
         updateMsgList.observe(messageEl);
-        // 重写卡片消息
-        if (options.background.enabled && options.background.redrawCard) {
-          const findArkMsg = msgRecord?.elements?.find((element) => element?.arkElement);
-          if (findArkMsg) {
-            try {
-              const arkData = JSON.parse(findArkMsg.arkElement.bytesData);
-              const htmlCard = createHtmlCard(arkData);
-              if (htmlCard) {
-                log("重写卡片");
-                const arkMsgContentContainer = messageEl.querySelector(
-                  ".message-content__wrapper .ark-msg-content-container:not(.lite-tools-cover-canvas)",
-                );
-                if (arkMsgContentContainer) {
-                  arkMsgContentContainer.classList.add("lite-tools-cover-canvas");
-                  arkMsgContentContainer.insertAdjacentHTML("beforeend", htmlCard);
-                }
-              } else {
-                log("没有对应卡片");
-              }
-            } catch (err) {
-              log("重写卡片出错", err);
-            }
-          }
-        }
 
         // 消息靠左
         if (options.message.selfMsgToLeft) {
