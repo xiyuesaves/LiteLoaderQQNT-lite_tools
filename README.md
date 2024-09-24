@@ -43,8 +43,8 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 ```
 git clone git@github.com:xiyuesaves/LiteLoaderQQNT-lite_tools.git
 cd ./LiteLoaderQQNT-lite_tools
-npm i
-npm run build
+pnpm i
+pnpm run build
 ```
 
 ### 查看当前版本更新日志
