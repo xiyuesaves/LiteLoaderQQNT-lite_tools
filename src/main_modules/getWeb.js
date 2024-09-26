@@ -175,7 +175,7 @@ function getCharset(contentType, htmlStr) {
     }
   }
   if (htmlStr) {
-    const charset = htmlStr.match(/<meta\s+http-equiv="Content-Type"\s+content="text\/html;\s*charset=([^"]+)"\s*\/?>/i);
+    const charset = htmlStr.match(/<meta\s+[^>]*charset=["']?([^"'\s>]+)|<meta\s+http-equiv=["']?Content-Type["']?\s+content=["'][^"']*charset=([^"']+)/i)
     if (charset) {
       return charset[1];
     }
