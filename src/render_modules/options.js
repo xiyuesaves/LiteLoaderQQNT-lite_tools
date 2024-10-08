@@ -47,6 +47,7 @@
  * @property {boolean} message.disabledSlideMultipleSelection - 阻止消息窗口拖拽操作。
  * @property {boolean} message.convertMiniPrgmArk - 小程序分享转为url卡片。
  * @property {boolean} message.showMsgTime - 显示消息时间。
+ * @property {boolean} message.showMsgElapsedTime 显示消息发送后距离现在过了多久
  * @property {string} message.showMsgTimeFormat - 消息时间格式。
  * @property {string} message.showMsgTimeDateFormat - 消息日期格式。
  * @property {boolean} message.showMsgTimeZone - 显示消息时区。

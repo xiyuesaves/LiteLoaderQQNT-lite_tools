@@ -52,6 +52,7 @@
     "disabledSlideMultipleSelection": false,
     "convertMiniPrgmArk": false,
     "showMsgTime": false,
+    "showMsgElapsedTime": false,
     "showMsgTimeFormat": "220",
     "showMsgTimeDateFormat": "000",
     "showMsgTimeZone": false,

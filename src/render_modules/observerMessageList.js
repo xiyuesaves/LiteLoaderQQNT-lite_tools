@@ -1,4 +1,4 @@
-import { options } from "./options.js";
+import { options, updateOptions } from "./options.js";
 import { messageRecall } from "./messageRecall.js";
 import { forwardMessage } from "./nativeCall.js";
 import { debounce } from "./debounce.js";
@@ -57,6 +57,11 @@ const TIME_FORMAT_MAPPING = {
  * 获取当前peer
  */
 let peer = getPeer();
+
+/**
+ * 获取当前时间显示方案
+ */
+let showMsgElapsedTime = options.message.showMsgElapsedTime;
 
 /**
  * 处理当前可见的消息列表
@@ -365,16 +370,9 @@ async function singleMessageProcessing(target, msgRecord) {
           if (!messageEl.querySelector(".lite-tools-time")) {
             const find = (msgRecord?.msgTime ?? 0) * 1000;
             if (find) {
-              const showTime = new Intl.DateTimeFormat("zh-CN", {
-                year: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[0]],
-                month: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[1]],
-                day: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[2]],
-                hour: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[0]],
-                minute: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[1]],
-                second: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[2]],
-                timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined,
-              }).format(new Date(find));
+              const showTime = options.message.showMsgElapsedTime ? autoTime(find) : absTime(find);
 
+              // 完整时间
               const fullTime = new Intl.DateTimeFormat("zh-CN", {
                 timeStyle: "full",
                 dateStyle: "full",
@@ -384,6 +382,7 @@ async function singleMessageProcessing(target, msgRecord) {
               newTimeEl.innerText = showTime;
               newTimeEl.title = `${fullTime}`;
               newTimeEl.setAttribute("time", showTime);
+              newTimeEl.setAttribute("data-date", find);
               newTimeEl.classList.add("lite-tools-time");
 
               /**
@@ -579,6 +578,78 @@ addEventPeerChange((newPeer) => {
   peer = newPeer;
   checkNSFW = new Set();
 });
+
+// 动态时间
+function autoTime(sendTime) {
+  const sendTimeStamp = new Date(sendTime);
+  const nowTimeStamp = new Date();
+  const diff = nowTimeStamp - sendTimeStamp;
+  const diffYear = Math.floor(diff / 1000 / 60 / 60 / 24 / 30 / 12);
+  const diffMonth = Math.floor(diff / 1000 / 60 / 60 / 24 / 30);
+  const diffDay = Math.floor(diff / 1000 / 60 / 60 / 24);
+  const diffHour = Math.floor(diff / 1000 / 60 / 60);
+  const diffMin = Math.floor(diff / 1000 / 60);
+  const diffSec = Math.floor(diff / 1000);
+  if (diffYear > 0) {
+    return `${diffYear} 年前`;
+  } else if (diffMonth > 0) {
+    return `${diffMonth} 个月前`;
+  } else if (diffDay > 0) {
+    return `${diffDay} 天前`;
+  } else if (diffHour > 0) {
+    return `${diffHour} 小时前`;
+  } else if (diffMin > 0) {
+    return `${diffMin} 分钟前`;
+  } else if (diffSec > 0) {
+    return `${diffSec} 秒前`;
+  } else {
+    return "当前";
+  }
+}
+
+// 每隔30秒更新一次动态时间
+setInterval(() => {
+  if (options.message.showMsgElapsedTime) {
+    document.querySelectorAll(".lite-tools-time").forEach((item) => {
+      const newTime = autoTime(item.getAttribute("data-date") * 1);
+      item.innerText = newTime;
+      item.setAttribute("time", newTime);
+    });
+  }
+}, 30 * 1000);
+
+// 配置更新时触发
+updateOptions(() => {
+  if (showMsgElapsedTime !== options.message.showMsgElapsedTime) {
+    showMsgElapsedTime = options.message.showMsgElapsedTime;
+    if (options.message.showMsgElapsedTime) {
+      document.querySelectorAll(".lite-tools-time").forEach((item) => {
+        const newTime = autoTime(item.getAttribute("data-date") * 1);
+        item.innerText = newTime;
+        item.setAttribute("time", newTime);
+      });
+    } else {
+      document.querySelectorAll(".lite-tools-time").forEach((item) => {
+        const newTime = absTime(item.getAttribute("data-date") * 1);
+        item.innerText = newTime;
+        item.setAttribute("time", newTime);
+      });
+    }
+  }
+});
+
+// 绝对时间
+function absTime(sendTime) {
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[0]],
+    month: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[1]],
+    day: TIME_FORMAT_MAPPING[options.message.showMsgTimeDateFormat[2]],
+    hour: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[0]],
+    minute: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[1]],
+    second: TIME_FORMAT_MAPPING[options.message.showMsgTimeFormat[2]],
+    timeZoneName: options.message.showMsgTimeZone ? "shortOffset" : undefined,
+  }).format(new Date(sendTime));
+}
 
 /**
  * 初始化监听器
