@@ -131,6 +131,7 @@
     "blockAllRetractions": false,
     "cacheHistory": false,
     "stealthMode": false,
+    "redirectPicPath": false,
     "textColor": {
       "light": "#ff6666",
       "dark": "#c70000"
@@ -172,7 +173,7 @@
     "title": false,
     "all": false
   },
-  "appearance":{
+  "appearance": {
     "useSystemAccentColor": false,
     "prioritizeColor": false
   },
