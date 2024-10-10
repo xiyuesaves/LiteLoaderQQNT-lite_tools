@@ -95,10 +95,12 @@ async function getWebPrevew(url) {
       standardData = {
         url,
         title: webMeta.data["og:title"] || webMeta.data["twitter:title"] || webMeta.data["title"],
-        imageUrl: (webMeta.data["og:image"] || webMeta.data["twitter:image:src"] || webMeta.data["image"])?.replace(
-          /^(http:\/\/|https:\/\/|\/\/)?/,
-          "https://",
-        ),
+        imageUrl: (
+          webMeta.data["og:image"] ||
+          webMeta.data["twitter:image:src"] ||
+          webMeta.data["twitter:image"] ||
+          webMeta.data["image"]
+        )?.replace(/^(http:\/\/|https:\/\/|\/\/)?/, "https://"),
         alt: webMeta.data["og:image:alt"] || webMeta.data["twitter:description"] || webMeta.data["description"],
         description: webMeta.data["og:description"] || webMeta.data["twitter:description"] || webMeta.data["description"],
         site_name: webMeta.data["og:site_name"] || webMeta.data["twitter:site"] || webMeta.data["url"],
