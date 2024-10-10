@@ -17,7 +17,7 @@ export function get(url, redirects = 0) {
       error: "Too many redirects",
     });
   }
-  log("请求地址", url);
+  // log("请求地址", url);
   const urlData = new URL(url);
   const defaultHeaders = {
     "User-Agent": config.global.UA,
@@ -144,7 +144,7 @@ export function get(url, redirects = 0) {
           const charset = getCharset(contentType, defaultHtml);
           const decode = new TextDecoder(charset);
           const html = decode.decode(buffer);
-          log("返回数据", html);
+          // log("返回数据", html);
           resolve({
             success: true,
             data: html,

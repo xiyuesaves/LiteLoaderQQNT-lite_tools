@@ -76,12 +76,12 @@ function updateEmoticonList() {
       }),
     );
     // 如果没有启用历史表情
-    log("平铺所有表情文件路径", newPaths);
+    log("平铺所有表情文件路径", newPaths.size);
     localEmoticonsConfig.commonlyEmoticons = localEmoticonsConfig.commonlyEmoticons.filter((path) => {
-      log("过滤历史表情", path, newPaths.has(path));
+      // log("过滤历史表情", path, newPaths.has(path));
       return newPaths.has(path);
     });
-    log("广播表情列表", emoticonsList);
+    log("广播表情列表", emoticonsList.length);
     globalBroadcast("LiteLoader.lite_tools.updateEmoticons", emoticonsList);
     log("广播常用表情列表", localEmoticonsConfig);
     globalBroadcast("LiteLoader.lite_tools.updateLocalEmoticonsConfig", localEmoticonsConfig);

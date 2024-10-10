@@ -16,7 +16,7 @@ function replaceMiniAppArk(args) {
     // 接收到获取历史消息列表
     const msgList = args[2]?.msgList;
     if (msgList && msgList.length && checkChatType(msgList[0])) {
-      log("历史消息事件");
+      // log("历史消息事件");
       replaceMsgList(msgList);
     }
     // 接收到的新消息
@@ -26,14 +26,14 @@ function replaceMiniAppArk(args) {
       "nodeIKernelMsgListener/onActiveMsgInfoUpdate",
     ]);
     if (onRecvMsg >= 0 && checkChatType(args?.[2]?.[onRecvMsg]?.payload?.msgList?.[0])) {
-      log("新消息事件");
+      // log("新消息事件");
       replaceMsgList(args[2][onRecvMsg].payload.msgList);
     }
 
     // 转发消息
     const onForwardMsg = findEventIndex(args, "nodeIKernelMsgListener/onAddSendMsg");
     if (onForwardMsg >= 0 && checkChatType(args?.[2]?.[onForwardMsg]?.payload?.msgRecord)) {
-      log("转发消息事件");
+      // log("转发消息事件");
       replaceMsgList([args[2][onForwardMsg].payload.msgRecord]);
     }
   }
@@ -55,7 +55,7 @@ function replaceMsgList(msgList) {
         const json = JSON.parse(msgElements.arkElement.bytesData);
         if (json?.prompt?.includes("[QQ小程序]")) {
           msgElements.arkElement.bytesData = replaceArk(json, msg_seq);
-          log("替换小程序卡片", json);
+          log("成功替换卡片", json);
         }
       }
     });

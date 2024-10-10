@@ -39,7 +39,6 @@ async function getMeatData(url) {
       err: "没有找到meta数据",
     };
   }
-  log("请求成功", metaTags);
   const meta = {};
   metaTags.forEach((tag) => {
     const name = tag.match(/name=["']([^"']+)["']/) || tag.match(/<title>([^<]+)<\/title>/);

@@ -180,7 +180,7 @@ function messageRecall(args) {
 
 // 激活所有聊天对象
 function activeAllChat(recentContactList) {
-  log("检测到联系人列表更新", recentContactList);
+  // log("检测到联系人列表更新", recentContactList);
   const recentContactLists = recentContactList?.payload?.changedRecentContactLists;
   if (recentContactLists instanceof Array) {
     for (let i = 0; i < recentContactLists.length; i++) {
@@ -218,7 +218,7 @@ function activeAllChat(recentContactList) {
 // 替换消息列表中的撤回标记
 function preventRecallMessage(msgList) {
   let historyMessageRecallList = new Map();
-  log("处理消息列表", msgList.length);
+  // log("处理消息列表", msgList.length);
   for (let i = 0; i < msgList.length; i++) {
     const msgItem = msgList[i];
     for (let j = 0; j < msgItem.elements.length; j++) {
@@ -300,7 +300,7 @@ function preventRecallMessage(msgList) {
       }
     }
   }
-  log("消息列表处理完成");
+  // log("消息列表处理完成");
 }
 
 // 初始化本地撤回数据结构
