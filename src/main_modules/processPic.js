@@ -1,11 +1,11 @@
 import { dirname, join, basename } from "path";
 import { loadConfigPath } from "./config.js";
 import { existsSync, mkdirSync, writeFileSync, statSync } from "fs";
-import { downloadPic } from "./downloadPic.js";
 import { config } from "./config.js";
 import { getRkey } from "./getRkey.js";
 import { Logs } from "./logs.js";
 const log = new Logs("图片处理模块");
+const downloadingc = new Set();
 
 // 获取图片链接
 async function getPicUrl(picData, chatType) {
@@ -61,12 +61,15 @@ async function processPic(msgItem) {
         if (requireDownload(pic.sourcePath)) {
           picUrls = await getPicArr(pic, chatType);
           try {
-            log("下载原图");
+            downloadingc.add(pic.sourcePath);
             const body = await downloadPic(picUrls[0]);
             mkdirSync(dirname(pic.sourcePath), { recursive: true });
             writeFileSync(pic.sourcePath, body);
+            log("原图下载成功");
           } catch (err) {
-            log("原图下载失败", picUrls[0], err?.message, err?.stack);
+            log("原图下载失败", dirname(picUrls[0]), err?.message, err?.stack);
+          } finally {
+            downloadingc.delete(pic.sourcePath);
           }
         }
         if (pic?.thumbPath) {
@@ -83,12 +86,15 @@ async function processPic(msgItem) {
             const thumbPicPath = thumbPics[i][1];
             if (requireDownload(thumbPicPath)) {
               try {
-                log("下载缩略图", thumbPicPath, picUrls[i]);
+                downloadingc.add(thumbPicPath);
                 const body = await downloadPic(picUrls[i]);
                 mkdirSync(dirname(thumbPicPath), { recursive: true });
                 writeFileSync(thumbPicPath, body);
+                log("缩略图下载成功", thumbPicPath, picUrls[i]);
               } catch (err) {
-                log("缩略图下载失败", picUrls[i], err?.message, err?.stack);
+                log("缩略图下载失败", dirname(picUrls[i]), err?.message, err?.stack);
+              } finally {
+                downloadingc.delete(thumbPicPath);
               }
             }
           }
@@ -99,14 +105,46 @@ async function processPic(msgItem) {
 }
 
 /**
+ * 图片下载函数
+ * @param {String} url 图片url
+ * @returns {Promise}
+ */
+function downloadPic(url) {
+  return fetch(url)
+    .then((res) => {
+      if (res.status === 200) {
+        return res.arrayBuffer();
+      } else {
+        throw new Error(res.statusText);
+      }
+    })
+    .then((buf) => {
+      if (buf.size !== 0) {
+        return new Uint8Array(buf);
+      } else {
+        throw new Error("请求返回无数据");
+      }
+    });
+}
+
+/**
  * 判断是否需要下载图片
  * @param {String} path 图片本地路径
  * @returns {Boolean}
  */
 function requireDownload(path) {
+  if (downloadingc.has(path)) {
+    log("图片下载中", dirname(path));
+    return false;
+  }
   if (existsSync(path)) {
     const stats = statSync(path);
-    return stats.size < 100;
+    if (stats.size > 100) {
+      log("文件已存在", dirname(path));
+      return false;
+    } else {
+      return true;
+    }
   }
   return true;
 }
