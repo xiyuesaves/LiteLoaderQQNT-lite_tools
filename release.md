@@ -1,6 +1,7 @@
 ### 修复
 
 - `链接预览` 功能的编码识别函数有遗漏导致的乱码问题
+- 当启用代理地址后将导致 [Chii Devtools](https://github.com/mo-jinran/chii-devtools/tree/v4) 插件无法正常工作的问题
 
 ### 新增
 
