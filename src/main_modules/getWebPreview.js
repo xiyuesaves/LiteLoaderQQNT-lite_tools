@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { fetch } from "undici";
+import { fetch } from "./updateProxy.js";
 import { globalBroadcast } from "./globalBroadcast.js";
 import { config, onUpdateConfig } from "./config.js";
 import { getTweetWebMeta, isValidTwitterPostUrl, isTwitterProfileUrl, getTwitterUserInfoWebMeta } from "./getTwitterWebPreview.js";

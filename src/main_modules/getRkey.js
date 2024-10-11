@@ -1,5 +1,6 @@
 import { Logs } from "./logs.js";
 import { config } from "./config.js";
+import { fetch } from "./updateProxy.js";
 const log = new Logs("getRkey");
 
 let rkey;

@@ -1,4 +1,5 @@
 import { dirname, join, basename } from "path";
+import { fetch } from "./updateProxy.js";
 import { loadConfigPath } from "./config.js";
 import { existsSync, mkdirSync, writeFileSync, statSync } from "fs";
 import { config } from "./config.js";

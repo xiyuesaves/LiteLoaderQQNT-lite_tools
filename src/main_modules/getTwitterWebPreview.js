@@ -1,4 +1,4 @@
-import { fetch } from "undici";
+import { fetch } from "./updateProxy.js";
 import { Logs } from "./logs.js";
 const log = new Logs("推特数据解析");
 const locationSvg =

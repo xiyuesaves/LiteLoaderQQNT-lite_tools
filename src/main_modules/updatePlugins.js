@@ -3,7 +3,7 @@ import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { app, ipcMain } from "electron";
 import { join } from "path";
-import { fetch } from "undici";
+import { fetch } from "./updateProxy.js";
 import AdmZip from "adm-zip";
 import { config } from "./config.js";
 import { settingWindow } from "./captureWindow.js";

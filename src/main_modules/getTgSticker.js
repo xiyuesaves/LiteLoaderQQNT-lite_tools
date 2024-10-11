@@ -1,4 +1,3 @@
-import { fetch } from "undici";
 import { Readable } from "stream";
 import Ffmpeg from "fluent-ffmpeg";
 import { join } from "path";
@@ -7,6 +6,7 @@ import { writeFileSync, mkdirSync } from "fs";
 import { config } from "./config.js";
 import { settingWindow } from "./captureWindow.js";
 import { folderUpdate, setPauseWatch } from "./localEmoticons.js";
+import { fetch } from "./updateProxy.js";
 import { spawn } from "child_process";
 import zlib from "zlib";
 import { Logs } from "./logs.js";
