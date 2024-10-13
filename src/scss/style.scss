@@ -201,7 +201,6 @@
       text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
       box-shadow: var(--lt-box-shadow);
       overflow: hidden;
-      backdrop-filter: blur(28px);
       /* 我的消息 */
       // &.container--self {
       // }
@@ -216,8 +215,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        backdrop-filter: blur(28px);
-        background-color: var(--lt-background-color-05);
+        background-color: var(--lt-background-color-07);
         z-index: -1;
       }
       .text-link {
@@ -341,6 +339,20 @@
   /* 左侧消息列表 */
   .recent-contact {
     backdrop-filter: blur(8px);
+  }
+
+  :not(.record-msg-detail) > .message {
+    .forward-msg,
+    .msg-content-container,
+    .file-element,
+    .mix-message__container {
+      &:not(.wallet-message__container, .hidden-background) {
+        &::after {
+          backdrop-filter: blur(28px);
+          background-color: var(--lt-background-color-05);
+        }
+      }
+    }
   }
 }
 
