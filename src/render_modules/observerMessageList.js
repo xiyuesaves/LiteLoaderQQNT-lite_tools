@@ -31,6 +31,10 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
  * @type {Map}
  */
 let msgElMergeType = new Map();
+/**
+ * 历史合并消息头像高度缓存
+ */
+let msgMergerCacheMap = new Map();
 
 /**
  * 匹配链接正则
@@ -76,6 +80,7 @@ function processingMsgList() {
   }
 
   const msgMergerMap = new Map();
+
   let currentMainId = null;
   // 循环消息列表
   for (let index = 0; index < msgListRef.curMsgs.length; index++) {
@@ -105,13 +110,13 @@ function processingMsgList() {
         messageEl.classList.remove("merge-main");
         messageEl.classList.add("merge", "merge-child");
         msgMergerMap.delete(item.id);
-        msgMergerMap.get(currentMainId)?.push(item.id);
+        msgMergerMap.get(currentMainId)?.add(item.id);
         msgElMergeType.set(item.id, "merge-child");
       } else {
         messageEl.classList.remove("merge-child");
         messageEl.classList.add("merge", "merge-main");
         currentMainId = item.id;
-        msgMergerMap.set(currentMainId, []);
+        msgMergerMap.set(currentMainId, new Set());
         msgElMergeType.set(item.id, "merge-main");
       }
 
@@ -121,6 +126,11 @@ function processingMsgList() {
         const arrayLength = array.length;
         msgElMergeType = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
       }
+      if (msgMergerCacheMap.size >= MAX_CACHE_SIZE) {
+        const array = Array.from(msgMergerCacheMap);
+        const arrayLength = array.length;
+        msgMergerCacheMap = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
+      }
     }
   }
 
@@ -128,14 +138,25 @@ function processingMsgList() {
     const mainEl = document.querySelector(`[id="${mainId}"] .message`);
     const childs = msgMergerMap.get(mainId);
     let height = mainEl.offsetHeight - 15; // 减去主消息的padding-top
-    for (let index = 0; index < childs.length; index++) {
-      const childId = childs[index];
-      const childEl = document.querySelector(`[id="${childId}"] .message`);
-      if (childEl) {
-        height += childEl.offsetHeight;
-      }
+    const cache = msgMergerCacheMap.get(mainId);
+    if (cache?.size === childs.size) {
+      height = cache.height;
+      log("命中高度缓存", mainId, height);
+    } else {
+      childs.forEach((childId) => {
+        const childEl = document.querySelector(`[id="${childId}"] .message`);
+        if (childEl) {
+          height += childEl.offsetHeight;
+        }
+      });
+      height = height - 4;
+      // 添加缓存
+      msgMergerCacheMap.set(mainId, {
+        height,
+        size: childs.size,
+      });
     }
-    height = height - 4;
+
     const avatarEl = mainEl.querySelector(".avatar-span");
     if (avatarEl) {
       avatarEl.style.height = `${height}px`;
@@ -489,7 +510,7 @@ async function singleMessageProcessing(target, msgRecord) {
         if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
           const oldType = msgElMergeType.get(msgRecord?.msgId);
           if (oldType) {
-            log("读取到缓存", oldType);
+            log("命中合并缓存", oldType);
             messageEl.classList.add("merge", oldType);
           }
         }
