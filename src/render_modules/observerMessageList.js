@@ -105,12 +105,14 @@ function processingMsgList() {
         messageEl.classList.remove("merge-main");
         messageEl.classList.add("merge", "merge-child");
         msgMergerMap.delete(item.id);
-        msgMergerMap.get(currentMainId).push(item.id);
+        msgMergerMap.get(currentMainId)?.push(item.id);
+        msgElMergeType.set(item.id, "merge-child");
       } else {
         messageEl.classList.remove("merge-child");
         messageEl.classList.add("merge", "merge-main");
         currentMainId = item.id;
         msgMergerMap.set(currentMainId, []);
+        msgElMergeType.set(item.id, "merge-main");
       }
 
       // 如果缓存消息大于100000，则移除10%最早的数据
@@ -484,12 +486,13 @@ async function singleMessageProcessing(target, msgRecord) {
         }
 
         // 连续消息合并
-        // if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
-        //   const oldType = msgElMergeType.get(msgRecord?.msgId);
-        //   if (oldType) {
-        //     messageEl.classList.add("merge", oldType);
-        //   }
-        // }
+        if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
+          const oldType = msgElMergeType.get(msgRecord?.msgId);
+          if (oldType) {
+            log("读取到缓存", oldType);
+            messageEl.classList.add("merge", oldType);
+          }
+        }
 
         // 添加url预览信息
         if (options.message.previreUrl.enabled) {
