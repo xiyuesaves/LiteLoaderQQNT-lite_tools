@@ -67,59 +67,78 @@ let showMsgElapsedTime = options.message.showMsgElapsedTime;
  * 处理当前可见的消息列表
  */
 function processingMsgList() {
-  const curMsgs = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef.curMsgs;
+  // 消息列表数组
+  const msgListRef = app.__vue_app__.config.globalProperties.$store.state.aio_chatMsgArea.msgListRef;
+
   // 消息类型不在处理范围
-  if (!checkChatType(curMsgs?.[0]?.data)) {
+  if (!checkChatType(msgListRef.curMsgs?.[0]?.data)) {
     return;
   }
-  const childElHeight = new Map();
-  const curMsgsLength = curMsgs.length;
-  for (let index = 0; index < curMsgsLength; index++) {
-    const el = curMsgs[index];
-    const messageEl = document.querySelector(`[id="${el.id}"] .message`);
-    const msgRecord = curMsgs[index].data;
+
+  const msgMergerMap = new Map();
+  let currentMainId = null;
+  // 循环消息列表
+  for (let index = 0; index < msgListRef.curMsgs.length; index++) {
+    // 当前消息
+    const item = msgListRef.curMsgs[index];
+    // 上一条消息
+    const prevItem = msgListRef.curMsgs[index - 1];
+    // 当前消息元素
+    const messageEl = document.querySelector(`[id="${item.id}"] .message`);
+    // 当前消息对象
+    const msgRecord = msgListRef.curMsgs[index].data;
+
     // 额外处理下历史撤回数据
     if (messageEl && msgRecord?.lite_tools_recall) {
       messageRecall(messageEl, msgRecord?.lite_tools_recall);
     }
+
     // 消息合并逻辑
-    if (msgRecord?.elements?.[0]?.grayTipElement === null && options.message.avatarSticky.enabled && options.message.mergeMessage) {
-      // 发送者uid
-      const senderUid = msgRecord?.senderUid;
-      // 用户显示昵称
-      const anonymousNick = msgRecord?.anonymousExtInfo?.anonymousNick ?? "";
-      // 记录消息高度tag
-      const mapTag = senderUid + anonymousNick;
-      // 下一条消息元素
-      const nextMsgRecord = curMsgs[index + 1]?.data;
-      if (messageEl) {
-        if (isChildMessage(msgRecord, nextMsgRecord)) {
-          messageEl.classList.remove("merge-main");
-          messageEl.classList.add("merge", "merge-child");
-          curMsgs[index].height = messageEl.offsetHeight;
-          childElHeight.set(mapTag, (childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight);
-          msgElMergeType.set(curMsgs[index].id, "merge-child");
-        } else {
-          messageEl.classList.remove("merge-child");
-          messageEl.classList.add("merge", "merge-main");
-          const avatarEl = messageEl.querySelector(".avatar-span");
-          if (avatarEl) {
-            avatarEl.style.height = `${
-              (childElHeight.get(mapTag) ?? 0) + messageEl.querySelector(".message-container").offsetHeight - 4
-            }px`;
-          }
-          childElHeight.delete(mapTag);
-          msgElMergeType.set(curMsgs[index].id, "merge-main");
-        }
-        // 如果缓存消息大于100000，则移除10%最早的数据
-        if (msgElMergeType.size >= MAX_CACHE_SIZE) {
-          const array = Array.from(msgElMergeType);
-          const arrayLength = array.length;
-          msgElMergeType = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
-        }
+    if (
+      messageEl &&
+      msgRecord?.elements?.[0]?.grayTipElement === null &&
+      options.message.avatarSticky.enabled &&
+      options.message.mergeMessage
+    ) {
+      // 判断当前消息是不是子消息
+      if (isChildMessage(prevItem?.data, item?.data)) {
+        messageEl.classList.remove("merge-main");
+        messageEl.classList.add("merge", "merge-child");
+        msgMergerMap.delete(item.id);
+        msgMergerMap.get(currentMainId).push(item.id);
+      } else {
+        messageEl.classList.remove("merge-child");
+        messageEl.classList.add("merge", "merge-main");
+        currentMainId = item.id;
+        msgMergerMap.set(currentMainId, []);
+      }
+
+      // 如果缓存消息大于100000，则移除10%最早的数据
+      if (msgElMergeType.size >= MAX_CACHE_SIZE) {
+        const array = Array.from(msgElMergeType);
+        const arrayLength = array.length;
+        msgElMergeType = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
       }
     }
   }
+
+  msgMergerMap.keys().forEach((mainId) => {
+    const mainEl = document.querySelector(`[id="${mainId}"] .message`);
+    const childs = msgMergerMap.get(mainId);
+    let height = mainEl.offsetHeight - 15; // 减去主消息的padding-top
+    for (let index = 0; index < childs.length; index++) {
+      const childId = childs[index];
+      const childEl = document.querySelector(`[id="${childId}"] .message`);
+      if (childEl) {
+        height += childEl.offsetHeight;
+      }
+    }
+    height = height - 4;
+    const avatarEl = mainEl.querySelector(".avatar-span");
+    if (avatarEl) {
+      avatarEl.style.height = `${height}px`;
+    }
+  });
 }
 
 /**
@@ -465,12 +484,12 @@ async function singleMessageProcessing(target, msgRecord) {
         }
 
         // 连续消息合并
-        if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
-          const oldType = msgElMergeType.get(msgRecord?.msgId);
-          if (oldType) {
-            messageEl.classList.add("merge", oldType);
-          }
-        }
+        // if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
+        //   const oldType = msgElMergeType.get(msgRecord?.msgId);
+        //   if (oldType) {
+        //     messageEl.classList.add("merge", oldType);
+        //   }
+        // }
 
         // 添加url预览信息
         if (options.message.previreUrl.enabled) {
@@ -538,21 +557,26 @@ initMessageList();
  * 判断当前消息是不是子消息
  * @return {Boolean}
  */
-function isChildMessage(msgRecord, nextMsgRecord) {
+function isChildMessage(prevRecord, record) {
   // 如果其中一个参数为空则直接返回false
-  if (!(msgRecord && nextMsgRecord)) {
+  if (!(prevRecord && record)) {
     return false;
   }
+
   // uni是否一致
-  const uniEqual = msgRecord?.senderUid === nextMsgRecord?.senderUid;
+  const uniEqual = prevRecord?.senderUid === record?.senderUid;
+
   // 匿名昵称是否一致
-  const anonymousEqual = msgRecord?.anonymousExtInfo?.anonymousNick === nextMsgRecord?.anonymousExtInfo?.anonymousNick;
-  // 下一条消息不是灰色提示
-  const notGrayTip = nextMsgRecord?.elements?.[0]?.grayTipElement === null;
-  // 当前消息没有显示时间
-  const notShowTime = options.message.mergeMessageKeepTime ? !msgRecord?.showTimestamp : true;
-  // 返回是不是子消息
-  return uniEqual && anonymousEqual && notGrayTip && notShowTime;
+  const anonymousEqual = prevRecord?.anonymousExtInfo?.anonymousNick === record?.anonymousExtInfo?.anonymousNick;
+
+  // 消息是不是灰色提示
+  const grayTip = record?.elements?.[0]?.grayTipElement === null;
+
+  // 消息有没有显示时间
+  const showTime = options.message.mergeMessageKeepTime ? !record?.showTimestamp : true;
+
+  // 返回是不是主消息
+  return uniEqual && anonymousEqual && grayTip && showTime;
 }
 
 // 一个全局点击监听器，用于处理防剧透图片点击事件
