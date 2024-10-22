@@ -31,10 +31,6 @@ const filterClass = ".msg-content-container:not(.ptt-message,.file-message--cont
  * @type {Map}
  */
 let msgElMergeType = new Map();
-/**
- * 历史合并消息头像高度缓存
- */
-let msgMergerCacheMap = new Map();
 
 /**
  * 匹配链接正则
@@ -82,6 +78,7 @@ function processingMsgList() {
   const msgMergerMap = new Map();
 
   let currentMainId = null;
+
   // 循环消息列表
   for (let index = 0; index < msgListRef.curMsgs.length; index++) {
     // 当前消息
@@ -126,11 +123,6 @@ function processingMsgList() {
         const arrayLength = array.length;
         msgElMergeType = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
       }
-      if (msgMergerCacheMap.size >= MAX_CACHE_SIZE) {
-        const array = Array.from(msgMergerCacheMap);
-        const arrayLength = array.length;
-        msgMergerCacheMap = new Map(array.splice(0, arrayLength - arrayLength * 0.1));
-      }
     }
   }
 
@@ -138,25 +130,15 @@ function processingMsgList() {
   msgMergerMap.keys().forEach((mainId) => {
     const mainEl = document.querySelector(`[id="${mainId}"] .message .message-container`);
     const childs = msgMergerMap.get(mainId);
-    let height = mainEl.offsetHeight - 15; // 减去主消息的padding-top
-    const cache = msgMergerCacheMap.get(mainId);
-    if (cache?.size === childs.size) {
-      height = cache.height;
-      log("命中高度缓存", mainId, height);
-    } else {
-      childs.forEach((childId) => {
-        const childEl = document.querySelector(`[id="${childId}"] .message`);
-        if (childEl) {
-          height += childEl.offsetHeight;
-        }
-      });
-      height = height - 4;
-      // 添加缓存
-      msgMergerCacheMap.set(mainId, {
-        height,
-        size: childs.size,
-      });
-    }
+    let height = mainEl.offsetHeight; // 减去主消息的padding-top
+
+    childs.forEach((childId) => {
+      const childEl = document.querySelector(`[id="${childId}"] .message`);
+      if (childEl) {
+        height += childEl.offsetHeight;
+      }
+    });
+    height = height - 4;
 
     const avatarEl = mainEl.querySelector(".avatar-span");
     if (avatarEl) {
@@ -249,7 +231,7 @@ const awaitList = new Map();
 const resizeObserver = new ResizeObserver((entries) => {
   for (let entry of entries) {
     if (entry?.target?.offsetWidth) {
-      log("放行", entry?.target, entry?.target?.offsetWidth);
+      // log("放行", entry?.target, entry?.target?.offsetWidth);
       resizeObserver.unobserve(entry.target);
       // 降低处理优先级，避免出现循环监听
       requestIdleCallback(
@@ -370,7 +352,7 @@ async function singleMessageProcessing(target, msgRecord) {
               if (!msgContentEl.offsetWidth) {
                 await addlImgResizeEvent(msgContentEl);
               }
-              log("图片尺寸", msgContentEl.offsetWidth, document.body.contains(msgContentEl));
+              // log("图片尺寸", msgContentEl.offsetWidth, document.body.contains(msgContentEl));
               const elements = msgRecord?.elements;
               const minWidth =
                 options.message.showMsgTime && // 开启了显示时间
@@ -511,7 +493,6 @@ async function singleMessageProcessing(target, msgRecord) {
         if (options.message.avatarSticky.enabled && options.message.mergeMessage) {
           const oldType = msgElMergeType.get(msgRecord?.msgId);
           if (oldType) {
-            log("命中合并缓存", oldType);
             messageEl.classList.add("merge", oldType);
           }
         }
