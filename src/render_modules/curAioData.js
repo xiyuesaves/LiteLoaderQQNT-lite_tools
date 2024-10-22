@@ -55,7 +55,7 @@ function addEventPeerChange(func) {
  * @returns {Object}
  */
 function getPeer() {
-  log("返回peer", peer);
+  // log("返回peer", peer);
   return peer;
 }
 

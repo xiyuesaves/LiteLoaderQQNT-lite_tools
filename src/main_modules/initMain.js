@@ -47,7 +47,6 @@ ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
 
 // 更新侧边栏功能列表
 ipcMain.on("LiteLoader.lite_tools.sendSidebar", (_, list) => {
-  // 改为增量更新，不移除已被添加的选项
   config.sidebar = list;
   updateConfig(config);
 });

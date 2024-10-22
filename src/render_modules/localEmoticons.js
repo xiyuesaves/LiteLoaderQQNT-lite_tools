@@ -895,7 +895,7 @@ function jumpFolder(event) {
 async function appendEmoticons(_, newEmoticonsList) {
   try {
     const config = await lite_tools.getLocalEmoticonsConfig();
-    log("获取到表情对象", newEmoticonsList);
+    // log("获取到表情对象", newEmoticonsList);
     // 平铺表情对象数组
     emoticonsListArr = newEmoticonsList.flatMap((emoticons) => {
       return emoticons.list;

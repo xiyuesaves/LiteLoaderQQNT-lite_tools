@@ -24,7 +24,7 @@ async function getWindowIcon(peer) {
     if (res instanceof Map) {
       const avatar = res.get(peer.peerUid);
       if (avatar) {
-        log("获取到对应聊天头像", res, avatar, webContentId);
+        // log("获取到对应聊天头像", res, avatar, webContentId);
         lite_tools.setWindowIcon(avatar, webContentId);
       }
     } else {

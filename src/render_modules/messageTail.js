@@ -15,7 +15,7 @@ const debounceSetOptions = debounce(() => {
 
 addEventPeerChange((newPeer) => {
   peer = newPeer;
-  log("peer更新", peer);
+  // log("peer更新", peer);
   messageTail();
 });
 
@@ -35,7 +35,7 @@ function messageTail() {
     return;
   }
   peer = getPeer();
-  log("加载完成", peer);
+  // log("加载完成", peer);
   let tailTipsEl = document.querySelector(".lite-tools-tail-tips");
   if (container && peer?.peerUid && options.tail.tips) {
     tailIndex = options.tail.list.findIndex((tail) => {

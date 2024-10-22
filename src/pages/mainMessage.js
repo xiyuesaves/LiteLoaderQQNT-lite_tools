@@ -81,7 +81,7 @@ const updateVisibleItem = debounce(() => {
 }, 100);
 
 addEventPeerChange((newPeer) => {
-  log("peer更新-", newPeer);
+  // log("peer更新", newPeer);
   curUid = newPeer?.peerUid;
   injectReminder(curUid);
   if (options.message.currentLocation && curUid) {
