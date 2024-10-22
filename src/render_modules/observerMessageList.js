@@ -134,8 +134,9 @@ function processingMsgList() {
     }
   }
 
+  // 计算消息合并后的头像浮动高度
   msgMergerMap.keys().forEach((mainId) => {
-    const mainEl = document.querySelector(`[id="${mainId}"] .message`);
+    const mainEl = document.querySelector(`[id="${mainId}"] .message .message-container`);
     const childs = msgMergerMap.get(mainId);
     let height = mainEl.offsetHeight - 15; // 减去主消息的padding-top
     const cache = msgMergerCacheMap.get(mainId);
