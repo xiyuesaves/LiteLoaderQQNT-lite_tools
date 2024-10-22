@@ -533,6 +533,32 @@
 
 // 消息合并样式
 .merge-message {
+  // 移除没用的功能
+  .message {
+    padding-bottom: 0 !important;
+    .message-container {
+      padding-top: 0;
+      padding-bottom: 4px;
+    }
+    .message__timestamp {
+      display: none;
+    }
+    .message-tips {
+      &.reaction-panel {
+        .reaction-content {
+          margin-bottom: 0;
+        }
+      }
+      .reaction-content {
+        margin-bottom: 0;
+      }
+    }
+    // 不知道为什么卡片消息会有个单独的margin-top
+    .ark-msg-content-container {
+      margin-top: 0;
+    }
+  }
+
   &.lite-tools-merge-message-tip-top-btn-fix {
     .chat-msg-area__tip--top-btn {
       margin: 6px 10px;
@@ -574,20 +600,6 @@
   .ml-root.q-scroll-view {
     .ml-item {
       .merge {
-        .message-tips {
-          &.reaction-panel {
-            .reaction-content {
-              margin-bottom: 0;
-            }
-          }
-          .reaction-content {
-            margin-bottom: 0;
-          }
-        }
-        // 不知道为什么卡片消息会有个单独的margin-top
-        .ark-msg-content-container {
-          margin-top: 0;
-        }
         &.merge-main {
           &.message {
             padding-top: 15px;
@@ -602,6 +614,7 @@
               position: sticky !important;
               top: 10px !important;
               bottom: 10px !important;
+              z-index: 9999;
             }
           }
         }
@@ -620,16 +633,6 @@
   .chat-msg-area__vlist .virtual-scroll-area .ml-list.list {
     .ml-item:first-child {
       margin-bottom: 10px;
-    }
-  }
-  .message {
-    padding-bottom: 0 !important;
-    .message-container {
-      padding-top: 0;
-      padding-bottom: 4px;
-    }
-    .message__timestamp {
-      display: none;
     }
   }
 }
