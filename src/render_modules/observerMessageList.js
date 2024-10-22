@@ -576,7 +576,7 @@ function isChildMessage(prevRecord, record) {
   const anonymousEqual = prevRecord?.anonymousExtInfo?.anonymousNick === record?.anonymousExtInfo?.anonymousNick;
 
   // 消息是不是灰色提示
-  const grayTip = record?.elements?.[0]?.grayTipElement === null;
+  const grayTip = prevRecord?.elements?.[0]?.grayTipElement === null;
 
   // 消息有没有显示时间
   const showTime = options.message.mergeMessageKeepTime ? !record?.showTimestamp : true;
