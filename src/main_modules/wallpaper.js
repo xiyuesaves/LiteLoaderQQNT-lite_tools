@@ -13,25 +13,33 @@ onUpdateConfig(() => {
   // 更新窗口背景
   if (config.background.enabled) {
     if ([".mp4", ".webm"].includes(extname(config.background.url))) {
-      videoServer.setFilePath(config.background.url);
-      videoServer
-        .startServer()
-        .then((port) => {
-          backgroundData = {
-            href: `http://localhost:${port}/${basename(config.background.url)}`,
-            type: "video",
-          };
-          log("背景-更新为视频");
-          globalBroadcast("LiteLoader.lite_tools.updateWallpaper", config.background.enabled, backgroundData);
-        })
-        .catch((err) => {
-          log("启用视频背景服务时出错", err);
-          backgroundData = {
-            href: "",
-            type: "image",
-          };
-          globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
-        });
+      if (config.background.url.startsWith("http")) {
+        videoServer.stopServer();
+        backgroundData = {
+          href: config.background.url,
+          type: "video"
+        };
+      } else {
+        videoServer.setFilePath(config.background.url);
+        videoServer
+          .startServer()
+          .then((port) => {
+            backgroundData = {
+              href: `http://localhost:${port}/${basename(config.background.url)}`,
+              type: "video",
+            };
+            log("背景-更新为视频");
+            globalBroadcast("LiteLoader.lite_tools.updateWallpaper", config.background.enabled, backgroundData);
+          })
+          .catch((err) => {
+            log("启用视频背景服务时出错", err);
+            backgroundData = {
+              href: "",
+              type: "image",
+            };
+            globalBroadcast("LiteLoader.lite_tools.updateWallpaper", false, backgroundData);
+          });
+      }
     } else {
       videoServer.stopServer();
       backgroundData = {
