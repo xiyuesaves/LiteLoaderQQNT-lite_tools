@@ -30,6 +30,11 @@ const log = new Logs("配置界面");
  * @param {Element} view 设置页面容器
  */
 async function onConfigView(view) {
+  // 检查是否已初始化
+  const existingSettings = view.querySelector(".lite-tools-settings");
+  if (existingSettings) {
+    view.innerHTML = "";
+  }
   // 调试用，等待5秒后再执行
   // await new Promise((res) => setTimeout(res, 3000));
 
@@ -79,6 +84,11 @@ async function onConfigView(view) {
   const chatArea = view.querySelector(".chatArea ul");
 
   log("开始添加功能");
+
+  // 清空已有列表项，防止重复添加
+  if (sidebar) sidebar.innerHTML = "";
+  if (textArea) textArea.innerHTML = "";
+  if (chatArea) chatArea.innerHTML = "";
 
   // 异步初始化自定义字体功能
   initFontList();
@@ -187,11 +197,16 @@ async function onConfigView(view) {
     }
   }
 
-  // 添加侧边栏上方功能列表
-  addOptionLi(options.sidebar.top, sidebar, "sidebar.top", "disabled");
+  // 获取最新配置（直接从文件读取，而不是使用可能过期的 options 对象）
+  const latestOptions = lite_tools.getOptions();
 
-  // 添加侧边栏下方功能列表
-  addOptionLi(options.sidebar.bottom, sidebar, "sidebar.bottom", "disabled");
+  // 添加侧边栏顶部功能列表
+  addOptionLi(latestOptions.sidebar.top, sidebar, "sidebar.top", "disabled", true);
+
+  // 添加侧边栏底部功能列表（不清空已有内容）
+  if (latestOptions.sidebar.bottom?.length > 0) {
+    addOptionLi(latestOptions.sidebar.bottom, sidebar, "sidebar.bottom", "disabled", false);
+  }
 
   // 添加输入框上方功能列表
   addOptionLi(options.textAreaFuncList, textArea, "textAreaFuncList", "disabled");

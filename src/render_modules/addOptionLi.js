@@ -8,8 +8,13 @@ import { setValueByPath } from "./ObjectPathUtils.js";
  * @param {Element} element 指定插入元素
  * @param {String} objKey 对象路径
  * @param {String} key 控制键值
+ * @param {Boolean} clearInnerHTML 是否清空已有内容，默认为 true
  */
-function addOptionLi(list, element, objKey, key) {
+function addOptionLi(list, element, objKey, key, clearInnerHTML = true) {
+  // 清空已有内容，防止重复添加
+  if (clearInnerHTML) {
+    element.innerHTML = "";
+  }
   list.forEach((el, index) => {
     const hr = document.createElement("hr");
     hr.classList.add("horizontal-dividing-line");

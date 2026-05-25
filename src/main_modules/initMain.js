@@ -47,7 +47,44 @@ ipcMain.on("LiteLoader.lite_tools.getWebContentId", (event) => {
 
 // 更新侧边栏功能列表
 ipcMain.on("LiteLoader.lite_tools.sendSidebar", (_, list) => {
-  config.sidebar = list;
+  // 合并而不是覆盖，保留所有项目
+  if (!config.sidebar) {
+    config.sidebar = { top: [], bottom: [] };
+  }
+
+  // 合并 top 列表
+  if (list.top) {
+    list.top.forEach((newItem) => {
+      const existingIndex = config.sidebar.top?.findIndex(
+        (item) => item.name === newItem.name || item.id === newItem.id
+      );
+      if (existingIndex >= 0) {
+        // 更新现有项目
+        config.sidebar.top[existingIndex] = { ...config.sidebar.top[existingIndex], ...newItem };
+      } else {
+        // 添加新项目
+        config.sidebar.top = config.sidebar.top || [];
+        config.sidebar.top.push(newItem);
+      }
+    });
+  }
+
+  // 合并 bottom 列表
+  if (list.bottom) {
+    list.bottom.forEach((newItem) => {
+      const existingIndex = config.sidebar.bottom?.findIndex(
+        (item) => item.name === newItem.name || item.id === newItem.id
+      );
+      if (existingIndex >= 0) {
+        // 更新现有项目
+        config.sidebar.bottom[existingIndex] = { ...config.sidebar.bottom[existingIndex], ...newItem };
+      } else {
+        // 添加新项目
+        config.sidebar.bottom = config.sidebar.bottom || [];
+        config.sidebar.bottom.push(newItem);
+      }
+    });
+  }
   updateConfig(config);
 });
 
