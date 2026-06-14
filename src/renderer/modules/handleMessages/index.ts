@@ -137,6 +137,11 @@ function enhanceMessage(component: any) {
 async function observerElement() {
   const target = await waitForElement(".chat-msg-area__vlist");
   const observer = new MutationObserver((mutationsList) => {
+    // 元素已不在DOM中时断开观察，避免切换页面时产生无用回调
+    if (!target.isConnected) {
+      observer.disconnect();
+      return;
+    }
     for (let mutation of mutationsList) {
       if (mutation.type === "childList") {
         const target = mutation.target as HTMLElement;
