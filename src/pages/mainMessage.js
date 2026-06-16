@@ -108,7 +108,7 @@ async function scrollToItem(messageId, tryNum = 20) {
   }
 }
 
-const debounceChatMessage = debounce(chatMessage, 10);
+const debounceChatMessage = debounce(chatMessage, 100);
 const observe = new MutationObserver(debounceChatMessage);
 observe.observe(document.body, {
   childList: true,
@@ -116,6 +116,58 @@ observe.observe(document.body, {
 });
 updateOptions(chatMessage);
 chatMessage();
+
+/**
+ * 监听侧边栏容器的重新创建
+ * 当侧边栏被重新加载时，立即重新应用设置
+ */
+let sidebarObserver = null;
+function observeSidebarContainer() {
+  // 如果已经存在观察者，先断开
+  if (sidebarObserver) {
+    sidebarObserver.disconnect();
+  }
+
+  // 查找侧边栏容器
+  const sidebarContainer = document.querySelector(".sidebar__upper");
+  if (!sidebarContainer) {
+    // 如果容器不存在，延迟后重试
+    setTimeout(observeSidebarContainer, 500);
+    return;
+  }
+
+  // 创建专门的侧边栏观察者
+  sidebarObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === "childList") {
+        // 检查是否有侧边栏相关元素被添加
+        const hasSidebarChange = Array.from(mutation.addedNodes).some((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            return node.matches?.(".nav.sidebar__nav") || node.querySelector?.(".nav.sidebar__nav");
+          }
+          return false;
+        });
+
+        if (hasSidebarChange) {
+          // 侧边栏被重新创建，延迟应用设置（等待 Vue 初始化完成）
+          setTimeout(() => {
+            applySidebarSettings();
+            initSidebarData();
+          }, 100);
+        }
+      }
+    }
+  });
+
+  // 监听侧边栏容器的子元素变化
+  sidebarObserver.observe(sidebarContainer, {
+    childList: true,
+    subtree: false,
+  });
+}
+
+// 启动侧边栏容器监听
+observeSidebarContainer();
 
 /**
  * 监听鼠标侧键返回事件
@@ -127,11 +179,108 @@ document.addEventListener("mouseup", (event) => {
 });
 
 /**
+ * 应用侧边栏精简设置
+ * 提取为独立函数以便在侧边栏重新加载时调用
+ */
+function applySidebarSettings() {
+  const sidebarNav = document.querySelector(".nav.sidebar__nav");
+  if (!sidebarNav) return false;
+
+  let applied = false;
+
+  if (options?.sidebar?.top?.length > 0) {
+    // 全局搜索 navStore
+    let navStore = null;
+    const allElements = document.querySelectorAll("*");
+    for (const el of allElements) {
+      if (el.__VUE__?.length) {
+        for (const instance of el.__VUE__) {
+          if (instance?.proxy?.navStore?.finalTabConfig) {
+            navStore = instance.proxy.navStore;
+            break;
+          }
+        }
+      }
+      if (navStore) break;
+    }
+
+    if (navStore?.finalTabConfig) {
+      navStore.finalTabConfig.forEach((tabIcon) => {
+        const find = options.sidebar.top.find((el) => el?.name == tabIcon?.label);
+        if (find && find.id !== undefined) {
+          tabIcon.status = find.disabled ? 2 : 1;
+        }
+      });
+      applied = true;
+    }
+
+    // CSS后备方案 - 直接遍历所有侧边栏 nav-item
+    const allNavItems = sidebarNav.querySelectorAll(".nav-item");
+    allNavItems.forEach((el) => {
+      const ariaLabel = el.getAttribute("aria-label");
+      if (ariaLabel) {
+        const findLabel = options.sidebar.top.find((item) => item.name === ariaLabel);
+        if (findLabel) {
+          el.classList.toggle("LT-disabled", findLabel.disabled);
+          applied = true;
+        }
+      }
+    });
+
+    // Patch: 空间 特殊处理
+    const spaceEl = document.querySelector('.sidebar__nav .nav-item[data-v-a5e9cffe]');
+    if (spaceEl) {
+      const spaceOpt = options.sidebar.top.find((el) => el.name === "空间");
+      if (spaceOpt) spaceEl.classList.toggle("LT-disabled", spaceOpt.disabled);
+    }
+
+    // Patch: QQ天气 特殊处理
+    const weatherEl = document.querySelector('.sidebar__nav .nav-item-weather.nav-item');
+    if (weatherEl) {
+      const weatherOpt = options.sidebar.top.find((el) => el.name === "QQ天气");
+      if (weatherOpt) weatherEl.classList.toggle("LT-disabled", weatherOpt.disabled);
+    }
+  }
+
+  /**
+   * 侧边栏底部 - 通过 CSS 类控制显示/隐藏
+   */
+  if (options?.sidebar?.bottom?.length > 0) {
+    const bottomItems = document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item");
+    bottomItems.forEach((el) => {
+      const itemName = el?.__VUE__?.[0]?.attrs?.item?.label;
+      if (itemName) {
+        const opt = options.sidebar.bottom.find((item) => item.name === itemName);
+        if (opt) {
+          el.classList.toggle("LT-disabled", opt.disabled);
+          applied = true;
+        }
+      }
+    });
+  }
+
+  return applied;
+}
+
+/**
+ * 初始化侧边栏数据到配置
+ */
+function initSidebarData() {
+  const sidebarNav = document.querySelector(".nav.sidebar__nav");
+  if (!sidebarNav) {
+    return;
+  }
+
+  const navStore = sidebarNav?.__VUE__?.[0]?.proxy?.navStore;
+  if (navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
+    updateSiderbarNavFuncList(navStore);
+  }
+}
+
+/**
  * 初始化聊天消息功能，包括滚动事件、贴纸条、侧边栏项目、GIF热点地图、徽章、头像显示、消息气泡调整和移除VIP红名。
  */
 function chatMessage() {
-  log("更新页面");
-
   // 消息合并功能判断右侧悬浮按钮是否显示
   chatMsgAreaTip();
 
@@ -142,95 +291,12 @@ function chatMessage() {
   }
   updateVisibleItem();
 
-  /**
-   * 侧边栏数据
-   */
-  const navStore = document.querySelector(".nav.sidebar__nav")?.__VUE__?.[0]?.proxy?.navStore;
-  navStore?.finalTabConfig?.forEach((tabIcon) => {
-    const find = options.sidebar.top.find((el) => el?.name == tabIcon?.label);
-    if (find && find.id !== undefined) {
-      if (find.disabled) {
-        tabIcon.status = 2;
-      } else {
-        tabIcon.status = 1;
-      }
-    }
-  });
+  // 应用侧边栏精简设置
+  const sidebarApplied = applySidebarSettings();
 
-  // 初始化底部侧边栏
-  // document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item").forEach((el) => {
-  //   const find = options.sidebar.bottom.find((opt) => opt.id === el?.__VUE__?.[0]?.attrs?.item?.id);
-  //   if (find) {
-  //     el.classList.toggle("LT-disabled", find.disabled);
-  //   }
-  // });
-  // the original method by getting (opt) => opt.id === el?.__VUE__?.[0]?.attrs?.item?.id can no longer work
-  // use index to match instead
-  document.querySelectorAll(".func-menu.sidebar__menu .func-menu__item_wrap").forEach((el, index) => {
-    const opt = options.sidebar.bottom[index];
-    // console.log("[Debug] opt ids:", JSON.stringify(options.sidebar.bottom, null, 2));
-    if (opt) {
-      if (opt.disabled) {
-        // change class name: func-menu__item_wrap -> func-menu__item_wrap LT-disabled
-        el.className = "func-menu__item_wrap LT-disabled";
-      } else {
-        el.className = "func-menu__item_wrap";
-      }
-    }
-  });
-
-
-  // 更新侧边栏数据，只执行一次
-  if (navStore?.finalTabConfig?.length && first("updateSiderbarNavFuncList")) {
-    updateSiderbarNavFuncList(navStore);
-  }
-
-  // 特殊的图标
-  const arr = ["消息", "联系人", "短视频", "腾讯文档", "QQ游戏", "自选股", "腾讯网", "微云", "QQ音乐", "QQ钱包", "更多", "空间", "频道", "游戏", "QQ天气"];
-  for (let i = 0; i < arr.length; i++) {
-    const areaLabel = arr[i];
-    const findLabel = options.sidebar.top.find((el) => el.name === areaLabel);
-    if (findLabel) {
-      document
-        .querySelector(`.sidebar__upper .nav.sidebar__nav .nav-item[aria-label="${areaLabel}"]`)
-        ?.classList?.toggle("LT-disabled", findLabel.disabled);
-    }
-
-    // Patch of fixing 空间 option starts here
-    // We need to create a special case for "空间" because it has no aria-label? Tencent Programmers Sucks.
-    // If nav item matches data-v-a5e9cffe, change its class to "nav-item LT-disabled"
-    if (areaLabel === "空间") {
-      if (findLabel.disabled) {
-        // console.log("[Debug] 空间 is disabled, changing class...");
-        const el = document.querySelector('.sidebar__nav .nav-item[data-v-a5e9cffe]');
-        if (el) {
-          el.className = "nav-item LT-disabled";
-        }  
-      } else {
-        // console.log("[Debug] 空间 is enabled, changing class...");
-        const el = document.querySelector('.sidebar__nav .nav-item[data-v-a5e9cffe]');
-        if (el) {
-          el.className = "nav-item";
-        }
-      }
-    }
-    // Patch ends here
-    // Patch of fixing QQ天气 option starts here
-    // The same, QQ天气 has no aria-label too, we need to locate it with class name "nav-item-weather nav-item"
-    if (areaLabel === "QQ天气") {
-      if (findLabel && findLabel.disabled) {
-        const el = document.querySelector('.sidebar__nav .nav-item-weather.nav-item');
-        if (el) {
-          el.className = "nav-item-weather nav-item LT-disabled";
-        }
-      } else {
-        const el = document.querySelector('.sidebar__nav .nav-item-weather.nav-item');
-        if (el) {
-          el.className = "nav-item-weather nav-item";
-        }
-      }
-    }
-    // Patch ends here
+  // 如果侧边栏设置成功应用，初始化侧边栏数据
+  if (sidebarApplied) {
+    initSidebarData();
   }
 
   // 初始化推荐表情

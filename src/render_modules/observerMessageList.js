@@ -544,7 +544,7 @@ function messageToleft(component) {
 const initMessageList = (recursion = true) => {
   // const findObj = findShortestPathAndValue(app, "curMsgs");
   // const curMsgs = findObj.value;
-  const { value: curMsgs } = getInstanceSync(".aio .group-chat", "proxy.curMsgListData");
+  const { value: curMsgs } = getInstanceSync(".aio .group-chat", "proxy.curMsgListData") || {};
   if (!curMsgs?.length) {
     return;
   }

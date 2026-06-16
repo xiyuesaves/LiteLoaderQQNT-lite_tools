@@ -25,7 +25,7 @@ async function onLoad() {
    * 根据页面哈希值决定加载页面模块
    * @returns {void}
    */
-  function updateHash() {
+  async function updateHash() {
     let hash = location.hash;
     if (hash === "#/blank") {
       return;
@@ -33,7 +33,11 @@ async function onLoad() {
     if (hash.includes("#/main/message")) {
       initCurAioData();
       app.classList.add("lite-tools-main");
-      import("./pages/mainMessage.js");
+      try {
+        await import("./pages/mainMessage.js");
+      } catch (err) {
+        console.error("[lite_tools] mainMessage.js 加载失败:", err);
+      }
     } else if (hash.includes("#/chat")) {
       initCurAioData();
       app.classList.add("lite-tools-chat");
