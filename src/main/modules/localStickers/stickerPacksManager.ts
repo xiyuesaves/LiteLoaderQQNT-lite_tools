@@ -1,9 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
 import type { StickerPack, StickerConfig, InternalStickerPack } from "@/common/types/localStickers";
-import { createLogger } from "@/main/utils/createLogger";
-
-const log = createLogger("stickerPacksManager");
 
 // 定义支持的图片后缀
 const SUPPORTED_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp"]);
@@ -93,7 +90,11 @@ class StickerPacksManager {
 
   private writeConfig(dirPath: string, pack: StickerConfig, rewrite = false) {
     const configPath = path.join(dirPath, "sticker.json");
-    const currentConfig = rewrite ? {} : fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath, "utf-8")) : {};
+    const currentConfig = rewrite
+      ? {}
+      : fs.existsSync(configPath)
+        ? JSON.parse(fs.readFileSync(configPath, "utf-8"))
+        : {};
     fs.writeFileSync(
       configPath,
       JSON.stringify(
@@ -193,7 +194,10 @@ class StickerPacksManager {
         label: pack.label,
         dirPath: pack.dirPath,
         index: pack.index,
-        icon: (pack.icon ? path.join(pack.dirPath, pack.icon) : pack.stickerPaths.keys().next().value)?.replace(/\\/g, "/"),
+        icon: (pack.icon ? path.join(pack.dirPath, pack.icon) : pack.stickerPaths.keys().next().value)?.replace(
+          /\\/g,
+          "/",
+        ),
         stickers,
       };
     });

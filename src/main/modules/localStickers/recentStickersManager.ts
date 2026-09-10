@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { createLogger } from "@/main/utils/createLogger";
 import { configManager } from "@/main/modules/configManager";
 
 import type { Path, Sticker, Stickers, StickerPack } from "@/common/types/localStickers";
