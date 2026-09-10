@@ -15,6 +15,7 @@
     "ffmpegPath": "",
     "tgsToGifPath": "",
     "hoverShow": false,
+    "customSummary": false,
     "sort": "default",
     "recentStickers": {
       "enabled": false,

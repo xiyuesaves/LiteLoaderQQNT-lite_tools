@@ -6,6 +6,7 @@ import { StickerPack, StickerPackLabel, StickerItem } from "./components/sticker
 import { StickerIcon } from "./components/stickerIcon";
 import { StickerFullViewer } from "./components/stickerFullViewer";
 import { StickerContainer } from "./components/stickerContainer";
+import { basename } from "@/renderer/utils/pathUtils";
 
 import { configStore } from "@/renderer/modules/configStore";
 import { waitForElement, waitForInstance } from "@/renderer/utils/domWaitFor";
@@ -151,12 +152,13 @@ async function setupLocalStickers() {
     }
     const picSubType = configStore.value.localStickers.sendAsPic ? 0 : 1;
     log("插入表情", e.detail.path);
+    const summary = configStore.value.localStickers.customSummary ? getCustomSummary(e.detail.path) : "";
     if (editorModel === "ckeditor") {
       ckeditEditorModel.change((writer: any) => {
         const selection = ckeditEditorModel.document.selection;
         const position = selection.getFirstPosition();
         const writerEl = writer.createElement("msg-img", {
-          data: JSON.stringify({ type: "pic", src: e.detail.path, picSubType, summary: "" }),
+          data: JSON.stringify({ type: "pic", src: e.detail.path, picSubType, summary }),
         });
         writer.insert(writerEl, position);
         writer.setSelection(writer.createPositionAt(writerEl, "after"));
@@ -174,6 +176,7 @@ async function setupLocalStickers() {
             type: "pic",
             src: e.detail.path,
             picSubType,
+            summary,
             thumbUrl: "",
           },
         },
@@ -189,9 +192,20 @@ async function setupLocalStickers() {
       lite_tools.updateRecentStickers(e.detail);
     }
     const picSubType = configStore.value.localStickers.sendAsPic ? 0 : 1;
-    sendMessage(aioStore.getPeer(), [{ type: "image", path: e.detail.path, picSubType, summary: "" }]);
+    const summary = configStore.value.localStickers.customSummary ? getCustomSummary(e.detail.path) : "";
+    sendMessage(aioStore.getPeer(), [{ type: "image", path: e.detail.path, picSubType, summary }]);
     log("发送表情", e.detail.path);
   });
+}
+
+function getCustomSummary(path: string): string {
+  // 返回第一个"."之前的内容
+  const arr = basename(path).split(".");
+  log("文件名", arr);
+  if (arr.length >= 3) {
+    return arr[0];
+  }
+  return "";
 }
 
 function buildStickerMenu(packs: StickerPackType[], sourceFilePath: string, getRawContextMenu: any): ContextMenuType {
