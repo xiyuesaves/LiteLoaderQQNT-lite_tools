@@ -19,7 +19,7 @@ type InternalStickerPack = {
   index: number;
   icon?: string;
   dirPath: string;
-  stickerPaths: Set<string>; // 内部只存路径
+  stickerPaths: Map<string, number | undefined>;
 };
 
 type StickerPack = {

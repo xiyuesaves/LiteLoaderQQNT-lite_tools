@@ -11,6 +11,7 @@ type FuncBar = {
 
 type ObjectFit = "cover" | "contain" | "fill";
 type CoverArea = "chat" | "full";
+type SortType = "default" | "fileName" | "fileName-desc" | "createDate" | "createDate-desc";
 
 type Wallpaper = {
   enabled: boolean;
@@ -20,9 +21,12 @@ type Wallpaper = {
   opacity: number;
 };
 
-type ExtendedConfig = Omit<BaseConfig, "chatFuncBar" | "topFuncBar"> & {
+type ExtendedConfig = Omit<BaseConfig, "chatFuncBar" | "topFuncBar" | "localStickers"> & {
   topFuncBar: FuncBar[];
   chatFuncBar: FuncBar[];
+  localStickers: Omit<BaseConfig["localStickers"], "sort"> & {
+    sort: SortType;
+  };
   interface: Omit<BaseConfig["interface"], "wallpaper"> & {
     wallpaper: Wallpaper;
   };

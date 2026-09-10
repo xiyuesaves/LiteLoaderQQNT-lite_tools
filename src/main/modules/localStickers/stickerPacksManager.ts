@@ -1,9 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
 import type { StickerPack, StickerConfig, InternalStickerPack } from "@/common/types/localStickers";
-import { createLogger } from "@/main/utils/createLogger";
-
-const log = createLogger("stickerPacksManager");
 
 // 定义支持的图片后缀
 const SUPPORTED_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp"]);
@@ -15,7 +12,7 @@ class StickerPacksManager {
 
   constructor() {}
 
-  public onEvent(eventName: string, inputPath: string) {
+  public onEvent(eventName: string, inputPath: string, stats?: fs.Stats) {
     const filePath = inputPath.replace(/\\/g, "/");
     const fileName = path.basename(filePath);
     const dirPath = path.dirname(filePath);
@@ -29,7 +26,7 @@ class StickerPacksManager {
         break;
       case "add":
         if (SUPPORTED_EXTENSIONS.has(ext)) {
-          this.addSticker(filePath);
+          this.addSticker(filePath, stats);
         }
         break;
       case "change":
@@ -56,7 +53,7 @@ class StickerPacksManager {
             index: config.index || 0,
             icon: config.icon || undefined,
             dirPath: dirPath,
-            stickerPaths: new Set<string>(),
+            stickerPaths: new Map<string, number | undefined>(),
           };
         } else {
           pack = {
@@ -64,7 +61,7 @@ class StickerPacksManager {
             index: 0,
             icon: undefined,
             dirPath: dirPath,
-            stickerPaths: new Set<string>(),
+            stickerPaths: new Map<string, number | undefined>(),
           };
           this.writeConfig(pack.dirPath, pack);
         }
@@ -74,9 +71,9 @@ class StickerPacksManager {
           index: 0,
           icon: undefined,
           dirPath: dirPath,
-          stickerPaths: new Set<string>(),
+          stickerPaths: new Map<string, number | undefined>(),
         };
-        this.writeConfig(pack.dirPath, pack);
+        this.writeConfig(pack.dirPath, pack, true);
       }
 
       this.stickerPacks.set(dirPath, pack);
@@ -91,9 +88,13 @@ class StickerPacksManager {
     return stickerPath.replace(this.rootPath + "/", "");
   }
 
-  private writeConfig(dirPath: string, pack: StickerConfig) {
+  private writeConfig(dirPath: string, pack: StickerConfig, rewrite = false) {
     const configPath = path.join(dirPath, "sticker.json");
-    const currentConfig = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath, "utf-8")) : {};
+    const currentConfig = rewrite
+      ? {}
+      : fs.existsSync(configPath)
+        ? JSON.parse(fs.readFileSync(configPath, "utf-8"))
+        : {};
     fs.writeFileSync(
       configPath,
       JSON.stringify(
@@ -128,10 +129,12 @@ class StickerPacksManager {
     });
   }
 
-  private addSticker(stickerPath: string) {
+  private addSticker(stickerPath: string, stats?: fs.Stats) {
     const dirPath = path.dirname(stickerPath);
     const pack = this.ensurePackExists(dirPath);
-    pack.stickerPaths.add(stickerPath);
+    if (!pack.stickerPaths.has(stickerPath)) {
+      pack.stickerPaths.set(stickerPath, stats?.birthtimeMs);
+    }
   }
 
   private deleteSticker(stickerPath: string) {
@@ -160,15 +163,29 @@ class StickerPacksManager {
       }
     } else if (pack.icon === baseName) {
       // 贴纸没删空，且被删除的刚好是作为封面的贴纸，顺位继承下一个
-      pack.icon = path.basename(pack.stickerPaths.values().next().value!);
+      pack.icon = path.basename(pack.stickerPaths.keys().next().value!);
       this.writeConfig(pack.dirPath, pack);
     }
   }
 
-  // 在导出时进行数据转换：Set<string> -> Sticker[]
-  public getPackList(): StickerPack[] {
+  public getPackList(sort: Config["localStickers"]["sort"] = "default"): StickerPack[] {
     return Array.from(this.stickerPacks.values()).map((pack) => {
-      const stickers = Array.from(pack.stickerPaths).map((filePath) => ({
+      const entries = Array.from(pack.stickerPaths);
+      switch (sort) {
+        case "fileName":
+          entries.sort(([a], [b]) => path.basename(a).localeCompare(path.basename(b)));
+          break;
+        case "fileName-desc":
+          entries.sort(([a], [b]) => path.basename(b).localeCompare(path.basename(a)));
+          break;
+        case "createDate":
+          entries.sort(([, a], [, b]) => (a ?? 0) - (b ?? 0));
+          break;
+        case "createDate-desc":
+          entries.sort(([, a], [, b]) => (b ?? 0) - (a ?? 0));
+          break;
+      }
+      const stickers = entries.map(([filePath]) => ({
         label: path.basename(filePath, path.extname(filePath)),
         path: filePath,
       }));
@@ -177,7 +194,10 @@ class StickerPacksManager {
         label: pack.label,
         dirPath: pack.dirPath,
         index: pack.index,
-        icon: (pack.icon ? path.join(pack.dirPath, pack.icon) : stickers[0]?.path)?.replace(/\\/g, "/"),
+        icon: (pack.icon ? path.join(pack.dirPath, pack.icon) : pack.stickerPaths.keys().next().value)?.replace(
+          /\\/g,
+          "/",
+        ),
         stickers,
       };
     });

@@ -24,7 +24,8 @@ class LocalStickers {
 
   public notifyStickerStoreUpdated = createThrottledDispatcher(() => {
     if (!this.initializedReady) return; // 避免因节流导致的 offListener 后状态被覆盖
-    const stickerStore = this.createStickerStoreResult("success", stickerPacksManager.getPackList());
+    const stickerPacks = stickerPacksManager.getPackList(configManager.value.localStickers.sort);
+    const stickerStore = this.createStickerStoreResult("success", stickerPacks);
     if (stickerStore.stickerPacks?.length) {
       // 插入常用贴纸
       if (configManager.value.localStickers.recentStickers.enabled) {
@@ -82,6 +83,7 @@ class LocalStickers {
         "localStickers.recentStickers.enabled",
         "localStickers.recentStickers.limit",
         "localStickers.stickersPerRow",
+        "localStickers.sort",
       ]);
       if (configManager.lastUpdatedConfigs.some((key) => some.has(key))) {
         this.notifyStickerStoreUpdated();
@@ -133,6 +135,7 @@ class LocalStickers {
 
       this.watcher = chokidar.watch(targetPath, {
         ignoreInitial: false,
+        alwaysStat: true,
         depth: 10, // 限制目录深度，防止过度扫描子目录导致性能问题
       });
 
@@ -143,13 +146,13 @@ class LocalStickers {
         this.notifyStickerStoreUpdated();
       });
 
-      this.watcher.on("all", (event, path) => {
+      this.watcher.on("all", (event, path, stats) => {
         // 初始扫描时避免疯狂日志刷屏卡顿
         if (this.initializedReady) {
           log("文件变化", event, path);
         }
 
-        stickerPacksManager.onEvent(event, path);
+        stickerPacksManager.onEvent(event, path, stats);
 
         if (event === "unlink") {
           recentStickersManager.deleteSticker(path);
